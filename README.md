@@ -4,6 +4,9 @@
 
 Turn-based combat where each unit queues up to three actions in a fixed sequence (first, second, third), committing their plan at the start of the turn. Actions resolve one step at a time across all units, with speed dynamically determining which action executes next. Because actions can modify speed, status, and battlefield conditions, execution order can shift mid-turn, causing queued actions to play out differently than planned.
 
+playable at
+https://ted-game-declared-tactics.netlify.app/
+
 ## Getting Started
 
 ```bash
