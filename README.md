@@ -1,6 +1,8 @@
-# daq-game
+# Declared Tactics
 
-A turn-based battle card game built with React 18 and Tailwind CSS.
+<img width="1959" height="1114" alt="image" src="https://github.com/user-attachments/assets/ab1ba285-f361-428d-82d9-06566ddc4ced" />
+
+Turn-based combat where each unit queues up to three actions in a fixed sequence (first, second, third), committing their plan at the start of the turn. Actions resolve one step at a time across all units, with speed dynamically determining which action executes next. Because actions can modify speed, status, and battlefield conditions, execution order can shift mid-turn, causing queued actions to play out differently than planned.
 
 ## Getting Started
 
