@@ -1,0 +1,55 @@
+BATTLE IMPORTANT NOTES
+======================
+
+AOE ATTACKS — COMPLETE DEFENDER LOOP
+--------------------------------------
+When implementing AOE attacks, the defender pipeline must run COMPLETELY
+per enemy. Skipping phases like ON_RECEIVE or APPLY STATUS TAGS means
+enemies can't react to being hit and status effects (BURN, FREEZE, etc.)
+won't apply to each target. Get this wrong and AOE cards will behave
+inconsistently compared to single-target cards.
+
+PIPELINE SPLIT FOR AOE
+-----------------------
+The pipeline is split into two halves: owner-side (runs ONCE) and
+defender-side (runs PER ENEMY).
+
+  OWNER SIDE — runs once, before the per-enemy loop:
+  ────────────────────────────────────────────────────
+  1. PRE_ACTION      — tag-based gates + resource check (fizzle if short)
+  2. Resource cost   — deducted from owner once
+  3. IMBUE           — owner tags modify payload type/flags
+  4. BUILD DAMAGES   — DELIVERY handlers on card target tags populate dmg entries
+  5. INJECT_MULT     — multiply damage (BATTOJUTSU, MAGIC_CHARGE consumed HERE)
+  6. INJECT_FLAT     — add flat damage (FUEL_TO_THE_FLAMES consumed HERE)
+
+  → Payload is FROZEN after step 6. All owner-side buffs are consumed.
+    BATTOJUTSU applies once and boosts every hit equally — it does NOT
+    get consumed on the first enemy and leave the rest unboosted.
+
+  DEFENDER SIDE — runs per enemy in the loop:
+  ────────────────────────────────────────────────────
+  7. ON_INCOMING     — each enemy can individually dodge, cancel, or reflect
+                       (e.g. Quick Steps can evade an AOE hit)
+  8. DAMAGE_REDUCE   — each enemy can individually mitigate damage
+                       (payload is cloned per-enemy so mitigation doesn't bleed over)
+  9. Deliver damage  — apply dmg.power to that enemy's health
+  10. APPLY STATUS   — status tags (BURN, FREEZE, etc.) applied to that enemy
+  11. ON_RECEIVE     — each enemy reacts to being hit
+
+  OWNER SIDE CLEANUP — runs once, after the loop:
+  ────────────────────────────────────────────────────
+  12. SELF TAGS      — owner applies self-buffs/heals from the card
+  13. POST_ATTACK    — owner reacts after attacking (MOMENTUM, etc.)
+
+WHY THE PAYLOAD MUST BE CLONED PER-ENEMY
+-----------------------------------------
+DAMAGE_REDUCE mutates the payload's dmg.power values. If we reused the
+same payload object for each enemy, the first enemy's mitigation would
+carry over and reduce damage for every subsequent enemy. deepClone(payload)
+before each defender pass prevents this.
+
+CURRENTLY KNOWN AOE CARDS
+--------------------------
+- Storm Strike (samurai_cards.js) — 100 PHYSICAL to all enemies, costs 5 BATTLE_SPIRIT
+  properties: ['AOE']

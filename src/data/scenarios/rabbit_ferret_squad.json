@@ -1,0 +1,12 @@
+{
+  "id": "rabbit_ferret_squad",
+  "name": "Rabbit & Ferret Squad",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["rabbit_sumurai", "bear_sumurai", "bear_sumurai", "rabbit_sumurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "rewards": {}
+}

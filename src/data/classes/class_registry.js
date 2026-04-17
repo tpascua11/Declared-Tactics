@@ -21,10 +21,17 @@ function resolveClass(classDef) {
   return {
     ...classDef,
     portrait: ASSETS[classDef.portrait] ?? null,
-    cards: classDef.cards.map(card => ({
-      ...card,
-      image: ASSETS[card.image] ?? null,
-    })),
+    cards: classDef.cards
+      .map(card => ({ ...card, image: ASSETS[card.image] ?? null }))
+      .sort((a, b) => {
+        const order = classDef.card_order;
+        if (!order) return 0;
+        const ai = order.indexOf(a.id);
+        const bi = order.indexOf(b.id);
+        const aIdx = ai === -1 ? order.length : ai;
+        const bIdx = bi === -1 ? order.length : bi;
+        return aIdx - bIdx;
+      }),
   };
 }
 

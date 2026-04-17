@@ -1,5 +1,6 @@
 // ============================================================
 //  battleReducer — all battle state transitions
+//
 // ============================================================
 
 import { DEBUG_HAND_COST } from '../debug';
@@ -13,9 +14,46 @@ import {
   TurnResultCleanup,
   runPhaseOnTurnStart,
 } from './engine/battle_engine';
-import { buildEnemyQueue, buildInitialState } from './initialState';
+import { buildEnemyQueue, buildInitialState, buildStageEnemies, MAX_ENEMIES } from './initialState';
 import EMBER_KEEP from '../data/scenarios/ember_keep.json';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
+
+// Called when all active enemies are still dead after bench replacement.
+// Advances to the next stage, or returns a WIN result if nothing remains.
+// Bench replacement itself is handled before this call in BATTLE_STEP.
+function advanceStageOrWin(state, logs) {
+  const { currentStageIndex = 0, scenario } = state;
+
+  const nextStageIndex = currentStageIndex + 1;
+  if (scenario?.stages?.[nextStageIndex]) {
+    const nextIds   = scenario.stages[nextStageIndex].enemies ?? [];
+    const newActive = buildStageEnemies(nextIds.slice(0, MAX_ENEMIES), nextStageIndex, 0);
+    const newBench  = buildStageEnemies(nextIds.slice(MAX_ENEMIES),    nextStageIndex, MAX_ENEMIES);
+    const newChars  = [
+      ...state.characters.filter(c => c.faction === 'player'),
+      ...newActive,
+    ].map(c => ({ ...c, queue: [] }));
+    return {
+      ...state,
+      characters: newChars,
+      enemyBench: newBench,
+      currentStageIndex: nextStageIndex,
+      phase: 'QUEUE_SETUP',
+      logs: [...logs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
+      activeEnemyId: null,
+      pendingAnimation: newActive.map(e => ({ type: 'enemy_enter', targetId: e.id })),
+      lastTargetId: newChars.find(c => c.faction === 'enemy' && c.health > 0)?.id ?? null,
+    };
+  }
+
+  return {
+    ...state,
+    phase: 'RESULT',
+    result: 'WIN',
+    pendingAnimation: [],
+    logs: [...logs, { msg: '🏆 VICTORY! ALL ENEMIES DEFEATED!', type: 'heal' }],
+  };
+}
 
 export function battleReducer(state, action) {
   switch (action.type) {
@@ -84,7 +122,7 @@ export function battleReducer(state, action) {
         return { ...state, characters: startChars, phase: 'RESULT', result: 'LOSS', logs: [...turnStartLogs, { msg: '💀 VRAX HAS FALLEN.', type: 'dmg' }] };
       }
       if (allEnemiesDeadAfterStart) {
-        return { ...state, characters: startChars, phase: 'RESULT', result: 'WIN', logs: [...turnStartLogs, { msg: '🏆 VICTORY! ALL ENEMIES DEFEATED!', type: 'heal' }] };
+        return advanceStageOrWin({ ...state, characters: startChars }, turnStartLogs);
       }
       const firstSorted = SpeedCheckAllAvailableActions(startChars);
       const firstAction = firstSorted[0] ?? null;
@@ -102,22 +140,44 @@ export function battleReducer(state, action) {
       if (sorted.length === 0) {
         const { newState: cleanedState, logs: cleanLogs } = TurnResultCleanup({ ...state });
         const player = cleanedState.characters.find(c => c.faction === 'player');
-        const allEnemiesDead = cleanedState.characters.filter(c => c.faction === 'enemy').every(e => e.health <= 0);
         if (player.health <= 0) {
           return { ...cleanedState, phase: 'RESULT', result: 'LOSS', pendingAnimation: [], logs: [...state.logs, ...cleanLogs, { msg: '💀 VRAX HAS FALLEN.', type: 'dmg' }] };
         }
+
+        const turnEndLogs = [...state.logs, ...cleanLogs, { msg: `━━━ TURN ${state.turn} END ━━━`, type: 'info' }];
+
+        // 1-for-1 bench replacement: swap each dead enemy slot with the next bench entry.
+        let benchCopy = [...(cleanedState.enemyBench ?? [])];
+        const enterAnimIds = [];
+        const nextChars = cleanedState.characters.map(c => {
+          if (c.faction === 'enemy' && c.health <= 0 && benchCopy.length > 0) {
+            const replacement = benchCopy.shift();
+            enterAnimIds.push(replacement.id);
+            return { ...replacement, queue: [] };
+          }
+          return { ...c, queue: [] };
+        });
+
+        const allEnemiesDead = nextChars.filter(c => c.faction === 'enemy').every(e => e.health <= 0);
         if (allEnemiesDead) {
-          return { ...cleanedState, phase: 'RESULT', result: 'WIN', pendingAnimation: [], logs: [...state.logs, ...cleanLogs, { msg: '🏆 VICTORY! ALL ENEMIES DEFEATED!', type: 'heal' }] };
+          return advanceStageOrWin(
+            { ...cleanedState, characters: nextChars, enemyBench: benchCopy, turn: state.turn + 1 },
+            turnEndLogs,
+          );
         }
-        const nextChars = cleanedState.characters.map(c => ({ ...c, queue: [] }));
+
         return {
           ...cleanedState,
           characters: nextChars,
+          enemyBench: benchCopy,
           phase: 'QUEUE_SETUP',
           turn: state.turn + 1,
-          logs: [...state.logs, ...cleanLogs, { msg: `━━━ TURN ${state.turn} END ━━━`, type: 'info' }],
+          logs: enterAnimIds.length > 0
+            ? [...turnEndLogs, { msg: '⚡ REINFORCEMENTS ARRIVE!', type: 'info' }]
+            : turnEndLogs,
           activeEnemyId: null,
-          pendingAnimation: [],
+          pendingAnimation: enterAnimIds.map(id => ({ type: 'enemy_enter', targetId: id })),
+          lastTargetId: nextChars.find(c => c.faction === 'enemy' && c.health > 0)?.id ?? null,
         };
       }
 
@@ -130,7 +190,7 @@ export function battleReducer(state, action) {
 
       if (interactionLog) newLogs.push(interactionLog);
 
-      const { newState: afterExec, logs: execLogs, actualTargetId, fizzled, dodged, dodgerId, isSelfBuff, animationHint, animationSelf, animationIntensity, damageDealt } = ExecuteAction(actionA, resultA, newState);
+      const { newState: afterExec, logs: execLogs, actualTargetId, aoeHits, fizzled, dodged, dodgerId, isSelfBuff, animationHint, animationSelf, animationIntensity, damageDealt } = ExecuteAction(actionA, resultA, newState);
       newState = afterExec;
       newLogs.push(...execLogs);
 
@@ -176,9 +236,16 @@ export function battleReducer(state, action) {
           // Self-buff: animate on owner, optionally also on target if animation_self is set on target side
           pendingAnimation.push({ type: animationHint, targetId: actionA.owner_id, intensity: animationIntensity });
         } else if (anyoneWasHit) {
-          // Attack: animate on target
-          pendingAnimation.push({ type: animationHint, targetId: actualTargetId, intensity: animationIntensity, value: damageDealt });
-          // Also animate on self if card defines animation_self
+          if (aoeHits?.length > 0) {
+            // AOE: one shake per hit enemy; SFX plays only on the first to avoid stacking
+            aoeHits.forEach(({ targetId, damage }, i) => {
+              pendingAnimation.push({ type: animationHint, targetId, intensity: animationIntensity, value: damage, skipSfx: i > 0 });
+            });
+          } else {
+            // Single-target: animate on target
+            pendingAnimation.push({ type: animationHint, targetId: actualTargetId, intensity: animationIntensity, value: damageDealt });
+          }
+          // Animate on self if card defines animation_self
           if (animationSelf) {
             pendingAnimation.push({ type: animationSelf, targetId: actionA.owner_id, intensity: animationIntensity });
           }

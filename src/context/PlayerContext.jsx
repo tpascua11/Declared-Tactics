@@ -64,7 +64,15 @@ export function derivePlayerSnapshot(playerData) {
     .reduce((total, b) => total + b.amount, classDef.total_action_slots);
 
   const allCardIds = [...new Set([...(classDef.starting_cards ?? []), ...(playerData.unlocked_cards ?? [])])];
-  const cards = allCardIds.map(id => classDef.cards.find(c => c.id === id)).filter(Boolean);
+  const resolvedCards = allCardIds.map(id => classDef.cards.find(c => c.id === id)).filter(Boolean);
+  const cardOrder = classDef.card_order;
+  const cards = cardOrder
+    ? [...resolvedCards].sort((a, b) => {
+        const ai = cardOrder.indexOf(a.id);
+        const bi = cardOrder.indexOf(b.id);
+        return (ai === -1 ? cardOrder.length : ai) - (bi === -1 ? cardOrder.length : bi);
+      })
+    : resolvedCards;
 
   const currentHealth = playerData.current_hp ?? maxHealth;
 

@@ -436,6 +436,53 @@
 .character-card[data-character="paladin"]  { --card-accent: 190, 210, 235; --card-bg-start: 28, 32, 42; --card-bg-end: 20, 24, 32; }
 .character-card[data-character="wizard"]   { --card-accent: 160, 130, 220; --card-bg-start: 32, 24, 42; --card-bg-end: 24, 18, 32; }
 
+/* ── Locked state ── */
+.character-card.locked {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.character-card.locked .portrait-icon {
+  filter: grayscale(1);
+  opacity: 0.35;
+}
+
+.character-card.locked:hover,
+.character-card.locked.selected {
+  border-color: rgba(201, 168, 106, 0.2);
+  border-width: 1px;
+  background: rgba(15, 12, 25, 0.7);
+  box-shadow: none;
+}
+
+.character-card.locked:hover .portrait-icon {
+  filter: grayscale(1);
+  opacity: 0.35;
+  box-shadow: none;
+  border-color: rgba(var(--card-accent), 0.5);
+}
+
+.character-card.locked:hover .select-indicator,
+.character-card.locked.selected .select-indicator {
+  opacity: 0;
+}
+
+.character-card.locked .character-name {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: rgba(150, 130, 100, 0.5);
+  text-shadow: none;
+}
+
+.locked-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 4, 12, 0.25);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 4;
+}
+
 /* ════════════════════════════════════════════════════════════════ */
 /* EMPTY SLOT                                                      */
 /* ════════════════════════════════════════════════════════════════ */

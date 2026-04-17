@@ -15,18 +15,21 @@
     "queue": [],
     "ai_type": "conditional",
     "action_library": {
-      "Heavy Slice": {
-        "name": "Heavy Slice",
-        "icon": "ENM_SAM_HEAVY_STRIKE_1",
-        "speed_mod": -10,
+      "Stream Slash": {
+        "name": "Stream Slash",
+        "icon": "ENEMY_STREAM_SLASH",
+        "speed_mod": 0,
         "payload_type": "PHYSICAL",
         "tag_type": ["PHYSICAL", "SLASH"],
-        "animation": "heavy_slice",
-        "animation_intensity": 1.0,
+        "animation": "stream_slash",
+        "animation_intensity": 0.7,
         "properties": [],
+        "tag_interactions": [
+          { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.5 }
+        ],
         "tags": {
           "self": [],
-          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 50 }]
+          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 52 }]
         }
       },
       "Flame Strike": {
@@ -67,24 +70,27 @@
     "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
     "resource_bar_type": "sumurai",
     "base_speed": 100,
-    "total_action_slots": 2,
+    "total_action_slots": 1,
     "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
     "faction": "enemy",
     "queue": [],
     "ai_type": "conditional",
     "action_library": {
-      "Heavy Slice": {
-        "name": "Heavy Slice",
-        "icon": "ENM_SAM_HEAVY_STRIKE_1",
-        "speed_mod": -10,
+      "Stream Slash": {
+        "name": "Stream Slash",
+        "icon": "ENEMY_STREAM_SLASH",
+        "speed_mod": 0,
         "payload_type": "PHYSICAL",
         "tag_type": ["PHYSICAL", "SLASH"],
-        "animation": "heavy_slice",
-        "animation_intensity": 1.0,
+        "animation": "stream_slash",
+        "animation_intensity": 0.7,
         "properties": [],
+        "tag_interactions": [
+          { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.5 }
+        ],
         "tags": {
           "self": [],
-          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 50 }]
+          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 52 }]
         }
       },
       "Flame Strike": {
@@ -107,11 +113,11 @@
       {
         "id": "flame_burst",
         "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 9 },
-        "actions": ["Flame Strike", "Flame Strike"]
+        "actions": ["Flame Strike"]
       },
       {
         "id": "default",
-        "actions": ["Heavy Slice", "Heavy Slice"]
+        "actions": ["Stream Slash"]
       }
     ]
   },
@@ -242,6 +248,134 @@
       {
         "id": "default",
         "actions": ["Heavy Slice"]
+      }
+    ]
+  },
+  {
+    "id": "rabbit_sumurai",
+    "name": "RABBIT SUMURAI",
+    "portrait": "ENEMY_RABBIT_SUMURAI_3",
+    "card_size": "medium",
+    "health": 300,
+    "max_health": 300,
+    "resources": { "BATTLE_SPIRIT": { "current": 1, "max": 10 } },
+    "resource_bar_type": "sumurai",
+    "base_speed": 100,
+    "total_action_slots": 2,
+    "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+    "faction": "enemy",
+    "queue": [],
+    "ai_type": "sequential",
+    "sequence_index": 0,
+    "action_library": {
+      "Battojutsu": {
+        "name": "Battojutsu",
+        "icon": "ENM_SAM_SHEATH",
+        "speed_mod": 0,
+        "payload_type": "PHYSICAL",
+        "tag_type": ["PHYSICAL", "SLASH"],
+        "animation": "sumurai_sheath",
+        "animation_intensity": 1.2,
+        "properties": [],
+        "tags": {
+          "self": [{ "tag_name": "BATTOJUTSU", "multiplier": 0.75, "tier": "advanced" }],
+          "target": []
+        }
+      },
+      "Quick Steps": {
+        "name": "Quick Steps",
+        "icon": "ENEMY_SPEED_UP",
+        "speed_mod": 1,
+        "payload_type": "PHYSICAL",
+        "tag_type": ["PHYSICAL", "STANCE"],
+        "animation": "run_circle",
+        "animation_intensity": 1.0,
+        "properties": [],
+        "tags": {
+          "self": [{ "tag_name": "QUICK_STEPS", "dodge_range": 11, "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
+          "target": []
+        }
+      },
+      "Flame Strike": {
+        "name": "Flame Strike",
+        "icon": "ENM_SAM_FLAME_STRIKE",
+        "speed_mod": 0,
+        "payload_type": "MAGIC",
+        "tag_type": ["MAGIC", "FIRE"],
+        "animation": "flame_strike",
+        "cost": { "BATTLE_SPIRIT": 3 },
+        "animation_intensity": 0.8,
+        "properties": [],
+        "tags": {
+          "self": [],
+          "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 125 }, { "tag_name": "BURN", "power": 15, "duration": 2, "reset": "TICK_TURN" }]
+        }
+      }
+    },
+    "action_sets": [
+      { "id": "turn_1", "actions": ["Battojutsu", "Quick Steps"] },
+      { "id": "turn_2", "actions": ["Quick Steps", "Quick Steps"] },
+      { "id": "turn_3", "actions": ["Flame Strike", "Quick Steps"] }
+    ]
+  },
+   {
+    "id": "otter_sumurai",
+    "name": "OTTER SUMURAI",
+    "portrait": "ENEMY_OTTER_SUMURAI",
+    "card_size": "medium",
+    "health": 333,
+    "max_health": 333,
+    "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+    "resource_bar_type": "sumurai",
+    "base_speed": 100,
+    "total_action_slots": 2,
+    "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+    "faction": "enemy",
+    "queue": [],
+    "ai_type": "conditional",
+    "action_library": {
+      "Stream Slash": {
+        "name": "Stream Slash",
+        "icon": "ENEMY_STREAM_SLASH",
+        "speed_mod": 0,
+        "payload_type": "PHYSICAL",
+        "tag_type": ["PHYSICAL", "SLASH"],
+        "animation": "stream_slash",
+        "animation_intensity": 0.7,
+        "properties": [],
+        "tag_interactions": [
+          { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.5 }
+        ],
+        "tags": {
+          "self": [],
+          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 52 }]
+        }
+      },
+      "Flame Strike": {
+        "name": "Flame Strike",
+        "icon": "ENM_SAM_FLAME_STRIKE",
+        "cost": { "BATTLE_SPIRIT": 3 },
+        "speed_mod": 0,
+        "payload_type": "MAGIC",
+        "tag_type": ["MAGIC", "FIRE"],
+        "animation": "flame_strike",
+        "animation_intensity": 0.8,
+        "properties": [],
+        "tags": {
+          "self": [],
+          "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 99 }, { "tag_name": "BURN", "power": 15, "duration": 2, "reset": "TICK_TURN" }]
+        }
+      }
+    },
+    "action_sets": [
+      {
+        "id": "flame_burst",
+        "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+        "actions": ["Flame Strike", "Stream Slash"]
+      },
+      {
+        "id": "default",
+        "actions": ["Stream Slash", "Stream Slash"]
       }
     ]
   },

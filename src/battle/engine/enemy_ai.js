@@ -35,6 +35,16 @@ export function selectActionSet(enemy) {
     return enemy.base_actions ?? [];
   }
 
+  // Sequential AI: cycle through action_sets in order, one per turn.
+  // sequence_index is stored on the enemy and mutated here — safe because
+  // the caller always deep-copies characters before calling buildEnemyQueue.
+  if (enemy.ai_type === 'sequential') {
+    const idx = (enemy.sequence_index ?? 0) % enemy.action_sets.length;
+    enemy.sequence_index = idx + 1;
+    const set = enemy.action_sets[idx];
+    return set.actions.map(name => enemy.action_library[name]).filter(Boolean);
+  }
+
   for (const set of enemy.action_sets) {
     if (evalCondition(set.condition ?? null, enemy)) {
       const resolved = set.actions

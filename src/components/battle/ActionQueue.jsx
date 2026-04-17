@@ -2,7 +2,7 @@
 //  ActionQueue — Card-shaped slots to the right of Vrax
 // ============================================================
 
-export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, fizzlingCard }) {
+export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard }) {
   const PENALTIES = Array.from({ length: totalSlots }, (_, i) => i * 20);
 
   return (
@@ -134,8 +134,18 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
       {/* Execute Button */}
       {isResult ? (
         <button
-          className="w-full py-2 rounded-lg font-display tracking-widest text-sm text-white
-            bg-[#4da6ff] hover:scale-105 transition-transform shadow-lg"
+          className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform"
+          style={result !== 'WIN' ? {
+            position: 'relative',
+            zIndex: 9003,
+            background: 'linear-gradient(to right, #e2e8f0, #ffffff)',
+            color: '#0f0f1a',
+            boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25)',
+          } : {
+            background: '#4da6ff',
+            color: '#fff',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.4)',
+          }}
           onClick={onExecute}
         >
           CONTINUE

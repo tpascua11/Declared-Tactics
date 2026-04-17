@@ -8,6 +8,12 @@
    in the BattleScreen useEffect.
    ============================================================ */
 
+/* ── VICTORY overlay pulse ── */
+@keyframes victoryPulse {
+  0%, 100% { opacity: 1; text-shadow: 0 0 30px #f5d76e, 0 0 60px #c8a135, 2px 2px 0 #3a2800; }
+  50%       { opacity: 0.75; text-shadow: 0 0 50px #ffe899, 0 0 100px #f5d76e, 2px 2px 0 #3a2800; }
+}
+
 /* ── SHAKE (physical hit) ── */
 @keyframes shake {
   0%   { transform: translate(1px, 1px)   rotate(0deg); }
@@ -223,6 +229,28 @@
   background-size:   12px 5px, 5px 12px, 12px 5px, 5px 12px;
   background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
   animation: march 0.1s linear infinite;
+}
+
+/* ── ENEMY EXIT (dead card fades away before bench replacement) ── */
+@keyframes enemy_exit {
+  0%   { opacity: 1;   transform: scale(1);    filter: brightness(1) saturate(1) blur(0px); }
+  35%  { opacity: 0.6; transform: scale(1.04); filter: brightness(1.6) saturate(0.4) blur(0px); }
+  100% { opacity: 0;   transform: scale(0.88); filter: brightness(0.4) saturate(0) blur(3px); }
+}
+.animate-enemy_exit {
+  animation: enemy_exit 0.5s ease-in forwards;
+}
+
+/* ── ENEMY ENTER (bench replacement — drops in from above) ── */
+@keyframes enemy_enter {
+  0%   { opacity: 0;   transform: translateY(-220px) scale(0.88); filter: brightness(3) saturate(0); }
+  35%  { opacity: 0.85; transform: translateY(12px) scale(1.04);  filter: brightness(1.8) saturate(0.5); }
+  58%  { opacity: 1;   transform: translateY(-5px) scale(0.98);   filter: brightness(1.3) saturate(1); }
+  78%  { transform: translateY(3px)  scale(1.01); filter: brightness(1.1) saturate(1); }
+  100% { opacity: 1;   transform: translateY(0) scale(1);         filter: brightness(1)   saturate(1); }
+}
+.animate-enemy_enter {
+  animation: enemy_enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* ── Placeholders (not yet implemented) ──────────────────────

@@ -10,12 +10,12 @@
 export { default as COOL_FOX } from './Cool_Fox.png';
 export { default as PORTRAIT_SUMURAI } from './PLAYER_PORTRAITS/SUMURAI_2.png';
 export { default as PORTRAIT_PALADIN } from './PLAYER_PORTRAITS/PALADIN_2.png';
-export { default as PORTRAIT_ROGUE } from './PLAYER_PORTRAITS/ROGUE.png';
+export { default as PORTRAIT_ROGUE } from './PLAYER_PORTRAITS/ROGUE_3.png';
 export { default as PORTRAIT_WARRIOR } from './PLAYER_PORTRAITS/WARRIOR_2.png';
-export { default as PORTRAIT_FIGHTER } from './PLAYER_PORTRAITS/FIGHTER.png';
+export { default as PORTRAIT_FIGHTER } from './PLAYER_PORTRAITS/FIGHTER_2.png';
 export { default as PORTRAIT_MONK } from './PLAYER_PORTRAITS/MONK_2.png';
 export { default as PORTRAIT_TEMPLAR } from './PLAYER_PORTRAITS/TEMPLAR.png';
-export { default as PORTRAIT_WIZARD } from './PLAYER_PORTRAITS/WIZARD.png';
+export { default as PORTRAIT_WIZARD } from './PLAYER_PORTRAITS/WIZARD_DARK.png';
 export { default as UPSCALED_00017 } from './PLAYER_PORTRAITS/Upscaled_00017_.png';
 export { default as UPSCALED_00028 } from './PLAYER_PORTRAITS/Upscaled_00028_.png';
 export { default as UPSCALED_00203 } from './PLAYER_PORTRAITS/Upscaled_00203_.png';
@@ -52,6 +52,8 @@ export { default as ENEMY_BEAR_SUMURAI } from './ENEMY/BEAR_SUMURAI.png';
 export { default as ENEMY_FERRET_SUMURAI } from './ENEMY/FERRET_SUMURAI.png';
 export { default as ENEMY_TIGER_SUMURAI } from './ENEMY/TIGER_SUMURAI.png';
 export { default as ENEMY_WOLF_SUMURAI } from './ENEMY/WOLF_SUMURAI.png';
+export { default as ENEMY_RABBIT_SUMURAI_3 } from './ENEMY/RABBIT_SUMURAI_3.png';
+export { default as ENEMY_OTTER_SUMURAI } from './ENEMY/WHITE_OTTER_SUMURAI.png';
 
 // --- Status Icons ---
 export { default as STATUS_DEFAULT } from './STATUS/DEFAULT.png';
@@ -65,6 +67,7 @@ export { default as STATUS_LIGHT_1 } from './STATUS/LIGHT_1.png';
 export { default as STATUS_LIGHT_2 } from './STATUS/LIGHT_2.png';
 export { default as STATUS_WATER_1 } from './STATUS/WATER_1.png';
 export { default as STATUS_WATER_2 } from './STATUS/WATER_2.png';
+export { default as STATUS_GOUKI_1 } from './STATUS/GOUKI_1.png';
 
 // --- Class Icons ---
 export { default as CLASS_ICON_WARRIOR } from './CLASS_ICONS/WARRIOR.png';
@@ -119,6 +122,7 @@ export { default as ENEMY_SPEED_UP }         from './ENEMY_ABILITY_ICONS/ENEMY_S
 export { default as ENM_SAM_STANCE_1 }       from './ENEMY_ABILITY_ICONS/ENEMY_STANCE_1.png';
 export { default as ENM_SAM_STANCE_2 }       from './ENEMY_ABILITY_ICONS/ENEMY_STANCE_2.png';
 export { default as ENM_SAM_STORM_STRIKE }   from './ENEMY_ABILITY_ICONS/ENEMY_STORM_STRIKE.png';
+export { default as ENEMY_STREAM_SLASH }     from './ENEMY_ABILITY_ICONS/ENEMY_STREAM_SLASH.png';
 
 // --- Fox Summurai Animation Frames ---
 export { default as FOX_SUMMURAI_1 } from './FOX_SUMMURAI/fox_summurai_1.png';
@@ -179,3 +183,5 @@ export { default as FOX_SUMMURAI_FLAME_STRIKE } from './FOX_SUMMURAI/fox_flame_s
 export { default as FOX_QUICK_STEPS } from './FOX_SUMMURAI/fox_quick_steps.png';
 export { default as FOX_GUARD_STANCE } from './FOX_SUMMURAI/fox_guard_stance.png';
 export { default as FOX_SUMMURAI_STREAM_SLASH } from './FOX_SUMMURAI/SUMURAI_STREAM_SLASH.png';
+export { default as FOX_STORM_STRIKE } from './FOX_SUMMURAI/fox_storm_strike.png';
+export { default as FOX_SHINSOKU} from './FOX_SUMMURAI/fox_shinsoku.png';

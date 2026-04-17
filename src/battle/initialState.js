@@ -11,7 +11,23 @@ import { derivePlayerSnapshot } from '../context/PlayerContext';
 import { calcSpeed } from './engine/battle_engine';
 import { selectActionSet } from './engine/enemy_ai';
 
-const MAX_ENEMIES = 5;
+export const MAX_ENEMIES = 5;
+
+// ── BUILD STAGE ENEMIES ──
+// Turns an array of enemy ID strings into runtime enemy objects.
+// stageIndex + offset are used to generate unique IDs across stages and bench slots.
+export function buildStageEnemies(enemyIds, stageIndex, offset = 0) {
+  return enemyIds
+    .map((id, i) => {
+      const def = ENEMY_REGISTRY[id];
+      if (!def) return null;
+      return {
+        ...JSON.parse(JSON.stringify(def)),
+        id: `${def.id}_s${stageIndex}_${offset + i + 1}`,
+      };
+    })
+    .filter(Boolean);
+}
 
 // ── BUILD ENEMY QUEUE ──
 export function buildEnemyQueue(enemy) {
@@ -31,16 +47,12 @@ export function buildEnemyQueue(enemy) {
 // scenario: a scenario JSON from src/data/scenarios/ — defaults to EMBER_KEEP for debug.
 // playerData: persistent player from PlayerContext — falls back to SAMURAI if null.
 export function buildInitialState(scenario = EMBER_WITCH_TEST, playerData = null) {
-  // Resolve enemy ID strings → full enemy objects via ENEMY_REGISTRY.
-  // Pull from first stage only for now — multi-stage + bench handled later.
-  const enemyIds = scenario?.stages?.[0]?.enemies ?? [];
-  const builtEnemies = enemyIds.slice(0, MAX_ENEMIES)
-    .map(id => ENEMY_REGISTRY[id])
-    .filter(Boolean)
-    .map((def, i) => ({
-      ...JSON.parse(JSON.stringify(def)),
-      id: `${def.id}_${i + 1}`,
-    }));
+  const stage0Ids = scenario?.stages?.[0]?.enemies ?? [];
+  const activeIds = stage0Ids.slice(0, MAX_ENEMIES);
+  const benchIds  = stage0Ids.slice(MAX_ENEMIES);
+
+  const builtEnemies = buildStageEnemies(activeIds, 0, 0);
+  const enemyBench   = buildStageEnemies(benchIds,  0, MAX_ENEMIES);
 
   // Derive full runtime player from stored minimal data, or fall back to SAMURAI for debug
   const player = playerData
@@ -55,6 +67,9 @@ export function buildInitialState(scenario = EMBER_WITCH_TEST, playerData = null
     turn: 1,
     result: null,          // WIN | LOSS
     characters,
+    scenario,
+    currentStageIndex: 0,
+    enemyBench,
     logs: [{ msg: '⚔️  System Ready. Queue your actions and execute.', type: 'info' }],
     stepCount: 0,
     pendingAnimation: [],

@@ -51,3 +51,49 @@ registerTag('ONE_UNDER_THE_SUN', {
   phases: ['END_OF_TURN'],
   handlers: { END_OF_TURN: OneUnderTheSunHandler },
 });
+
+// ── GOUKI ──
+// Buff with up to 3 stacks. On apply: cleanses all debuffs from the holder.
+// DAMAGE_REDUCE: reduces incoming damage by 25% per stack. Consumes 1 stack per hit.
+// Expires when stacks reach 0.
+
+function GoukiOnApply(pool, tag) {
+  for (let i = pool.length - 1; i >= 0; i--) {
+    if (pool[i].status_type === 'debuff') pool.splice(i, 1);
+  }
+  const existing = pool.find(t => t.tag_name === 'GOUKI');
+  if (existing) {
+    existing.stacks = Math.min(3, existing.stacks + (tag.stacks ?? 3));
+  } else {
+    pool.push(tag);
+  }
+}
+
+function GoukiDamageReduceHandler(payload, tag) {
+  const totalDamage = payload.damages.reduce((sum, d) => sum + d.power, 0);
+  if (totalDamage === 0) return { payload, consumed: false };
+
+  const stacks = tag.stacks ?? 1;
+  const reductionPct = Math.min(stacks * 0.25, 0.75);
+  const reducedPayload = {
+    ...payload,
+    damages: payload.damages.map(d => ({ ...d, power: Math.floor(d.power * (1 - reductionPct)) })),
+  };
+
+  tag.stacks = stacks - 1;
+  const consumed = tag.stacks <= 0;
+  const stacksAfter = consumed ? 0 : tag.stacks;
+
+  return {
+    payload: reducedPayload,
+    consumed,
+    logs: [{ msg: `🛡️ GOUKI reduces damage by ${Math.round(reductionPct * 100)}% (${stacks} → ${stacksAfter} stacks)`, type: 'buff' }],
+  };
+}
+
+registerTag('GOUKI', {
+  phases: ['DAMAGE_REDUCE'],
+  status_type: 'buff',
+  onApply: GoukiOnApply,
+  handlers: { DAMAGE_REDUCE: GoukiDamageReduceHandler },
+});

@@ -39,7 +39,7 @@ export const SAMURAI_CARDS = [
     tag_interactions: [
       { traits: ['EVASION'], bypass: true, bonus_multiplier: 0.5 },
     ],
-    animation: 'dual_heavy_slice',
+    animation: 'stream_slash',
     animation_intensity: 0.7,
     tags: {
       self: [
@@ -123,12 +123,12 @@ export const SAMURAI_CARDS = [
   },
   {
     id: 'speed_up',
-    name: 'Speed Up',
+    name: 'Shinsoku',
     speed_mod: 20,
     tag_type: ['PHYSICAL'],
     cost: {},
     icon: '💨',
-    image: 'FOX_SUMMURAI_9',
+    image: 'FOX_SHINSOKU',
     color: '#38bdf8',
     desc: 'Boost the speed of your next action by 50.',
     animation: 'run_circle',
@@ -246,13 +246,53 @@ export const SAMURAI_CARDS = [
     cost: {},
     icon: '🛡️',
     image: 'FOX_GUARD_STANCE',
-    color: '#3b82f6 ',
+    color: '#f6f33b ',
     desc: 'Take a defensive stance. Reduce all incoming damage by 75% until your next action.',
     animation: 'buff',
     animation_intensity: 1.0,
     tags: {
       self: [
         { tag_name: 'STEEL_WILL', reset: 'ON_OWNER_ACTION' },
+      ],
+      target: [],
+    },
+  },
+  {
+    id: 'storm_strike',
+    name: 'Storm Strike',
+    speed_mod: 0,
+    tag_type: ['PHYSICAL', 'SLASH', 'STORM'],
+    cost: { BATTLE_SPIRIT: 3 },
+    properties: ['AOE'],
+    icon: '⚡',
+    image: 'FOX_STORM_STRIKE',
+    color: '#818cf8',
+    desc: 'Unleash a storm that strikes all enemies for 100 damage. Costs 2 Battle Spirit.',
+    animation: 'flame_strike',
+    animation_intensity: 1.2,
+    tags: {
+      self: [],
+      target: [
+        { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 100 },
+        { tag_name: 'ELECTRIFIED', stacks: 2 },
+      ],
+    },
+  },
+  {
+    id: 'gouki',
+    name: 'Gouki',
+    speed_mod: 10,
+    tag_type: ['SPIRITUAL', 'STANCE'],
+    cost: { BATTLE_SPIRIT: 1 },
+    icon: '🛡️',
+    image: 'FOX_GUARD_STANCE',
+    color: '#ca8a04 ',
+    desc: 'Cleanse all debuffs and gain Gouki (3 stacks). Reduce incoming damage by 25% per stack.',
+    animation: 'buff',
+    animation_intensity: 1.0,
+    tags: {
+      self: [
+        { tag_name: 'GOUKI', stacks: 3 },
       ],
       target: [],
     },

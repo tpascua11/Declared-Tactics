@@ -1,7 +1,7 @@
 // ============================================================
 //  BATTLE ENGINE
 //  Pure functions — take state in, return new state out.
-//  No direct mutation. Safe for React useReducer pattern.
+//  No direct mutation. Safe for React useReducer pattern. 
 // ============================================================
 
 import { battle_registry } from '../registry/battle_registry';
@@ -52,9 +52,6 @@ export function addTagToPool(pool, tag, actionContext = null) {
   return [...pool, { ...tagWithMeta }];
 }
 
-function deepClone(obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
 
 // ── SPEED CHECK ──
 
@@ -64,7 +61,7 @@ export function SpeedCheckAllAvailableActions(characters) {
   for (const character of characters) {
     if (character.health <= 0) continue;
     if (!character.queue || character.queue.length === 0) continue;
-    const action = deepClone(character.queue[0]);
+    const action = structuredClone(character.queue[0]);
     if (!action) continue;
     if (action.priority_flag === 'SKIP') continue;
 
@@ -192,17 +189,19 @@ function runPhasePostAttack(tag_pool, payload, character, hit_result) {
 
 function runPhaseDamageReduce(tag_pool, payload) {
   const remaining = [];
+  const logs = [];
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('DAMAGE_REDUCE')) {
       const result = entry.handlers['DAMAGE_REDUCE'](payload, tag);
       payload = result.payload;
+      if (result.logs) logs.push(...result.logs);
       if (!result.consumed) remaining.push(tag);
     } else {
       remaining.push(tag);
     }
   }
-  return { tag_pool: remaining, payload };
+  return { tag_pool: remaining, payload, logs };
 }
 
 function runPhasePreAction(tag_pool, action, owner) {
@@ -319,7 +318,7 @@ function runPhaseOnIncoming(tag_pool, incoming_action, defender, state, interact
 
 export function ExecuteAction(action, interaction_result, state) {
   const logs = [];
-  let newState = deepClone(state);
+  let newState = structuredClone(state);
 
   if (interaction_result === 'NULLIFY') {
     logs.push({ msg: `💨 "${action.name}" was nullified`, type: 'clash' });
@@ -348,11 +347,13 @@ export function ExecuteAction(action, interaction_result, state) {
   // target's active tags. Result is passed into ON_INCOMING so handlers can
   // decide to bypass/consume themselves, and used below for bonus multipliers.
   const interactionResult = resolveTagInteractions(action, target);
+  const isAoe = action.properties?.includes('AOE');
 
   // ON_INCOMING phase — defender-side gate (dodge, parry, reflect, etc.)
   // Runs on the original target before any payload is built or damage dealt.
   // If cancelled: attacker resources are still spent (action was committed).
-  if (target.health > 0) {
+  // AOE attacks skip per-target dodge/cancel checks.
+  if (!isAoe && target.health > 0) {
     const onIncoming = runPhaseOnIncoming(target.active_tag_pool, action, target, newState, interactionResult);
     logs.push(...onIncoming.logs);
     target.active_tag_pool = onIncoming.tag_pool;
@@ -415,21 +416,63 @@ export function ExecuteAction(action, interaction_result, state) {
   owner.active_tag_pool = injectFlatResult.tag_pool;
   payload = injectFlatResult.payload;
 
-  // ── DAMAGE_REDUCE — defender-side mitigation ──
-  if (resolvedTarget) {
-    const damageReduceResult = runPhaseDamageReduce(resolvedTarget.active_tag_pool, payload);
-    resolvedTarget.active_tag_pool = damageReduceResult.tag_pool;
-    payload = damageReduceResult.payload;
-  }
+  // ── DEFENDER PIPELINE ──
+  // Payload is frozen here — owner buffs (BATTOJUTSU, MAGIC_CHARGE, etc.) were
+  // consumed in INJECT_MULT / INJECT_FLAT above. Each target now runs through
+  // their own independent defender-side pipeline.
+  //
+  // Single-target: one pass on resolvedTarget.
+  // AOE: every living opposing character loops through ON_INCOMING, DAMAGE_REDUCE,
+  //      delivery, APPLY STATUS TAGS, and ON_RECEIVE independently.
+  //      Payload is cloned per-enemy so one enemy's mitigation doesn't bleed to the next.
+  if (!isAoe && retargeted) logs.push({ msg: `🔀 ${action.name} retargeted to ${resolvedTarget.name}`, type: 'info' });
 
-  // ── DELIVERY ──
-  if (retargeted) logs.push({ msg: `🔀 ${action.name} retargeted to ${resolvedTarget.name}`, type: 'info' });
+  const deliveryTargets = isAoe
+    ? newState.characters.filter(c => c.faction !== owner.faction && c.health > 0)
+    : (resolvedTarget ? [resolvedTarget] : []);
+
   let total_damage = 0;
-  if (resolvedTarget) {
-    for (const dmg of payload.damages) {
-      resolvedTarget.health = Math.max(0, resolvedTarget.health - dmg.power);
-      total_damage += dmg.power;
-      logs.push({ msg: `⚔️ ${owner.name} uses ${action.name} → ${resolvedTarget.name} takes ${dmg.power} ${dmg.element} dmg`, type: 'dmg' });
+  const aoeHits = []; // { targetId, damage } — one entry per enemy hit, used for per-enemy animation
+
+  if (deliveryTargets.length > 0) {
+    for (const defTarget of deliveryTargets) {
+      // ON_INCOMING — single-target already ran above; for AOE run per-enemy
+      if (isAoe && defTarget.health > 0) {
+        const onIncoming = runPhaseOnIncoming(defTarget.active_tag_pool, action, defTarget, newState, { activeInteractions: [] });
+        logs.push(...onIncoming.logs);
+        defTarget.active_tag_pool = onIncoming.tag_pool;
+        if (onIncoming.cancelled) continue; // this enemy dodged — move to next
+      }
+
+      // DAMAGE_REDUCE — clone payload so each enemy's mitigation is independent
+      let defPayload = structuredClone(payload);
+      const damageReduceResult = runPhaseDamageReduce(defTarget.active_tag_pool, defPayload);
+      defTarget.active_tag_pool = damageReduceResult.tag_pool;
+      defPayload = damageReduceResult.payload;
+      logs.push(...(damageReduceResult.logs ?? []));
+
+      // Deliver damage
+      let dmg_this_target = 0;
+      for (const dmg of defPayload.damages) {
+        defTarget.health = Math.max(0, defTarget.health - dmg.power);
+        dmg_this_target += dmg.power;
+        logs.push({ msg: `⚔️ ${owner.name} uses ${action.name} → ${defTarget.name} takes ${dmg.power} ${dmg.element} dmg`, type: 'dmg' });
+      }
+      total_damage += dmg_this_target;
+      aoeHits.push({ targetId: defTarget.id, damage: dmg_this_target });
+
+      // APPLY STATUS TARGET TAGS
+      for (const tag of (action.tags?.target || [])) {
+        const entry = battle_registry[tag.tag_name];
+        if (!entry?.phases?.includes('DELIVERY')) {
+          defTarget.active_tag_pool = addTagToPool(defTarget.active_tag_pool, tag);
+          logs.push({ msg: `🔻 ${defTarget.name} gains ${tag.tag_name}`, type: 'debuff' });
+        }
+      }
+
+      // ON_RECEIVE
+      const hit_result_this = dmg_this_target > 0 ? 'HIT' : 'MISS';
+      defTarget.active_tag_pool = runPhaseOnReceive(defTarget.active_tag_pool, defPayload, defTarget, hit_result_this);
     }
   } else {
     logs.push({ msg: `💨 ${owner.name} uses ${action.name} — no targets remaining`, type: 'info' });
@@ -453,22 +496,6 @@ export function ExecuteAction(action, interaction_result, state) {
 
   const hit_result = total_damage > 0 ? 'HIT' : 'MISS';
 
-  // ── APPLY STATUS TARGET TAGS ──
-  if (resolvedTarget) {
-    for (const tag of (action.tags?.target || [])) {
-      const entry = battle_registry[tag.tag_name];
-      if (!entry?.phases?.includes('DELIVERY')) {
-        resolvedTarget.active_tag_pool = addTagToPool(resolvedTarget.active_tag_pool, tag);
-        logs.push({ msg: `🔻 ${resolvedTarget.name} gains ${tag.tag_name}`, type: 'debuff' });
-      }
-    }
-  }
-
-  // ── ON_RECEIVE ──
-  if (resolvedTarget) {
-    resolvedTarget.active_tag_pool = runPhaseOnReceive(resolvedTarget.active_tag_pool, payload, resolvedTarget, hit_result);
-  }
-
   // ── POST_ATTACK ──
   owner.active_tag_pool = runPhasePostAttack(owner.active_tag_pool, payload, owner, hit_result);
 
@@ -477,7 +504,8 @@ export function ExecuteAction(action, interaction_result, state) {
   return {
     newState,
     logs,
-    actualTargetId: resolvedTarget?.id ?? null,
+    actualTargetId: isAoe ? (aoeHits[0]?.targetId ?? null) : (resolvedTarget?.id ?? null),
+    aoeHits: isAoe ? aoeHits : null,
     isSelfBuff,
     animationHint: action.animation ?? (action.payload_type === 'MAGIC' ? 'shake_magic' : 'shake'),
     animationSelf: action.animation_self ?? null,
@@ -489,7 +517,7 @@ export function ExecuteAction(action, interaction_result, state) {
 // ── ACTION CLEANUP ──
 
 export function ActionCleanup(action, state) {
-  const newState = deepClone(state);
+  const newState = structuredClone(state);
   const owner = newState.characters.find(c => c.id === action.owner_id);
   if (!owner) return newState;
   owner.queue = owner.queue.slice(1);
@@ -501,7 +529,7 @@ export function ActionCleanup(action, state) {
 // ── ON_TURN_START / END_OF_TURN PHASE RUNNERS ──
 
 export function runPhaseOnTurnStart(characters, field) {
-  const newCharacters = deepClone(characters);
+  const newCharacters = structuredClone(characters);
   const logs = [];
 
   for (const character of newCharacters) {
@@ -514,6 +542,7 @@ export function runPhaseOnTurnStart(characters, field) {
         const result = entry.handlers['ON_TURN_START'](context, tag);
         logs.push(...(result.logs ?? []));
         if (!result.consumed) remaining.push(tag);
+        if (result.inject?.length) remaining.push(...result.inject);
       } else {
         remaining.push(tag);
       }
@@ -525,7 +554,7 @@ export function runPhaseOnTurnStart(characters, field) {
 }
 
 export function runPhaseEndOfTurn(characters, field) {
-  const newCharacters = deepClone(characters);
+  const newCharacters = structuredClone(characters);
   const logs = [];
 
   for (const character of newCharacters) {
@@ -551,7 +580,7 @@ export function runPhaseEndOfTurn(characters, field) {
 // ── TURN RESULT CLEANUP ──
 
 export function TurnResultCleanup(state, field = null) {
-  let newState = deepClone(state);
+  let newState = structuredClone(state);
   const logs = [];
 
   // END_OF_TURN tag phase — runs before expiry sweep

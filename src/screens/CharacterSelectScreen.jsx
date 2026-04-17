@@ -77,24 +77,27 @@ const LEFT_CARDS  = ['samurai', 'warrior', 'fighter', 'monk'];
 const RIGHT_CARDS = ['rogue', 'templar', 'paladin', 'wizard'];
 const LEFT_EMPTY  = 3;
 const RIGHT_EMPTY = 4;
+const UNLOCKED    = new Set(['samurai']);
 
 // ── Card component ───────────────────────────────────────────────
 function CharacterCard({ id, index, selectedId, onSelect }) {
-  const data = CHARACTER_DATA[id];
+  const data   = CHARACTER_DATA[id];
+  const locked = !UNLOCKED.has(id);
   return (
     <article
-      className={`character-card${selectedId === id ? ' selected' : ''}`}
+      className={`character-card${selectedId === id ? ' selected' : ''}${locked ? ' locked' : ''}`}
       data-character={id}
       style={{ '--card-index': index }}
-      onClick={() => onSelect(id)}
+      onClick={() => !locked && onSelect(id)}
     >
       <div className="select-indicator" />
       <div className="portrait-container">
         <img className="portrait-icon" src={data.icon} alt={data.name} />
       </div>
       <div className="character-label">
-        <span className="character-name">{data.name}</span>
+        <span className="character-name">{locked ? 'LOCKED' : data.name}</span>
       </div>
+      {locked && <div className="locked-overlay" />}
     </article>
   );
 }
@@ -117,8 +120,8 @@ export default function CharacterSelectScreen() {
   const { dispatch } = useGame();
   const { playerData, playerDispatch } = usePlayer();
 
-  const [selectedId, setSelectedId]       = useState(null);
-  const [showcasedId, setShowcasedId]     = useState(null);
+  const [selectedId, setSelectedId]       = useState('samurai');
+  const [showcasedId, setShowcasedId]     = useState('samurai');
   const [isTransitioning, setTransitioning] = useState(false);
   const [fadeOut, setFadeOut]             = useState(false);
   const [pendingMap, setPendingMap] = useState(false);

@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import './TitleScreen.css';
 import { useGame } from '../context/GameContext';
+import CardShowerTransition from '../components/shared/CardShowerTransition';
 
 // ── Particle configs (computed once at module load) ──────────────
 const CARD_CONFIG = [
@@ -38,6 +40,7 @@ const EMBER_CONFIG = [
 
 export default function TitleScreen() {
   const { dispatch } = useGame();
+  const [transitioning, setTransitioning] = useState(false);
 
   return (
     <div className="title-screen">
@@ -106,7 +109,7 @@ export default function TitleScreen() {
         <nav className="menu">
           <button
             className="menu-btn"
-            onClick={() => dispatch({ type: 'START_NEW_GAME' })}
+            onClick={() => setTransitioning(true)}
           >
             New Game
           </button>
@@ -118,6 +121,10 @@ export default function TitleScreen() {
         <span>v0.1.0</span>
         <span>© 2026</span>
       </div>
+
+      {transitioning && (
+        <CardShowerTransition onDone={() => dispatch({ type: 'START_NEW_GAME' })} />
+      )}
     </div>
   );
 }
