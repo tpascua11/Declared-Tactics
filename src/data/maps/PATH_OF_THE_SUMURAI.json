@@ -10,9 +10,9 @@
       "type": "COMBAT",
       "map_icon": "CITADEL_1",
       "levels": [
-        { "desc": "First contact. Light resistance.", "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["freeze_slash"] }] }, "scenario_id": "zone1_level1" },
-        { "desc": "Reinforcements arrive mid-fight.", "reward": "+30 Gold + card slot", "scenario_id": "ferret_group" },
-        { "desc": "The commander joins the battle.", "reward": { "unlocks": [{ "class": "samurai", "card_ids": [] }] }, "scenario_id": "bear_boss" }
+        { "desc": "First contact. Light resistance.", "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["freeze_slash"] }] }, "scenario_id": "ferret_group" },
+        { "desc": "Reinforcements arrive mid-fight.", "reward": "+30 Gold + card slot", "scenario_id": "rabbit_ferret_squad" },
+        { "desc": "The commander joins the battle.", "reward": { "unlocks": [{ "class": "samurai", "card_ids": [] }] }, "scenario_id": "enemy_sumurai_group" }
       ]
     },
     {
