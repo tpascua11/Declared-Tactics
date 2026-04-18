@@ -48,8 +48,18 @@ const MAP_ICON_LOOKUP = {
 
 const ALL_MAP_ICONS = Object.values(MAP_ICON_LOOKUP).concat([MAP_ICON_2_SNOWY_FOREST, MAP_ICON_2_GREEN_TREE_AT_SNOW]);
 
-const CELL_SIZE = 160;
 const CELL_GAP  = 14;
+
+const TARGET_ROWS = 3;
+
+const CELL_SIZE_BY_ROWS = {
+  5: 160,
+  4: 192,
+  3: 256,
+  2: 384,
+};
+
+const CELL_SIZE = CELL_SIZE_BY_ROWS[TARGET_ROWS] ?? 160;
 
 // ── Constants ────────────────────────────────────────────────
 
@@ -352,7 +362,7 @@ export default function MapScreen() {
   const [flashOn,     setFlashOn]     = useState(false);
   const [activeMenu,  setActiveMenu]  = useState(null);
 
-  const [gridDims, setGridDims] = useState({ cols: 5, rows: 1 });
+  const [gridDims, setGridDims] = useState({ cols: 5, rows: TARGET_ROWS });
   const gridWrapRef = useRef(null);
   const audioRef    = useRef(null);
 
@@ -367,9 +377,8 @@ export default function MapScreen() {
     const el = gridWrapRef.current;
     if (!el) return;
     const measure = () => {
-      const cols = Math.max(1, Math.floor((el.clientWidth  + CELL_GAP) / (CELL_SIZE + CELL_GAP)));
-      const rows = Math.max(1, Math.floor((el.clientHeight + CELL_GAP) / (CELL_SIZE + CELL_GAP)));
-      setGridDims({ cols, rows });
+      const cols = Math.max(1, Math.floor((el.clientWidth + CELL_GAP) / (CELL_SIZE + CELL_GAP)));
+      setGridDims({ cols, rows: TARGET_ROWS });
     };
     measure();
     const ro = new ResizeObserver(measure);
