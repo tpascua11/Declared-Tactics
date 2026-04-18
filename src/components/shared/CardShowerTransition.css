@@ -7,13 +7,22 @@
   inset: 0;
   z-index: 10000;
   pointer-events: all;
-  animation: showerBg 2.0s ease forwards;
+  animation: showerOverlay 3.0s ease forwards;
 }
 
-@keyframes showerBg {
-  0%   { background: rgba(4, 3, 8, 0); }
-  25%  { background: rgba(4, 3, 8, 0.2); }
-  100% { background: rgba(4, 3, 8, 0.97); }
+/*
+  0%   – rain just starts, screen still visible
+  20%  – overlay darkens slowly as cards pour in
+  50%  – peak darkness (phase switches underneath here)
+  60%  – brief hold at peak
+  100% – entire overlay (bg + cards) fades out, new screen reveals
+*/
+@keyframes showerOverlay {
+  0%   { background: rgba(4, 3, 8, 0);    opacity: 1; }
+  20%  { background: rgba(4, 3, 8, 0.35); opacity: 1; }
+  50%  { background: rgba(4, 3, 8, 0.93); opacity: 1; }
+  60%  { background: rgba(4, 3, 8, 0.93); opacity: 1; }
+  100% { background: rgba(4, 3, 8, 0.1);  opacity: 0; }
 }
 
 .shower-card {
@@ -24,7 +33,7 @@
   opacity: 0;
   will-change: transform, opacity;
   contain: layout style paint;
-  animation: showerFall var(--shower-duration, 0.45s) ease-in var(--shower-delay, 0s) forwards;
+  animation: showerFall var(--shower-duration, 1.0s) ease-in var(--shower-delay, 0s) forwards;
 }
 
 .shower-card::before {

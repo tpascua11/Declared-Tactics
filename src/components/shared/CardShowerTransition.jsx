@@ -16,35 +16,40 @@ const COLORS = [
 ];
 
 const CARD_COUNT = 300;
-const DONE_DELAY = 2200;
+const MIDPOINT_DELAY = 1500;
+const DONE_DELAY     = 3000;
 
 function buildCards() {
   return Array.from({ length: CARD_COUNT }, (_, i) => {
     const color = COLORS[i % COLORS.length];
     return {
-      id:        i,
+      id:       i,
       color,
-      left:      Math.random() * 100,
-      delay:     Math.random() * 1.0,
-      duration:  0.8 + Math.random() * 0.6,
-      startRot:  (Math.random() - 0.5) * 64,
-      endRot:    (Math.random() - 0.5) * 64,
-      width:     38 + Math.floor(Math.random() * 18),
-      height:    54 + Math.floor(Math.random() * 22),
+      left:     Math.random() * 100,
+      delay:    Math.random() * 1.6,
+      duration: 1.0 + Math.random() * 0.8,
+      startRot: (Math.random() - 0.5) * 64,
+      endRot:   (Math.random() - 0.5) * 64,
+      width:    38 + Math.floor(Math.random() * 18),
+      height:   54 + Math.floor(Math.random() * 22),
     };
   });
 }
 
-export default function CardShowerTransition({ onDone }) {
+export default function CardShowerTransition({ onMidpoint, onDone }) {
   const cards = useMemo(buildCards, []);
 
   useEffect(() => {
     const audio = new Audio(rainSfx);
-    audio.volume = 0.25;
+    audio.volume = 0.18;
     audio.play().catch(() => {});
-    const t = setTimeout(onDone, DONE_DELAY);
-    return () => clearTimeout(t);
-  }, [onDone]);
+    const midT  = setTimeout(onMidpoint, MIDPOINT_DELAY);
+    const doneT = setTimeout(onDone,     DONE_DELAY);
+    return () => {
+      clearTimeout(midT);
+      clearTimeout(doneT);
+    };
+  }, [onMidpoint, onDone]);
 
   return (
     <div className="shower-overlay">
