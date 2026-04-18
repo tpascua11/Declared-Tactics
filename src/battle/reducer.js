@@ -285,10 +285,10 @@ export function battleReducer(state, action) {
       // Builds a full fresh battle state from playerData + scenario.
       // playerData: minimal stored data from PlayerContext.
       // scenario: array of enemy definitions from the selected map node.
-      // sourceZone: { zoneId, levelIndex } — which map node launched this fight.
-      const { playerData, scenario, sourceZone } = action.payload;
+      // sourceLevel: { levelId } — which map level launched this fight.
+      const { playerData, scenario, sourceLevel } = action.payload;
       const freshState = buildInitialState(scenario, playerData);
-      return { ...freshState, phase: 'QUEUE_SETUP', sourceZone: sourceZone ?? null };
+      return { ...freshState, phase: 'QUEUE_SETUP', sourceLevel: sourceLevel ?? null };
     }
 
     case 'BATTLE_END': {

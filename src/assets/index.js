@@ -105,6 +105,8 @@ export { default as MAP_ICON_GRASS_3 }         from './MAP_ICONS/GRASS_3.png';
 export { default as MAP_ICON_GRASS_4 }         from './MAP_ICONS/GRASS_4.png';
 export { default as MAP_ICON_GRASS_5 }         from './MAP_ICONS/GRASS_5.png';
 export { default as MAP_ICON_GRASS_6 }         from './MAP_ICONS/GRASS_6.png';
+export { default as MAP_ICON_2_SNOWY_FOREST }      from './MAP_ICONS_2/Snowy_Forest.png';
+export { default as MAP_ICON_2_GREEN_TREE_AT_SNOW } from './MAP_ICONS_2/Green_Tree_At_Snow.png';
 
 // --- Enemy Ability Icons ---
 export { default as ENM_DEFAULT }        from './ENEMY_ABILITY_ICONS/ENEMY_DEFAULT_ATTACK.png';

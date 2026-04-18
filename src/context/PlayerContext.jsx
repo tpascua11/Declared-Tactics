@@ -6,7 +6,7 @@
 //    class_id        → string, e.g. 'samurai'
 //    unlocked_cards  → array of card IDs the player has unlocked beyond their starting deck
 //    stat_boosts     → array of { stat, amount } deltas applied on top of class base stats
-//    completed_zones → TODO: not built yet — will track which map zones/levels are done
+//    completed_levels → array of cleared level IDs from the map
 //
 //  WHAT WE DERIVE AT RUNTIME (never stored):
 //    portrait        → CLASS_REGISTRY[class_id].portrait
@@ -113,7 +113,7 @@ function playerReducer(state, action) {
         current_hp:      classDef.base_health,
         unlocked_cards:  [],
         stat_boosts:     [],
-        completed_zones: {},
+        completed_levels: [],
       };
     }
 
@@ -130,18 +130,11 @@ function playerReducer(state, action) {
     case 'UPGRADE_STAT':
       return { ...state, stat_boosts: [...state.stat_boosts, { stat: action.stat, amount: action.amount }] };
 
-    // Called by MapScreen to record zone/level completion after a victory.
-    // completed_zones shape: { [zoneId]: [clearedLevelIndex, ...] }
+    // Called by MapScreen to record level completion after a victory.
     case 'SAVE_MAP_PROGRESS': {
-      const existing = state.completed_zones?.[action.zoneId] ?? [];
-      if (existing.includes(action.levelIndex)) return state;
-      return {
-        ...state,
-        completed_zones: {
-          ...(state.completed_zones ?? {}),
-          [action.zoneId]: [...existing, action.levelIndex],
-        },
-      };
+      const existing = state.completed_levels ?? [];
+      if (existing.includes(action.levelId)) return state;
+      return { ...state, completed_levels: [...existing, action.levelId] };
     }
 
     // Wipe everything — called on true new game

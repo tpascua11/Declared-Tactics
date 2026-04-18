@@ -3,56 +3,51 @@
   "name": "PATH OF THE SUMURAI",
   "cols": 5,
   "rows": 1,
-  "zones": [
+  "levels": [
     {
       "id": 0,
       "name": "IRON GATE",
       "type": "COMBAT",
       "map_icon": "CITADEL_1",
-      "levels": [
-        { "desc": "First contact. Light resistance.", "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["freeze_slash"] }] }, "scenario_id": "ferret_group" },
-        { "desc": "Reinforcements arrive mid-fight.", "reward": "+30 Gold + card slot", "scenario_id": "rabbit_ferret_squad" },
-        { "desc": "The commander joins the battle.", "reward": { "unlocks": [{ "class": "samurai", "card_ids": [] }] }, "scenario_id": "enemy_sumurai_group" }
-      ]
+      "desc": "First contact. Light resistance.",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["freeze_slash"] }] },
+      "scenario_id": "ferret_group"
     },
     {
       "id": 1,
       "name": "BAMBOO TRAIL",
       "type": "EXPLORE",
       "map_icon": "PATH_1",
-      "levels": [
-        { "desc": "Survey the forest paths for hidden caches.", "reward": "Unlocks 1 card", "scenario_id": null },
-        { "desc": "Deeper in — a sumurai relic remains.", "reward": "ZONE CLEAR — unlocks neighboring zones", "scenario_id": null }
-      ]
+      "desc": "Survey the forest paths for hidden caches.",
+      "reward": "Unlocks 1 card",
+      "scenario_id": null
     },
     {
       "id": 2,
       "name": "FOX DEN",
       "type": "COMBAT",
       "map_icon": "FOREST_1",
-      "levels": [
-        { "desc": "A patrol of fox sumurai blocks the path.", "reward": "+20 Gold", "scenario_id": "ferret_group" },
-        { "desc": "Elite scouts arrive from the shadows.", "reward": "+30 Gold", "scenario_id": "ferret_group" },
-        { "desc": "The den master steps forward.", "reward": "ZONE CLEAR — unlocks neighboring zones", "scenario_id": "ferret_group" }
-      ]
+      "desc": "A patrol of fox sumurai blocks the path.",
+      "reward": "+20 Gold",
+      "scenario_id": "ferret_group"
     },
     {
       "id": 3,
       "name": "SILENT SHRINE",
       "type": "RESTORE",
       "map_icon": "RUINS",
-      "levels": [
-        { "desc": "Rest at the shrine of the old blade masters.", "reward": "ZONE CLEAR — unlocks neighboring zones", "scenario_id": null }
-      ]
+      "desc": "Rest at the shrine of the old blade masters.",
+      "reward": "HP Restored",
+      "scenario_id": null
     },
     {
       "id": 4,
       "name": "THE GRAND DOJO",
       "type": "BOSS",
       "map_icon": "CITADEL_3",
-      "levels": [
-        { "desc": "The path ends here. The grand sumurai awaits.", "reward": "ZONE CLEAR — path complete", "scenario_id": "ferret_group" }
-      ]
+      "desc": "The path ends here. The grand sumurai awaits.",
+      "reward": "PATH COMPLETE",
+      "scenario_id": "ferret_group"
     }
   ]
 }
