@@ -11,7 +11,7 @@ import samuraiVictory from './Samurai Victory.mp3';
 import sumuraiDefeat from './Sumurai Defeat.mp3';
 import introMusic from './intro.mp3';
 
-export { introMusic };
+export { sumuraiDefeat as introMusic };
 
 export const MUSIC_REGISTRY = {
   battle_theme: battleTheme,

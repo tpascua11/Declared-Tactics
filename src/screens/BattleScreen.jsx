@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
 import { useGame } from '../context/GameContext';
+import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/MUSIC/index';
 import { ANIMATIONS, preloadedAudio, sfx } from '../battle/animationRegistry';
@@ -33,6 +34,7 @@ export default function BattleScreen() {
   const player = gs.characters.find(c => c.faction === 'player');
   const enemies = gs.characters.filter(c => c.faction === 'enemy');
   const { ResourceBar } = CLASS_REGISTRY[player.class_id] ?? {};
+  const effectiveSlots = getEffectiveActionSlots(player);
 
 
   // Clean up any in-flight float/anim timers on unmount
@@ -216,7 +218,7 @@ export default function BattleScreen() {
 
   function handleCardClick(card) {
     if (gs.phase !== 'QUEUE_SETUP') return;
-    if (player.queue.filter(Boolean).length >= player.total_action_slots) return;
+    if (player.queue.filter(Boolean).length >= effectiveSlots) return;
     playSfx(sfx('SELECT.wav'), 0.6);
     dispatch({ type: 'ADD_TO_QUEUE', card });
   }
@@ -232,7 +234,8 @@ export default function BattleScreen() {
       return;
     }
     if (gs.phase !== 'QUEUE_SETUP') return;
-    if (!player.queue.some(Boolean)) return;
+    const filledCount = player.queue.filter(Boolean).length;
+    if (filledCount === 0 || filledCount < effectiveSlots) return;
     playSfx(sfx('START_1.wav'), 0.7);
     dispatch({ type: 'START_BATTLE' });
   }
@@ -356,7 +359,7 @@ export default function BattleScreen() {
               <TagPool tags={player.active_tag_pool.filter(t => t.status_type === 'buff')} growRight />
               <ActionQueue
                 queue={player.queue}
-                totalSlots={player.total_action_slots}
+                totalSlots={effectiveSlots}
                 enemies={enemies}
                 onClearSlot={handleClearSlot}
                 retargetingSlot={retargetingSlot}
@@ -375,7 +378,7 @@ export default function BattleScreen() {
           <Hand
             cards={player.cards}
             queue={player.queue}
-            totalSlots={player.total_action_slots}
+            totalSlots={effectiveSlots}
             onCardClick={handleCardClick}
             disabled={gs.phase !== 'QUEUE_SETUP'}
             resources={player.resources}

@@ -108,3 +108,50 @@ registerTag('SHOCKED', {
     SPEED_CALC: ShockedSpeedCalcHandler,
   },
 });
+
+// ── SLOW ──
+// Reduces available actions by 1 per stack.
+// Player: getEffectiveActionSlots reads action_slot_mod — limits queuing.
+// Enemy: ON_TURN_START pops from queue (which was just built before this fires).
+// Stacks decay by 1 at END_OF_TURN; apply with stacks: 2 to affect the next full turn.
+
+function SlowOnApply(pool, tag) {
+  const existing = pool.find(t => t.tag_name === 'SLOW');
+  if (existing) {
+    existing.stacks = Math.min(3, existing.stacks + (tag.stacks ?? 1));
+  } else {
+    pool.push({ ...tag, stacks: Math.min(3, tag.stacks ?? 1) });
+  }
+}
+
+function SlowOnTurnStartHandler(context, tag) {
+  const owner = context.owner;
+  const reduce = tag.stacks ?? 1;
+  if (owner.faction === 'enemy' && owner.queue.length > 0) {
+    owner.queue = owner.queue.slice(0, Math.max(0, owner.queue.length - reduce));
+  }
+  return {
+    consumed: false,
+    logs: [{ msg: `🐢 ${owner.name} is SLOWED — loses ${reduce} action(s) this turn!`, type: 'debuff' }],
+  };
+}
+
+function SlowEndOfTurnHandler(context, tag) {
+  tag.stacks -= 1;
+  if (tag.stacks <= 0) {
+    return { consumed: true, logs: [{ msg: `🐢 ${context.owner.name}: SLOW wore off`, type: 'info' }] };
+  }
+  return { consumed: false, logs: [{ msg: `🐢 ${context.owner.name}: SLOW — ${tag.stacks} turn(s) remaining`, type: 'info' }] };
+}
+
+registerTag('SLOW', {
+  phases: ['ON_TURN_START', 'END_OF_TURN'],
+  status_type: 'debuff',
+  traits: ['SLOW'],
+  action_slot_mod: (tag) => -(tag.stacks ?? 1),
+  onApply: SlowOnApply,
+  handlers: {
+    ON_TURN_START: SlowOnTurnStartHandler,
+    END_OF_TURN: SlowEndOfTurnHandler,
+  },
+});

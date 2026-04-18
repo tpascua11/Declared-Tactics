@@ -7,6 +7,7 @@ import { DEBUG_HAND_COST } from '../debug';
 import {
   calcSpeed,
   effectiveResourceAtExecution,
+  getEffectiveActionSlots,
   SpeedCheckAllAvailableActions,
   InteractionCheck,
   ExecuteAction,
@@ -62,7 +63,7 @@ export function battleReducer(state, action) {
       const chars = JSON.parse(JSON.stringify(state.characters));
       const player = chars.find(c => c.faction === 'player');
       const filledCount = player.queue.filter(Boolean).length;
-      if (filledCount >= player.total_action_slots) return state;
+      if (filledCount >= getEffectiveActionSlots(player)) return state;
       const nullIdx = player.queue.findIndex(s => !s);
       const slotIndex = nullIdx !== -1 ? nullIdx : player.queue.length;
       const card = action.card;

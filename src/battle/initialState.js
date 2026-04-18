@@ -5,6 +5,7 @@
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
 import EMBER_KEEP from '../data/scenarios/ember_keep.json';
 import EMBER_WITCH_TEST from '../data/scenarios/ember_witch_test.json';
+import WOLF_SLOW_TEST from '../data/scenarios/wolf_slow_test.json';
 import { ENEMY_REGISTRY } from '../data/characters/enemy_registry';
 import { buildPlayer } from '../data/player';
 import { derivePlayerSnapshot } from '../context/PlayerContext';
@@ -46,7 +47,7 @@ export function buildEnemyQueue(enemy) {
 // ── BUILD INITIAL STATE ──
 // scenario: a scenario JSON from src/data/scenarios/ — defaults to EMBER_KEEP for debug.
 // playerData: persistent player from PlayerContext — falls back to SAMURAI if null.
-export function buildInitialState(scenario = EMBER_WITCH_TEST, playerData = null) {
+export function buildInitialState(scenario = WOLF_SLOW_TEST, playerData = null) {
   const stage0Ids = scenario?.stages?.[0]?.enemies ?? [];
   const activeIds = stage0Ids.slice(0, MAX_ENEMIES);
   const benchIds  = stage0Ids.slice(MAX_ENEMIES);

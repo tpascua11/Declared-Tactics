@@ -33,6 +33,17 @@ export function effectiveResourceAtExecution(resourceType, mySlotIndex, queue, r
   return effect;
 }
 
+export function getEffectiveActionSlots(character) {
+  let slots = character.total_action_slots ?? 0;
+  for (const tag of character.active_tag_pool ?? []) {
+    const entry = battle_registry[tag.tag_name];
+    if (entry?.action_slot_mod) {
+      slots += entry.action_slot_mod(tag);
+    }
+  }
+  return Math.max(0, slots);
+}
+
 export function addTagToPool(pool, tag, actionContext = null) {
   const entry = battle_registry[tag.tag_name];
   // Allow registry entries to stamp action-time data onto the tag (e.g. calc_speed for QUICK_STEPS)

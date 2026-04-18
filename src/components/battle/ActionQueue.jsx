@@ -4,6 +4,8 @@
 
 export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard }) {
   const PENALTIES = Array.from({ length: totalSlots }, (_, i) => i * 20);
+  const filledCount = queue.filter(Boolean).length;
+  const canExecute = !isBattling && filledCount > 0 && filledCount >= totalSlots;
 
   return (
     <div className="flex flex-col items-start gap-3">
@@ -152,10 +154,10 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
         </button>
       ) : (
         <button
-          disabled={isBattling || !queue.some(Boolean)}
+          disabled={!canExecute}
           onClick={onExecute}
           className={`w-full py-2 rounded-lg font-display tracking-widest text-sm text-white transition-all
-            ${isBattling || !queue.some(Boolean)
+            ${!canExecute
               ? 'bg-gray-700 opacity-40 cursor-not-allowed'
               : 'bg-gradient-to-r from-[#e94560] to-[#b83b5e] hover:scale-105 shadow-[0_0_15px_rgba(233,69,96,0.4)]'
             }`}

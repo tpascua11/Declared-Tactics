@@ -1,0 +1,12 @@
+{
+  "id": "wolf_slow_test",
+  "name": "Wolf Slow Test",
+  "battle_background": "MOUNTAIN_1_WIDE",
+  "stages": [
+    {
+      "enemies": ["wolf_sumurai"]
+    }
+  ],
+  "music": "battle_theme",
+  "rewards": {}
+}
