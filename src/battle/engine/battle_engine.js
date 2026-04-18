@@ -359,12 +359,14 @@ export function ExecuteAction(action, interaction_result, state) {
   // decide to bypass/consume themselves, and used below for bonus multipliers.
   const interactionResult = resolveTagInteractions(action, target);
   const isAoe = action.properties?.includes('AOE');
+  const isSelfBuff = (action.tags?.target ?? []).length === 0 && (action.tags?.self ?? []).length > 0;
 
   // ON_INCOMING phase — defender-side gate (dodge, parry, reflect, etc.)
   // Runs on the original target before any payload is built or damage dealt.
   // If cancelled: attacker resources are still spent (action was committed).
-  // AOE attacks skip per-target dodge/cancel checks.
-  if (!isAoe && target.health > 0) {
+  // AOE and self-buff actions skip — self-buffs don't actually target the enemy
+  // even though target_id points to one (an artifact of how ADD_TO_QUEUE assigns targets).
+  if (!isAoe && !isSelfBuff && target.health > 0) {
     const onIncoming = runPhaseOnIncoming(target.active_tag_pool, action, target, newState, interactionResult);
     logs.push(...onIncoming.logs);
     target.active_tag_pool = onIncoming.tag_pool;
@@ -510,7 +512,6 @@ export function ExecuteAction(action, interaction_result, state) {
   // ── POST_ATTACK ──
   owner.active_tag_pool = runPhasePostAttack(owner.active_tag_pool, payload, owner, hit_result);
 
-  const isSelfBuff = (action.tags?.target ?? []).length === 0 && (action.tags?.self ?? []).length > 0;
 
   return {
     newState,
