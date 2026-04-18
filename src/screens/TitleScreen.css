@@ -53,8 +53,9 @@
   contain: strict;
 }
 
-.cards-rain { z-index: 2; }
-.particles  { z-index: 1; }
+.cards-rain    { z-index: 2; }
+.cards-rain-fg { z-index: 11; pointer-events: none; }
+.particles     { z-index: 1; }
 
 .falling-card {
   position: absolute;

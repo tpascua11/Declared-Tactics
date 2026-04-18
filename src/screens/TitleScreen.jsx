@@ -1,29 +1,80 @@
-import { useState } from 'react';
 import './TitleScreen.css';
-import { useGame } from '../context/GameContext';
-import CardShowerTransition from '../components/shared/CardShowerTransition';
 
 // ── Particle configs (computed once at module load) ──────────────
-const CARD_CONFIG = [
-  { color: [212, 168,  75], left:  8, delay:   0, fallDuration: 14, swayDuration: 4.0, startRot:  -8, endRot:   5, maxOpacity: 0.50, size: [44, 62] },
-  { color: [232, 197, 109], left: 22, delay:  -3, fallDuration: 17, swayDuration: 4.5, startRot:  12, endRot:  -6, maxOpacity: 0.45, size: [52, 72] },
-  { color: [201, 166, 105], left: 76, delay:  -7, fallDuration: 13, swayDuration: 3.8, startRot:  -5, endRot:  10, maxOpacity: 0.40, size: [46, 64] },
-  { color: [155, 139, 171], left: 45, delay:  -2, fallDuration: 16, swayDuration: 5.0, startRot:  15, endRot:  -8, maxOpacity: 0.48, size: [50, 70] },
-  { color: [175, 159, 191], left: 88, delay:  -9, fallDuration: 19, swayDuration: 4.2, startRot: -10, endRot:   7, maxOpacity: 0.42, size: [42, 58] },
-  { color: [140, 120, 165], left: 12, delay: -11, fallDuration: 15, swayDuration: 4.7, startRot:   7, endRot: -12, maxOpacity: 0.46, size: [48, 66] },
-  { color: [108, 180, 190], left: 58, delay:  -5, fallDuration: 18, swayDuration: 5.2, startRot: -14, endRot:   9, maxOpacity: 0.44, size: [46, 64] },
-  { color: [130, 200, 210], left: 33, delay: -13, fallDuration: 15, swayDuration: 3.9, startRot:  11, endRot:  -5, maxOpacity: 0.38, size: [44, 60] },
-  { color: [195, 130, 150], left: 68, delay:  -8, fallDuration: 16, swayDuration: 4.4, startRot:  -7, endRot:  11, maxOpacity: 0.47, size: [50, 68] },
-  { color: [215, 150, 170], left:  5, delay: -15, fallDuration: 20, swayDuration: 5.0, startRot:   9, endRot:  -9, maxOpacity: 0.41, size: [42, 58] },
-  { color: [100, 170, 130], left: 82, delay:  -4, fallDuration: 17, swayDuration: 4.6, startRot: -12, endRot:   6, maxOpacity: 0.43, size: [46, 64] },
-  { color: [120, 190, 145], left: 38, delay: -10, fallDuration: 14, swayDuration: 4.1, startRot:   6, endRot: -10, maxOpacity: 0.39, size: [44, 60] },
-  { color: [180, 130, 100], left: 92, delay:  -6, fallDuration: 18, swayDuration: 4.8, startRot:  -9, endRot:   8, maxOpacity: 0.45, size: [48, 66] },
-  { color: [200, 150, 120], left: 18, delay: -12, fallDuration: 15, swayDuration: 4.3, startRot:  13, endRot:  -7, maxOpacity: 0.42, size: [44, 62] },
-  { color: [120, 150, 195], left: 52, delay:  -1, fallDuration: 19, swayDuration: 5.1, startRot: -11, endRot:  10, maxOpacity: 0.44, size: [50, 68] },
-  { color: [140, 170, 215], left: 72, delay: -14, fallDuration: 16, swayDuration: 4.0, startRot:   8, endRot: -11, maxOpacity: 0.37, size: [42, 58] },
-  { color: [220, 185, 110], left: 28, delay: -17, fallDuration: 21, swayDuration: 5.3, startRot:  -6, endRot:  12, maxOpacity: 0.35, size: [40, 56] },
-  { color: [240, 208, 144], left: 62, delay: -19, fallDuration: 17, swayDuration: 4.5, startRot:  10, endRot:  -8, maxOpacity: 0.33, size: [38, 54] },
-].map(cfg => ({ ...cfg, colorAlpha: 0.25 + Math.random() * 0.15 }));
+const COLORS = [
+  [212, 168,  75], [232, 197, 109], [201, 166, 105],
+  [155, 139, 171], [175, 159, 191], [140, 120, 165],
+  [108, 180, 190], [130, 200, 210], [195, 130, 150],
+  [215, 150, 170], [100, 170, 130], [120, 190, 145],
+  [180, 130, 100], [200, 150, 120], [120, 150, 195],
+  [140, 170, 215], [220, 185, 110], [240, 208, 144],
+];
+
+function buildCardConfig() {
+  const bg = [];
+  const fg = [];
+
+  // Seed cards: just 3 already mid-fall so the screen isn't completely bare
+  for (let i = 0; i < 3; i++) {
+    const color = COLORS[i % COLORS.length];
+    bg.push({
+      color,
+      colorAlpha: 0.18 + Math.random() * 0.10,
+      left: (i * 33 + Math.random() * 10) % 100,
+      delay: -(3 + Math.random() * 6),
+      fallDuration: 12 + Math.random() * 5,
+      swayDuration: 3.5 + Math.random() * 2.0,
+      startRot: (Math.random() - 0.5) * 28,
+      endRot:   (Math.random() - 0.5) * 28,
+      maxOpacity: 0.28 + Math.random() * 0.12,
+      size: (w => [w, Math.round(w * 1.5)])(40 + Math.floor(Math.random() * 14)),
+    });
+  }
+
+  // Storm wave: 95 bg cards spreading over 0→55 s with a gentle linear-ish curve
+  // so density builds slowly and steadily before plateauing into a full downpour.
+  for (let i = 0; i < 190; i++) {
+    const color = COLORS[i % COLORS.length];
+    const t     = i / 189;
+    const delay = 4 + Math.pow(t, 0.75) * 116;
+    bg.push({
+      color,
+      colorAlpha: 0.14 + Math.random() * 0.20,
+      left: Math.random() * 100,
+      delay,
+      fallDuration: 9 + Math.random() * 6,
+      swayDuration: 3.0 + Math.random() * 2.5,
+      startRot: (Math.random() - 0.5) * 38,
+      endRot:   (Math.random() - 0.5) * 38,
+      maxOpacity: 0.26 + Math.random() * 0.28,
+      size: (w => [w, Math.round(w * 1.5)])(36 + Math.floor(Math.random() * 20)),
+    });
+  }
+
+  // Foreground cards: fewer, larger, more opaque — appear in front of title/menu.
+  // Stagger their entry across the same buildup window so they join the storm gradually too.
+  for (let i = 0; i < 36; i++) {
+    const color = COLORS[i % COLORS.length];
+    const t     = i / 35;
+    const delay = 4 + Math.pow(t, 0.75) * 116;
+    fg.push({
+      color,
+      colorAlpha: 0.28 + Math.random() * 0.18,
+      left: Math.random() * 100,
+      delay,
+      fallDuration: 10 + Math.random() * 7,
+      swayDuration: 3.5 + Math.random() * 2.5,
+      startRot: (Math.random() - 0.5) * 30,
+      endRot:   (Math.random() - 0.5) * 30,
+      maxOpacity: 0.38 + Math.random() * 0.25,
+      size: (w => [w, Math.round(w * 1.5)])(46 + Math.floor(Math.random() * 22)),
+    });
+  }
+
+  return { bg, fg };
+}
+
+const { bg: BG_CARDS, fg: FG_CARDS } = buildCardConfig();
 
 const EMBER_CONFIG = [
   { left: 20, top: 80, color: '#d4a84b', delay: 0.0, duration: 11 },
@@ -38,9 +89,7 @@ const EMBER_CONFIG = [
   { left: 78, top: 76, color: '#f0d090', delay: 3.5, duration: 14 },
 ];
 
-export default function TitleScreen() {
-  const { dispatch } = useGame();
-  const [transitioning, setTransitioning] = useState(false);
+export default function TitleScreen({ onNewGame }) {
 
   return (
     <div className="title-screen">
@@ -48,9 +97,9 @@ export default function TitleScreen() {
       <div className="overlay-layer crt-warmth" />
       <div className="overlay-layer vignette" />
 
-      {/* Falling cards */}
+      {/* Background falling cards (behind title) */}
       <div className="particle-container cards-rain">
-        {CARD_CONFIG.map((cfg, i) => (
+        {BG_CARDS.map((cfg, i) => (
           <div
             key={i}
             className="falling-card"
@@ -109,11 +158,34 @@ export default function TitleScreen() {
         <nav className="menu">
           <button
             className="menu-btn"
-            onClick={() => setTransitioning(true)}
+            onClick={onNewGame}
           >
             New Game
           </button>
         </nav>
+      </div>
+
+      {/* Foreground falling cards (in front of title/menu) */}
+      <div className="particle-container cards-rain-fg">
+        {FG_CARDS.map((cfg, i) => (
+          <div
+            key={i}
+            className="falling-card"
+            style={{
+              '--card-rgb':       cfg.color.join(','),
+              '--card-color':     `rgba(${cfg.color.join(',')}, ${cfg.colorAlpha.toFixed(2)})`,
+              '--fall-duration':  `${cfg.fallDuration}s`,
+              '--sway-duration':  `${cfg.swayDuration}s`,
+              '--start-rot':      `${cfg.startRot}deg`,
+              '--end-rot':        `${cfg.endRot}deg`,
+              '--max-opacity':    cfg.maxOpacity,
+              '--delay':          `${cfg.delay}s`,
+              left:               `${cfg.left}%`,
+              width:              `${cfg.size[0]}px`,
+              height:             `${cfg.size[1]}px`,
+            }}
+          />
+        ))}
       </div>
 
       {/* Footer */}
@@ -122,9 +194,6 @@ export default function TitleScreen() {
         <span>© 2026</span>
       </div>
 
-      {transitioning && (
-        <CardShowerTransition onDone={() => dispatch({ type: 'START_NEW_GAME' })} />
-      )}
     </div>
   );
 }
