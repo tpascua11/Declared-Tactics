@@ -50,23 +50,7 @@ export const SAMURAI_CARDS = [
       ],
     },
   },
-  {
-    id: 'quick_slice',
-    name: 'Quick Slice',
-    speed_mod: 10,
-    tag_type: ['PHYSICAL', 'SLASH'],
-    cost: {},
-    icon: '🔪',
-    image: 'FOX_SUMMURAI_21',
-    color: '#ff6b35',
-    desc: 'A fast light slash.',
-    tags: {
-      self: [],
-      target: [
-        { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 25 },
-      ],
-    },
-  },
+
   {
     id: 'mend',
     name: 'Mend',
@@ -83,40 +67,6 @@ export const SAMURAI_CARDS = [
       self: [
         { tag_name: 'HEAL', power: 250 },
         { tag_name: 'REGEN', power: 33, duration: 3, reset: 'TICK_TURN' },
-      ],
-      target: [],
-    },
-  },
-  {
-    id: 'magic_charge',
-    name: 'Magic Charge',
-    speed_mod: 0,
-    tag_type: ['WIZARD_PREP', 'SPELL', 'MAGIC', 'CHARGING'],
-    cost: {},
-    icon: '✨',
-    image: 'FOX_SUMMURAI_3',
-    color: '#7c3aed',
-    desc: 'Charge next MAGIC attack by 20%.',
-    tags: {
-      self: [
-        { tag_name: 'MAGIC_CHARGE', multiplier: 0.2, consume: true, tier: 'advanced' },
-      ],
-      target: [],
-    },
-  },
-  {
-    id: 'fuel_to_the_flames',
-    name: 'Fuel to the Flames',
-    speed_mod: 0,
-    tag_type: ['WIZARD_PREP', 'SPELL', 'MAGIC', 'CHARGING'],
-    cost: {},
-    icon: '🔥',
-    image: 'FOX_SUMMURAI_41',
-    color: '#f97316',
-    desc: 'Add +50 flat damage to next FIRE attack.',
-    tags: {
-      self: [
-        { tag_name: 'FUEL_TO_THE_FLAMES', flat: 50 },
       ],
       target: [],
     },
@@ -176,7 +126,7 @@ export const SAMURAI_CARDS = [
       self: [],
       target: [
         { tag_name: 'DAMAGE', type: 'FROST', power: 150 },
-        { tag_name: 'SLOW', stacks: 2 },
+        { tag_name: 'FREEZE', stacks: 2 },
       ],
     },
   },
@@ -267,13 +217,13 @@ export const SAMURAI_CARDS = [
     icon: '⚡',
     image: 'FOX_STORM_STRIKE',
     color: '#818cf8',
-    desc: 'Unleash a storm that strikes all enemies for 100 damage. Costs 2 Battle Spirit.',
+    desc: 'Unleash a storm that strikes all enemies for 150 damage. Costs 3 Battle Spirit.',
     animation: 'flame_strike',
     animation_intensity: 1.2,
     tags: {
       self: [],
       target: [
-        { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 100 },
+        { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 150 },
         { tag_name: 'ELECTRIFIED', stacks: 2 },
       ],
     },

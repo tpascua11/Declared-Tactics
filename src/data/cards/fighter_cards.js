@@ -45,6 +45,7 @@ export const FIGHTER_CARDS = [
       ],
     },
   },
+  
   {
     id: 'mend',
     name: 'Mend',

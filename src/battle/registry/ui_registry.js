@@ -94,13 +94,24 @@ export const ui_registry = {
     describe: (tag) => `+${tag.power} HP/turn`,
   },
 
-  FREEZE: {
+  OLD_FREEZE: {
     icon: '🧊',
     statusIcon: STATUS_FROST_1,
     color: '#38bdf8',
     describe: (tag) => {
       const s = tag.stacks ?? 1;
       return `-${s * 5} speed (${s} stack${s !== 1 ? 's' : ''}, max 10)`;
+    },
+  },
+
+  FREEZE: {
+    icon: '🧊',
+    statusIcon: STATUS_FROST_1,
+    color: '#38bdf8',
+    describe: (tag) => {
+      const s = tag.stacks ?? 1;
+      const actions = s >= 3 ? 2 : 1;
+      return `-${actions} action${actions > 1 ? 's' : ''}, -10 speed (${s} stack${s !== 1 ? 's' : ''})`;
     },
   },
 

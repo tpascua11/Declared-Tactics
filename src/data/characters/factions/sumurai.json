@@ -177,7 +177,7 @@
         "properties": [],
         "tags": {
           "self": [],
-          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 80 }, { "tag_name": "SLOW", "stacks": 2 }]
+          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 80 }, { "tag_name": "FREEZE", "stacks": 2 }]
         }
       }
     },
