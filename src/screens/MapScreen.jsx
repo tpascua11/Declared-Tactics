@@ -45,6 +45,9 @@ const MAP_ICON_LOOKUP = {
   GRASS_6:        MAP_ICON_GRASS_6,
 };
 
+const CELL_SIZE = 160;
+const CELL_GAP  = 14;
+
 // ── Constants ────────────────────────────────────────────────
 
 const ZONE_TYPES = {
@@ -102,16 +105,16 @@ const STATIC_STYLES = {
     overflow: "hidden",
     position: "relative",
   },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: `repeat(${MAP_DATA.cols},200px)`,
-    gridTemplateRows: `repeat(${MAP_DATA.rows},200px)`,
-    gap: 14,
-    position: "relative",
+  gridWrap: {
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "20px 32px",
+    boxSizing: "border-box",
   },
   bottom: {
-    height: "15vh",
-    minHeight: 100,
+    height: 80,
     flexShrink: 0,
     background: "linear-gradient(180deg,#050810,#0a0f18)",
     borderTop: "1px solid rgba(77,166,255,0.12)",
@@ -138,7 +141,7 @@ function getNeighbors(id) {
   return n;
 }
 
-const DEBUG_UNLOCK_ALL = false;
+const DEBUG_UNLOCK_ALL = true;
 
 // Converts playerData.completed_zones ({ "0": [0,1] }) into
 // zoneStates and levelStates the component can render directly.
@@ -444,12 +447,28 @@ export default function MapScreen() {
   const [flashOn,       setFlashOn]       = useState(false);
   const [activeMenu,    setActiveMenu]    = useState(null);
 
+  const [gridDims, setGridDims] = useState({ cols: 5, rows: 1 });
+  const gridWrapRef = useRef(null);
   const audioRef = useRef(null);
   useEffect(() => {
     const audio = audioRef.current;
     audio.volume = 0.1;
     audio.play().catch(() => {});
     return () => { audio.pause(); audio.currentTime = 0; };
+  }, []);
+
+  useEffect(() => {
+    const el = gridWrapRef.current;
+    if (!el) return;
+    const measure = () => {
+      const cols = Math.max(1, Math.floor((el.clientWidth  + CELL_GAP) / (CELL_SIZE + CELL_GAP)));
+      const rows = Math.max(1, Math.floor((el.clientHeight + CELL_GAP) / (CELL_SIZE + CELL_GAP)));
+      setGridDims({ cols, rows });
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   const ftRef    = useRef(null);
@@ -588,11 +607,17 @@ export default function MapScreen() {
 
   // ── Memoized styles ───────────────────────────────────────
   const gridWrapStyle = useMemo(() => ({
-    flex: 1, padding: "20px 24px", display: "flex",
-    alignItems: "center", justifyContent: "center",
+    ...STATIC_STYLES.gridWrap,
     filter: modalOpen ? "blur(5px) brightness(0.7)" : "none",
     transition: "filter 0.3s ease",
   }), [modalOpen]);
+
+  const gridStyle = useMemo(() => ({
+    display: "grid",
+    gridTemplateColumns: `repeat(${gridDims.cols},${CELL_SIZE}px)`,
+    gridTemplateRows:    `repeat(${gridDims.rows},${CELL_SIZE}px)`,
+    gap: CELL_GAP,
+  }), [gridDims]);
 
   const backdropStyle = useMemo(() => ({
     position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
@@ -629,9 +654,13 @@ export default function MapScreen() {
 
       {/* MAIN */}
       <div style={STATIC_STYLES.main}>
-        <div style={gridWrapStyle}>
-          <div style={STATIC_STYLES.grid}>
-            {MAP_DATA.zones.map(z => {
+        <div ref={gridWrapRef} style={gridWrapStyle}>
+          <div style={gridStyle}>
+            {Array.from({ length: gridDims.cols * gridDims.rows }, (_, i) => {
+              const z = MAP_DATA.zones[i];
+              if (!z) {
+                return <div key={`empty-${i}`} className="map-cell-base map-cell-locked" style={{ background: "#05080f", borderColor: "#0c1018" }} />;
+              }
               const st   = zoneStates[z.id];
               const t    = ZONE_TYPES[z.type];
               const prog = getProgress(z.id);
@@ -656,7 +685,6 @@ export default function MapScreen() {
                 />
               );
             })}
-
           </div>
         </div>
 

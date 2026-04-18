@@ -40,7 +40,7 @@
 
 .map-flash-message {
   position: fixed;
-  bottom: calc(15vh + 20px);
+  bottom: 100px;
   left: 50%;
   background: linear-gradient(135deg, #0a1020, #0c1525);
   border-radius: 6px;
