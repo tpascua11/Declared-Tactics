@@ -139,6 +139,10 @@ function playerReducer(state, action) {
       return { ...state, completed_levels: [...existing, action.levelId] };
     }
 
+    // Called when player enters a node — persists their last map position.
+    case 'SAVE_LAST_LEVEL':
+      return { ...state, last_level_id: action.levelId };
+
     // Wipe everything — called on true new game
     case 'NEW_GAME':
       return null;

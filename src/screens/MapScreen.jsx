@@ -15,8 +15,11 @@ import {
   MAP_ICON_GRASS_4, MAP_ICON_GRASS_5, MAP_ICON_GRASS_6,
   MAP_ICON_2_SNOWY_FOREST, MAP_ICON_2_GREEN_TREE_AT_SNOW,
 } from '../assets';
+import { DEBUG_MAP } from '../debug';
 import './MapScreen.css';
 import menuMapTheme from '../assets/MUSIC/Menu Map Theme.mp3';
+import WinModal from '../components/map/WinModal';
+import LosePopup from '../components/map/LosePopup';
 
 const MAP_ICON_LOOKUP = {
   GARDEN_TOWN:    MAP_ICON_GARDEN_TOWN,
@@ -357,10 +360,12 @@ export default function MapScreen() {
   const { playerData, playerDispatch } = usePlayer();
 
   const [levelStates, setLevelStates] = useState(() => deriveStates(playerData?.completed_levels ?? []));
-  const [playerLevel, setPlayerLevel] = useState(0);
+  const [playerLevel, setPlayerLevel] = useState(() => playerData?.last_level_id ?? 0);
   const [flashMsg,    setFlashMsg]    = useState("");
   const [flashOn,     setFlashOn]     = useState(false);
   const [activeMenu,  setActiveMenu]  = useState(null);
+  const [winModal,    setWinModal]    = useState(null); // { levelId, reward, unlockedCards }
+  const [losePopup,   setLosePopup]   = useState(null); // defeat_tip string
 
   const [gridDims, setGridDims] = useState({ cols: 5, rows: TARGET_ROWS });
   const gridWrapRef = useRef(null);
@@ -392,8 +397,11 @@ export default function MapScreen() {
   useEffect(() => {
     if (!gs.battleResult) return;
     playerDispatch({ type: 'APPLY_BATTLE_RESULT', currentHP: gs.battleResult.currentHP });
-    if (gs.battleResult.victory && gs.sourceLevel) {
-      const { levelId } = gs.sourceLevel;
+
+    const levelId = gs.sourceLevel?.levelId;
+    if (levelId != null) setPlayerLevel(levelId); // restore cursor to where they fought
+
+    if (gs.battleResult.victory && levelId != null) {
       playerDispatch({ type: 'SAVE_MAP_PROGRESS', levelId });
 
       setLevelStates(prev => {
@@ -403,13 +411,21 @@ export default function MapScreen() {
       });
 
       const level = MAP_DATA.levels[levelId];
-      if (typeof level.reward === 'object' && level.reward !== null) {
+      let unlockedCards = [];
+      if (typeof level?.reward === 'object' && level.reward !== null) {
         const classUnlock = level.reward.unlocks?.find(u => u.class === playerData.class_id);
-        if (classUnlock) classUnlock.card_ids.forEach(id => playerDispatch({ type: 'UNLOCK_CARD', cardId: id }));
+        if (classUnlock) {
+          classUnlock.card_ids.forEach(id => playerDispatch({ type: 'UNLOCK_CARD', cardId: id }));
+          const classDef = CLASS_REGISTRY[playerData.class_id];
+          unlockedCards = classUnlock.card_ids.map(id => classDef?.cards.find(c => c.id === id)).filter(Boolean);
+        }
       }
-
-      flash("LEVEL CLEARED");
+      setWinModal({ levelId, reward: level?.reward, unlockedCards, mapIconSrc: level?.map_icon ? MAP_ICON_LOOKUP[level.map_icon] : null,});
+    } else if (!gs.battleResult.victory && levelId != null) {
+      const level = MAP_DATA.levels[levelId];
+      setLosePopup(level?.defeat_tip ?? "Prepare your strategy and try again.");
     }
+
     dispatch({ type: 'CLEAR_BATTLE_RESULT' });
   }, []); // intentionally empty: runs once on mount to process a just-returned battle result
 
@@ -432,6 +448,34 @@ export default function MapScreen() {
   const canEnter = useMemo(() =>
     levelStates[playerLevel] === "available",
   [playerLevel, levelStates]);
+
+  // ── Cheat: force-clear selected node (opens win modal) ───
+  const handleCheatClear = useCallback(() => {
+    const level = MAP_DATA.levels[playerLevel];
+    if (!level) return;
+    setLevelStates(prev => {
+      const next = { ...prev, [playerLevel]: "cleared" };
+      getNeighbors(playerLevel).forEach(nid => { if (next[nid] === "locked") next[nid] = "available"; });
+      return next;
+    });
+    playerDispatch({ type: 'SAVE_MAP_PROGRESS', levelId: playerLevel });
+    let unlockedCards = [];
+    if (typeof level.reward === 'object' && level.reward !== null) {
+      const classUnlock = level.reward.unlocks?.find(u => u.class === playerData.class_id);
+      if (classUnlock) {
+        classUnlock.card_ids.forEach(id => playerDispatch({ type: 'UNLOCK_CARD', cardId: id }));
+        const classDef = CLASS_REGISTRY[playerData.class_id];
+        unlockedCards = classUnlock.card_ids.map(id => classDef?.cards.find(c => c.id === id)).filter(Boolean);
+      }
+    }
+    setWinModal({ levelId: playerLevel, reward: level.reward, unlockedCards, mapIconSrc: level.map_icon ? MAP_ICON_LOOKUP[level.map_icon] : null,});
+  }, [playerLevel, playerData, playerDispatch]);
+
+  // ── Cheat: trigger lose popup for selected node ───────────
+  const handleCheatLose = useCallback(() => {
+    const level = MAP_DATA.levels[playerLevel];
+    setLosePopup(level?.defeat_tip ?? "Prepare your strategy and try again.");
+  }, [playerLevel]);
 
   // ── Handlers ─────────────────────────────────────────────
   const handleCellClick = useCallback((lid) => {
@@ -461,6 +505,7 @@ export default function MapScreen() {
 
     const scenario = SCENARIO_REGISTRY[level.scenario_id];
     if (!scenario) { flash("NO SCENARIO FOUND"); return; }
+    playerDispatch({ type: 'SAVE_LAST_LEVEL', levelId: playerLevel });
     goToBattle(scenario, { levelId: playerLevel });
   }, [playerLevel, levelStates, playerData, playerDispatch, flash, goToBattle]);
 
@@ -489,6 +534,34 @@ export default function MapScreen() {
         <div style={{ fontSize: 9, letterSpacing: 2, color: "#2a4060", marginLeft: 16 }}>
           {clearedCount}/{MAP_DATA.levels.length} CLEARED
         </div>
+        {DEBUG_MAP && (
+          <>
+            <button
+              onClick={handleCheatClear}
+              style={{
+                marginLeft: 16, padding: "3px 10px",
+                border: "1px solid #ff006644", borderRadius: 4,
+                background: "rgba(255,0,102,0.08)", color: "#ff4488",
+                fontSize: 9, letterSpacing: 2, cursor: "pointer",
+                fontFamily: "'Courier New', monospace",
+              }}
+            >
+              CHEAT: WIN
+            </button>
+            <button
+              onClick={handleCheatLose}
+              style={{
+                marginLeft: 6, padding: "3px 10px",
+                border: "1px solid #88440044", borderRadius: 4,
+                background: "rgba(136,68,0,0.08)", color: "#cc7733",
+                fontSize: 9, letterSpacing: 2, cursor: "pointer",
+                fontFamily: "'Courier New', monospace",
+              }}
+            >
+              CHEAT: LOSE
+            </button>
+          </>
+        )}
       </div>
 
       {/* MAIN */}
@@ -560,6 +633,20 @@ export default function MapScreen() {
       >
         {flashMsg}
       </div>
+
+      {winModal && (
+        <WinModal
+          levelId={winModal.levelId}
+          reward={winModal.reward}
+          unlockedCards={winModal.unlockedCards}
+          mapIconSrc={winModal.mapIconSrc}
+          onClose={() => setWinModal(null)}
+        />
+      )}
+
+      {losePopup && (
+        <LosePopup tip={losePopup} onClose={() => setLosePopup(null)} />
+      )}
     </div>
   );
 }

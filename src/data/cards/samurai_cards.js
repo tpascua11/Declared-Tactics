@@ -158,7 +158,7 @@ export const SAMURAI_CARDS = [
     icon: '👣',
     image: 'FOX_QUICK_STEPS',
     color: '#34d399',
-    desc: 'Enter a dodge stance. Sidestep the next enemy action within your speed window.',
+    desc: 'Enter a dodge stance. Side Step all attack actions to you within within -10 speed range when this action is used. This effects end after your next action.',
     animation: 'run_circle',
     animation_intensity: 1.0,
     tags: {

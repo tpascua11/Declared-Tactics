@@ -11,6 +11,8 @@
       "map_icon": "CITADEL_1",
       "desc": "First contact. Light resistance.",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["quick_steps"] }] },
+      "defeat_tip": "Ferrets attack in bursts — queue your fastest card first to win the speed race.",
+      "clear_desc": "The ferrets were relentless, but you held your ground. Their speed taught you the most important lesson on this path — move first, or don't move at all.",
       "scenario_id": "the_ferrets"
     },
     {
@@ -20,6 +22,8 @@
       "map_icon": "PATH_1",
       "desc": "Ferrets and rabbits hold the trail.",
       "reward": "Unlocks 1 card",
+      "defeat_tip": "The bear hits hard on slow turns. Fill all your slots and strike before it acts.",
+      "clear_desc": "The trail is yours. The bear's raw power was real, but a coordinated strike landed first. You are beginning to understand the weight of momentum.",
       "scenario_id": "bear_and_ferrets"
     },
     {
@@ -29,6 +33,8 @@
       "map_icon": "FOREST_1",
       "desc": "Ferrets, rabbits, and an otter block the path.",
       "reward": "+20 Gold",
+      "defeat_tip": "The otter builds tags over time. Prioritize it early before its buffs stack.",
+      "clear_desc": "Three against one — and you still walked out. The otter nearly had you, but you read the field before the tags stacked. That awareness will carry you far.",
       "scenario_id": "rabbit_full_squad"
     },
     {
@@ -38,6 +44,8 @@
       "map_icon": "RUINS",
       "desc": "Rest at the shrine of the old blade masters.",
       "reward": "HP Restored",
+      "defeat_tip": "Focus your queue — spreading damage across all enemies rarely pays off here.",
+      "clear_desc": "The shrine stands quiet. The blade masters ask nothing of you — only that you are still standing. Rest here. The path ahead will not be gentle.",
       "scenario_id": "ferret_otter_rabbit_group"
     },
     {
@@ -47,6 +55,8 @@
       "map_icon": "CITADEL_3",
       "desc": "The Otters Will Teach you a new ability only if you defeat them",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["stream_slash"] }] },
+      "defeat_tip": "The turtle uses phase shifts — watch for the stance change and adjust your target.",
+      "clear_desc": "The otters bowed only after you bested them on their own terms. In defeat they offered what no training could — the secret of water: strike where the armor is not.",
       "scenario_id": "ferret_group"
     }
   ]
