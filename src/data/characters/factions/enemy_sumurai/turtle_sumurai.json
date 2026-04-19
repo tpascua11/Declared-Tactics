@@ -3,11 +3,11 @@
   "name": "TURTLE SUMURAI",
   "portrait": "ENEMY_TURTLE_SUMURAI",
   "card_size": "large",
-  "health": 1000,
-  "max_health": 1000,
+  "health": 1500,
+  "max_health": 1500,
   "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
   "resource_bar_type": "sumurai",
-  "base_speed": 80,
+  "base_speed": 100,
   "total_action_slots": 2,
   "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
   "temp_hp": 0,
@@ -108,7 +108,7 @@
   "action_sets": [
     {
       "id": "build",
-      "actions": ["Still Winds", "Still Winds"]
+      "actions": ["Still Winds", "Battojutsu"]
     },
     {
       "id": "spend",

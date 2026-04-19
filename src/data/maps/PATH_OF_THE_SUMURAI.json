@@ -42,11 +42,11 @@
     },
     {
       "id": 4,
-      "name": "THE GRAND DOJO",
+      "name": "OTTER TEST",
       "type": "BOSS",
       "map_icon": "CITADEL_3",
-      "desc": "The path ends here. The grand sumurai awaits.",
-      "reward": "PATH COMPLETE",
+      "desc": "The Otters Will Teach you a new ability only if you defeat them",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["stream_slash"] }] },
       "scenario_id": "ferret_group"
     }
   ]
