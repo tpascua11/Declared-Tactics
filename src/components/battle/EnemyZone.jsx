@@ -51,6 +51,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
       <div className="relative flex flex-row items-end gap-20" style={{ transform: `translateX(${offset}rem)` }}>
       {enemies.map(enemy => {
         const hpPct = Math.max(0, (enemy.health / enemy.max_health) * 100);
+        const tempHpPct = Math.min((enemy.temp_hp ?? 0) / enemy.max_health * 100, 100 - hpPct);
         const isDead = enemy.health <= 0;
         const anim = activeAnimations[enemy.id];
         const isActive = activeEnemyId === enemy.id && !isDead;
@@ -96,9 +97,19 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
                   style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)' }}>
                   <div className={`font-display ${sz.name} text-white tracking-widest text-center mb-1`}>{enemy.name}</div>
                   <div className="w-full relative">
-                    <div className="w-full h-3 bg-gray-600/50 rounded-full overflow-hidden">
+                    <div className="w-full h-3 bg-gray-600/50 rounded-full overflow-hidden relative">
+                      {tempHpPct > 0 && (
+                        <div
+                          className="absolute h-full transition-all duration-500"
+                          style={{
+                            width: `${hpPct + tempHpPct}%`,
+                            background: 'linear-gradient(90deg, rgba(180,220,255,0.55), rgba(210,240,255,0.75))',
+                            boxShadow: 'inset 0 0 6px rgba(180,220,255,0.6)',
+                          }}
+                        />
+                      )}
                       <div
-                        className="h-full rounded-full transition-all duration-500"
+                        className="absolute h-full transition-all duration-500"
                         style={{
                           width: `${hpPct}%`,
                           background: hpPct > 50
@@ -113,7 +124,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
                       className={`absolute inset-0 flex items-center justify-center ${sz.hpText} text-white font-mono leading-none pointer-events-none`}
                       style={{ textShadow: '0 0 4px rgba(0,0,0,0.9)' }}
                     >
-                      {enemy.health} / {enemy.max_health}
+                      {enemy.health + (enemy.temp_hp ?? 0)} / {enemy.max_health}
                     </span>
                   </div>
 

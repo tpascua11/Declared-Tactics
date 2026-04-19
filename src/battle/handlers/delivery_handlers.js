@@ -12,7 +12,9 @@ export function DamageHandler(payload, character, tag) {
 }
 
 export function HealHandler(payload, character, tag) {
-  character.health = Math.min(character.health + tag.power, character.max_health);
+  const missing = character.max_health - character.health;
+  const tempCap = Math.max(0, missing - (character.temp_hp ?? 0));
+  character.temp_hp = (character.temp_hp ?? 0) + Math.min(tag.power, tempCap);
   return { payload, consumed: true };
 }
 

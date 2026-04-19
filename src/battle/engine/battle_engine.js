@@ -471,10 +471,12 @@ export function ExecuteAction(action, interaction_result, state) {
       defPayload = damageReduceResult.payload;
       logs.push(...(damageReduceResult.logs ?? []));
 
-      // Deliver damage
+      // Deliver damage — temp_hp absorbs first, then real health
       let dmg_this_target = 0;
       for (const dmg of defPayload.damages) {
-        defTarget.health = Math.max(0, defTarget.health - dmg.power);
+        const absorbed = Math.min(defTarget.temp_hp ?? 0, dmg.power);
+        defTarget.temp_hp = (defTarget.temp_hp ?? 0) - absorbed;
+        defTarget.health = Math.max(0, defTarget.health - (dmg.power - absorbed));
         dmg_this_target += dmg.power;
         logs.push({ msg: `⚔️ ${owner.name} uses ${action.name} → ${defTarget.name} takes ${dmg.power} ${dmg.element} dmg`, type: 'dmg' });
       }
@@ -505,7 +507,7 @@ export function ExecuteAction(action, interaction_result, state) {
       const result = entry.handlers['DELIVERY'](payload, owner, tag);
       payload = result.payload || payload;
       if (tag.tag_name === 'HEAL') {
-        logs.push({ msg: `💖 ${owner.name} heals for ${tag.power} HP`, type: 'heal' });
+        logs.push({ msg: `💙 ${owner.name} gains ${tag.power} temp HP`, type: 'heal' });
       }
     } else {
       // Pass action as context so registry entries can stamp action-time data (e.g. calc_speed)

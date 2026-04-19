@@ -5,6 +5,7 @@ import { COOL_FOX as fallbackImg } from '../../assets';
 
 export default function PlayerPortrait({ player, activeAnimations = {}, floatingNumbers = [], isVictory = false }) {
   const hpPct = Math.max(0, (player.health / player.max_health) * 100);
+  const tempHpPct = Math.min((player.temp_hp ?? 0) / player.max_health * 100, 100 - hpPct);
   const portrait = (isVictory && player.victory_portrait) ? player.victory_portrait : (player.portrait ?? fallbackImg);
   const anim = activeAnimations[player.id];
   const myNumbers = floatingNumbers.filter(fn => fn.targetId === player.id);
@@ -36,8 +37,18 @@ export default function PlayerPortrait({ player, activeAnimations = {}, floating
               {player.name}
             </div>
             <div className="relative w-full h-5 bg-gray-600/20 rounded-full overflow-hidden">
+              {tempHpPct > 0 && (
+                <div
+                  className="absolute h-full transition-all duration-500"
+                  style={{
+                    width: `${hpPct + tempHpPct}%`,
+                    background: 'linear-gradient(90deg, rgba(180,220,255,0.55), rgba(210,240,255,0.75))',
+                    boxShadow: 'inset 0 0 6px rgba(180,220,255,0.6)',
+                  }}
+                />
+              )}
               <div
-                className="h-full rounded-full transition-all duration-500"
+                className="absolute h-full transition-all duration-500"
                 style={{
                   width: `${hpPct}%`,
                   background: hpPct > 50 ? 'linear-gradient(90deg,#4da6ff,#80c8ff)'
@@ -46,7 +57,7 @@ export default function PlayerPortrait({ player, activeAnimations = {}, floating
                 }}
               />
               <span className="absolute inset-0 flex items-center justify-center text-[10px] font-mono text-white drop-shadow">
-                {player.health} / {player.max_health} HP
+                {player.health + (player.temp_hp ?? 0)} / {player.max_health} HP
               </span>
             </div>
           </div>

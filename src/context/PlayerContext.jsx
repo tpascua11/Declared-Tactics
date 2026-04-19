@@ -86,6 +86,7 @@ export function derivePlayerSnapshot(playerData) {
     class_id:           classDef.id,
     health:             currentHealth,
     max_health:         maxHealth,
+    temp_hp:            0,
     base_speed:         classDef.base_speed,
     resources: Object.fromEntries(
       classDef.resources.map(r => [r.type, { current: r.starting, max: r.max }])
