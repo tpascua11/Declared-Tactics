@@ -14,6 +14,11 @@
   50%       { opacity: 0.75; text-shadow: 0 0 50px #ffe899, 0 0 100px #f5d76e, 2px 2px 0 #3a2800; }
 }
 
+@keyframes textBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
 /* ── SHAKE (physical hit) ── */
 @keyframes shake {
   0%   { transform: translate(1px, 1px)   rotate(0deg); }
@@ -231,14 +236,55 @@
   animation: march 0.1s linear infinite;
 }
 
-/* ── ENEMY EXIT (dead card fades away before bench replacement) ── */
+/* ── STAGE CLEAR (shine sweep across player portrait) ── */
+@keyframes stage-clear-shine {
+  0%   { transform: translateX(-120%) skewX(-15deg); opacity: 0; }
+  15%  { opacity: 1; }
+  50%  { transform: translateX(220%) skewX(-15deg); opacity: 1; }
+  51%  { opacity: 0; }
+  70%  { transform: translateX(-120%) skewX(-15deg); opacity: 0; }
+  85%  { opacity: 1; }
+  100% { transform: translateX(220%) skewX(-15deg); opacity: 0; }
+}
+@keyframes stage-clear-flash {
+  0%   { opacity: 0; }
+  10%  { opacity: 0.25; }
+  30%  { opacity: 0; }
+  65%  { opacity: 0; }
+  75%  { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+.animate-stage-clear::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  border-radius: inherit;
+  background: white;
+  animation: stage-clear-flash 1.2s ease-out forwards;
+}
+.animate-stage-clear::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0.4) 55%, transparent 65%);
+  animation: stage-clear-shine 1.2s ease-in-out forwards;
+}
+
+/* ── ENEMY EXIT (dead card dissolves before stage transition) ── */
 @keyframes enemy_exit {
-  0%   { opacity: 1;   transform: scale(1);    filter: brightness(1) saturate(1) blur(0px); }
-  35%  { opacity: 0.6; transform: scale(1.04); filter: brightness(1.6) saturate(0.4) blur(0px); }
-  100% { opacity: 0;   transform: scale(0.88); filter: brightness(0.4) saturate(0) blur(3px); }
+  0%   { opacity: 1;    transform: scale(1)    translateY(0);    filter: brightness(1)   saturate(1)   blur(0px); }
+  20%  { opacity: 0.9;  transform: scale(1.06) translateY(-6px); filter: brightness(2.2) saturate(0.3) blur(0px); }
+  55%  { opacity: 0.35; transform: scale(0.92) translateY(-18px); filter: brightness(0.6) saturate(0)   blur(2px); }
+  100% { opacity: 0;    transform: scale(0.78) translateY(-38px); filter: brightness(0)   saturate(0)   blur(6px); }
 }
 .animate-enemy_exit {
-  animation: enemy_exit 0.5s ease-in forwards;
+  animation: enemy_exit 0.9s cubic-bezier(0.4, 0, 1, 1) forwards;
 }
 
 /* ── ENEMY ENTER (bench replacement — drops in from above) ── */

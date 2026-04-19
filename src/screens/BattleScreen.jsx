@@ -84,6 +84,15 @@ export default function BattleScreen() {
     };
   }, [gs.phase, gs.result]);
 
+  // Stage-clear shine — fires when advancing to a new stage, completely outside the battle loop.
+  useEffect(() => {
+    if (!gs.currentStageIndex) return;
+    setActiveAnimations(prev => ({ ...prev, [player.id]: { cssClass: 'animate-stage-clear', intensity: 1 } }));
+    playSfx(sfx('BATTLE_NEXT.wav'), 0.4);
+    const t = setTimeout(() => setActiveAnimations(prev => ({ ...prev, [player.id]: null })), 2000);
+    return () => clearTimeout(t);
+  }, [gs.currentStageIndex]);
+
   // Drive battle loop with timed steps.
   // If pending animations define a battleDelay, use the longest one — otherwise fall back to duration.
   useEffect(() => {

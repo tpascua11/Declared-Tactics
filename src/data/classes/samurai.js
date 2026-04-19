@@ -41,4 +41,17 @@ export const SAMURAI = {
   ],
   cards: SAMURAI_CARDS,
   ResourceBar: SamuraiResourceBar,
+  short_rest(player) {
+    player.temp_hp = 0;
+    if (player.resources?.BATTLE_SPIRIT) {
+      player.resources.BATTLE_SPIRIT.current = Math.min(3, player.resources.BATTLE_SPIRIT.max);
+    }
+    const half = Math.floor(player.max_health / 2);
+    if (player.health < half) {
+      player.health = half;
+    } else {
+      player.health = Math.min(player.max_health, Math.floor(player.health * 1.1));
+    }
+    return player;
+  },
 };

@@ -30,10 +30,20 @@ function advanceStageOrWin(state, logs) {
     const nextIds   = scenario.stages[nextStageIndex].enemies ?? [];
     const newActive = buildStageEnemies(nextIds.slice(0, MAX_ENEMIES), nextStageIndex, 0);
     const newBench  = buildStageEnemies(nextIds.slice(MAX_ENEMIES),    nextStageIndex, MAX_ENEMIES);
-    const newChars  = [
-      ...state.characters.filter(c => c.faction === 'player'),
+
+    // Apply short_rest to the player before the next stage
+    const playersBefore = state.characters.filter(c => c.faction === 'player');
+    const restedPlayers = playersBefore.map(p => {
+      const restored = JSON.parse(JSON.stringify(p));
+      const classDef = CLASS_REGISTRY[restored.class_id];
+      return classDef?.short_rest ? classDef.short_rest(restored) : restored;
+    });
+
+    const newChars = [
+      ...restedPlayers,
       ...newActive,
     ].map(c => ({ ...c, queue: [] }));
+
     return {
       ...state,
       characters: newChars,
@@ -132,7 +142,7 @@ export function battleReducer(state, action) {
       const firstActiveEnemyId = firstOwner?.faction === 'enemy'
         ? firstAction.owner_id
         : firstTarget?.faction === 'enemy' ? firstAction.target_id : null;
-      return { ...state, characters: startChars, phase: 'BATTLE', logs: turnStartLogs, activeEnemyId: firstActiveEnemyId };
+      return { ...state, characters: startChars, phase: 'BATTLE', logs: turnStartLogs, activeEnemyId: firstActiveEnemyId, pendingAnimation: [] };
     }
 
     case 'BATTLE_STEP': {
