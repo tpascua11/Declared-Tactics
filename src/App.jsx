@@ -28,7 +28,7 @@ function getIntroAudio() {
 
 function PhaseRouter() {
   const { gs, dispatch } = useGame();
-  const [showTransition, setShowTransition] = useState(false);
+  const [pendingTransitionAction, setPendingTransitionAction] = useState(null);
 
   useEffect(() => {
     const audio = getIntroAudio();
@@ -46,16 +46,18 @@ function PhaseRouter() {
     }
   }, [gs.phase]);
 
-  const handleMidpoint = useCallback(() => dispatch({ type: 'START_NEW_GAME' }), [dispatch]);
-  const handleDone     = useCallback(() => setShowTransition(false), []);
+  const handleMidpoint = useCallback(() => {
+    if (pendingTransitionAction) dispatch({ type: pendingTransitionAction });
+  }, [dispatch, pendingTransitionAction]);
+  const handleDone = useCallback(() => setPendingTransitionAction(null), []);
 
   let screen;
   switch (gs.phase) {
     case 'TITLE':
-      screen = <TitleScreen onNewGame={() => setShowTransition(true)} />;
+      screen = <TitleScreen onNewGame={() => setPendingTransitionAction('START_NEW_GAME')} />;
       break;
     case 'CHARACTER_SELECT':
-      screen = <CharacterSelectScreen />;
+      screen = <CharacterSelectScreen onConfirm={() => setPendingTransitionAction('GO_TO_MAP')} />;
       break;
     case 'MAP':
       screen = <MapScreen />;
@@ -72,7 +74,7 @@ function PhaseRouter() {
   return (
     <>
       {screen}
-      {showTransition && (
+      {pendingTransitionAction && (
         <CardShowerTransition onMidpoint={handleMidpoint} onDone={handleDone} />
       )}
     </>

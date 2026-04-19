@@ -41,7 +41,7 @@ export default function CardShowerTransition({ onMidpoint, onDone }) {
 
   useEffect(() => {
     const audio = new Audio(rainSfx);
-    audio.volume = 0.18;
+    audio.volume = 0.1;
     audio.play().catch(() => {});
     const midT  = setTimeout(onMidpoint, MIDPOINT_DELAY);
     const doneT = setTimeout(onDone,     DONE_DELAY);

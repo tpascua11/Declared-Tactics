@@ -1,6 +1,5 @@
 import './CharacterSelectScreen.css';
 import { useState, useCallback, useEffect } from 'react';
-import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
 import {
   CLASS_ICON_SAMURAI, CLASS_ICON_WARRIOR, CLASS_ICON_FIGHTER, CLASS_ICON_MONK,
@@ -116,15 +115,13 @@ function TypewriterText({ text, className, style }) {
 }
 
 // ── Screen ───────────────────────────────────────────────────────
-export default function CharacterSelectScreen() {
-  const { dispatch } = useGame();
-  const { playerData, playerDispatch } = usePlayer();
+export default function CharacterSelectScreen({ onConfirm }) {
+  const { playerDispatch } = usePlayer();
 
-  const [selectedId, setSelectedId]       = useState('samurai');
-  const [showcasedId, setShowcasedId]     = useState('samurai');
+  const [selectedId, setSelectedId]         = useState('samurai');
+  const [showcasedId, setShowcasedId]       = useState('samurai');
   const [isTransitioning, setTransitioning] = useState(false);
-  const [fadeOut, setFadeOut]             = useState(false);
-  const [pendingMap, setPendingMap] = useState(false);
+  const [fadeOut, setFadeOut]               = useState(false);
 
   // Preload all portraits on mount so swaps are instant
   useEffect(() => {
@@ -132,14 +129,6 @@ export default function CharacterSelectScreen() {
       if (portrait) { const img = new Image(); img.src = portrait; }
     });
   }, []);
-
-  // Step 2: once CONFIRM_CLASS has resolved and playerData is ready, go to map
-  useEffect(() => {
-    if (pendingMap && playerData) {
-      dispatch({ type: 'GO_TO_MAP' });
-      setPendingMap(false);
-    }
-  }, [pendingMap, playerData, dispatch]);
 
   const showDescription = useCallback((id) => {
     if (isTransitioning) return;
@@ -226,9 +215,8 @@ export default function CharacterSelectScreen() {
                   className="start-button"
                   type="button"
                   onClick={() => {
-                    // Step 1: build + persist the player — GO_TO_MAP fires once playerData is ready
                     playerDispatch({ type: 'CONFIRM_CLASS', classId: selectedId });
-                    setPendingMap(true);
+                    onConfirm();
                   }}
                 >
                   <span className="start-text">START</span>
