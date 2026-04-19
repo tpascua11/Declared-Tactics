@@ -1,0 +1,12 @@
+{
+  "id": "testing_enemy_ground",
+  "name": "Testing Enemy Ground",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["turtle_sumurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "rewards": {}
+}

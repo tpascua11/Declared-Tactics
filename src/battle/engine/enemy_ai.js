@@ -7,6 +7,12 @@
 //
 //  ai_type field on the enemy determines the evaluator:
 //    "conditional" — data-driven condition checks (default)
+//    "sequential"  — cycles through action_sets in order
+//    "phase"       — two-phase: build resource until max, then
+//                    spend until 0, then repeat. Requires two
+//                    action_sets with id "build" and "spend".
+//                    Transition resource configured via
+//                    phase_resource (default: "BATTLE_SPIRIT").
 //
 //  Falls back to base_actions for enemies without action_sets.
 // ============================================================
@@ -43,6 +49,32 @@ export function selectActionSet(enemy) {
     enemy.sequence_index = idx + 1;
     const set = enemy.action_sets[idx];
     return set.actions.map(name => enemy.action_library[name]).filter(Boolean);
+  }
+
+  // Phase AI: toggle between "build" and "spend" phases based on resource level.
+  // current_phase persists on the enemy object between turns (same as sequence_index).
+  if (enemy.ai_type === 'phase') {
+    const resource = enemy.phase_resource ?? 'BATTLE_SPIRIT';
+    const res = enemy.resources?.[resource];
+    const current = res?.current ?? 0;
+    const max = res?.max ?? 0;
+
+    if (enemy.current_phase === 'spend') {
+      if (current <= 0) enemy.current_phase = 'build';
+    } else {
+      if (current >= max) enemy.current_phase = 'spend';
+    }
+
+    const phaseId = enemy.current_phase ?? 'build';
+    const set = enemy.action_sets.find(s => s.id === phaseId);
+    if (!set) return [];
+    const resolved = set.actions.map(name => enemy.action_library[name]).filter(Boolean);
+
+    if (set.mode === 'random') {
+      return [resolved[Math.floor(Math.random() * resolved.length)]];
+    }
+
+    return resolved;
   }
 
   for (const set of enemy.action_sets) {

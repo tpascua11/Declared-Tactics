@@ -1,0 +1,118 @@
+{
+  "id": "turtle_sumurai",
+  "name": "TURTLE SUMURAI",
+  "portrait": "ENEMY_TURTLE_SUMURAI",
+  "card_size": "large",
+  "health": 1000,
+  "max_health": 1000,
+  "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+  "resource_bar_type": "sumurai",
+  "base_speed": 80,
+  "total_action_slots": 2,
+  "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+  "temp_hp": 0,
+  "faction": "enemy",
+  "queue": [],
+  "ai_type": "phase",
+  "phase_resource": "BATTLE_SPIRIT",
+  "current_phase": "build",
+  "action_library": {
+    "Still Winds": {
+      "name": "Still Winds",
+      "icon": "ENM_SAM_BUFF_3",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [
+          { "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 },
+          { "tag_name": "STILL_WIND", "stacks": 3 }
+        ],
+        "self_if": [
+          {
+            "owner_has": "STILL_WIND",
+            "tags": [
+              { "tag_name": "HEAL", "power": 50 },
+              { "tag_name": "STILL_WIND", "stacks": 3 }
+            ]
+          }
+        ],
+        "target": []
+      }
+    },
+    "Mend": {
+      "name": "Mend",
+      "icon": "ENM_SAM_BUFF_3",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": -5,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL"],
+      "animation": "heal",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "HEAL", "power": 600 }],
+        "target": []
+      }
+    },
+    "Shinsoku": {
+      "name": "Shinsoku",
+      "icon": "ENM_SAM_BUFF_3",
+      "speed_mod": 20,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL"],
+      "animation": "run_circle",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "SPEED_BOOST", "amount": 40 }],
+        "target": []
+      }
+    },
+    "Flame Strike": {
+      "name": "Flame Strike",
+      "icon": "ENM_SAM_FLAME_STRIKE",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": 0,
+      "payload_type": "MAGIC",
+      "tag_type": ["MAGIC", "FIRE"],
+      "animation": "flame_strike",
+      "animation_intensity": 0.8,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [
+          { "tag_name": "DAMAGE", "type": "FIRE", "power": 200 },
+          { "tag_name": "BURN", "power": 20, "duration": 2, "reset": "TICK_TURN" }
+        ]
+      }
+    },
+    "Battojutsu": {
+      "name": "Battojutsu",
+      "icon": "ENM_SAM_SHEATH",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "sumurai_sheath",
+      "animation_intensity": 1.2,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "BATTOJUTSU", "multiplier": 0.75, "tier": "advanced" }],
+        "target": []
+      }
+    }
+  },
+  "action_sets": [
+    {
+      "id": "build",
+      "actions": ["Still Winds", "Still Winds"]
+    },
+    {
+      "id": "spend",
+      "actions": ["Shinsoku", "Flame Strike"]
+    }
+  ]
+}

@@ -13,7 +13,7 @@ import { calcSpeed } from './engine/battle_engine';
 import { selectActionSet } from './engine/enemy_ai';
 
 
-import TEST_ENEMY from '../data/scenarios/sumurai_enemy_group/the_ferrets.json';
+import TEST_ENEMY from '../data/scenarios/testing_enemy_ground.json';
 
 
 export const MAX_ENEMIES = 5;

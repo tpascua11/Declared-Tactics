@@ -6,6 +6,7 @@ import rabbit_sumurai      from './rabbit_sumurai.json';
 import otter_sumurai       from './otter_sumurai.json';
 import ferret_sumurai      from './ferret_sumurai.json';
 import ferret_sumurai_simple from './ferret_sumurai_simple.json';
+import turtle_sumurai        from './turtle_sumurai.json';
 
 export default [
   bear_sumurai_boss,
@@ -16,4 +17,5 @@ export default [
   otter_sumurai,
   ferret_sumurai,
   ferret_sumurai_simple,
+  turtle_sumurai,
 ];
