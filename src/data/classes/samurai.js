@@ -42,16 +42,23 @@ export const SAMURAI = {
   cards: SAMURAI_CARDS,
   ResourceBar: SamuraiResourceBar,
   short_rest(player) {
+    const restLogs = [];
     player.temp_hp = 0;
     if (player.resources?.BATTLE_SPIRIT) {
+      const prev = player.resources.BATTLE_SPIRIT.current;
       player.resources.BATTLE_SPIRIT.current = Math.min(3, player.resources.BATTLE_SPIRIT.max);
+      const next = player.resources.BATTLE_SPIRIT.current;
+      if (next !== prev) restLogs.push({ msg: `🌀 ${player.name} — Battle Spirit reset to ${next}`, type: 'info' });
     }
     const half = Math.floor(player.max_health / 2);
+    const prevHp = player.health;
     if (player.health < half) {
       player.health = half;
+      restLogs.push({ msg: `💚 ${player.name} — restored to ${player.health} HP`, type: 'heal' });
     } else {
       player.health = Math.min(player.max_health, Math.floor(player.health * 1.1));
+      if (player.health > prevHp) restLogs.push({ msg: `💚 ${player.name} — recovered ${player.health - prevHp} HP`, type: 'heal' });
     }
-    return player;
+    return { player, logs: restLogs };
   },
 };

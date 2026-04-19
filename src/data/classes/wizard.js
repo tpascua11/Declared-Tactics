@@ -27,5 +27,5 @@ export const WIZARD = {
   ],
   cards: WIZARD_CARDS,
   ResourceBar: WizardResourceBar,
-  short_rest(player) { return player; },
+  short_rest(player) { return { player, logs: [] }; },
 };

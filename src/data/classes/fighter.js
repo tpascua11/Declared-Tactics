@@ -24,5 +24,5 @@ export const FIGHTER = {
   combat_start_tags: [],
   cards: FIGHTER_CARDS,
   ResourceBar: FighterResourceBar,
-  short_rest(player) { return player; },
+  short_rest(player) { return { player, logs: [] }; },
 };

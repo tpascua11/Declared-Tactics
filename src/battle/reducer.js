@@ -33,11 +33,13 @@ function advanceStageOrWin(state, logs) {
 
     // Apply short_rest to the player before the next stage
     const playersBefore = state.characters.filter(c => c.faction === 'player');
-    const restedPlayers = playersBefore.map(p => {
+    const restResults = playersBefore.map(p => {
       const restored = JSON.parse(JSON.stringify(p));
       const classDef = CLASS_REGISTRY[restored.class_id];
-      return classDef?.short_rest ? classDef.short_rest(restored) : restored;
+      return classDef?.short_rest ? classDef.short_rest(restored) : { player: restored, logs: [] };
     });
+    const restedPlayers = restResults.map(r => r.player);
+    const restLogs = restResults.flatMap(r => r.logs);
 
     const newChars = [
       ...restedPlayers,
@@ -50,7 +52,7 @@ function advanceStageOrWin(state, logs) {
       enemyBench: newBench,
       currentStageIndex: nextStageIndex,
       phase: 'QUEUE_SETUP',
-      logs: [...logs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
+      logs: [...logs, { msg: `━━━ REST ━━━`, type: 'info' }, ...restLogs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
       activeEnemyId: null,
       pendingAnimation: newActive.map(e => ({ type: 'enemy_enter', targetId: e.id })),
       lastTargetId: newChars.find(c => c.faction === 'enemy' && c.health > 0)?.id ?? null,
