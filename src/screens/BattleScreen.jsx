@@ -352,7 +352,7 @@ export default function BattleScreen() {
             </div>
 
             {/* CENTER — Character column */}
-            <PlayerPortrait player={player} activeAnimations={activeAnimations} floatingNumbers={floatingNumbers} />
+            <PlayerPortrait player={player} activeAnimations={activeAnimations} floatingNumbers={floatingNumbers} isVictory={gs.phase === 'RESULT' && gs.result === 'WIN'} />
 
             {/* RIGHT — Advanced tag column + Slot column */}
             <div style={{ width: '340px', paddingLeft: '12px', display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: '12px' }}>

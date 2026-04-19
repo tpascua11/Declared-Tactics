@@ -4,7 +4,7 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["ferret_sumurai", "ferret_sumurai"]
+      "enemies": ["ferret_sumurai_2", "ferret_sumurai_2"]
     },
     {
       "enemies": ["ferret_sumurai", "ferret_sumurai", "ferret_sumurai"]

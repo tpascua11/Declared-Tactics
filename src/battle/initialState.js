@@ -12,6 +12,10 @@ import { derivePlayerSnapshot } from '../context/PlayerContext';
 import { calcSpeed } from './engine/battle_engine';
 import { selectActionSet } from './engine/enemy_ai';
 
+
+import TEST_ENEMY from '../data/scenarios/sumurai_enemy_group/the_ferrets.json';
+
+
 export const MAX_ENEMIES = 5;
 
 // ── BUILD STAGE ENEMIES ──
@@ -47,7 +51,7 @@ export function buildEnemyQueue(enemy) {
 // ── BUILD INITIAL STATE ──
 // scenario: a scenario JSON from src/data/scenarios/ — defaults to EMBER_KEEP for debug.
 // playerData: persistent player from PlayerContext — falls back to SAMURAI if null.
-export function buildInitialState(scenario = WOLF_SLOW_TEST, playerData = null) {
+export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
   const stage0Ids = scenario?.stages?.[0]?.enemies ?? [];
   const activeIds = stage0Ids.slice(0, MAX_ENEMIES);
   const benchIds  = stage0Ids.slice(MAX_ENEMIES);

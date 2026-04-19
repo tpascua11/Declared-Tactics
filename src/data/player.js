@@ -8,6 +8,7 @@ export function buildPlayer(classDef, { id = 'player', name, portrait } = {}) {
     id,
     name,
     portrait: portrait ?? classDef.portrait ?? null,
+    victory_portrait: classDef.victory_portrait ?? null,
     icon: classDef.icon,
     faction: 'player',
     class_id: classDef.id,

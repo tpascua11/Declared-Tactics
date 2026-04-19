@@ -10,26 +10,26 @@
       "type": "COMBAT",
       "map_icon": "CITADEL_1",
       "desc": "First contact. Light resistance.",
-      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["freeze_slash"] }] },
-      "scenario_id": "ferret_group"
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["quick_steps"] }] },
+      "scenario_id": "the_ferrets"
     },
     {
       "id": 1,
       "name": "BAMBOO TRAIL",
-      "type": "EXPLORE",
+      "type": "COMBAT",
       "map_icon": "PATH_1",
-      "desc": "Survey the forest paths for hidden caches.",
+      "desc": "Ferrets and rabbits hold the trail.",
       "reward": "Unlocks 1 card",
-      "scenario_id": null
+      "scenario_id": "bear_and_ferrets"
     },
     {
       "id": 2,
       "name": "FOX DEN",
       "type": "COMBAT",
       "map_icon": "FOREST_1",
-      "desc": "A patrol of fox sumurai blocks the path.",
+      "desc": "Ferrets, rabbits, and an otter block the path.",
       "reward": "+20 Gold",
-      "scenario_id": "ferret_group"
+      "scenario_id": "rabbit_full_squad"
     },
     {
       "id": 3,
@@ -38,7 +38,7 @@
       "map_icon": "RUINS",
       "desc": "Rest at the shrine of the old blade masters.",
       "reward": "HP Restored",
-      "scenario_id": null
+      "scenario_id": "ferret_otter_rabbit_group"
     },
     {
       "id": 4,

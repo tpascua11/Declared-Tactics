@@ -21,6 +21,7 @@ function resolveClass(classDef) {
   return {
     ...classDef,
     portrait: ASSETS[classDef.portrait] ?? null,
+    victory_portrait: ASSETS[classDef.victory_portrait] ?? null,
     cards: classDef.cards
       .map(card => ({ ...card, image: ASSETS[card.image] ?? null }))
       .sort((a, b) => {

@@ -154,7 +154,7 @@ function getNeighbors(id) {
   return n;
 }
 
-const DEBUG_UNLOCK_ALL = true;
+const DEBUG_UNLOCK_ALL = false;
 
 // Converts playerData.completed_levels ([0, 2, ...]) into a flat levelStates map.
 function deriveStates(completedLevels = []) {

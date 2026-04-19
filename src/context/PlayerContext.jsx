@@ -80,6 +80,7 @@ export function derivePlayerSnapshot(playerData) {
     id: 'vrax',
     name: 'VRAX',
     portrait:           classDef.portrait ?? null,
+    victory_portrait:   classDef.victory_portrait ?? null,
     icon:               classDef.icon,
     faction:            'player',
     class_id:           classDef.id,

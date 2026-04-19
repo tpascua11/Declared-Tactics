@@ -90,7 +90,7 @@
         ],
         "tags": {
           "self": [],
-          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 52 }]
+          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 60 }]
         }
       },
       "Flame Strike": {
@@ -107,6 +107,21 @@
           "self": [],
           "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 150 }, { "tag_name": "BURN", "power": 15, "duration": 2, "reset": "TICK_TURN" }]
         }
+      },
+      "Mend": {
+        "name": "Mend",
+        "icon": "ENM_SAM_BUFF_3",
+        "cost": { "BATTLE_SPIRIT": 3 },
+        "speed_mod": -5,
+        "payload_type": "PHYSICAL",
+        "tag_type": ["SPIRITUAL"],
+        "animation": "heal",
+        "animation_intensity": 1.0,
+        "properties": [],
+        "tags": {
+          "self": [{ "tag_name": "HEAL", "power": 500 }],
+          "target": []
+        }
       }
     },
     "action_sets": [
@@ -114,6 +129,11 @@
         "id": "flame_burst",
         "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 9 },
         "actions": ["Flame Strike"]
+      },
+      {
+        "id": "mend_heal",
+        "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+        "actions": ["Mend"]
       },
       {
         "id": "default",
@@ -292,14 +312,14 @@
         "animation_intensity": 1.0,
         "properties": [],
         "tags": {
-          "self": [{ "tag_name": "QUICK_STEPS", "dodge_range": 11, "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
+          "self": [{ "tag_name": "QUICK_STEPS", "dodge_range": 12, "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
           "target": []
         }
       },
       "Flame Strike": {
         "name": "Flame Strike",
         "icon": "ENM_SAM_FLAME_STRIKE",
-        "speed_mod": 0,
+        "speed_mod": -1,
         "payload_type": "MAGIC",
         "tag_type": ["MAGIC", "FIRE"],
         "animation": "flame_strike",
@@ -384,8 +404,8 @@
     "name": "FERRET SUMURAI",
     "portrait": "ENEMY_FERRET_SUMURAI",
     "card_size": "small",
-    "health": 250,
-    "max_health": 250,
+    "health": 230,
+    "max_health": 230,
     "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
     "resource_bar_type": "sumurai",
     "base_speed": 100,
@@ -449,6 +469,65 @@
         "id": "default",
         "mode": "random",
         "actions": ["Heavy Slice", "Quick Steps"]
+      }
+    ]
+  },
+    {
+    "id": "ferret_sumurai_simple",
+    "name": "FERRET SUMURAI",
+    "portrait": "ENEMY_FERRET_SUMURAI",
+    "card_size": "small",
+    "health": 230,
+    "max_health": 230,
+    "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+    "resource_bar_type": "sumurai",
+    "base_speed": 100,
+    "total_action_slots": 1,
+    "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+    "faction": "enemy",
+    "queue": [],
+    "ai_type": "random",
+    "action_library": {
+      "Heavy Slice": {
+        "name": "Heavy Slice",
+        "icon": "ENM_SAM_HEAVY_STRIKE_1",
+        "speed_mod": -10,
+        "payload_type": "PHYSICAL",
+        "tag_type": ["PHYSICAL", "SLASH"],
+        "animation": "heavy_slice",
+        "animation_intensity": 1.0,
+        "properties": [],
+        "tags": {
+          "self": [],
+          "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 33 }]
+        }
+      },
+      "Flame Strike": {
+        "name": "Flame Strike",
+        "icon": "ENM_SAM_FLAME_STRIKE",
+        "cost": { "BATTLE_SPIRIT": 3 },
+        "speed_mod": 0,
+        "payload_type": "MAGIC",
+        "tag_type": ["MAGIC", "FIRE"],
+        "animation": "flame_strike",
+        "animation_intensity": 0.8,
+        "properties": [],
+        "tags": {
+          "self": [],
+          "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 99 }, { "tag_name": "BURN", "power": 15, "duration": 2, "reset": "TICK_TURN" }]
+        }
+      }
+    },
+    "action_sets": [
+      {
+        "id": "flame_burst",
+        "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+        "actions": ["Flame Strike"]
+      },
+      {
+        "id": "default",
+        "mode": "random",
+        "actions": ["Heavy Slice"]
       }
     ]
   }

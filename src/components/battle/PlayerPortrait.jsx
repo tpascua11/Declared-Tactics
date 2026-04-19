@@ -3,9 +3,9 @@
 // ============================================================
 import { COOL_FOX as fallbackImg } from '../../assets';
 
-export default function PlayerPortrait({ player, activeAnimations = {}, floatingNumbers = [] }) {
+export default function PlayerPortrait({ player, activeAnimations = {}, floatingNumbers = [], isVictory = false }) {
   const hpPct = Math.max(0, (player.health / player.max_health) * 100);
-  const portrait = player.portrait ?? fallbackImg;
+  const portrait = (isVictory && player.victory_portrait) ? player.victory_portrait : (player.portrait ?? fallbackImg);
   const anim = activeAnimations[player.id];
   const myNumbers = floatingNumbers.filter(fn => fn.targetId === player.id);
 

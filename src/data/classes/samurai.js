@@ -10,6 +10,7 @@ export const SAMURAI = {
   name: 'Samurai',
   icon: '⚔️',
   portrait: 'PORTRAIT_SUMURAI',
+  victory_portrait: 'PORTRAIT_SUMURAI_VICTORY',
   base_health: 750,
   base_speed: 100,
   total_action_slots: 3,
@@ -20,7 +21,8 @@ export const SAMURAI = {
     { tag_name: 'UNDER_THE_SUN', tier: 'permanent' },
   ],
   combat_start_tags: [],
-  starting_cards: ['heavy_slice', 'flame_strike', 'storm_strike', 'quick_steps', 'stream_slash', 'still_wind', 'gouki', 'mend', 'speed_up',  'battojutsu', 'freeze_slash', 'stream_slash'],
+  starting_cards: ['heavy_slice', 'flame_strike', 'battojutsu', 'still_wind'],
+  // starting_cards: ['heavy_slice', 'flame_strike', 'storm_strike', 'quick_steps', 'stream_slash', 'still_wind', 'gouki', 'mend', 'speed_up',  ' 'freeze_slash', 'stream_slash'],
   card_order: [
     'heavy_slice',
     'stream_slash',

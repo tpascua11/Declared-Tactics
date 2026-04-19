@@ -64,6 +64,13 @@ export function addTagToPool(pool, tag, actionContext = null) {
 }
 
 
+function resolveSelfTags(action, owner) {
+  for (const branch of (action.tags?.self_if ?? [])) {
+    if (owner.active_tag_pool.some(t => t.tag_name === branch.owner_has)) return branch.tags;
+  }
+  return action.tags?.self ?? [];
+}
+
 // ── SPEED CHECK ──
 
 export function SpeedCheckAllAvailableActions(characters) {
@@ -492,7 +499,7 @@ export function ExecuteAction(action, interaction_result, state) {
   }
 
   // ── SELF TAGS ──
-  for (const tag of (action.tags?.self || [])) {
+  for (const tag of resolveSelfTags(action, owner)) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('DELIVERY')) {
       const result = entry.handlers['DELIVERY'](payload, owner, tag);

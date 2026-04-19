@@ -1,0 +1,15 @@
+{
+   "id": "ferret_otter_rabbit_group",
+  "name": "Ferrets and Rabbits and Otters?",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["ferret_sumurai", "rabbit_sumurai", "ferret_sumurai", "otter_sumurai", "ferret_sumurai"]
+    },
+    {
+      "enemies": ["rabbit_sumurai", "ferret_sumurai", "otter_sumurai", "ferret_sumurai", "rabbit_sumurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "rewards": {}
+}

@@ -1,4 +1,4 @@
-const ctx = require.context('../scenarios', false, /\.json$/);
+const ctx = require.context('../scenarios', true, /\.json$/);
 
 export const SCENARIO_REGISTRY = Object.fromEntries(
   ctx.keys().map(key => {

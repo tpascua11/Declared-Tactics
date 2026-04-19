@@ -185,6 +185,15 @@ export const SAMURAI_CARDS = [
         { tag_name: 'GAIN_RESOURCE', resource_type: 'BATTLE_SPIRIT', power: 1 },
         { tag_name: 'STILL_WIND', stacks: 3 },
       ],
+      self_if: [
+        {
+          owner_has: 'STILL_WIND',
+          tags: [
+            { tag_name: 'HEAL', power: 50 },
+            { tag_name: 'STILL_WIND', stacks: 3 },
+          ],
+        },
+      ],
       target: [],
     },
   },

@@ -9,6 +9,7 @@
 // --- Portraits ---
 export { default as COOL_FOX } from './Cool_Fox.png';
 export { default as PORTRAIT_SUMURAI } from './PLAYER_PORTRAITS/SUMURAI_2.png';
+export { default as PORTRAIT_SUMURAI_VICTORY } from './PLAYER_PORTRAITS/SUMURAI_2_VICTORY.png';
 export { default as PORTRAIT_PALADIN } from './PLAYER_PORTRAITS/PALADIN_2.png';
 export { default as PORTRAIT_ROGUE } from './PLAYER_PORTRAITS/ROGUE_3.png';
 export { default as PORTRAIT_WARRIOR } from './PLAYER_PORTRAITS/WARRIOR_2.png';
