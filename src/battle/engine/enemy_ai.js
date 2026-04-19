@@ -17,10 +17,13 @@
 //  Falls back to base_actions for enemies without action_sets.
 // ============================================================
 
-function evalCondition(condition, enemy) {
+function evalCondition(condition, enemy, opponent) {
   if (!condition) return true;
 
-  const { type, resource, value } = condition;
+  // compound AND: every sub-condition must pass
+  if (condition.all) return condition.all.every(c => evalCondition(c, enemy, opponent));
+
+  const { type, resource, value, tag } = condition;
 
   switch (type) {
     case 'RESOURCE_GTE':
@@ -31,12 +34,29 @@ function evalCondition(condition, enemy) {
       return enemy.health <= value;
     case 'HEALTH_GTE':
       return enemy.health >= value;
+    // (enemy.health + enemy.temp_hp) / enemy.max_health <= value  (0–1 range)
+    case 'HEALTH_PCT_LTE': {
+      const effective = (enemy.health ?? 0) + (enemy.temp_hp ?? 0);
+      const max = enemy.max_health ?? 1;
+      return effective / max <= value;
+    }
+    // opponent's active_tag_pool contains a tag with the given tag_name
+    case 'OPPONENT_HAS_TAG':
+      return (opponent?.active_tag_pool ?? []).some(t => t.tag_name === tag);
+    // enemy's own tag pool has a tag whose stack_count >= value
+    case 'SELF_TAG_STACK_GTE': {
+      const found = (enemy.active_tag_pool ?? []).find(t => t.tag_name === tag);
+      return (found?.stack_count ?? 0) >= value;
+    }
+    // enemy's own tag pool contains a tag with the given tag_name (any stacks)
+    case 'SELF_HAS_TAG':
+      return (enemy.active_tag_pool ?? []).some(t => t.tag_name === tag);
     default:
       return true;
   }
 }
 
-export function selectActionSet(enemy) {
+export function selectActionSet(enemy, opponent) {
   if (!enemy.action_sets || !enemy.action_library) {
     return enemy.base_actions ?? [];
   }
@@ -78,7 +98,7 @@ export function selectActionSet(enemy) {
   }
 
   for (const set of enemy.action_sets) {
-    if (evalCondition(set.condition ?? null, enemy)) {
+    if (evalCondition(set.condition ?? null, enemy, opponent)) {
       const resolved = set.actions
         .map(name => enemy.action_library[name])
         .filter(Boolean);

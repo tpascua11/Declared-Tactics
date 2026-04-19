@@ -1,10 +1,10 @@
 {
-  "id": "testing_enemy_ground",
-  "name": "Testing Enemy Ground",
+  "id": "dual_turtles",
+  "name": "Dual Turtles",
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["falcon_sumurai", "falcon_sumurai", "falcon_sumurai"]
+      "enemies": ["turtle_sumurai", "turtle_sumurai"]
     }
   ],
   "music": "WAY_OF_THE_SUMURAI_BATTLE_1",

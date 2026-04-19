@@ -126,7 +126,7 @@ export function battleReducer(state, action) {
       const chars = JSON.parse(JSON.stringify(state.characters));
       const battlePlayer = chars.find(c => c.faction === 'player');
       battlePlayer.queue = battlePlayer.queue.filter(Boolean);
-      chars.filter(c => c.faction === 'enemy' && c.health > 0).forEach(e => { e.queue = buildEnemyQueue(e); });
+      chars.filter(c => c.faction === 'enemy' && c.health > 0).forEach(e => { e.queue = buildEnemyQueue(e, battlePlayer); });
       const { newCharacters: startChars, logs: startLogs } = runPhaseOnTurnStart(chars, null);
       const turnStartLogs = [...state.logs, { msg: `━━━ TURN ${state.turn} BEGIN ━━━`, type: 'info' }, ...startLogs];
       const playerAfterStart = startChars.find(c => c.faction === 'player');
