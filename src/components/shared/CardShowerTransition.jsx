@@ -31,7 +31,7 @@ function buildCards() {
       startRot: (Math.random() - 0.5) * 64,
       endRot:   (Math.random() - 0.5) * 64,
       width:    38 + Math.floor(Math.random() * 18),
-      height:   54 + Math.floor(Math.random() * 22),
+      get height() { return Math.round(this.width * 1.5); },
     };
   });
 }
