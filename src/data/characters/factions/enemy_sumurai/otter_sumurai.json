@@ -1,0 +1,62 @@
+{
+  "id": "otter_sumurai",
+  "name": "OTTER SUMURAI",
+  "portrait": "ENEMY_OTTER_SUMURAI",
+  "card_size": "medium",
+  "health": 333,
+  "max_health": 333,
+  "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+  "resource_bar_type": "sumurai",
+  "base_speed": 100,
+  "total_action_slots": 2,
+  "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+  "temp_hp": 0,
+  "faction": "enemy",
+  "queue": [],
+  "ai_type": "conditional",
+  "action_library": {
+    "Stream Slash": {
+      "name": "Stream Slash",
+      "icon": "ENEMY_STREAM_SLASH",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "stream_slash",
+      "animation_intensity": 0.7,
+      "properties": [],
+      "tag_interactions": [
+        { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.5 }
+      ],
+      "tags": {
+        "self": [],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 52 }]
+      }
+    },
+    "Flame Strike": {
+      "name": "Flame Strike",
+      "icon": "ENM_SAM_FLAME_STRIKE",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": 0,
+      "payload_type": "MAGIC",
+      "tag_type": ["MAGIC", "FIRE"],
+      "animation": "flame_strike",
+      "animation_intensity": 0.8,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 99 }, { "tag_name": "BURN", "power": 15, "duration": 2, "reset": "TICK_TURN" }]
+      }
+    }
+  },
+  "action_sets": [
+    {
+      "id": "flame_burst",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+      "actions": ["Flame Strike", "Stream Slash"]
+    },
+    {
+      "id": "default",
+      "actions": ["Stream Slash", "Stream Slash"]
+    }
+  ]
+}

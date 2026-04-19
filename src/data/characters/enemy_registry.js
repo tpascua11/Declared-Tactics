@@ -9,7 +9,7 @@
 // ============================================================
 
 import WITCHES   from './factions/witches.json';
-import SUMURAI   from './factions/sumurai.json';
+import SUMURAI   from './factions/enemy_sumurai';
 import * as ASSETS from '../../assets';
 
 const ENEMY_LIST = [...WITCHES, ...SUMURAI];
