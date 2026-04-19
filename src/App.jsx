@@ -2,7 +2,7 @@
 //  App — phase router
 // ============================================================
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { GameProvider, useGame } from './context/GameContext';
 import { PlayerProvider } from './context/PlayerContext';
 import GameCanvas from './components/shared/GameCanvas';
@@ -15,18 +15,23 @@ import { introMusic } from './assets/MUSIC/index';
 
 const INTRO_PHASES = new Set(['TITLE', 'CHARACTER_SELECT']);
 
+// Module-level singleton so HMR re-mounts don't spawn a second instance.
+let _introAudio = null;
+function getIntroAudio() {
+  if (!_introAudio) {
+    _introAudio = new Audio(introMusic);
+    _introAudio.loop = true;
+    _introAudio.volume = 0.2;
+  }
+  return _introAudio;
+}
+
 function PhaseRouter() {
   const { gs, dispatch } = useGame();
-  const audioRef = useRef(null);
   const [showTransition, setShowTransition] = useState(false);
 
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio(introMusic);
-      audioRef.current.loop = true;
-      audioRef.current.volume = 0.2;
-    }
-    const audio = audioRef.current;
+    const audio = getIntroAudio();
     if (INTRO_PHASES.has(gs.phase)) {
       audio.play().catch(() => {
         const resume = () => {
