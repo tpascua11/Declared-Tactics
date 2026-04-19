@@ -2,7 +2,7 @@
 //  App — phase router
 // ============================================================
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { GameProvider, useGame } from './context/GameContext';
 import { PlayerProvider } from './context/PlayerContext';
 import GameCanvas from './components/shared/GameCanvas';
@@ -14,6 +14,9 @@ import CardShowerTransition from './components/shared/CardShowerTransition';
 import { introMusic } from './assets/MUSIC/index';
 
 const INTRO_PHASES = new Set(['TITLE', 'CHARACTER_SELECT']);
+const TRANSITION_PHASES = new Set(['TITLE', 'CHARACTER_SELECT', 'MAP']);
+const SHOWER_MIDPOINT = 1500;
+const SHOWER_DONE     = 3000;
 
 // Module-level singleton so HMR re-mounts don't spawn a second instance.
 let _introAudio = null;
@@ -28,7 +31,13 @@ function getIntroAudio() {
 
 function PhaseRouter() {
   const { gs, dispatch } = useGame();
-  const [pendingTransitionAction, setPendingTransitionAction] = useState(null);
+  const [displayedPhase, setDisplayedPhase] = useState(gs.phase);
+  const [showShower, setShowShower] = useState(false);
+  const displayedPhaseRef = useRef(displayedPhase);
+
+  useEffect(() => {
+    displayedPhaseRef.current = displayedPhase;
+  }, [displayedPhase]);
 
   useEffect(() => {
     const audio = getIntroAudio();
@@ -46,18 +55,30 @@ function PhaseRouter() {
     }
   }, [gs.phase]);
 
-  const handleMidpoint = useCallback(() => {
-    if (pendingTransitionAction) dispatch({ type: pendingTransitionAction });
-  }, [dispatch, pendingTransitionAction]);
-  const handleDone = useCallback(() => setPendingTransitionAction(null), []);
+  useEffect(() => {
+    if (gs.phase === displayedPhaseRef.current) return;
+
+    const prev = displayedPhaseRef.current;
+    const shouldTransition = TRANSITION_PHASES.has(prev) || TRANSITION_PHASES.has(gs.phase);
+
+    if (shouldTransition) {
+      const target = gs.phase;
+      setShowShower(true);
+      const midT  = setTimeout(() => setDisplayedPhase(target), SHOWER_MIDPOINT);
+      const doneT = setTimeout(() => setShowShower(false),      SHOWER_DONE);
+      return () => { clearTimeout(midT); clearTimeout(doneT); };
+    } else {
+      setDisplayedPhase(gs.phase);
+    }
+  }, [gs.phase]);
 
   let screen;
-  switch (gs.phase) {
+  switch (displayedPhase) {
     case 'TITLE':
-      screen = <TitleScreen onNewGame={() => setPendingTransitionAction('START_NEW_GAME')} />;
+      screen = <TitleScreen onNewGame={() => dispatch({ type: 'START_NEW_GAME' })} />;
       break;
     case 'CHARACTER_SELECT':
-      screen = <CharacterSelectScreen onConfirm={() => setPendingTransitionAction('GO_TO_MAP')} />;
+      screen = <CharacterSelectScreen />;
       break;
     case 'MAP':
       screen = <MapScreen />;
@@ -74,9 +95,7 @@ function PhaseRouter() {
   return (
     <>
       {screen}
-      {pendingTransitionAction && (
-        <CardShowerTransition onMidpoint={handleMidpoint} onDone={handleDone} />
-      )}
+      {showShower && <CardShowerTransition />}
     </>
   );
 }

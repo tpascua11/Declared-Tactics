@@ -1,5 +1,6 @@
 import './CharacterSelectScreen.css';
 import { useState, useCallback, useEffect } from 'react';
+import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
 import {
   CLASS_ICON_SAMURAI, CLASS_ICON_WARRIOR, CLASS_ICON_FIGHTER, CLASS_ICON_MONK,
@@ -115,7 +116,8 @@ function TypewriterText({ text, className, style }) {
 }
 
 // ── Screen ───────────────────────────────────────────────────────
-export default function CharacterSelectScreen({ onConfirm }) {
+export default function CharacterSelectScreen() {
+  const { dispatch } = useGame();
   const { playerDispatch } = usePlayer();
 
   const [selectedId, setSelectedId]         = useState('samurai');
@@ -216,7 +218,7 @@ export default function CharacterSelectScreen({ onConfirm }) {
                   type="button"
                   onClick={() => {
                     playerDispatch({ type: 'CONFIRM_CLASS', classId: selectedId });
-                    onConfirm();
+                    dispatch({ type: 'GO_TO_MAP' });
                   }}
                 >
                   <span className="start-text">START</span>

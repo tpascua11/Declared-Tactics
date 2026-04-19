@@ -16,8 +16,6 @@ const COLORS = [
 ];
 
 const CARD_COUNT = 300;
-const MIDPOINT_DELAY = 1500;
-const DONE_DELAY     = 3000;
 
 function buildCards() {
   return Array.from({ length: CARD_COUNT }, (_, i) => {
@@ -36,20 +34,14 @@ function buildCards() {
   });
 }
 
-export default function CardShowerTransition({ onMidpoint, onDone }) {
+export default function CardShowerTransition() {
   const cards = useMemo(buildCards, []);
 
   useEffect(() => {
     const audio = new Audio(rainSfx);
     audio.volume = 0.1;
     audio.play().catch(() => {});
-    const midT  = setTimeout(onMidpoint, MIDPOINT_DELAY);
-    const doneT = setTimeout(onDone,     DONE_DELAY);
-    return () => {
-      clearTimeout(midT);
-      clearTimeout(doneT);
-    };
-  }, [onMidpoint, onDone]);
+  }, []);
 
   return (
     <div className="shower-overlay">
