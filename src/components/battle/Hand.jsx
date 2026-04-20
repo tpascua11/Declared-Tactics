@@ -2,8 +2,7 @@
 //  Hand — Bottom section showing available cards to play
 // ============================================================
 
-import { calcSpeed } from '../../battle/engine/battle_engine';
-import { effectiveResourceAtExecution } from '../../battle/engine/preview_utils';
+import { effectiveResourceAtExecution, projectedSpeedPenalty } from '../../battle/engine/preview_utils';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import { DEBUG_HAND_COST } from '../../debug';
 
@@ -63,7 +62,7 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
       <div className="flex-1 flex items-start justify-center px-4 pt-2">
         {cards.map((card, idx) => {
           const wouldSpeed = nextSlotIndex >= 0
-            ? calcSpeed(baseSpeed + (card.speed_mod ?? 0), nextSlotIndex) + speedInfluence
+            ? (baseSpeed + (card.speed_mod ?? 0)) - projectedSpeedPenalty(queue, nextSlotIndex) + speedInfluence
             : null;
           const canAfford = DEBUG_HAND_COST || (nextSlotIndex >= 0 && Object.entries(card.cost ?? {}).every(
             ([type, amount]) => effectiveResourceAtExecution(type, nextSlotIndex, queue, resources) >= amount

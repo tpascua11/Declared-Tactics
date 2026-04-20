@@ -9,7 +9,6 @@ import WOLF_SLOW_TEST from '../data/scenarios/wolf_slow_test.json';
 import { ENEMY_REGISTRY } from '../data/characters/enemy_registry';
 import { buildPlayer } from '../data/player';
 import { derivePlayerSnapshot } from '../context/PlayerContext';
-import { calcSpeed } from './engine/battle_engine';
 import { selectActionSet } from './engine/enemy_ai';
 
 
@@ -44,7 +43,6 @@ export function buildEnemyQueue(enemy, opponent) {
     owner_name: enemy.name,
     target_id: 'vrax',
     payload_type: act.payload_type || 'PHYSICAL',
-    calc_speed: calcSpeed(enemy.base_speed + (act.speed_mod ?? 0), i),
     priority_flag: null,
   }));
 }

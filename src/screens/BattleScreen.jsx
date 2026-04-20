@@ -385,6 +385,7 @@ export default function BattleScreen() {
                 result={gs.result}
                 fizzlingCard={gs.pendingAnimation?.find(a => a.type === 'fizzle') ? { name: gs.pendingAnimation.find(a => a.type === 'fizzle').cardName } : null}
                 speedInfluence={calcSpeedInfluenceDelta(player)}
+                baseSpeed={player.base_speed}
               />
             </div>
 

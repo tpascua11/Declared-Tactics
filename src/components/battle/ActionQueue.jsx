@@ -2,8 +2,9 @@
 //  ActionQueue — Card-shaped slots to the right of Vrax
 // ============================================================
 
-export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, speedInfluence }) {
-  const PENALTIES = Array.from({ length: totalSlots }, (_, i) => i * 20);
+import { projectedSpeedPenalty } from '../../battle/engine/preview_utils';
+
+export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, speedInfluence, baseSpeed }) {
   const filledCount = queue.filter(Boolean).length;
   const canExecute = !isBattling && filledCount > 0 && filledCount >= totalSlots;
 
@@ -123,7 +124,10 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
                   style={{ background: '#0d0d1a', borderTop: `1px solid ${slot ? slot.color + '55' : '#ffffff11'}`, height: '1.1rem' }}>
                   <span className="text-[11px] font-bold font-mono"
                     style={{ color: slot ? slot.color : '#4b5563' }}>
-                    {slot ? `SPD ${slot.calc_speed + speedInfluence}` : (PENALTIES[i] > 0 ? `−${PENALTIES[i]} SPD` : '—')}
+                    {slot
+                      ? `SPD ${(baseSpeed + (slot.speed_mod ?? 0)) - projectedSpeedPenalty(queue, i) + speedInfluence}`
+                      : (projectedSpeedPenalty(queue, i) > 0 ? `−${projectedSpeedPenalty(queue, i)} SPD` : '—')
+                    }
                   </span>
                 </div>
               </div>

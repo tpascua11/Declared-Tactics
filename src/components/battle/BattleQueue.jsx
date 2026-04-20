@@ -14,17 +14,15 @@ const GAP    = 10;   // px between card slots
 
 // ── helpers ──────────────────────────────────────────────────
 
-function applySpeedCalc(action, tagPool) {
-  let speed = action.calc_speed;
+function applySpeedCalc(baseSpeed, tagPool, char) {
+  const clone = { calc_speed: baseSpeed };
   for (const tag of tagPool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('SPEED_CALC')) {
-      const clone = { calc_speed: speed };
-      entry.handlers['SPEED_CALC'](clone, null, tag);
-      speed = clone.calc_speed;
+      entry.handlers['SPEED_CALC'](clone, char, tag);
     }
   }
-  return speed;
+  return clone.calc_speed;
 }
 
 // initialLengths: { [char.id]: original queue length at battle start }
@@ -32,12 +30,12 @@ function applySpeedCalc(action, tagPool) {
 function simulateExecutionOrder(characters, initialLengths) {
   const queues = {};
   const tagPools = {};
+  const speedPenalties = {};
 
   for (const char of characters) {
     if (char.health <= 0) continue;
     const filled = (char.queue || []).filter(Boolean);
     if (filled.length === 0) continue;
-    // offset = how many of this char's cards have already executed
     const initialLen = initialLengths?.[char.id] ?? filled.length;
     const offset = initialLen - filled.length;
     queues[char.id] = filled.map((a, i) => ({
@@ -46,6 +44,7 @@ function simulateExecutionOrder(characters, initialLengths) {
       _stableKey: `${char.id}_${offset + i}`,
     }));
     tagPools[char.id] = [...(char.active_tag_pool || [])];
+    speedPenalties[char.id] = char.speed_penalty ?? 0;
   }
 
   const order = [];
@@ -53,15 +52,18 @@ function simulateExecutionOrder(characters, initialLengths) {
   for (let step = 0; step < 50; step++) {
     const candidates = Object.entries(queues)
       .filter(([, q]) => q.length > 0)
-      .map(([id, q]) => ({
-        ...q[0],
-        _simSpeed: applySpeedCalc(q[0], tagPools[id] || []),
-      }));
+      .map(([id, q]) => {
+        const action = q[0];
+        const char = action._char;
+        const base = (char.base_speed + (action.speed_mod ?? 0)) - speedPenalties[id];
+        return { ...action, _simSpeed: applySpeedCalc(base, tagPools[id] || [], char) };
+      });
     if (candidates.length === 0) break;
     candidates.sort((a, b) => b._simSpeed - a._simSpeed);
     const winner = candidates[0];
     order.push({ ...winner, calc_speed: winner._simSpeed });
     queues[winner.owner_id] = queues[winner.owner_id].slice(1);
+    if (!winner.ignores_slot_penalty) speedPenalties[winner.owner_id] += 20;
   }
   return order;
 }

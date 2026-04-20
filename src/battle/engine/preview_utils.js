@@ -26,6 +26,17 @@ export function effectiveResourceAtExecution(resourceType, mySlotIndex, queue, r
   return effect;
 }
 
+// Returns the projected speed_penalty a card at slotIndex would face at execution,
+// accounting for ignores_slot_penalty on earlier queued cards.
+export function projectedSpeedPenalty(queue, slotIndex) {
+  let penalty = 0;
+  for (let i = 0; i < slotIndex; i++) {
+    const slot = queue[i];
+    if (slot && !slot.ignores_slot_penalty) penalty += 20;
+  }
+  return penalty;
+}
+
 // Returns the net speed delta that SPEED_CALC tags on a character would apply.
 export function calcSpeedInfluenceDelta(character) {
   const dummy = { calc_speed: 0 };
