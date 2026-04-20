@@ -7,7 +7,6 @@ import { createPortal } from 'react-dom';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
 import { useGame } from '../context/GameContext';
 import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
-import { calcSpeedInfluenceDelta } from '../battle/engine/preview_utils';
 
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/MUSIC/index';
 import { ANIMATIONS, playSfxBuffer, sfx } from '../battle/animationRegistry';
@@ -384,7 +383,7 @@ export default function BattleScreen() {
                 isResult={gs.phase === 'RESULT'}
                 result={gs.result}
                 fizzlingCard={gs.pendingAnimation?.find(a => a.type === 'fizzle') ? { name: gs.pendingAnimation.find(a => a.type === 'fizzle').cardName } : null}
-                speedInfluence={calcSpeedInfluenceDelta(player)}
+                tagPool={player.active_tag_pool}
                 baseSpeed={player.base_speed}
               />
             </div>
@@ -401,7 +400,7 @@ export default function BattleScreen() {
             resources={player.resources}
             ResourceBar={ResourceBar}
             baseSpeed={player.base_speed}
-            speedInfluence={calcSpeedInfluenceDelta(player)}
+            tagPool={player.active_tag_pool}
           />
 
         </div>

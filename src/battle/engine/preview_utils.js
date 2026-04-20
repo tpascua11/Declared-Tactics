@@ -37,13 +37,25 @@ export function projectedSpeedPenalty(queue, slotIndex) {
   return penalty;
 }
 
-// Returns the net speed delta that SPEED_CALC tags on a character would apply.
-export function calcSpeedInfluenceDelta(character) {
+// Returns the projected speed influence for a card at slotIndex —
+// combines current pool SPEED_CALC tags with self tags from earlier queued cards.
+export function projectedSpeedInfluence(tagPool, queue, slotIndex) {
+  const tags = [...(tagPool ?? [])];
+
+  for (let i = 0; i < slotIndex; i++) {
+    const slot = queue[i];
+    if (!slot) continue;
+    for (const tag of slot.tags?.self ?? []) {
+      const entry = battle_registry[tag.tag_name];
+      if (entry?.phases?.includes('SPEED_CALC')) tags.push(tag);
+    }
+  }
+
   const dummy = { calc_speed: 0 };
-  for (const tag of character.active_tag_pool ?? []) {
+  for (const tag of tags) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('SPEED_CALC')) {
-      entry.handlers['SPEED_CALC'](dummy, character, tag);
+      entry.handlers['SPEED_CALC'](dummy, null, tag);
     }
   }
   return dummy.calc_speed;
