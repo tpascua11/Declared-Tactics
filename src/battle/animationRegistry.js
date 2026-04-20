@@ -14,16 +14,32 @@
 // no entry in assets/index.js needed.
 export const sfx = (name) => { const m = require(`../assets/SOUND EFFECTS/${name}`); return m.default ?? m; };
 
-// Pre-decode audio at load time so playback is instant (no decode latency on first play).
-// Call cloneNode() on the returned element instead of new Audio(src).
-const _audioCache = new Map();
-export function preloadedAudio(src) {
-  if (!_audioCache.has(src)) {
-    const a = new Audio(src);
-    a.load();
-    _audioCache.set(src, a);
-  }
-  return _audioCache.get(src);
+// Web Audio API — pre-decodes audio into PCM buffers for zero-latency playback.
+// HTMLAudioElement.load() only fetches; the browser still decodes on first play.
+// decodeAudioData() does the full decode upfront so start() is instant.
+const _ctx = new (window.AudioContext || window.webkitAudioContext)();
+const _bufferCache = new Map();
+
+export function preloadSfx(src) {
+  if (_bufferCache.has(src)) return;
+  const p = fetch(src)
+    .then(r => r.arrayBuffer())
+    .then(ab => _ctx.decodeAudioData(ab))
+    .then(buf => { _bufferCache.set(src, buf); })
+    .catch(() => {});
+  _bufferCache.set(src, p);
+}
+
+export function playSfxBuffer(src, volume = 0.6) {
+  const buf = _bufferCache.get(src);
+  if (!buf || buf instanceof Promise) return;
+  const source = _ctx.createBufferSource();
+  source.buffer = buf;
+  const gain = _ctx.createGain();
+  gain.gain.value = volume;
+  source.connect(gain);
+  gain.connect(_ctx.destination);
+  source.start();
 }
 
 export const ANIMATIONS = {
@@ -170,3 +186,13 @@ export const ANIMATIONS = {
   // ── Coming soon ──────────────────────────────────────────
   // slam:   { cssClass: 'animate-slam',   duration: 500, sfx: null },
 };
+
+// Preload every sfx referenced in the registry at module load time.
+Object.values(ANIMATIONS).forEach(({ sfx: s }) => {
+  if (!s) return;
+  (Array.isArray(s) ? s : [{ src: s }]).forEach(({ src }) => preloadSfx(src));
+});
+
+// UI sounds used directly in BattleScreen (not tied to an animation entry).
+['BATTLE_NEXT.wav', 'FUN_SELECT_2.wav', 'SELECT.wav', 'DESELECT.wav', 'START_1.wav']
+  .forEach(name => preloadSfx(sfx(name)));
