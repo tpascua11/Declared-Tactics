@@ -51,6 +51,8 @@ const MAP_ICON_LOOKUP = {
 
 const ALL_MAP_ICONS = Object.values(MAP_ICON_LOOKUP).concat([MAP_ICON_2_SNOWY_FOREST, MAP_ICON_2_GREEN_TREE_AT_SNOW]);
 
+const MAX_LEVEL_ID = Math.max(...Object.keys(MAP_DATA.levels).map(Number));
+
 const CELL_GAP  = 14;
 
 const TARGET_ROWS = 3;
@@ -640,7 +642,12 @@ export default function MapScreen() {
           reward={winModal.reward}
           unlockedCards={winModal.unlockedCards}
           mapIconSrc={winModal.mapIconSrc}
-          onClose={() => setWinModal(null)}
+          onClose={() => {
+            setWinModal(null);
+            if (winModal.levelId === MAX_LEVEL_ID) {
+              dispatch({ type: 'GO_TO_GAME_FINISH' });
+            }
+          }}
         />
       )}
 

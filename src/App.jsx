@@ -10,11 +10,12 @@ import TitleScreen from './screens/TitleScreen';
 import CharacterSelectScreen from './screens/CharacterSelectScreen';
 import BattleScreen from './screens/BattleScreen';
 import MapScreen from './screens/MapScreen';
+import GameFinishScreen from './screens/GameFinishScreen';
 import CardShowerTransition from './components/shared/CardShowerTransition';
 import { introMusic } from './assets/MUSIC/index';
 
 const INTRO_PHASES = new Set(['TITLE', 'CHARACTER_SELECT']);
-const TRANSITION_PHASES = new Set(['TITLE', 'CHARACTER_SELECT', 'MAP']);
+const TRANSITION_PHASES = new Set(['TITLE', 'CHARACTER_SELECT', 'MAP', 'GAME_FINISH']);
 const SHOWER_MIDPOINT = 1500;
 const SHOWER_DONE     = 3000;
 
@@ -82,6 +83,9 @@ function PhaseRouter() {
       break;
     case 'MAP':
       screen = <MapScreen />;
+      break;
+    case 'GAME_FINISH':
+      screen = <GameFinishScreen />;
       break;
     case 'QUEUE_SETUP':
     case 'BATTLE':

@@ -313,6 +313,9 @@ export function battleReducer(state, action) {
     case 'CLEAR_BATTLE_RESULT':
       return { ...state, battleResult: null };
 
+    case 'GO_TO_GAME_FINISH':
+      return { ...state, phase: 'GAME_FINISH' };
+
     // !! IMPORTANT — RESET must NOT rebuild the player from scratch once progression exists.
     // Player data is persistent across fights: unlocked cards, max_health upgrades,
     // total_action_slots, permanent_tags, etc. must survive between battles.
