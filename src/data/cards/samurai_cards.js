@@ -153,6 +153,7 @@ export const SAMURAI_CARDS = [
     id: 'quick_steps',
     name: 'Quick Steps',
     speed_mod: 0,
+    ignores_slot_penalty: true,
     tag_type: ['PHYSICAL', 'STANCE'],
     cost: {},
     icon: '👣',

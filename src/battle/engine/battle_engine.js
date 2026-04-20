@@ -65,6 +65,9 @@ export function SpeedCheckAllAvailableActions(characters) {
     if (!action) continue;
     if (action.priority_flag === 'SKIP') continue;
 
+    // Base speed from character state, not baked queue value
+    action.calc_speed = (character.base_speed + (action.speed_mod ?? 0)) - (character.speed_penalty ?? 0);
+
     // Apply SPEED_CALC tags
     for (const tag of character.active_tag_pool) {
       const entry = battle_registry[tag.tag_name];
@@ -526,6 +529,7 @@ export function ActionCleanup(action, state) {
   owner.queue = owner.queue.slice(1);
   // Clear priority flags on remaining queue
   if (owner.queue[0]) owner.queue[0].priority_flag = null;
+  if (!action.ignores_slot_penalty) owner.speed_penalty = (owner.speed_penalty ?? 0) + 20;
   return newState;
 }
 
@@ -590,6 +594,10 @@ export function TurnResultCleanup(state, field = null) {
   const endOfTurnResult = runPhaseEndOfTurn(newState.characters, field);
   newState.characters = endOfTurnResult.newCharacters;
   logs.push(...endOfTurnResult.logs);
+
+  for (const character of newState.characters) {
+    character.speed_penalty = 0;
+  }
 
   for (const character of newState.characters) {
     character.active_tag_pool = character.active_tag_pool.filter(tag => {
