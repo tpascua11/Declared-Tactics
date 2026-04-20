@@ -28,15 +28,14 @@ function buildRisingCards() {
     const color = COLORS[i % COLORS.length];
     const width = 38 + Math.floor(Math.random() * 18);
     return {
-      id:       i,
+      id:          i,
       color,
-      left:     Math.random() * 100,
-      delay:    Math.random() * 6.0,
-      duration: 6.0 + Math.random() * 4.0,
-      startRot: (Math.random() - 0.5) * 64,
-      endRot:   (Math.random() - 0.5) * 64,
+      left:        Math.random() * 100,
+      delay:       Math.random() * 6.0,
+      duration:    6.0 + Math.random() * 4.0,
+      spinDuration: 5.0 + Math.random() * 5.0,
       width,
-      height:   Math.round(width * 1.5),
+      height:      Math.round(width * 1.5),
     };
   });
 }
@@ -50,11 +49,10 @@ function RisingCardShower() {
           key={card.id}
           className="finish-shower-card"
           style={{
-            '--shower-duration':  `${card.duration}s`,
-            '--shower-delay':     `${card.delay}s`,
-            '--shower-start-rot': `${card.startRot}deg`,
-            '--shower-end-rot':   `${card.endRot}deg`,
-            '--card-rgb':         card.color.join(','),
+            '--shower-duration': `${card.duration}s`,
+            '--shower-delay':    `${card.delay}s`,
+            '--spin-duration':   `${card.spinDuration}s`,
+            '--card-rgb':        card.color.join(','),
             left:   `${card.left}%`,
             bottom: `-${card.height + 10}px`,
             width:  `${card.width}px`,
@@ -86,21 +84,26 @@ export default function GameFinishScreen() {
 
       <RisingCardShower />
 
-      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center gap-8 py-8">
+      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center py-8">
 
-        {/* Portrait — top, same frame as BattleScreen PlayerPortrait */}
-        <div className="flex flex-col items-center">
-          <div
-            className="relative w-[14rem] h-[21rem] rounded-2xl overflow-hidden"
-          >
+        {/* Single box — portrait + text */}
+        <div className="flex flex-col items-center gap-6 text-center" style={{
+          maxWidth: '480px',
+          background: 'rgba(0,0,0,0.65)',
+          border: '1px solid rgba(200,200,200,0.25)',
+          borderRadius: '24px',
+          padding: '32px 32px',
+          backdropFilter: 'blur(4px)',
+        }}>
+
+          {/* Portrait */}
+          <div className="relative w-[14rem] h-[21rem] rounded-2xl overflow-hidden flex-shrink-0">
             {portrait && (
               <img src={portrait} alt="" className="absolute inset-0 w-full h-full object-cover" />
             )}
           </div>
-        </div>
 
-        {/* Text — below portrait */}
-        <div className="flex flex-col items-center gap-4 px-10 text-center" style={{ maxWidth: '480px', background: 'rgba(0,0,0,0.65)', borderRadius: '24px', padding: '24px 32px', backdropFilter: 'blur(4px)' }}>
+          {/* Text */}
           <div className="finish-title">PATH CLEARED</div>
           <div className="finish-subtitle">You are a force few dare to face.</div>
           <p className="finish-body">
@@ -108,6 +111,7 @@ export default function GameFinishScreen() {
             stacked. You answered — every time. Others carry blades. You carry intent.
             A true sumurai walks not because the road is safe, but because retreat was never an option.
           </p>
+
         </div>
 
       </div>

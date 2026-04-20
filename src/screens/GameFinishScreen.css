@@ -18,7 +18,10 @@
   opacity: 0;
   will-change: transform, opacity;
   contain: layout style paint;
-  animation: showerRise var(--shower-duration, 6.0s) linear var(--shower-delay, 0s) infinite;
+  animation:
+    showerRise var(--shower-duration, 6.0s) linear var(--shower-delay, 0s) infinite,
+    showerSpin var(--spin-duration, 3.0s)   linear var(--shower-delay, 0s) infinite,
+    showerFade var(--shower-duration, 6.0s) linear var(--shower-delay, 0s) infinite;
 }
 
 .finish-shower-card::before {
@@ -30,9 +33,19 @@
 }
 
 @keyframes showerRise {
-  0%   { opacity: 0;   transform: translateY(0)       rotate(var(--shower-start-rot, 0deg)); }
+  from { translate: 0 0; }
+  to   { translate: 0 -120vh; }
+}
+
+@keyframes showerSpin {
+  from { transform: perspective(300px) rotateY(0deg); }
+  to   { transform: perspective(300px) rotateY(360deg); }
+}
+
+@keyframes showerFade {
+  0%   { opacity: 0; }
   12%  { opacity: 1; }
-  100% { opacity: 0.6; transform: translateY(-120vh)  rotate(var(--shower-end-rot,   0deg)); }
+  100% { opacity: 0.6; }
 }
 
 @keyframes finishTitlePulse {
