@@ -9,7 +9,7 @@ import { useGame } from '../context/GameContext';
 import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/MUSIC/index';
-import { ANIMATIONS, preloadedAudio, sfx } from '../battle/animationRegistry';
+import { ANIMATIONS, playSfxBuffer, sfx } from '../battle/animationRegistry';
 import '../battle/animations.css';
 import EnemyZone from '../components/battle/EnemyZone';
 import BattleLog from '../components/battle/BattleLog';
@@ -25,6 +25,7 @@ export default function BattleScreen() {
   const [lineCoords, setLineCoords] = useState(null);
   const [activeAnimations, setActiveAnimations] = useState({});
   const [floatingNumbers, setFloatingNumbers] = useState([]);
+  const [resultVisible, setResultVisible] = useState(false);
   const floatIdRef = useRef(0);
   const floatTimersRef = useRef([]);
   const animClearTimersRef = useRef([]);
@@ -62,6 +63,12 @@ export default function BattleScreen() {
   }, [gs.music]);
 
   const victoryMusicRef = useRef(null);
+
+  useEffect(() => {
+    if (gs.phase !== 'RESULT') { setResultVisible(false); return; }
+    const t = setTimeout(() => setResultVisible(true), 400);
+    return () => clearTimeout(t);
+  }, [gs.phase]);
 
   useEffect(() => {
     if (gs.phase !== 'RESULT') return;
@@ -112,9 +119,7 @@ export default function BattleScreen() {
   }, [gs.phase, gs.stepCount]);
 
   function playSfx(src, volume = 0.6) {
-    const audio = preloadedAudio(src).cloneNode();
-    audio.volume = volume;
-    audio.play().catch(() => {});
+    playSfxBuffer(src, volume);
   }
 
   // Unified animation handler — reads pendingAnimation array from reducer,
@@ -286,7 +291,7 @@ export default function BattleScreen() {
       )}
 
       {gs.phase === 'RESULT' && gs.result === 'WIN' && (
-        <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: 9000, padding: '20%'}}>
+        <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: 9000, padding: '20%', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.4s ease-in' }}>
           <div style={{
             fontFamily: "'Georgia', serif",
             fontSize: '5rem',
@@ -304,9 +309,9 @@ export default function BattleScreen() {
       {gs.phase === 'RESULT' && gs.result !== 'WIN' && (
         <>
           {/* Dark background layer */}
-          <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 9000, backgroundColor: 'rgba(0,0,0,0.72)' }} />
+          <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 9000, backgroundColor: 'rgba(0,0,0,0.72)', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.8s ease-in' }} />
           {/* DEFEATED text — above background */}
-          <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: 9002, padding: '20%' }}>
+          <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: 9002, padding: '20%', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.4s ease-in' }}>
             <div style={{
               fontFamily: "'Georgia', serif",
               fontSize: '5rem',
