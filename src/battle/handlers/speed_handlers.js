@@ -12,7 +12,6 @@ export function SpeedBoostHandler(action, character, tag) {
 }
 
 export function SpeedBoostImbueHandler(payload, character, tag) {
-  // Turn-based — let TICK_TURN handle expiry
   if (tag.mode === 'turns') return { payload, consumed: false };
 
   // Action-based — decrement and consume when exhausted
@@ -28,7 +27,7 @@ export function SpeedBoostOnApply(pool, tag) {
     if (existing && existing.mode === 'turns') {
       existing.duration = Math.max(existing.duration, tag.turns);
     } else {
-      pool.push({ ...tag, mode: 'turns', duration: tag.turns, reset: 'TICK_TURN' });
+      pool.push({ ...tag, mode: 'turns', duration: tag.turns, status_type: 'buff' });
     }
   } else {
     // Action-based mode (default: 1 action)
@@ -36,7 +35,7 @@ export function SpeedBoostOnApply(pool, tag) {
     if (existing && existing.mode === 'actions') {
       existing.actions_remaining += actions;
     } else {
-      pool.push({ ...tag, mode: 'actions', actions_remaining: actions });
+      pool.push({ ...tag, mode: 'actions', actions_remaining: actions, status_type: 'buff' });
     }
   }
 }

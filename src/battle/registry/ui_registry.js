@@ -48,6 +48,7 @@ export const ui_registry = {
 
   SPEED_BOOST: {
     icon: '⚡',
+    statusIcon: ENEMY_SPEED_UP,
     color: '#eab308',
     describe: (tag) => {
       const base = `+${tag.amount} speed`;
