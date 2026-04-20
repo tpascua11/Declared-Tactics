@@ -20,7 +20,7 @@ export function buildPlayer(classDef, { id = 'player', name, portrait } = {}) {
       classDef.resources.map(r => [r.type, { current: r.starting, max: r.max }])
     ),
     total_action_slots: classDef.total_action_slots,
-    speed_penalty: 0,
+    action_count: 0,
     active_tag_pool: [...classDef.permanent_tags],
     queue: [],
     // Store these so START_BATTLE can inject them

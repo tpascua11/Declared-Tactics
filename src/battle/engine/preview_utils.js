@@ -26,7 +26,7 @@ export function effectiveResourceAtExecution(resourceType, mySlotIndex, queue, r
   return effect;
 }
 
-// Returns the projected speed_penalty a card at slotIndex would face at execution,
+// Returns the projected action_count penalty a card at slotIndex would face at execution,
 // accounting for ignores_slot_penalty on earlier queued cards.
 export function projectedSpeedPenalty(queue, slotIndex) {
   let penalty = 0;

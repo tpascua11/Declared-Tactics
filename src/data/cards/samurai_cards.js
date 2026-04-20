@@ -75,6 +75,7 @@ export const SAMURAI_CARDS = [
     id: 'speed_up',
     name: 'Shinsoku',
     speed_mod: 20,
+    ignores_slot_penalty: true,
     tag_type: ['PHYSICAL'],
     cost: {},
     icon: '💨',
@@ -85,7 +86,7 @@ export const SAMURAI_CARDS = [
     animation_intensity: 1.0,
     tags: {
       self: [
-        { tag_name: 'SPEED_BOOST', amount: 40 },
+        { tag_name: 'SPEED_BOOST', amount: 20 },
       ],
       target: [],
     },
@@ -153,7 +154,6 @@ export const SAMURAI_CARDS = [
     id: 'quick_steps',
     name: 'Quick Steps',
     speed_mod: 0,
-    ignores_slot_penalty: true,
     tag_type: ['PHYSICAL', 'STANCE'],
     cost: {},
     icon: '👣',

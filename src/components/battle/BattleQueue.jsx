@@ -44,7 +44,7 @@ function simulateExecutionOrder(characters, initialLengths) {
       _stableKey: `${char.id}_${offset + i}`,
     }));
     tagPools[char.id] = [...(char.active_tag_pool || [])];
-    speedPenalties[char.id] = char.speed_penalty ?? 0;
+    speedPenalties[char.id] = char.action_count ?? 0;
   }
 
   const order = [];
@@ -55,7 +55,7 @@ function simulateExecutionOrder(characters, initialLengths) {
       .map(([id, q]) => {
         const action = q[0];
         const char = action._char;
-        const base = (char.base_speed + (action.speed_mod ?? 0)) - speedPenalties[id];
+        const base = (char.base_speed + (action.speed_mod ?? 0)) - speedPenalties[id] * 20;
         return { ...action, _simSpeed: applySpeedCalc(base, tagPools[id] || [], char) };
       });
     if (candidates.length === 0) break;
@@ -63,7 +63,7 @@ function simulateExecutionOrder(characters, initialLengths) {
     const winner = candidates[0];
     order.push({ ...winner, calc_speed: winner._simSpeed });
     queues[winner.owner_id] = queues[winner.owner_id].slice(1);
-    if (!winner.ignores_slot_penalty) speedPenalties[winner.owner_id] += 20;
+    if (!winner.ignores_slot_penalty) speedPenalties[winner.owner_id] += 1;
   }
   return order;
 }

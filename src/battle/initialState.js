@@ -28,7 +28,7 @@ export function buildStageEnemies(enemyIds, stageIndex, offset = 0) {
       return {
         ...JSON.parse(JSON.stringify(def)),
         id: `${def.id}_s${stageIndex}_${offset + i + 1}`,
-        speed_penalty: 0,
+        action_count: 0,
       };
     })
     .filter(Boolean);
