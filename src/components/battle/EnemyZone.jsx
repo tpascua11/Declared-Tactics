@@ -95,7 +95,14 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
                 {/* Bottom overlay: name + HP bar */}
                 <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-4"
                   style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)' }}>
-                  <div className={`font-display ${sz.name} text-white tracking-widest text-center mb-1`}>{enemy.name}</div>
+                  <div className={`font-display ${sz.name} text-white tracking-widest text-center mb-1 relative`}>
+                    {!isDead && enemy.total_action_slots > 0 && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 font-mono text-[9px] text-white flex gap-px leading-none">
+                        {Array.from({ length: enemy.total_action_slots }, (_, i) => <span key={i}>▮</span>)}
+                      </span>
+                    )}
+                    {enemy.name}
+                  </div>
                   <div className="w-full relative">
                     <div className="w-full h-3 bg-gray-600/50 rounded-full overflow-hidden relative">
                       {tempHpPct > 0 && (
