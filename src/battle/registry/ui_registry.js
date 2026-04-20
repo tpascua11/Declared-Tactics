@@ -53,7 +53,6 @@ export const ui_registry = {
     describe: (tag) => {
       const base = `+${tag.amount} speed`;
       if (tag.mode === 'turns') return `${base} (${tag.duration}T)`;
-      if (tag.actions_remaining > 1) return `${base} (${tag.actions_remaining} actions)`;
       return base;
     },
   },

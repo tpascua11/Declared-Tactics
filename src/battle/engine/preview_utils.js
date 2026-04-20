@@ -39,6 +39,11 @@ export function projectedSpeedPenalty(queue, slotIndex) {
 
 // Returns the projected speed influence for a card at slotIndex —
 // combines current pool SPEED_CALC tags with self tags from earlier queued cards.
+// NOTE: Does not simulate the IMBUE decrement, so action-based boosts (e.g. SPEED_BOOST)
+// show as active for ALL cards after the source, not just the next N. If you have 5 cards
+// after a 3-stack Shinsoku, slots 4 and 5 still show +60 in the preview even though the
+// buff would be consumed. Acceptable simplification for queue preview — revisit if a card
+// needs accurate multi-action boost display.
 export function projectedSpeedInfluence(tagPool, queue, slotIndex) {
   let tags = [...(tagPool ?? [])];
 

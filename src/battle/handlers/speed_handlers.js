@@ -13,10 +13,9 @@ export function SpeedBoostHandler(action, character, tag) {
 
 export function SpeedBoostImbueHandler(payload, character, tag) {
   if (tag.mode === 'turns') return { payload, consumed: false };
-
-  // Action-based — decrement and consume when exhausted
-  tag.actions_remaining -= 1;
-  return { payload, consumed: tag.actions_remaining <= 0 };
+  // Speed actions (e.g. Shinsoku) don't consume the boost — stacks persist
+  if (payload.properties?.includes('SPEED_ACTION')) return { payload, consumed: false };
+  return { payload, consumed: true };
 }
 
 export function SpeedBoostOnApply(pool, tag) {
@@ -30,12 +29,13 @@ export function SpeedBoostOnApply(pool, tag) {
       pool.push({ ...tag, mode: 'turns', duration: tag.turns, status_type: 'buff' });
     }
   } else {
-    // Action-based mode (default: 1 action)
-    const actions = tag.actions ?? 1;
+    // Action-based — accumulate amount up to max_amount, consumed all at once
     if (existing && existing.mode === 'actions') {
-      existing.actions_remaining += actions;
+      const cap = tag.max_amount ?? Infinity;
+      existing.amount = Math.min(existing.amount + tag.amount, cap);
+      existing.stacks = Math.round(existing.amount / tag.amount);
     } else {
-      pool.push({ ...tag, mode: 'actions', actions_remaining: actions, status_type: 'buff' });
+      pool.push({ ...tag, mode: 'actions', stacks: 1, status_type: 'buff' });
     }
   }
 }
