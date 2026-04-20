@@ -5,7 +5,7 @@
 import { useEffect, useMemo } from 'react';
 import { usePlayer } from '../context/PlayerContext';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
-import { VICTORY_MUSIC, MUSIC_REGISTRY } from '../assets/MUSIC/index';
+import { COMPLETION_MUSIC, MUSIC_REGISTRY } from '../assets/MUSIC/index';
 import './GameFinishScreen.css';
 
 const COLORS = [
@@ -70,11 +70,12 @@ export default function GameFinishScreen() {
   const portrait = classDef?.victory_portrait ?? classDef?.portrait;
 
   useEffect(() => {
-    const trackId = VICTORY_MUSIC[playerData?.class_id] ?? VICTORY_MUSIC.default;
+    const trackId = COMPLETION_MUSIC[playerData?.class_id] ?? COMPLETION_MUSIC.default;
     const src = MUSIC_REGISTRY[trackId];
     if (!src) return;
     const audio = new Audio(src);
     audio.volume = 0.35;
+    audio.loop = true;
     audio.play().catch(() => {});
     return () => { audio.pause(); audio.currentTime = 0; };
   }, [playerData?.class_id]);
@@ -106,6 +107,7 @@ export default function GameFinishScreen() {
           {/* Text */}
           <div className="finish-title">PATH CLEARED</div>
           <div className="finish-subtitle">You are a force few dare to face.</div>
+          {/* TODO: replace title, subtitle, and body with class-specific flavour text per future class */}
           <p className="finish-body">
             The path asked for discipline, cunning, and the will to rise when the odds were
             stacked. You answered — every time. Others carry blades. You carry intent.
