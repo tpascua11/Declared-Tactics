@@ -2,11 +2,12 @@
 //  Hand — Bottom section showing available cards to play
 // ============================================================
 
-import { calcSpeed, effectiveResourceAtExecution } from '../../battle/engine/battle_engine';
+import { calcSpeed } from '../../battle/engine/battle_engine';
+import { effectiveResourceAtExecution } from '../../battle/engine/preview_utils';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import { DEBUG_HAND_COST } from '../../debug';
 
-export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed }) {
+export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, speedInfluence }) {
   const filledCount = queue.filter(Boolean).length;
   const nullIdx = queue.findIndex(s => !s);
   const nextSlotIndex = filledCount >= totalSlots ? -1 : (nullIdx !== -1 ? nullIdx : queue.length);
@@ -62,7 +63,7 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
       <div className="flex-1 flex items-start justify-center px-4 pt-2">
         {cards.map((card, idx) => {
           const wouldSpeed = nextSlotIndex >= 0
-            ? calcSpeed(baseSpeed + (card.speed_mod ?? 0), nextSlotIndex)
+            ? calcSpeed(baseSpeed + (card.speed_mod ?? 0), nextSlotIndex) + speedInfluence
             : null;
           const canAfford = DEBUG_HAND_COST || (nextSlotIndex >= 0 && Object.entries(card.cost ?? {}).every(
             ([type, amount]) => effectiveResourceAtExecution(type, nextSlotIndex, queue, resources) >= amount
@@ -136,6 +137,11 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
                   <div className="text-xs text-gray-400 font-mono">{card.tag_type.join(' · ')}</div>
                   <div className="text-sm text-gray-300 leading-snug mt-1">{card.desc}</div>
                   <div className="text-xs text-[#4da6ff] font-mono mt-1">BASE SPD {baseSpeed}{card.speed_mod !== 0 ? ` ${card.speed_mod > 0 ? '+' : ''}${card.speed_mod}` : ''}</div>
+                  {speedInfluence !== 0 && (
+                    <div className={`text-xs font-mono mt-1 ${speedInfluence > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      SPD INFLUENCE {speedInfluence > 0 ? '+' : ''}{speedInfluence}
+                    </div>
+                  )}
                   {Object.entries(card.cost ?? {}).map(([type, amount]) => {
                     const free = nextSlotIndex >= 0 ? effectiveResourceAtExecution(type, nextSlotIndex, queue, resources) : 0;
                     const hasEnough = free >= amount;

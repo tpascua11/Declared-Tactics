@@ -6,7 +6,6 @@
 import { DEBUG_HAND_COST } from '../debug';
 import {
   calcSpeed,
-  effectiveResourceAtExecution,
   getEffectiveActionSlots,
   SpeedCheckAllAvailableActions,
   InteractionCheck,
@@ -15,6 +14,7 @@ import {
   TurnResultCleanup,
   runPhaseOnTurnStart,
 } from './engine/battle_engine';
+import { effectiveResourceAtExecution } from './engine/preview_utils';
 import { buildEnemyQueue, buildInitialState, buildStageEnemies, MAX_ENEMIES } from './initialState';
 import EMBER_KEEP from '../data/scenarios/ember_keep.json';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
