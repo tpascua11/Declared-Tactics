@@ -124,7 +124,7 @@ function ElectrifiedOnTurnStartHandler(context, tag) {
 }
 
 function ElectrifiedEndOfTurnHandler(context, tag) {
-  tag.stacks = Math.floor(tag.stacks / 2);
+  tag.stacks -= 1;
   if (tag.stacks <= 0) {
     return {
       consumed: true,

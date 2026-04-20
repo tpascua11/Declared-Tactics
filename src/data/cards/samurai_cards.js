@@ -235,7 +235,7 @@ export const SAMURAI_CARDS = [
       self: [],
       target: [
         { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 150 },
-        { tag_name: 'ELECTRIFIED', stacks: 2 },
+        { tag_name: 'ELECTRIFIED', stacks: 3 },
       ],
     },
   },
