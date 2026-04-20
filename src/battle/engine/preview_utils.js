@@ -40,14 +40,20 @@ export function projectedSpeedPenalty(queue, slotIndex) {
 // Returns the projected speed influence for a card at slotIndex —
 // combines current pool SPEED_CALC tags with self tags from earlier queued cards.
 export function projectedSpeedInfluence(tagPool, queue, slotIndex) {
-  const tags = [...(tagPool ?? [])];
+  let tags = [...(tagPool ?? [])];
 
   for (let i = 0; i < slotIndex; i++) {
     const slot = queue[i];
     if (!slot) continue;
     for (const tag of slot.tags?.self ?? []) {
       const entry = battle_registry[tag.tag_name];
-      if (entry?.phases?.includes('SPEED_CALC')) tags.push(tag);
+      if (!entry?.phases?.includes('SPEED_CALC')) continue;
+      // Use onApply so stacking tags (e.g. SPEED_BOOST) merge correctly
+      if (entry.onApply) {
+        entry.onApply(tags, { ...tag, tier: 'condition' });
+      } else {
+        tags.push(tag);
+      }
     }
   }
 
