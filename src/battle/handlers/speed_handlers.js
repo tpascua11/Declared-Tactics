@@ -18,6 +18,15 @@ export function SpeedBoostImbueHandler(payload, character, tag) {
   return { payload, consumed: true };
 }
 
+export function SpeedBoostOnMiss(action, owner, tag) {
+  if (tag.mode === 'turns') return { consumed: false };
+  if (action.properties?.includes('SPEED_ACTION')) return { consumed: false };
+  return {
+    consumed: true,
+    logs: [{ msg: `💨 ${owner.name}'s Speed Boost was spent — attack missed!`, type: 'debuff' }],
+  };
+}
+
 export function SpeedBoostOnApply(pool, tag) {
   const existing = pool.find(t => t.tag_name === 'SPEED_BOOST');
 
@@ -41,10 +50,11 @@ export function SpeedBoostOnApply(pool, tag) {
 }
 
 registerTag('SPEED_BOOST', {
-  phases: ['SPEED_CALC', 'IMBUE'],
+  phases: ['SPEED_CALC', 'IMBUE', 'ON_MISS'],
   onApply: SpeedBoostOnApply,
   handlers: {
     SPEED_CALC: SpeedBoostHandler,
     IMBUE: SpeedBoostImbueHandler,
+    ON_MISS: SpeedBoostOnMiss,
   },
 });
