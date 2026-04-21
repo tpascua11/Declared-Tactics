@@ -4,7 +4,7 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["tiger_sumurai"]
+      "enemies": ["turtle_sumurai", "ferret_sumurai", "turtle_sumurai"]
     }
   ],
   "music": "WAY_OF_THE_SUMURAI_BATTLE_1",

@@ -101,10 +101,50 @@ registerTag('FREEZE', {
   },
 });
 
+// ── OLD_ELECTRIFIED ──
+// Original approach: ON_TURN_START injects SHOCKED (reset: ON_OWNER_ACTION),
+// which applies -20 speed to the holder's first action then self-destructs.
+// Replaced by ELECTRIFIED which checks action_count directly in SPEED_CALC.
+
+function OldElectrifiedOnApply(pool, tag) {
+  const existing = pool.find(t => t.tag_name === 'OLD_ELECTRIFIED');
+  if (existing) {
+    existing.stacks = Math.min(10, existing.stacks + (tag.stacks ?? 10));
+  } else {
+    pool.push({ ...tag, stacks: Math.min(10, tag.stacks ?? 10) });
+  }
+}
+
+function OldElectrifiedOnTurnStartHandler(context, tag) {
+  return {
+    consumed: false,
+    inject: [{ tag_name: 'SHOCKED', reset: 'ON_OWNER_ACTION', tier: 'condition', status_type: 'debuff' }],
+    logs: [{ msg: `⚡ ${context.owner.name} is SHOCKED (-20 speed this action)`, type: 'debuff' }],
+  };
+}
+
+function OldElectrifiedEndOfTurnHandler(context, tag) {
+  tag.stacks -= 1;
+  if (tag.stacks <= 0) {
+    return { consumed: true, logs: [{ msg: `⚡ ${context.owner.name}: OLD_ELECTRIFIED wore off`, type: 'info' }] };
+  }
+  return { consumed: false, logs: [{ msg: `⚡ ${context.owner.name}: OLD_ELECTRIFIED ${tag.stacks} stack(s) remaining`, type: 'info' }] };
+}
+
+registerTag('OLD_ELECTRIFIED', {
+  phases: ['ON_TURN_START', 'END_OF_TURN'],
+  status_type: 'debuff',
+  traits: ['ELECTRIC', 'ELEMENTAL'],
+  onApply: OldElectrifiedOnApply,
+  handlers: {
+    ON_TURN_START: OldElectrifiedOnTurnStartHandler,
+    END_OF_TURN: OldElectrifiedEndOfTurnHandler,
+  },
+});
+
 // ── ELECTRIFIED ──
-// Starts at 10 stacks. Each turn start injects SHOCKED onto the holder,
-// which slows their first action by -20 speed. Halves stacks (floor) at
-// end of turn; expires at 0.
+// Applies a flat -20 speed penalty to all of the holder's actions.
+// Stacks decay by 1 at END_OF_TURN; expires at 0.
 
 function ElectrifiedOnApply(pool, tag) {
   const existing = pool.find(t => t.tag_name === 'ELECTRIFIED');
@@ -115,12 +155,8 @@ function ElectrifiedOnApply(pool, tag) {
   }
 }
 
-function ElectrifiedOnTurnStartHandler(context, tag) {
-  return {
-    consumed: false,
-    inject: [{ tag_name: 'SHOCKED', reset: 'ON_OWNER_ACTION', tier: 'condition', status_type: 'debuff' }],
-    logs: [{ msg: `⚡ ${context.owner.name} is SHOCKED (-20 speed this action)`, type: 'debuff' }],
-  };
+function ElectrifiedSpeedCalcHandler(action, character, tag) {
+  action.calc_speed -= 20;
 }
 
 function ElectrifiedEndOfTurnHandler(context, tag) {
@@ -133,24 +169,77 @@ function ElectrifiedEndOfTurnHandler(context, tag) {
   }
   return {
     consumed: false,
-    logs: [{ msg: `⚡ ${context.owner.name}: ELECTRIFIED ${tag.stacks} stack(s) remaining`, type: 'info' }],
+    logs: [
+      { msg: `⚡ ${context.owner.name} was slowed by ELECTRIFIED (-20 all actions)`, type: 'debuff' },
+      { msg: `⚡ ${context.owner.name}: ELECTRIFIED ${tag.stacks} stack(s) remaining`, type: 'info' },
+    ],
   };
 }
 
 registerTag('ELECTRIFIED', {
-  phases: ['ON_TURN_START', 'END_OF_TURN'],
+  phases: ['SPEED_CALC', 'END_OF_TURN'],
   status_type: 'debuff',
   traits: ['ELECTRIC', 'ELEMENTAL'],
   onApply: ElectrifiedOnApply,
   handlers: {
-    ON_TURN_START: ElectrifiedOnTurnStartHandler,
+    SPEED_CALC: ElectrifiedSpeedCalcHandler,
     END_OF_TURN: ElectrifiedEndOfTurnHandler,
   },
 });
 
+// ── PARALYSIS ──
+// Applies -20 speed to the holder's first action each turn (action_count === 0).
+// SPEED_CALC fires every action, but action_count tracks how many have fired
+// this turn — so the penalty only lands on the first. Do NOT use a persistent
+// SPEED_CALC tag without this guard; it would slow every action.
+// Stacks decay by 1 at END_OF_TURN; expires at 0.
+
+function ParalysisOnApply(pool, tag) {
+  const existing = pool.find(t => t.tag_name === 'PARALYSIS');
+  if (existing) {
+    existing.stacks = Math.min(10, existing.stacks + (tag.stacks ?? 10));
+  } else {
+    pool.push({ ...tag, stacks: Math.min(10, tag.stacks ?? 10) });
+  }
+}
+
+function ParalysisSpeedCalcHandler(action, character, tag) {
+  if ((character?.action_count ?? 0) === 0) {
+    action.calc_speed -= 20;
+  }
+}
+
+function ParalysisEndOfTurnHandler(context, tag) {
+  tag.stacks -= 1;
+  if (tag.stacks <= 0) {
+    return {
+      consumed: true,
+      logs: [{ msg: `⚡ ${context.owner.name}: PARALYSIS wore off`, type: 'info' }],
+    };
+  }
+  return {
+    consumed: false,
+    logs: [
+      { msg: `⚡ ${context.owner.name} was slowed by PARALYSIS (-20 first action)`, type: 'debuff' },
+      { msg: `⚡ ${context.owner.name}: PARALYSIS ${tag.stacks} stack(s) remaining`, type: 'info' },
+    ],
+  };
+}
+
+registerTag('PARALYSIS', {
+  phases: ['SPEED_CALC', 'END_OF_TURN'],
+  status_type: 'debuff',
+  traits: ['ELECTRIC', 'ELEMENTAL'],
+  onApply: ParalysisOnApply,
+  handlers: {
+    SPEED_CALC: ParalysisSpeedCalcHandler,
+    END_OF_TURN: ParalysisEndOfTurnHandler,
+  },
+});
+
 // ── SHOCKED ──
-// Injected by ELECTRIFIED each turn start. Applies -20 speed to the holder's
-// first action, then is consumed when that action fires (reset: ON_OWNER_ACTION).
+// Kept for OLD_ELECTRIFIED reference. Injected on turn start, applies -20 speed,
+// consumed after the first action fires via reset: ON_OWNER_ACTION.
 
 function ShockedSpeedCalcHandler(action, character, tag) {
   action.calc_speed -= 20;
