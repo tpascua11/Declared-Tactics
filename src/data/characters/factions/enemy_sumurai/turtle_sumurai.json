@@ -108,7 +108,15 @@
   "action_sets": [
     {
       "id": "build",
-      "actions": ["Still Winds", "Battojutsu"]
+      "candidates": [
+        {
+          "condition": { "type": "SELF_HAS_TAG", "tag": "STILL_WIND" },
+          "actions": ["Battojutsu", "Battojutsu"]
+        },
+        {
+          "actions": ["Still Winds", "Battojutsu"]
+        }
+      ]
     },
     {
       "id": "spend",

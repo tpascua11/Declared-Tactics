@@ -16,3 +16,9 @@ BATTLE ENGINE TODOS
 4. isSelfBuff detection is fragile
    - Currently inferred from (action.tags?.target ?? []).length === 0
    - Ties correctness to data shape — an explicit `self_buff: true` flag on the card would be safer
+
+5. Enemy AI: OPPONENT_HAS_QUEUED condition type
+   - Add condition that reads the player's committed queue at START_BATTLE (after Execute is pressed)
+   - Enemy reacts to what the player actually declared that turn, not hand contents
+   - Implementation: check opponent.queue[].tag_type for a given tag value
+   - Example use: "if player queued a FIRE action, switch to defensive set"

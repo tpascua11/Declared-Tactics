@@ -88,6 +88,21 @@ export function selectActionSet(enemy, opponent) {
     const phaseId = enemy.current_phase ?? 'build';
     const set = enemy.action_sets.find(s => s.id === phaseId);
     if (!set) return [];
+
+    // candidates: priority list of conditional action sets — first match wins.
+    // A candidate with no condition is an unconditional default.
+    if (set.candidates) {
+      for (const candidate of set.candidates) {
+        if (evalCondition(candidate.condition ?? null, enemy, opponent)) {
+          const resolved = candidate.actions.map(name => enemy.action_library[name]).filter(Boolean);
+          return candidate.mode === 'random'
+            ? [resolved[Math.floor(Math.random() * resolved.length)]]
+            : resolved;
+        }
+      }
+      return [];
+    }
+
     const resolved = set.actions.map(name => enemy.action_library[name]).filter(Boolean);
 
     if (set.mode === 'random') {
