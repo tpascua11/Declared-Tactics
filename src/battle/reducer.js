@@ -203,7 +203,7 @@ export function battleReducer(state, action) {
 
       if (interactionLog) newLogs.push(interactionLog);
 
-      const { newState: afterExec, logs: execLogs, actualTargetId, aoeHits, fizzled, dodged, dodgerId, isSelfBuff, animationHint, animationSelf, animationIntensity, damageDealt } = ExecuteAction(actionA, resultA, newState);
+      const { newState: afterExec, logs: execLogs, actualTargetId, aoeHits, aoeDodges, fizzled, dodged, dodgerId, isSelfBuff, animationHint, animationSelf, animationIntensity, damageDealt } = ExecuteAction(actionA, resultA, newState);
       newState = afterExec;
       newLogs.push(...execLogs);
 
@@ -240,10 +240,16 @@ export function battleReducer(state, action) {
         : nextTarget?.faction === 'enemy' ? nextTarget.id : null;
 
       let pendingAnimation = [];
-      if (dodged) {
-        pendingAnimation.push({ type: 'sidestep', targetId: dodgerId, intensity: 1.0 });
-      } else if (fizzled) {
+      if (fizzled) {
         pendingAnimation.push({ type: 'fizzle', targetId: actionA.owner_id, intensity: 1.0, cardName: actionA.name });
+      } else if (dodged) {
+        // Single-target evade
+        pendingAnimation.push({ type: 'sidestep', targetId: dodgerId, intensity: 1.0 });
+      } else if (aoeDodges?.length > 0 && aoeHits?.length === 0) {
+        // AOE complete miss — every target evaded; SFX plays only on the first
+        aoeDodges.forEach(({ targetId }, i) => {
+          pendingAnimation.push({ type: 'sidestep', targetId, intensity: 1.0, skipSfx: i > 0 });
+        });
       } else {
         if (isSelfBuff) {
           // Self-buff: animate on owner, optionally also on target if animation_self is set on target side
@@ -253,6 +259,10 @@ export function battleReducer(state, action) {
             // AOE: one shake per hit enemy; SFX plays only on the first to avoid stacking
             aoeHits.forEach(({ targetId, damage }, i) => {
               pendingAnimation.push({ type: animationHint, targetId, intensity: animationIntensity, value: damage, skipSfx: i > 0 });
+            });
+            // Sidestep for any AOE targets that evaded; SFX plays only on the first
+            aoeDodges?.forEach(({ targetId }, i) => {
+              pendingAnimation.push({ type: 'sidestep', targetId, intensity: 1.0, skipSfx: i > 0 });
             });
           } else {
             // Single-target: animate on target
