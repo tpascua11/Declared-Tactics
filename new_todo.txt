@@ -1,0 +1,18 @@
+BATTLE ENGINE TODOS
+===================
+
+1. runPhasePostAttack doesn't filter by `consumed`
+   - Only runner that returns tag_pool unchanged regardless of handler return value
+   - Either POST_ATTACK tags should never be consumed (document it), or it's an oversight
+
+2. runPhaseOnReceive silently drops logs
+   - Handlers can't emit logs — any msg a tag wants to emit on receive disappears
+
+3. AOE + ON_MISS gap [FIXED]
+   - ON_MISS only fired for single-target (early return path); AOE dodge is a `continue` inside the loop
+   - Added post-loop check: if isAoe && deliveryTargets.length > 0 && aoeHits.length === 0, run ON_MISS
+   - Note: BATTOJUTSU is unaffected (consumed by INJECT_MULT before the loop) but future ON_MISS tags are now covered
+
+4. isSelfBuff detection is fragile
+   - Currently inferred from (action.tags?.target ?? []).length === 0
+   - Ties correctness to data shape — an explicit `self_buff: true` flag on the card would be safer

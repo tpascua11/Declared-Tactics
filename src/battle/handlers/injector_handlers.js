@@ -97,6 +97,13 @@ registerTag('FUEL_TO_THE_FLAMES', {
   handlers: { INJECT_FLAT: FuelToTheFlamesHandler },
 });
 
+export function BattojutsuOnMiss(action, owner, tag) {
+  return {
+    consumed: true,
+    logs: [{ msg: `💨 ${owner.name}'s Battojutsu was spent — attack missed!`, type: 'debuff' }],
+  };
+}
+
 export function BattojutsuHandler(payload, character, tag) {
   // Non-attacking action — add 1 stack (10%), cap at 10 stacks
   if (payload.damages.length === 0) {
@@ -123,8 +130,8 @@ export function BattojutsuOnApply(pool, tag) {
 }
 
 registerTag('BATTOJUTSU', {
-  phases: ['INJECT_MULT'],
+  phases: ['INJECT_MULT', 'ON_MISS'],
   status_type: 'buff',
   onApply: BattojutsuOnApply,
-  handlers: { INJECT_MULT: BattojutsuHandler },
+  handlers: { INJECT_MULT: BattojutsuHandler, ON_MISS: BattojutsuOnMiss },
 });

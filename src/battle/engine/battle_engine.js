@@ -275,6 +275,27 @@ function resolveTagInteractions(action, target) {
   return { activeInteractions };
 }
 
+// ── ON_MISS PHASE RUNNER ──
+// Runs on the *attacker's* tag pool when their attack is evaded or cancelled by the defender.
+// Tags that should be spent on a miss (e.g. charge-ups, stance buffs) register for this phase.
+// Handler signature: (action, owner, tag) → { consumed, logs }
+
+function runPhaseOnMiss(tag_pool, action, owner) {
+  const logs = [];
+  const remaining = [];
+  for (const tag of tag_pool) {
+    const entry = battle_registry[tag.tag_name];
+    if (entry?.phases?.includes('ON_MISS')) {
+      const result = entry.handlers['ON_MISS'](action, owner, tag);
+      logs.push(...(result.logs ?? []));
+      if (!result.consumed) remaining.push(tag);
+    } else {
+      remaining.push(tag);
+    }
+  }
+  return { tag_pool: remaining, logs };
+}
+
 // ── ON_INCOMING PHASE RUNNER ──
 // Runs on the *defender's* tag pool when an action is about to hit them.
 // Any tag declaring phase 'ON_INCOMING' can cancel the action, reflect damage,
@@ -363,6 +384,9 @@ export function ExecuteAction(action, interaction_result, state) {
     logs.push(...onIncoming.logs);
     target.active_tag_pool = onIncoming.tag_pool;
     if (onIncoming.cancelled) {
+      const onMiss = runPhaseOnMiss(owner.active_tag_pool, action, owner);
+      logs.push(...onMiss.logs);
+      owner.active_tag_pool = onMiss.tag_pool;
       return { newState, logs, dodged: true, dodgerId: target.id, attackerId: owner.id };
     }
   }
@@ -483,6 +507,13 @@ export function ExecuteAction(action, interaction_result, state) {
     }
   } else {
     logs.push({ msg: `💨 ${owner.name} uses ${action.name} — no targets remaining`, type: 'info' });
+  }
+
+  // AOE complete-miss — every target evaded, fire ON_MISS on the attacker
+  if (isAoe && deliveryTargets.length > 0 && aoeHits.length === 0) {
+    const onMiss = runPhaseOnMiss(owner.active_tag_pool, action, owner);
+    logs.push(...onMiss.logs);
+    owner.active_tag_pool = onMiss.tag_pool;
   }
 
   // ── SELF TAGS ──
