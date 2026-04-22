@@ -9,10 +9,10 @@
       "name": "IRON GATE",
       "type": "COMBAT",
       "map_icon": "CITADEL_1",
-      "desc": "First contact. Light resistance.",
+      "desc": "A pair of ferrets block the iron gate. One of them snorts. 'Hah — a fox? On the Path of the Sumurai? Go home, kit.'",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["quick_steps"] }] },
       "defeat_tip": "Hestiation is defeat! Attack!",
-      "clear_desc": "The Ferrets appolgize for the mess, but this reminds you of a ability and skill. Quick Steps to dodge gracefull in the battle",
+      "clear_desc": "The ferrets go quiet. One of them laughs despite himself — 'Not bad, fox.' Watching them weave and sidestep, something clicks. Quick Steps. You're going to need that.",
       "scenario_id": "rabbit_and_boar_level_1"
     },
     {
@@ -20,10 +20,10 @@
       "name": "BAMBOO TRAIL",
       "type": "COMBAT",
       "map_icon": "PATH_1",
-      "desc": "Ferrets and rabbits hold the trail.",
+      "desc": "Boars and rabbits hold the trail. The boars are slow — but the rabbits won't stay still long enough to hit.",
       "reward": "Unlocks 1 card",
-      "defeat_tip": "Rabbits Starts with 1 Battle Spirit. Be Wary of Enemies with 3 Battle Spirit.",
-      "clear_desc": "The trail is yours. The bear's raw power was real, but a coordinated strike landed first. You are beginning to understand the weight of momentum.",
+      "defeat_tip": "Rabbits are extremely evasive. Don't waste heavy strikes on them — wait for your opening.",
+      "clear_desc": "The trail is yours. The rabbits were slippery, but you found the gaps. You're starting to understand — speed isn't just about hitting first.",
       "scenario_id": "rabbit_and_boar_level_2"
     },
     {
@@ -31,10 +31,10 @@
       "name": "FOX DEN",
       "type": "COMBAT",
       "map_icon": "FOREST_1",
-      "desc": "The Rabbits really don't like you",
+      "desc": "Five rabbits have made themselves at home in the old fox den. They see you coming — and not one of them runs.",
       "reward": "+20 Gold",
-      "defeat_tip": "The Rabbits Will Only and Always attack at turn 3 1st action, Take advantage of their patterns.",
-      "clear_desc": "5 Against one, The Rabbits underestimated you! The Turtle watching you nearby is impress, and wants to teach you important ability!",
+      "defeat_tip": "The rabbits move as a pack — they always strike at the 3rd turn, first action. Let them think they have you. Then make it count.",
+      "clear_desc": "Five against one, and not one of them ran. When the last rabbit dropped, you heard slow clapping from the tree line. A turtle steps out of the shadows, arms folded. 'You have skill, fox,' he says. 'Let me show you something.'",
       "scenario_id": "rabbit_full_squad"
     },
     {

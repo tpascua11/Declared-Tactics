@@ -1,0 +1,12 @@
+{
+  "id": "falcon_introduction",
+  "name": "Rabbits and Falcon",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["rabbit_sumurai", "falcon_sumurai_2", "rabbit_sumurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "rewards": {}
+}
