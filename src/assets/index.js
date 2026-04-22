@@ -57,6 +57,7 @@ export { default as ENEMY_RABBIT_SUMURAI_3 } from './ENEMY/RABBIT_SUMURAI_3.png'
 export { default as ENEMY_OTTER_SUMURAI } from './ENEMY/WHITE_OTTER_SUMURAI.png';
 export { default as ENEMY_TURTLE_SUMURAI } from './ENEMY/TURTLE_SUMURAI.png';
 export { default as ENEMY_FALCON_SUMURAI } from './ENEMY/FALCON_SUMURAI.png';
+export { default as ENEMY_BOAR_SUMURAI } from './ENEMY/BOAR_SUMURAI.png';
 
 // --- Status Icons ---
 export { default as STATUS_DEFAULT } from './STATUS/DEFAULT.png';
@@ -127,6 +128,7 @@ export { default as ENEMY_SPEED_UP }         from './ENEMY_ABILITY_ICONS/ENEMY_S
 export { default as ENM_SAM_STANCE_1 }       from './ENEMY_ABILITY_ICONS/ENEMY_STANCE_1.png';
 export { default as ENM_SAM_STANCE_2 }       from './ENEMY_ABILITY_ICONS/ENEMY_STANCE_2.png';
 export { default as ENM_SAM_STORM_STRIKE }   from './ENEMY_ABILITY_ICONS/ENEMY_STORM_STRIKE.png';
+export { default as ENEMY_EVADE }            from './ENEMY_ABILITY_ICONS/ENEMY_EVADE.png';
 export { default as ENEMY_STREAM_SLASH }     from './ENEMY_ABILITY_ICONS/ENEMY_STREAM_SLASH.png';
 export { default as ENEMY_RESOLVE }          from './ENEMY_ABILITY_ICONS/ENEMY_RESOLVE.png';
 

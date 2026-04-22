@@ -124,7 +124,7 @@
   100%  { transform: translate(  0px,   0px); } /* 360° — lap 2 done */
 }
 .animate-run_circle {
-  animation: run_circle calc(0.7s / var(--anim-intensity, 1)) linear;
+  animation: run_circle calc(0.5s / var(--anim-intensity, 1)) linear;
 }
 
 /* ── SIDESTEP (quick dodge — left-right dash) ── */
@@ -298,6 +298,76 @@
 }
 .animate-enemy_enter {
   animation: enemy_enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── SPEED DASH (Speed Up — sound barrier burst, two downward speed lines) ── */
+@keyframes speed_dash {
+  0%   { filter: brightness(1)   saturate(1);   transform: scaleX(1)    scaleY(1)    translateY(0px); }
+  20%  { filter: brightness(2.2) saturate(1.4); transform: scaleX(0.96) scaleY(1.02) translateY(-32px); }
+  58%  { filter: brightness(1.5) saturate(1.2); transform: scaleX(0.97) scaleY(1.01) translateY(-20px); }
+  100% { filter: brightness(1)   saturate(1);   transform: scaleX(1)    scaleY(1)    translateY(0px); }
+}
+@keyframes speed_dash_march_up {
+  from { background-position: 0% 0,     100% 0; }
+  to   { background-position: 0% -22px, 100% -22px; }
+}
+@keyframes speed_dash_lines_fade {
+  0%   { opacity: 0; }
+  12%  { opacity: 1; }
+  78%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.animate-speed_dash {
+  animation: speed_dash calc(0.75s / var(--anim-intensity, 1)) ease-out;
+  z-index: 11550;
+}
+.animate-speed_dash::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(180deg, rgba(180, 230, 255, 0.95) 0, rgba(180, 230, 255, 0.95) 16px, transparent 16px, transparent 22px),
+    repeating-linear-gradient(180deg, rgba(180, 230, 255, 0.95) 0, rgba(180, 230, 255, 0.95) 16px, transparent 16px, transparent 22px);
+  background-size: 6px 22px, 6px 22px;
+  background-repeat: repeat-y, repeat-y;
+  background-position: 0% 0, 100% 0;
+  animation:
+    speed_dash_march_up 0.04s linear infinite,
+    speed_dash_lines_fade calc(0.75s / var(--anim-intensity, 1)) ease-in-out forwards;
+}
+
+/* ── SPEED DASH PLAYER (Speed Up — player version, ants + card go upward) ── */
+@keyframes speed_dash_player {
+  0%   { filter: brightness(1)   saturate(1);   transform: scaleX(1)    scaleY(1)    translateY(0px); }
+  20%  { filter: brightness(2.2) saturate(1.4); transform: scaleX(0.96) scaleY(1.02) translateY(32px); }
+  58%  { filter: brightness(1.5) saturate(1.2); transform: scaleX(0.97) scaleY(1.01) translateY(20px); }
+  100% { filter: brightness(1)   saturate(1);   transform: scaleX(1)    scaleY(1)    translateY(0px); }
+}
+@keyframes speed_dash_march_down {
+  from { background-position: 0% 0,    100% 0; }
+  to   { background-position: 0% 22px, 100% 22px; }
+}
+.animate-speed_dash_player {
+  animation: speed_dash_player calc(0.75s / var(--anim-intensity, 1)) ease-out;
+  z-index: 50;
+}
+.animate-speed_dash_player::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(180deg, rgba(180, 230, 255, 0.95) 0, rgba(180, 230, 255, 0.95) 16px, transparent 16px, transparent 22px),
+    repeating-linear-gradient(180deg, rgba(180, 230, 255, 0.95) 0, rgba(180, 230, 255, 0.95) 16px, transparent 16px, transparent 22px);
+  background-size: 6px 22px, 6px 22px;
+  background-repeat: repeat-y, repeat-y;
+  background-position: 0% 0, 100% 0;
+  animation:
+    speed_dash_march_down 0.04s linear infinite,
+    speed_dash_lines_fade calc(0.75s / var(--anim-intensity, 1)) ease-in-out forwards;
 }
 
 /* ── Placeholders (not yet implemented) ──────────────────────

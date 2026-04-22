@@ -32,7 +32,7 @@
     },
     "Quick Steps": {
       "name": "Quick Steps",
-      "icon": "ENEMY_SPEED_UP",
+      "icon": "ENEMY_EVADE",
       "speed_mod": 1,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL", "STANCE"],

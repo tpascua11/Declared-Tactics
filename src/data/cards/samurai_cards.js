@@ -83,7 +83,7 @@ export const SAMURAI_CARDS = [
     image: 'FOX_SHINSOKU',
     color: '#38bdf8',
     desc: 'Boost the speed of your next action by 20. Ignores Speed Penalty',
-    animation: 'run_circle',
+    animation: 'speed_dash_player',
     animation_intensity: 1.0,
     tags: {
       self: [
@@ -159,7 +159,7 @@ export const SAMURAI_CARDS = [
     cost: {},
     icon: '👣',
     image: 'FOX_QUICK_STEPS',
-    color: '#34d399',
+    color: '#a5f3fc',
     desc: 'Enter a dodge stance. Side Step all attack actions to you within within -10 speed range when this action is used. This effects end after your next action.',
     animation: 'run_circle',
     animation_intensity: 1.0,

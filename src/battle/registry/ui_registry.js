@@ -7,7 +7,7 @@
 // ============================================================
 
 import { STATUS_NATURE_1, STATUS_FROST_1, STATUS_FIRE_1, FOX_QUICK_STEPS, FOX_SUMMURAI_STILL_WIND, FOX_SUMMURAI_BATTOJUTSU, FOX_SUMMURAI_HEAVY_STRIKE,
-         ENEMY_SPEED_UP, STATUS_GOUKI_1,
+         ENEMY_SPEED_UP, ENEMY_EVADE, STATUS_GOUKI_1,
  } from '../../assets';
 
 export const ui_registry = {
@@ -136,7 +136,7 @@ export const ui_registry = {
 
   QUICK_STEPS: {
     icon: '👣',
-    statusIcon: ENEMY_SPEED_UP,
+    statusIcon: ENEMY_EVADE,
     color: '#38bdf8',
     describe: (tag) => {
       if (tag.dodge_anchor == null) return 'Dodge stance active';

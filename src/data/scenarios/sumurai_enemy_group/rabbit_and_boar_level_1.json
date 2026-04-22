@@ -1,0 +1,15 @@
+{
+  "id": "rabbit_and_boar_level_1",
+  "name": "Ferrets And Boars",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["ferret_sumurai", "boar_sumurai", "ferret_sumurai"]
+    },
+    {
+      "enemies": ["boar_sumurai", "rabbit_sumurai", "ferret_sumurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "rewards": {}
+}

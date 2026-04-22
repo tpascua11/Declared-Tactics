@@ -66,7 +66,7 @@
     },
     "Shinsoku": {
       "name": "Shinsoku",
-      "icon": "ENEMY_SPEED_UP",
+      "icon": "ENEMY_EVADE",
       "speed_mod": 20,
       "ignores_slot_penalty": true,
       "payload_type": "PHYSICAL",

@@ -109,9 +109,23 @@ export const ANIMATIONS = {
   },
   run_circle: {
     cssClass: 'animate-run_circle',
-    duration: 700,
+    duration: 500,
     //battleDelay: 2000,
-    sfx: sfx('BUFF_1.wav'), 
+    sfx: sfx('BUFF_1.wav'),
+    floatingNumber: null,
+  },
+  speed_dash: {
+    cssClass: 'animate-speed_dash',
+    duration: 750,
+    sfx: sfx('SPEED_2.wav'),
+    volume: 0.7,
+    floatingNumber: null,
+  },
+  speed_dash_player: {
+    cssClass: 'animate-speed_dash_player',
+    duration: 750,
+    sfx: sfx('SPEED_2.wav'),
+    volume: 0.7,
     floatingNumber: null,
   },
   heal: {

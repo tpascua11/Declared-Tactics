@@ -11,9 +11,9 @@
       "map_icon": "CITADEL_1",
       "desc": "First contact. Light resistance.",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["quick_steps"] }] },
-      "defeat_tip": "Ferrets attack in bursts — queue your fastest card first to win the speed race.",
-      "clear_desc": "The ferrets were relentless, but you held your ground. Their speed taught you the most important lesson on this path — move first, or don't move at all.",
-      "scenario_id": "the_ferrets"
+      "defeat_tip": "Hestiation is defeat! Attack!",
+      "clear_desc": "The Ferrets appolgize for the mess, but this reminds you of a ability and skill. Quick Steps to dodge gracefull in the battle",
+      "scenario_id": "rabbit_and_boar_level_1"
     },
     {
       "id": 1,
@@ -22,19 +22,19 @@
       "map_icon": "PATH_1",
       "desc": "Ferrets and rabbits hold the trail.",
       "reward": "Unlocks 1 card",
-      "defeat_tip": "The bear hits hard on slow turns. Fill all your slots and strike before it acts.",
+      "defeat_tip": "Rabbits Starts with 1 Battle Spirit. Be Wary of Enemies with 3 Battle Spirit.",
       "clear_desc": "The trail is yours. The bear's raw power was real, but a coordinated strike landed first. You are beginning to understand the weight of momentum.",
-      "scenario_id": "bear_and_ferrets"
+      "scenario_id": "rabbit_and_boar_level_2"
     },
     {
       "id": 2,
       "name": "FOX DEN",
       "type": "COMBAT",
       "map_icon": "FOREST_1",
-      "desc": "Ferrets, rabbits, and an otter block the path.",
+      "desc": "The Rabbits really don't like you",
       "reward": "+20 Gold",
-      "defeat_tip": "The otter builds tags over time. Prioritize it early before its buffs stack.",
-      "clear_desc": "Three against one — and you still walked out. The otter nearly had you, but you read the field before the tags stacked. That awareness will carry you far.",
+      "defeat_tip": "The Rabbits Will Only and Always attack at turn 3 1st action, Take advantage of their patterns.",
+      "clear_desc": "5 Against one, The Rabbits underestimated you! The Turtle watching you nearby is impress, and wants to teach you important ability!",
       "scenario_id": "rabbit_full_squad"
     },
     {
@@ -44,19 +44,19 @@
       "map_icon": "RUINS",
       "desc": "Rest at the shrine of the old blade masters.",
       "reward": "HP Restored",
-      "defeat_tip": "Focus your queue — spreading damage across all enemies rarely pays off here.",
+      "defeat_tip": "Turtles Are Scary, make sure you take them down! Otters Wave Slash prevent you from evading!",
       "clear_desc": "The shrine stands quiet. The blade masters ask nothing of you — only that you are still standing. Rest here. The path ahead will not be gentle.",
-      "scenario_id": "ferret_otter_rabbit_group"
+      "scenario_id": "otter_2_turtle_1"
     },
     {
       "id": 4,
-      "name": "OTTER TEST",
+      "name": "2 Turtles and a Rabbit",
       "type": "BOSS",
       "map_icon": "CITADEL_3",
-      "desc": "The Otters Will Teach you a new ability only if you defeat them",
+      "desc": "To Achieve Power, you must defeat the 2 turtle master, and a rabbit for some reason",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["stream_slash"] }] },
       "defeat_tip": "The turtle uses phase shifts — watch for the stance change and adjust your target.",
-      "clear_desc": "The otters bowed only after you bested them on their own terms. In defeat they offered what no training could — the secret of water: strike where the armor is not.",
+      "clear_desc": "The Turtles are impressed by your skill, and wish you luck on your journey to becoming a great sumurai!",
       "scenario_id": "the_otter_test"
     },
     {

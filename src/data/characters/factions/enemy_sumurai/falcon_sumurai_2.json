@@ -1,8 +1,8 @@
 {
-  "id": "falcon_sumurai",
-  "name": "FALCON SUMURAI",
+  "id": "falcon_sumurai_2",
+  "name": "FALCON SUMURAI II",
   "portrait": "ENEMY_FALCON_SUMURAI",
-  "card_size": "medium",
+  "card_size": "large",
   "health": 850,
   "max_health": 850,
   "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
@@ -60,35 +60,6 @@
         "target": []
       }
     },
-    "Speed Up": {
-      "name": "Speed Up",
-      "icon": "ENM_SAM_SPEED_UP",
-      "speed_mod": 1,
-      "payload_type": "PHYSICAL",
-      "tag_type": ["PHYSICAL", "STANCE"],
-      "animation": "speed_dash",
-      "animation_intensity": 1.0,
-      "properties": [],
-      "tags": {
-        "self": [{ "tag_name": "SPEED_BOOST", "amount": 40 }],
-        "target": []
-      }
-    },
-    "Mend": {
-      "name": "Mend",
-      "icon": "ENM_SAM_BUFF_3",
-      "cost": { "BATTLE_SPIRIT": 3 },
-      "speed_mod": -5,
-      "payload_type": "PHYSICAL",
-      "tag_type": ["SPIRITUAL"],
-      "animation": "heal",
-      "animation_intensity": 1.0,
-      "properties": [],
-      "tags": {
-        "self": [{ "tag_name": "HEAL", "power": 500 }],
-        "target": []
-      }
-    },
     "Still Winds": {
       "name": "Still Winds",
       "icon": "ENM_SAM_BUFF_3",
@@ -115,6 +86,38 @@
         "target": []
       }
     },
+    "Shinsoku": {
+      "name": "Shinsoku",
+      "icon": "ENEMY_SPEED_UP",
+      "speed_mod": 20,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL"],
+      "animation": "speed_dash",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "SPEED_BOOST", "amount": 40 }],
+        "target": []
+      }
+    },
+    "Flame Strike": {
+      "name": "Flame Strike",
+      "icon": "ENM_SAM_FLAME_STRIKE",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": 0,
+      "payload_type": "MAGIC",
+      "tag_type": ["MAGIC", "FIRE"],
+      "animation": "flame_strike",
+      "animation_intensity": 0.8,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [
+          { "tag_name": "DAMAGE", "type": "FIRE", "power": 150 },
+          { "tag_name": "BURN", "power": 20, "duration": 2, "reset": "TICK_TURN" }
+        ]
+      }
+    },
     "Quick Steps": {
       "name": "Quick Steps",
       "icon": "ENEMY_EVADE",
@@ -132,44 +135,33 @@
   },
   "action_sets": [
     {
-      "id": "mend_low_hp",
-      "condition": { "all": [
-        { "type": "HEALTH_PCT_LTE", "value": 0.5 },
-        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 }
-      ]},
-      "actions": ["Mend", "Battojutsu"]
-    },
-    {
-      "id": "low_hp_build_spirit",
-      "condition": { "all": [
-        { "type": "HEALTH_PCT_LTE", "value": 0.5 },
-        { "type": "RESOURCE_LT", "resource": "BATTLE_SPIRIT", "value": 3 }
-      ]},
-      "actions": ["Quick Steps", "Still Winds"]
-    },
-    {
       "id": "gouki_punish",
       "condition": { "type": "OPPONENT_HAS_TAG", "tag": "GOUKI" },
-      "actions": ["Stream Slash", "Stream Slash"]
+      "actions": ["Heavy Slice", "Heavy Slice"]
     },
     {
       "id": "still_wind_counter",
       "condition": { "type": "OPPONENT_HAS_TAG", "tag": "STILL_WIND" },
-      "actions": ["Speed Up", "Stream Slash"]
+      "actions": ["Shinsoku", "Heavy Slice"]
     },
     {
-      "id": "battojutsu_max_spend",
-      "condition": { "type": "SELF_TAG_STACK_GTE", "tag": "BATTOJUTSU", "value": 10 },
-      "actions": ["Heavy Slice", "Battojutsu"]
+      "id": "spirit_burst",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+      "actions": ["Shinsoku", "Flame Strike"]
+    },
+    {
+      "id": "low_hp_evasive",
+      "condition": { "type": "HEALTH_PCT_LTE", "value": 0.5 },
+      "actions": ["Quick Steps", "Quick Steps"]
     },
     {
       "id": "has_still_winds",
       "condition": { "type": "SELF_HAS_TAG", "tag": "STILL_WIND" },
-      "actions": ["Quick Steps", "Battojutsu"]
+      "actions": ["Quick Steps", "Quick Steps"]
     },
     {
       "id": "default",
-      "actions": ["Still Winds", "Battojutsu"]
+      "actions": ["Quick Steps", "Still Winds"]
     }
   ]
 }
