@@ -57,7 +57,18 @@
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["stream_slash"] }] },
       "defeat_tip": "The turtle uses phase shifts — watch for the stance change and adjust your target.",
       "clear_desc": "The otters bowed only after you bested them on their own terms. In defeat they offered what no training could — the secret of water: strike where the armor is not.",
-      "scenario_id": "ferret_group"
+      "scenario_id": "the_otter_test"
+    },
+    {
+      "id": 5,
+      "name": "TURTLE TEST",
+      "type": "BOSS",
+      "map_icon": "CITADEL_3",
+      "desc": "The Turtles will teach the value of patient, and breath",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["sstill_wind"] }] },
+      "defeat_tip": "Still Wind. Generates Battle Spirit. One at the start, and for other each non-action taken. But it can be broken early! Slice Them!",
+      "clear_desc": "You Earn The Turtle's Respect, and taught you the value of breathing harmony!",
+      "scenario_id": "dual_turtles"
     }
   ]
 }

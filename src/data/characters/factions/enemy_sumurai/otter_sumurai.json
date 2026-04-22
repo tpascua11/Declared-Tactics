@@ -15,9 +15,36 @@
   "queue": [],
   "ai_type": "conditional",
   "action_library": {
+    "Still Winds": {
+      "name": "Still Winds",
+      "icon": "ENM_SAM_BUFF_3",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [
+          { "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 },
+          { "tag_name": "STILL_WIND", "stacks": 3 }
+        ],
+        "self_if": [
+          {
+            "owner_has": "STILL_WIND",
+            "tags": [
+              { "tag_name": "HEAL", "power": 50 },
+              { "tag_name": "STILL_WIND", "stacks": 3 }
+            ]
+          }
+        ],
+        "target": []
+      }
+    },
     "Stream Slash": {
       "name": "Stream Slash",
       "icon": "ENEMY_STREAM_SLASH",
+      "cost": { "BATTLE_SPIRIT": 1 },
       "speed_mod": 0,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL", "SLASH"],
@@ -25,38 +52,23 @@
       "animation_intensity": 0.7,
       "properties": [],
       "tag_interactions": [
-        { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.5 }
+        { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.6 }
       ],
       "tags": {
         "self": [],
         "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 52 }]
       }
-    },
-    "Flame Strike": {
-      "name": "Flame Strike",
-      "icon": "ENM_SAM_FLAME_STRIKE",
-      "cost": { "BATTLE_SPIRIT": 3 },
-      "speed_mod": 0,
-      "payload_type": "MAGIC",
-      "tag_type": ["MAGIC", "FIRE"],
-      "animation": "flame_strike",
-      "animation_intensity": 0.8,
-      "properties": [],
-      "tags": {
-        "self": [],
-        "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 99 }, { "tag_name": "BURN", "power": 15, "duration": 2, "reset": "TICK_TURN" }]
-      }
     }
   },
   "action_sets": [
     {
-      "id": "flame_burst",
-      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
-      "actions": ["Flame Strike", "Stream Slash"]
+      "id": "double_slash",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 2 },
+      "actions": ["Stream Slash", "Stream Slash"]
     },
     {
       "id": "default",
-      "actions": ["Stream Slash", "Stream Slash"]
+      "actions": ["Still Winds", "Stream Slash"]
     }
   ]
 }

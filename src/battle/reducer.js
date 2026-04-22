@@ -55,7 +55,8 @@ function advanceStageOrWin(state, logs) {
       logs: [...logs, { msg: `━━━ REST ━━━`, type: 'info' }, ...restLogs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
       activeEnemyId: null,
       pendingAnimation: newActive.map(e => ({ type: 'enemy_enter', targetId: e.id })),
-      lastTargetId: newChars.find(c => c.faction === 'enemy' && c.health > 0)?.id ?? null,
+      lastTargetId: newChars.find(c => c.id === state.lastTargetId && c.health > 0)?.id
+        ?? newChars.find(c => c.faction === 'enemy' && c.health > 0)?.id ?? null,
     };
   }
 
@@ -179,6 +180,7 @@ export function battleReducer(state, action) {
           );
         }
 
+        const prevTarget = nextChars.find(c => c.id === cleanedState.lastTargetId && c.health > 0);
         return {
           ...cleanedState,
           characters: nextChars,
@@ -190,7 +192,7 @@ export function battleReducer(state, action) {
             : turnEndLogs,
           activeEnemyId: null,
           pendingAnimation: enterAnimIds.map(id => ({ type: 'enemy_enter', targetId: id })),
-          lastTargetId: nextChars.find(c => c.faction === 'enemy' && c.health > 0)?.id ?? null,
+          lastTargetId: prevTarget?.id ?? nextChars.find(c => c.faction === 'enemy' && c.health > 0)?.id ?? null,
         };
       }
 
@@ -310,7 +312,11 @@ export function battleReducer(state, action) {
       // sourceLevel: { levelId } — which map level launched this fight.
       const { playerData, scenario, sourceLevel } = action.payload;
       const freshState = buildInitialState(scenario, playerData);
-      return { ...freshState, phase: 'QUEUE_SETUP', sourceLevel: sourceLevel ?? null };
+      const prevTargetId = state.lastTargetId;
+      const prevTargetAlive = prevTargetId &&
+        freshState.characters.some(c => c.id === prevTargetId && c.health > 0);
+      const lastTargetId = prevTargetAlive ? prevTargetId : freshState.lastTargetId;
+      return { ...freshState, phase: 'QUEUE_SETUP', sourceLevel: sourceLevel ?? null, lastTargetId };
     }
 
     case 'BATTLE_END': {

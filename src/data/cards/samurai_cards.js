@@ -14,7 +14,7 @@ export const SAMURAI_CARDS = [
     icon: '⚔️',
     image: 'FOX_SUMMURAI_HEAVY_STRIKE',
     color: '#f97316',
-    desc: 'A powerful slash attack.',
+    desc: '140 Damage Total. A powerful slash attack. For Each Strike done gain 1 stack of Momentum. Each stack powers up your next attack by 20%. Last Until the end of Turn.',
     animation: 'dual_heavy_slice',
     animation_intensity: 1.0,
     tags: {
@@ -31,11 +31,11 @@ export const SAMURAI_CARDS = [
     name: 'Stream Slash',
     speed_mod: 0,
     tag_type: ['PHYSICAL', 'SLASH'],
-    cost: {},
+    cost: { BATTLE_SPIRIT: 1 },
     icon: '⚔️',
     image: 'FOX_SUMMURAI_STREAM_SLASH',
     color: '#38bdf8',
-    desc: 'A flowing slash attack. Cannot be evaded. Deals 50% more damage to evasive targets.',
+    desc: '150 Damage. A flowing slash attack. Cannot be evaded. Deals 50% more damage to evasive targets.',
     tag_interactions: [
       { traits: ['EVASION'], bypass: true, bonus_multiplier: 0.5 },
     ],
@@ -43,10 +43,10 @@ export const SAMURAI_CARDS = [
     animation_intensity: 0.7,
     tags: {
       self: [
-        { tag_name: 'MOMENTUM', multiplier: 0.2, tier: 'advanced' },
+        { tag_name: 'MOMENTUM', multiplier: 0.5, tier: 'advanced' },
       ],
       target: [
-        { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 105 },
+        { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 150 },
       ],
     },
   },
@@ -101,7 +101,7 @@ export const SAMURAI_CARDS = [
     icon: '🔥',
     image: 'FOX_SUMMURAI_FLAME_STRIKE',
     color: '#ef4444',
-    desc: 'Strike target with fire for 150 damage. Costs 3 Battle Spirit.',
+    desc: 'Strike target with fire for 400 damage. Costs 3 Battle Spirit.',
     animation: 'flame_strike',
     animation_intensity: 1.2,
     tags: {
@@ -121,7 +121,7 @@ export const SAMURAI_CARDS = [
     icon: '❄️',
     image: 'FOX_SUMMURAI_FREEZE_SLASH',
     color: '#38bdf8',
-    desc: 'A chilling slash. Deal 150 Frost damage and apply Slow.',
+    desc: 'A chilling slash. Deal 150 Frost damage and apply FROST. FROST reduces action count by 1. At 3 or higher Reduce action count by 2.',
     animation: 'ice_slash',
     animation_intensity: 1.0,
     tags: {
@@ -141,7 +141,7 @@ export const SAMURAI_CARDS = [
     icon: '🔦',
     image: 'FOX_SUMMURAI_BATTOJUTSU',
     color: '#c084fc',
-    desc: 'Enter a focused draw stance. Your next attack deals 75% more damage.',
+    desc: 'Enter a focused draw stance. Your next attack deals 75% more damage. Gain An Additiona 10% per each non-action.',
     animation: 'sumurai_sheath',
     animation_intensity: 1.2,
     tags: {
@@ -228,14 +228,14 @@ export const SAMURAI_CARDS = [
     icon: '⚡',
     image: 'FOX_STORM_STRIKE',
     color: '#818cf8',
-    desc: 'Unleash a storm that strikes all enemies for 150 damage. Costs 3 Battle Spirit.',
+    desc: 'Unleash a storm that strikes all enemies for 150 damage. Costs 3 Battle Spirit. Applies ELETRIFIED, slows enemies down by -20 speed. Last until the next 3 turns.',
     animation: 'flame_strike',
     animation_intensity: 1.2,
     tags: {
       self: [],
       target: [
         { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 150 },
-        { tag_name: 'ELECTRIFIED', stacks: 3 },
+        { tag_name: 'ELECTRIFIED', stacks: 4 },
       ],
     },
   },
@@ -248,7 +248,7 @@ export const SAMURAI_CARDS = [
     icon: '🛡️',
     image: 'FOX_GUARD_STANCE',
     color: '#ca8a04 ',
-    desc: 'Cleanse all debuffs and gain Gouki (3 stacks). Reduce incoming damage by 25% per stack.',
+    desc: 'Cleanse all debuffs and gain Gouki (3 stacks). Reduce incoming damage by 25% per stack. Each Damage taken reduce stack by 1.',
     animation: 'buff',
     animation_intensity: 1.0,
     tags: {
