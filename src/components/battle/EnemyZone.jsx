@@ -3,6 +3,7 @@
 //  Layout per enemy: [Tags] [Card] [Action Stack]
 // ============================================================
 
+import { useState, useEffect } from 'react';
 import TagPool from './TagPool';
 import EnemyResourceBar from './EnemyResourceBar';
 import { SCENARIO_BACKGROUNDS } from '../../assets';
@@ -17,7 +18,40 @@ const CARD_SIZES = {
 const CARD_WIDTH_REM = { small: 8, medium: 10, large: 12 };
 const TAG_POOL_REM = 4;
 const GAP_REM = 5; // gap-20 = 5rem
+const AURA_FADE_IN_MS  = 2000;
+const AURA_FADE_OUT_MS = 1200;
 
+function AuraLayer({ auraConfig }) {
+  const [current, setCurrent] = useState(auraConfig);
+  const [outgoing, setOutgoing] = useState(null);
+
+  useEffect(() => {
+    if (auraConfig?.style === current?.style) return;
+    setOutgoing(current);
+    setCurrent(auraConfig);
+    const t = setTimeout(() => setOutgoing(null), AURA_FADE_OUT_MS);
+    return () => clearTimeout(t);
+  }, [auraConfig?.style]);
+
+  return (
+    <>
+      {outgoing && (
+        <div className="absolute inset-0 pointer-events-none aura-fade-out" style={{ '--aura-fade-out-dur': `${AURA_FADE_OUT_MS / 1000}s` }}>
+          <div className="absolute inset-0" style={{ opacity: outgoing.intensity }}>
+            <div className={`absolute inset-0 aura-${outgoing.style}`} style={{ '--aura-color': outgoing.color, '--aura-secondary': outgoing.secondary }} />
+          </div>
+        </div>
+      )}
+      {current && (
+        <div key={current.style} className="absolute inset-0 pointer-events-none aura-fade-in" style={{ '--aura-fade-in-dur': `${AURA_FADE_IN_MS / 1000}s` }}>
+          <div className="absolute inset-0" style={{ opacity: current.intensity }}>
+            <div className={`absolute inset-0 aura-${current.style}`} style={{ '--aura-color': current.color, '--aura-secondary': current.secondary }} />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 function resolveAura(enemy) {
   const set = enemy.action_sets?.find(s => s.id === enemy.display_action_set_id);
@@ -102,13 +136,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
                 <img src={enemy.portrait} alt={enemy.name} className="absolute inset-0 w-full h-full object-cover" />
 
                 {/* Aura gradient overlay — stays inside overflow-hidden */}
-                {auraConfig && (
-                  <div key={auraConfig.style} className="absolute inset-0 pointer-events-none aura-fade-in">
-                    <div className="absolute inset-0" style={{ opacity: auraConfig.intensity }}>
-                      <div className={`absolute inset-0 aura-${auraConfig.style}`} style={{ '--aura-color': auraConfig.color, '--aura-secondary': auraConfig.secondary }} />
-                    </div>
-                  </div>
-                )}
+                <AuraLayer auraConfig={auraConfig} />
 
                 {/* Bottom overlay: name + HP bar */}
                 <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-4"

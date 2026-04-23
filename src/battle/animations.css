@@ -392,13 +392,21 @@
   pointer-events: none;
 }
 
-/* ── AURA FADE-IN (on mount) ── */
+/* ── AURA FADE-IN / FADE-OUT ── */
 @keyframes aura-fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 .aura-fade-in {
-  animation: aura-fade-in 1.2s ease-in forwards;
+  animation: aura-fade-in var(--aura-fade-in-dur, 2s) ease-in forwards;
+}
+
+@keyframes aura-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.aura-fade-out {
+  animation: aura-fade-out var(--aura-fade-out-dur, 1.2s) ease-out forwards;
 }
 
 /* ── AURA WISP (slow, soft upward drift) ── */
