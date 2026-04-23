@@ -7,6 +7,7 @@ import TagPool from './TagPool';
 import EnemyResourceBar from './EnemyResourceBar';
 import { SCENARIO_BACKGROUNDS } from '../../assets';
 import { AURA_REGISTRY } from '../../battle/registry/aura_registry';
+import { predictEnemyActionSet } from '../../battle/engine/enemy_ai';
 
 const CARD_SIZES = {
   small:  { card: 'w-32 h-48',  icon: 'text-3xl py-2',   name: 'text-[10px]', hpText: 'text-[10px]' },
@@ -18,17 +19,10 @@ const CARD_WIDTH_REM = { small: 8, medium: 10, large: 12 };
 const TAG_POOL_REM = 4;
 const GAP_REM = 5; // gap-20 = 5rem
 
-function resolveAura(enemy) {
-  if (enemy.current_action_set_id && enemy.action_sets) {
-    const set = enemy.action_sets.find(s => s.id === enemy.current_action_set_id);
-    if (set?.aura) return AURA_REGISTRY[set.aura] ?? null;
-  }
-  if (enemy.current_phase && enemy.action_sets) {
-    const set = enemy.action_sets.find(s => s.id === enemy.current_phase);
-    if (set?.aura) return AURA_REGISTRY[set.aura] ?? null;
-  }
-  if (enemy.aura) return AURA_REGISTRY[enemy.aura] ?? null;
-  return null;
+function resolveAura(enemy, opponent) {
+  const set = predictEnemyActionSet(enemy, opponent);
+  const auraKey = set?.aura ?? enemy.aura ?? null;
+  return auraKey ? AURA_REGISTRY[auraKey] ?? null : null;
 }
 
 function getMidCardOffset(enemies) {
@@ -43,7 +37,7 @@ function getMidCardOffset(enemies) {
   return totalWidth / 2 - midCardCenter;
 }
 
-export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumbers = [], activeEnemyId, selectedTargetId, phase, onSelectTarget, battleBackground }) {
+export default function EnemyZone({ enemies, opponent, activeAnimations = {}, floatingNumbers = [], activeEnemyId, selectedTargetId, phase, onSelectTarget, battleBackground }) {
   const bgImage = SCENARIO_BACKGROUNDS[battleBackground] ?? SCENARIO_BACKGROUNDS['CITADEL_1_ENEMY'];
   const offset = getMidCardOffset(enemies);
   return (
@@ -76,7 +70,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
         const visibleActions = actions.slice(0, 3);
 
         const sz = CARD_SIZES[enemy.card_size] ?? CARD_SIZES.large;
-        const auraConfig = resolveAura(enemy);
+        const auraConfig = resolveAura(enemy, opponent);
 
         return (
           <div
@@ -107,7 +101,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
                 {/* Portrait fills entire card */}
                 <img src={enemy.portrait} alt={enemy.name} className="absolute inset-0 w-full h-full object-cover" />
 
-                {/* Aura overlay */}
+                {/* Aura gradient overlay — stays inside overflow-hidden */}
                 {auraConfig && (
                   <div className="absolute inset-0 pointer-events-none" style={{ opacity: auraConfig.intensity }}>
                     <div className={`absolute inset-0 aura-${auraConfig.style}`} style={{ '--aura-color': auraConfig.color, '--aura-secondary': auraConfig.secondary }} />
@@ -160,6 +154,31 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
                   <EnemyResourceBar enemy={enemy} hpText={sz.hpText} />
                 </div>
               </div>
+
+              {/* Aura particles — outside overflow-hidden so they escape the card boundary */}
+              {auraConfig?.particles && (
+                <div className="absolute inset-0 pointer-events-none" style={{ opacity: auraConfig.intensity }}>
+                  {Array.from({ length: auraConfig.particles.count }).map((_, i) => {
+                    const pct = i / auraConfig.particles.count;
+                    const x = pct * 110 - 5;
+                    const driftX = x < 15 ? '7px' : x > 90 ? '-7px' : (i % 2 === 0 ? '3px' : '-2px');
+                    return (
+                      <span
+                        key={i}
+                        className="aura-frost-particle"
+                        style={{
+                          '--p-color': auraConfig.color,
+                          '--p-delay': `${pct * auraConfig.particles.duration}s`,
+                          '--p-dur':   `${auraConfig.particles.duration + (i % 4) * 0.4}s`,
+                          '--x':       `${x}%`,
+                          '--bottom':  `${(i % 6) * 5}%`,
+                          '--drift-x': driftX,
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
 
               {/* Floating damage numbers */}
               {floatingNumbers.filter(fn => fn.targetId === enemy.id).map(fn => (

@@ -65,11 +65,6 @@ export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
     : buildPlayer(CLASS_REGISTRY.samurai, { id: 'vrax', name: 'VRAX' });
 
   const characters = [player, ...builtEnemies];
-  // Prime current_action_set_id so aura shows during QUEUE_SETUP.
-  // Sequential enemies are excluded — calling selectActionSet early would advance sequence_index.
-  builtEnemies.forEach(e => {
-    if (e.ai_type === 'conditional') selectActionSet(e, player);
-  });
   return {
     phase: new URLSearchParams(window.location.search).has('debug') ? 'QUEUE_SETUP' : 'TITLE',
     music: scenario?.music ?? null,

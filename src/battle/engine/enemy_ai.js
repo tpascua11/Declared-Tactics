@@ -127,3 +127,27 @@ export function selectActionSet(enemy, opponent) {
 
   return [];
 }
+
+// Pure read-only: returns the action set the enemy is about to use, without mutating state.
+// Mirrors selectActionSet priority. Use this to derive aura, intent display, etc.
+export function predictEnemyActionSet(enemy, opponent) {
+  if (!enemy.action_sets) return null;
+
+  if (enemy.ai_type === 'sequential') {
+    const idx = (enemy.sequence_index ?? 0) % enemy.action_sets.length;
+    return enemy.action_sets[idx] ?? null;
+  }
+
+  if (enemy.ai_type === 'phase') {
+    const phaseId = enemy.current_phase ?? 'build';
+    return enemy.action_sets.find(s => s.id === phaseId) ?? null;
+  }
+
+  for (const set of enemy.action_sets) {
+    if (evalCondition(set.condition ?? null, enemy, opponent)) {
+      return set;
+    }
+  }
+
+  return null;
+}

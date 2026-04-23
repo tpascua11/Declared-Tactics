@@ -370,6 +370,28 @@
     speed_dash_lines_fade calc(0.75s / var(--anim-intensity, 1)) ease-in-out forwards;
 }
 
+/* ── AURA FROST PARTICLE (ice shard drifting to top, lightning crackle) ── */
+@keyframes aura-frost-particle {
+  0%   { transform: translateY(0px)    translateX(0px)                             skewY(0deg);  opacity: 0;    filter: brightness(1);   }
+  10%  {                                                                                          opacity: 1;    filter: brightness(2.4); }
+  30%  { transform: translateY(-90px)  translateX(var(--drift-x, 3px))             skewY(2deg);  opacity: 0.8;  filter: brightness(1);   }
+  55%  { transform: translateY(-200px) translateX(var(--drift-x, 3px))             skewY(-1deg); opacity: 0.6;  filter: brightness(1.5); }
+  80%  { transform: translateY(-320px) translateX(calc(var(--drift-x, 3px) * 0.6)) skewY(1deg);  opacity: 0.25; filter: brightness(1);   }
+  100% { transform: translateY(-400px) translateX(calc(var(--drift-x, 3px) * 0.3)) skewY(0deg);  opacity: 0;    filter: brightness(1);   }
+}
+.aura-frost-particle {
+  position: absolute;
+  bottom: var(--bottom, 10%);
+  left: var(--x, 50%);
+  width: 2px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--p-color, #38bdf8);
+  box-shadow: 0 0 6px 2px var(--p-color, #38bdf8), 0 0 2px 1px rgba(255,255,255,0.5);
+  animation: aura-frost-particle var(--p-dur, 3s) ease-out var(--p-delay, 0s) infinite;
+  pointer-events: none;
+}
+
 /* ── AURA WISP (slow, soft upward drift) ── */
 @keyframes aura-wisp {
   0%, 100% { transform: translateY(0); }
