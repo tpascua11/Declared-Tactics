@@ -4,6 +4,12 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
+      "enemies": ["rabbit_sumurai", "rabbit_sumurai"]
+    },
+    {
+      "enemies": ["rabbit_sumurai", "rabbit_sumurai"]
+    },
+    {
       "enemies": ["ferret_sumurai", "boar_sumurai", "ferret_sumurai"]
     },
     {

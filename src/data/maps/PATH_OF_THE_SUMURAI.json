@@ -40,35 +40,58 @@
     {
       "id": 3,
       "name": "SILENT SHRINE",
-      "type": "RESTORE",
+      "type": "COMBAT",
       "map_icon": "RUINS",
-      "desc": "Rest at the shrine of the old blade masters.",
-      "reward": "HP Restored",
-      "defeat_tip": "Turtles Are Scary, make sure you take them down! Otters Wave Slash prevent you from evading!",
-      "clear_desc": "The shrine stands quiet. The blade masters ask nothing of you — only that you are still standing. Rest here. The path ahead will not be gentle.",
-      "scenario_id": "otter_2_turtle_1"
+      "desc": "The turtle leads you to a weathered shrine at the edge of the forest. Two otters and a ferret wait inside, arms crossed. 'My students,' the turtle says. 'If you can move them, perhaps you are ready to learn what I came here to teach.'",
+      "reward": { "general": { "type": "gold", "amount": 20 } },
+      "defeat_tip": "The turtle is the real threat — Still Wind builds Battle Spirit every moment he's left alone. Break his concentration and it wears off. The otters are consistent: Stream Slash, every turn. Don't count on evading your way through them.",
+      "clear_desc": "The shrine goes still. The turtle watches the last of his students hit the ground, then exhales slowly. 'Good.' He settles into a low stance — and you see something shift. A faint pulse gathering around him, born not from movement, but from stillness. 'That,' he says, 'is Still Wind. Battle Spirit from the breath, not the blade.' He holds it a moment, then lets it go. 'You will need it before this path is done.'",
+      "scenario_id": "otter_turtle_test"
     },
     {
       "id": 4,
       "name": "2 Turtles and a Rabbit",
       "type": "BOSS",
       "map_icon": "CITADEL_3",
-      "desc": "To Achieve Power, you must defeat the 2 turtle master, and a rabbit for some reason",
+      "desc": "The path ends here — for now. Two turtle masters stand side by side, a rabbit stationed between them. They've been watching you since the shrine. This is their answer.",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["stream_slash"] }] },
-      "defeat_tip": "The turtle uses phase shifts — watch for the stance change and adjust your target.",
-      "clear_desc": "The Turtles are impressed by your skill, and wish you luck on your journey to becoming a great sumurai!",
-      "scenario_id": "the_otter_test"
+      "defeat_tip": "This is the hardest fight on the path. Don't rush it. You've seen Still Wind — you know their rhythm. Their patience is their strength, but patience cuts both ways. Find your moment and strike when they breathe.",
+      "clear_desc": "The last turtle staggers back. The students watching from the ridge go silent. The elder turtle looks at you for a long moment — then bows, just slightly. 'We have not seen a fox fight like that,' he says. The students exchange glances. No one argues.",
+      "scenario_id": "dual_turtles"
     },
     {
       "id": 5,
-      "name": "TURTLE TEST",
+      "name": "THE FALCON'S EYE",
       "type": "BOSS",
       "map_icon": "CITADEL_3",
-      "desc": "The Turtles will teach the value of patient, and breath",
-      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["sstill_wind"] }] },
-      "defeat_tip": "Still Wind. Generates Battle Spirit. One at the start, and for other each non-action taken. But it can be broken early! Slice Them!",
-      "clear_desc": "You Earn The Turtle's Respect, and taught you the value of breathing harmony!",
-      "scenario_id": "dual_turtles"
+      "desc": "A shape drops from the treetops and lands before you — a falcon, arms folded, eyes sharp. 'I've been watching since the gate,' he says. 'Not bad for a fox. Let's see if you can keep up.'",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["shinsoku"] }] },
+      "defeat_tip": "The falcon moves fast — faster than anything you've faced. He acts before you can answer. Watch his rhythm and don't give him room to breathe.",
+      "clear_desc": "The falcon tilts his head — then grins. 'Hah. You actually kept up.' He steps forward and shows you something. One motion, fluid and nearly invisible. 'Shinsoku,' he says. 'Speed your enemy can't answer. Strike before they can think.' He steps aside. 'That's yours now, fox.'",
+      "scenario_id": "falcon_introduction"
+    },
+    {
+      "id": 6,
+      "name": "FALCON AMBUSH",
+      "type": "COMBAT",
+      "map_icon": "PATH_1",
+      "desc": "You don't see them coming. A blur of wings, and a falcon drops from above. Then another. Then three more. They don't look surprised to find you here. They look like they were waiting.",
+      "reward": { "general": { "type": "gold", "amount": 20 } },
+      "defeat_tip": "These falcons are fast — but so are you. Shinsoku exists for this moment. Strike before they can set their footing and the numbers won't matter.",
+      "clear_desc": "Six falcons on the ground. You stand over all of them, breathing slow. The wind moves through the trees. Somewhere ahead, the Path of the Sumurai continues. You take a step forward.",
+      "scenario_id": "falcon_ambush"
+    },
+    {
+      "id": -1,
+      "note": "PLACEHOLDER — not yet placed on the map, order TBD",
+      "name": "AGAINST THE TIDE",
+      "type": "COMBAT",
+      "map_icon": "PATH_1",
+      "desc": "A group of otters blocks the river crossing, laughing and splashing. They see you coming and fall into formation — still grinning. 'A fox on the path?' one calls out. 'Let's see what you've got!'",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["stream_slash"] }] },
+      "defeat_tip": "Stream Slash rides the current — you can dodge it, but you can't dodge forever. Stop running and fight back. Strike against the tide.",
+      "clear_desc": "The lead otter splashes over, grinning ear to ear. 'Not bad, fox! Not bad at all!' He shows you the motion — a flowing cut that follows like water. 'Stream Slash,' he says. 'Cuts right through the slippery ones. Doesn't matter how fast they move.' He winks. 'Now you try.'",
+      "scenario_id": "the_otter_test"
     }
   ]
 }

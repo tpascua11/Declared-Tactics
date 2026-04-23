@@ -35,7 +35,7 @@ export const SAMURAI_CARDS = [
     icon: '⚔️',
     image: 'FOX_SUMMURAI_STREAM_SLASH',
     color: '#38bdf8',
-    desc: '150 Damage. A flowing slash attack. Cannot be evaded. Deals 50% more damage to evasive targets.',
+    desc: '150 Damage. A flowing slash attack. Cannot be evaded. Deals 50% more damage to evasive targets. Each Strike done gain 1 stack of Momentum',
     tag_interactions: [
       { traits: ['EVASION'], bypass: true, bonus_multiplier: 0.5 },
     ],
@@ -200,25 +200,6 @@ export const SAMURAI_CARDS = [
     },
   },
   {
-    id: 'steel_will',
-    name: 'Steel Will',
-    speed_mod: 20,
-    tag_type: ['SPIRITUAL', 'STANCE'],
-    cost: {},
-    icon: '🛡️',
-    image: 'FOX_GUARD_STANCE',
-    color: '#f6f33b ',
-    desc: 'Take a defensive stance. Reduce all incoming damage by 75% until your next action.',
-    animation: 'buff',
-    animation_intensity: 1.0,
-    tags: {
-      self: [
-        { tag_name: 'STEEL_WILL', reset: 'ON_OWNER_ACTION' },
-      ],
-      target: [],
-    },
-  },
-  {
     id: 'storm_strike',
     name: 'Storm Strike',
     speed_mod: 0,
@@ -257,24 +238,5 @@ export const SAMURAI_CARDS = [
       ],
       target: [],
     },
-  },
-  {
-    id: 'focus_spirit',
-    name: 'Focus Spirit',
-    speed_mod: -30,
-    tag_type: ['SPIRITUAL'],
-    cost: {},
-    icon: '☀️',
-    image: 'FOX_SUMMURAI_STILL_WIND',
-    color: '#f59e0b',
-    desc: 'Center yourself. Gain 1 Battle Spirit.',
-    animation: 'buff',
-    animation_intensity: 1.0,
-    tags: {
-      self: [
-        { tag_name: 'GAIN_RESOURCE', resource_type: 'BATTLE_SPIRIT', power: 3 },
-      ],
-      target: [],
-    },
-  },
+  }
 ];

@@ -366,28 +366,35 @@ export function ExecuteAction(action, interaction_result, state) {
     owner.resources[resourceType].current -= amount;
   }
 
+  // Retarget if original target is already dead — prefer same faction as original target
+  const resolvedTarget = target.health > 0
+    ? target
+    : newState.characters.find(c => c.faction === target.faction && c.id !== action.owner_id && c.health > 0) ?? null;
+  const retargeted = resolvedTarget && resolvedTarget.id !== target.id;
+  if (retargeted) logs.push({ msg: `🔀 ${action.name} retargeted to ${resolvedTarget.name}`, type: 'info' });
+
   // ── RESOLVE TAG INTERACTIONS ──
   // Check if this action has tag_interactions that match any traits on the
-  // target's active tags. Result is passed into ON_INCOMING so handlers can
-  // decide to bypass/consume themselves, and used below for bonus multipliers.
-  const interactionResult = resolveTagInteractions(action, target);
+  // actual delivery target's active tags. Result is passed into ON_INCOMING so
+  // handlers can decide to bypass/consume themselves, and used below for bonus multipliers.
+  const interactionResult = resolveTagInteractions(action, resolvedTarget);
   const isAoe = action.properties?.includes('AOE');
   const isSelfBuff = (action.tags?.target ?? []).length === 0 && (action.tags?.self ?? []).length > 0;
 
   // ON_INCOMING phase — defender-side gate (dodge, parry, reflect, etc.)
-  // Runs on the original target before any payload is built or damage dealt.
+  // Runs on the resolved target before any payload is built or damage dealt.
   // If cancelled: attacker resources are still spent (action was committed).
   // AOE and self-buff actions skip — self-buffs don't actually target the enemy
   // even though target_id points to one (an artifact of how ADD_TO_QUEUE assigns targets).
-  if (!isAoe && !isSelfBuff && target.health > 0) {
-    const onIncoming = runPhaseOnIncoming(target.active_tag_pool, action, target, newState, interactionResult);
+  if (!isAoe && !isSelfBuff && resolvedTarget && resolvedTarget.health > 0) {
+    const onIncoming = runPhaseOnIncoming(resolvedTarget.active_tag_pool, action, resolvedTarget, newState, interactionResult);
     logs.push(...onIncoming.logs);
-    target.active_tag_pool = onIncoming.tag_pool;
+    resolvedTarget.active_tag_pool = onIncoming.tag_pool;
     if (onIncoming.cancelled) {
       const onMiss = runPhaseOnMiss(owner.active_tag_pool, action, owner);
       logs.push(...onMiss.logs);
       owner.active_tag_pool = onMiss.tag_pool;
-      return { newState, logs, dodged: true, dodgerId: target.id, attackerId: owner.id };
+      return { newState, logs, dodged: true, dodgerId: resolvedTarget.id, attackerId: owner.id };
     }
   }
 
@@ -402,15 +409,9 @@ export function ExecuteAction(action, interaction_result, state) {
           tag.power = Math.floor(tag.power * (1 + interaction.bonus_multiplier));
         }
       }
-      logs.push({ msg: `⚡ ${action.name} exploits ${target.name}'s stance! +${Math.round(interaction.bonus_multiplier * 100)}% damage`, type: 'dmg' });
+      logs.push({ msg: `⚡ ${action.name} exploits ${resolvedTarget.name}'s stance! +${Math.round(interaction.bonus_multiplier * 100)}% damage`, type: 'dmg' });
     }
   }
-
-  // Retarget if original target is already dead — prefer same faction as original target
-  const resolvedTarget = target.health > 0
-    ? target
-    : newState.characters.find(c => c.faction === target.faction && c.id !== action.owner_id && c.health > 0) ?? null;
-  const retargeted = resolvedTarget && resolvedTarget.id !== target.id;
 
   // ── BUILD ──
   let payload = {
@@ -454,7 +455,6 @@ export function ExecuteAction(action, interaction_result, state) {
   // AOE: every living opposing character loops through ON_INCOMING, DAMAGE_REDUCE,
   //      delivery, APPLY STATUS TAGS, and ON_RECEIVE independently.
   //      Payload is cloned per-enemy so one enemy's mitigation doesn't bleed to the next.
-  if (!isAoe && retargeted) logs.push({ msg: `🔀 ${action.name} retargeted to ${resolvedTarget.name}`, type: 'info' });
 
   const deliveryTargets = isAoe
     ? newState.characters.filter(c => c.faction !== owner.faction && c.health > 0)

@@ -6,6 +6,7 @@
 import TagPool from './TagPool';
 import EnemyResourceBar from './EnemyResourceBar';
 import { SCENARIO_BACKGROUNDS } from '../../assets';
+import { AURA_REGISTRY } from '../../battle/registry/aura_registry';
 
 const CARD_SIZES = {
   small:  { card: 'w-32 h-48',  icon: 'text-3xl py-2',   name: 'text-[10px]', hpText: 'text-[10px]' },
@@ -16,6 +17,19 @@ const CARD_SIZES = {
 const CARD_WIDTH_REM = { small: 8, medium: 10, large: 12 };
 const TAG_POOL_REM = 4;
 const GAP_REM = 5; // gap-20 = 5rem
+
+function resolveAura(enemy) {
+  if (enemy.current_action_set_id && enemy.action_sets) {
+    const set = enemy.action_sets.find(s => s.id === enemy.current_action_set_id);
+    if (set?.aura) return AURA_REGISTRY[set.aura] ?? null;
+  }
+  if (enemy.current_phase && enemy.action_sets) {
+    const set = enemy.action_sets.find(s => s.id === enemy.current_phase);
+    if (set?.aura) return AURA_REGISTRY[set.aura] ?? null;
+  }
+  if (enemy.aura) return AURA_REGISTRY[enemy.aura] ?? null;
+  return null;
+}
 
 function getMidCardOffset(enemies) {
   const cardWidths = enemies.map(e => CARD_WIDTH_REM[e.card_size] ?? 12);
@@ -62,6 +76,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
         const visibleActions = actions.slice(0, 3);
 
         const sz = CARD_SIZES[enemy.card_size] ?? CARD_SIZES.large;
+        const auraConfig = resolveAura(enemy);
 
         return (
           <div
@@ -91,6 +106,13 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
               >
                 {/* Portrait fills entire card */}
                 <img src={enemy.portrait} alt={enemy.name} className="absolute inset-0 w-full h-full object-cover" />
+
+                {/* Aura overlay */}
+                {auraConfig && (
+                  <div className="absolute inset-0 pointer-events-none" style={{ opacity: auraConfig.intensity }}>
+                    <div className={`absolute inset-0 aura-${auraConfig.style}`} style={{ '--aura-color': auraConfig.color, '--aura-secondary': auraConfig.secondary }} />
+                  </div>
+                )}
 
                 {/* Bottom overlay: name + HP bar */}
                 <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-4"

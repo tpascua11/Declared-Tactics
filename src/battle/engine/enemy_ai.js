@@ -114,6 +114,7 @@ export function selectActionSet(enemy, opponent) {
 
   for (const set of enemy.action_sets) {
     if (evalCondition(set.condition ?? null, enemy, opponent)) {
+      enemy.current_action_set_id = set.id;
       const resolved = set.actions
         .map(name => enemy.action_library[name])
         .filter(Boolean);

@@ -2,10 +2,10 @@
   "id": "wolf_sumurai",
   "name": "WOLF SUMURAI",
   "portrait": "ENEMY_WOLF_SUMURAI",
-  "card_size": "medium",
-  "health": 600,
-  "max_health": 600,
-  "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+  "card_size": "large",
+  "health": 900,
+  "max_health": 900,
+  "resources": { "BATTLE_SPIRIT": { "current": 5, "max": 10 } },
   "resource_bar_type": "sumurai",
   "base_speed": 100,
   "total_action_slots": 2,
@@ -55,18 +55,20 @@
       "properties": [],
       "tags": {
         "self": [],
-        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 80 }, { "tag_name": "FREEZE", "stacks": 2 }]
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 150 }, { "tag_name": "FREEZE", "stacks": 2 }]
       }
     }
   },
   "action_sets": [
     {
       "id": "freeze_burst",
+      "aura": "frost_burst",
       "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 4 },
       "actions": ["Freeze Slash", "Heavy Slice"]
     },
     {
       "id": "default",
+      "aura": "frost_wisp",
       "actions": ["Heavy Slice", "Focus Spirit"]
     }
   ]
