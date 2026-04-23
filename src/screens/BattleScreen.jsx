@@ -335,7 +335,6 @@ export default function BattleScreen() {
         {/* TOP — Enemy Zone */}
         <EnemyZone
           enemies={enemies}
-          opponent={player}
           activeAnimations={activeAnimations}
           floatingNumbers={floatingNumbers}
           activeEnemyId={gs.activeEnemyId}

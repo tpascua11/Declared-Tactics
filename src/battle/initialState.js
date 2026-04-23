@@ -9,7 +9,7 @@ import WOLF_SLOW_TEST from '../data/scenarios/wolf_slow_test.json';
 import { ENEMY_REGISTRY } from '../data/characters/enemy_registry';
 import { buildPlayer } from '../data/player';
 import { derivePlayerSnapshot } from '../context/PlayerContext';
-import { selectActionSet } from './engine/enemy_ai';
+import { selectActionSet, primeDisplayAura } from './engine/enemy_ai';
 
 
 
@@ -65,6 +65,7 @@ export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
     : buildPlayer(CLASS_REGISTRY.samurai, { id: 'vrax', name: 'VRAX' });
 
   const characters = [player, ...builtEnemies];
+  primeDisplayAura(characters);
   return {
     phase: new URLSearchParams(window.location.search).has('debug') ? 'QUEUE_SETUP' : 'TITLE',
     music: scenario?.music ?? null,

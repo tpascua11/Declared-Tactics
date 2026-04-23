@@ -16,6 +16,7 @@ import {
 } from './engine/battle_engine';
 import { effectiveResourceAtExecution } from './engine/preview_utils';
 import { buildEnemyQueue, buildInitialState, buildStageEnemies, MAX_ENEMIES } from './initialState';
+import { primeDisplayAura } from './engine/enemy_ai';
 import EMBER_KEEP from '../data/scenarios/ember_keep.json';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
 
@@ -45,6 +46,7 @@ function advanceStageOrWin(state, logs) {
       ...restedPlayers,
       ...newActive,
     ].map(c => ({ ...c, queue: [] }));
+    primeDisplayAura(newChars);
 
     return {
       ...state,
@@ -180,6 +182,7 @@ export function battleReducer(state, action) {
           );
         }
 
+        primeDisplayAura(nextChars);
         const prevTarget = nextChars.find(c => c.id === cleanedState.lastTargetId && c.health > 0);
         return {
           ...cleanedState,

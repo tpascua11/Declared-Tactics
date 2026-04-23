@@ -128,6 +128,16 @@ export function selectActionSet(enemy, opponent) {
   return [];
 }
 
+// Stamps display_action_set_id onto each enemy in the characters array.
+// Call only at the three aura checkpoints: battle init, turn cleanup, stage advance.
+export function primeDisplayAura(characters) {
+  const opponent = characters.find(c => c.faction === 'player');
+  characters.filter(c => c.faction === 'enemy').forEach(e => {
+    const set = predictEnemyActionSet(e, opponent);
+    e.display_action_set_id = set?.id ?? null;
+  });
+}
+
 // Pure read-only: returns the action set the enemy is about to use, without mutating state.
 // Mirrors selectActionSet priority. Use this to derive aura, intent display, etc.
 export function predictEnemyActionSet(enemy, opponent) {

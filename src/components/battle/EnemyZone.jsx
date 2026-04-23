@@ -7,7 +7,6 @@ import TagPool from './TagPool';
 import EnemyResourceBar from './EnemyResourceBar';
 import { SCENARIO_BACKGROUNDS } from '../../assets';
 import { AURA_REGISTRY } from '../../battle/registry/aura_registry';
-import { predictEnemyActionSet } from '../../battle/engine/enemy_ai';
 
 const CARD_SIZES = {
   small:  { card: 'w-32 h-48',  icon: 'text-3xl py-2',   name: 'text-[10px]', hpText: 'text-[10px]' },
@@ -19,8 +18,9 @@ const CARD_WIDTH_REM = { small: 8, medium: 10, large: 12 };
 const TAG_POOL_REM = 4;
 const GAP_REM = 5; // gap-20 = 5rem
 
-function resolveAura(enemy, opponent) {
-  const set = predictEnemyActionSet(enemy, opponent);
+
+function resolveAura(enemy) {
+  const set = enemy.action_sets?.find(s => s.id === enemy.display_action_set_id);
   const auraKey = set?.aura ?? enemy.aura ?? null;
   return auraKey ? AURA_REGISTRY[auraKey] ?? null : null;
 }
@@ -37,7 +37,7 @@ function getMidCardOffset(enemies) {
   return totalWidth / 2 - midCardCenter;
 }
 
-export default function EnemyZone({ enemies, opponent, activeAnimations = {}, floatingNumbers = [], activeEnemyId, selectedTargetId, phase, onSelectTarget, battleBackground }) {
+export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumbers = [], activeEnemyId, selectedTargetId, phase, onSelectTarget, battleBackground }) {
   const bgImage = SCENARIO_BACKGROUNDS[battleBackground] ?? SCENARIO_BACKGROUNDS['CITADEL_1_ENEMY'];
   const offset = getMidCardOffset(enemies);
   return (
@@ -70,7 +70,7 @@ export default function EnemyZone({ enemies, opponent, activeAnimations = {}, fl
         const visibleActions = actions.slice(0, 3);
 
         const sz = CARD_SIZES[enemy.card_size] ?? CARD_SIZES.large;
-        const auraConfig = resolveAura(enemy, opponent);
+        const auraConfig = resolveAura(enemy);
 
         return (
           <div
