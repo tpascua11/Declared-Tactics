@@ -187,7 +187,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
 
               {/* Aura particles — outside overflow-hidden so they escape the card boundary */}
               {auraConfig?.particles && (
-                <div className="absolute inset-0 pointer-events-none" style={{ opacity: auraConfig.intensity }}>
+                <div key={auraConfig.style} className="absolute inset-0 pointer-events-none" style={{ opacity: auraConfig.intensity }}>
                   {Array.from({ length: auraConfig.particles.count }).map((_, i) => {
                     const pct = i / (auraConfig.particles.count - 1);
                     const x = pct * 130 - 15;
