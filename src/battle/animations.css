@@ -388,7 +388,7 @@
   border-radius: 50%;
   background: var(--p-color, #38bdf8);
   box-shadow: 0 0 6px 2px var(--p-color, #38bdf8), 0 0 2px 1px rgba(255,255,255,0.5);
-  animation: aura-frost-particle var(--p-dur, 3s) ease-out var(--p-delay, 0s) infinite;
+  animation: aura-frost-particle var(--p-dur, 3s) ease-out var(--p-delay, 0s) infinite backwards;
   pointer-events: none;
 }
 

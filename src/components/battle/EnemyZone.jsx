@@ -86,7 +86,7 @@ export default function EnemyZone({ enemies, opponent, activeAnimations = {}, fl
             </div>
 
             {/* Enemy Card — wrapped in relative so floating numbers escape overflow-hidden */}
-            <div className="relative shrink-0">
+            <div className="relative shrink-0" style={{ zIndex: 1 }}>
               <div
                 data-enemy-id={enemy.id}
                 className={`${sz.card} relative rounded-lg border-2 overflow-hidden ${anim?.cssClass ?? ''}`}
@@ -159,9 +159,9 @@ export default function EnemyZone({ enemies, opponent, activeAnimations = {}, fl
               {auraConfig?.particles && (
                 <div className="absolute inset-0 pointer-events-none" style={{ opacity: auraConfig.intensity }}>
                   {Array.from({ length: auraConfig.particles.count }).map((_, i) => {
-                    const pct = i / auraConfig.particles.count;
-                    const x = pct * 110 - 5;
-                    const driftX = x < 15 ? '7px' : x > 90 ? '-7px' : (i % 2 === 0 ? '3px' : '-2px');
+                    const pct = i / (auraConfig.particles.count - 1);
+                    const x = pct * 130 - 15;
+                    const driftX = x < 10 ? '7px' : x > 105 ? '-7px' : (i % 2 === 0 ? '3px' : '-2px');
                     return (
                       <span
                         key={i}
