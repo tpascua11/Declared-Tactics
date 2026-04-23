@@ -103,8 +103,10 @@ export default function EnemyZone({ enemies, opponent, activeAnimations = {}, fl
 
                 {/* Aura gradient overlay — stays inside overflow-hidden */}
                 {auraConfig && (
-                  <div className="absolute inset-0 pointer-events-none" style={{ opacity: auraConfig.intensity }}>
-                    <div className={`absolute inset-0 aura-${auraConfig.style}`} style={{ '--aura-color': auraConfig.color, '--aura-secondary': auraConfig.secondary }} />
+                  <div key={auraConfig.style} className="absolute inset-0 pointer-events-none aura-fade-in">
+                    <div className="absolute inset-0" style={{ opacity: auraConfig.intensity }}>
+                      <div className={`absolute inset-0 aura-${auraConfig.style}`} style={{ '--aura-color': auraConfig.color, '--aura-secondary': auraConfig.secondary }} />
+                    </div>
                   </div>
                 )}
 
