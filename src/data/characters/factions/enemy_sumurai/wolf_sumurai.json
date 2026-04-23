@@ -5,7 +5,7 @@
   "card_size": "large",
   "health": 900,
   "max_health": 900,
-  "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+  "resources": { "BATTLE_SPIRIT": { "current": 5, "max": 10 } },
   "resource_bar_type": "sumurai",
   "base_speed": 100,
   "total_action_slots": 2,

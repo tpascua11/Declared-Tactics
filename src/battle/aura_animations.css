@@ -1,0 +1,169 @@
+/* ============================================================
+   Aura Animations
+   @keyframes and CSS classes for aura layer effects.
+   Uses CSS custom properties (--aura-color, --aura-secondary,
+   --drift-x, --bottom, --x, --p-color, --p-dur, --p-delay,
+   --aura-fade-in-dur, --aura-fade-out-dur) set per-instance.
+   ============================================================ */
+
+/* ── AURA PARTICLES ONLY (no gradient, particles still render via --p-color) ── */
+.aura-particles-only {
+  background: transparent;
+}
+
+/* ── AURA EMBER PARTICLE (slow rising ember, soft glow) ── */
+@keyframes aura-ember-particle {
+  0%   { transform: translateY(0px)    translateX(0px)                             skewY(0deg);  opacity: 0;    filter: brightness(1);   }
+  8%   {                                                                                          opacity: 1;    filter: brightness(2.5); }
+  30%  { transform: translateY(-60px)  translateX(var(--drift-x, 2px))             skewY(1deg);  opacity: 0.8;  filter: brightness(1.5); }
+  60%  { transform: translateY(-140px) translateX(var(--drift-x, 2px))             skewY(-1deg); opacity: 0.5;  filter: brightness(1.2); }
+  85%  { transform: translateY(-200px) translateX(calc(var(--drift-x, 2px) * 0.5)) skewY(1deg);  opacity: 0.2;  filter: brightness(1);   }
+  100% { transform: translateY(-240px) translateX(0px)                             skewY(0deg);  opacity: 0;    filter: brightness(1);   }
+}
+.aura-ember-particle {
+  position: absolute;
+  bottom: var(--bottom, 10%);
+  left: var(--x, 50%);
+  width: 2px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--p-color, #f97316);
+  box-shadow: 0 0 5px 2px var(--p-color, #f97316), 0 0 2px 1px rgba(255, 200, 100, 0.5);
+  animation: aura-ember-particle var(--p-dur, 1.8s) ease-out var(--p-delay, 0s) infinite backwards;
+  pointer-events: none;
+}
+
+/* ── AURA LIGHTNING PARTICLE (fast crackle shard, short travel) ── */
+@keyframes aura-lightning-particle {
+  0%   { transform: translateY(0px)    translateX(0px)                             skewY(0deg);  opacity: 0;    filter: brightness(1);   }
+  5%   {                                                                                          opacity: 1;    filter: brightness(3.5); }
+  25%  { transform: translateY(-35px)  translateX(var(--drift-x, 4px))             skewY(6deg);  opacity: 0.9;  filter: brightness(2.2); }
+  50%  { transform: translateY(-80px)  translateX(var(--drift-x, 4px))             skewY(-4deg); opacity: 0.6;  filter: brightness(1.6); }
+  75%  { transform: translateY(-130px) translateX(calc(var(--drift-x, 4px) * 0.4)) skewY(2deg);  opacity: 0.2;  filter: brightness(1);   }
+  100% { transform: translateY(-170px) translateX(0px)                             skewY(0deg);  opacity: 0;    filter: brightness(1);   }
+}
+.aura-lightning-particle {
+  position: absolute;
+  bottom: var(--bottom, 10%);
+  left: var(--x, 50%);
+  width: 1px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--p-color, #a78bfa);
+  box-shadow: 0 0 5px 2px var(--p-color, #a78bfa), 0 0 2px 1px rgba(255,255,255,0.8);
+  animation: aura-lightning-particle var(--p-dur, 1.0s) ease-out var(--p-delay, 0s) infinite backwards;
+  pointer-events: none;
+}
+
+/* ── AURA FROST PARTICLE (ice shard drifting to top, lightning crackle) ── */
+@keyframes aura-frost-particle {
+  0%   { transform: translateY(0px)    translateX(0px)                             skewY(0deg);  opacity: 0;    filter: brightness(1);   }
+  10%  {                                                                                          opacity: 1;    filter: brightness(2.4); }
+  30%  { transform: translateY(-90px)  translateX(var(--drift-x, 3px))             skewY(2deg);  opacity: 0.8;  filter: brightness(1);   }
+  55%  { transform: translateY(-200px) translateX(var(--drift-x, 3px))             skewY(-1deg); opacity: 0.6;  filter: brightness(1.5); }
+  80%  { transform: translateY(-320px) translateX(calc(var(--drift-x, 3px) * 0.6)) skewY(1deg);  opacity: 0.25; filter: brightness(1);   }
+  100% { transform: translateY(-400px) translateX(calc(var(--drift-x, 3px) * 0.3)) skewY(0deg);  opacity: 0;    filter: brightness(1);   }
+}
+.aura-frost-particle {
+  position: absolute;
+  bottom: var(--bottom, 10%);
+  left: var(--x, 50%);
+  width: 2px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--p-color, #38bdf8);
+  box-shadow: 0 0 6px 2px var(--p-color, #38bdf8), 0 0 2px 1px rgba(255,255,255,0.5);
+  animation: aura-frost-particle var(--p-dur, 3s) ease-out var(--p-delay, 0s) infinite backwards;
+  pointer-events: none;
+}
+
+/* ── AURA FADE-IN / FADE-OUT ── */
+@keyframes aura-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.aura-fade-in {
+  animation: aura-fade-in var(--aura-fade-in-dur, 2s) ease-in forwards;
+}
+
+@keyframes aura-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.aura-fade-out {
+  animation: aura-fade-out var(--aura-fade-out-dur, 1.2s) ease-out forwards;
+}
+
+/* ── AURA WISP (slow, soft upward drift) ── */
+@keyframes aura-wisp {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+.aura-wisp {
+  background: linear-gradient(to top, var(--aura-color, #38bdf8) 0%, var(--aura-secondary, #818cf8) 40%, transparent 70%);
+  animation: aura-wisp 3s ease-in-out infinite;
+}
+
+/* ── AURA FROST (medium speed, crystalline shimmer) ── */
+@keyframes aura-frost {
+  0%   { transform: translateY(0)    scaleX(1);     }
+  20%  { transform: translateY(-5px) scaleX(1.015); }
+  40%  { transform: translateY(-9px) scaleX(0.99);  }
+  60%  { transform: translateY(-7px) scaleX(1.01);  }
+  80%  { transform: translateY(-11px) scaleX(1.005);}
+  100% { transform: translateY(0)    scaleX(1);     }
+}
+.aura-frost {
+  background: linear-gradient(to top, var(--aura-color, #38bdf8) 0%, var(--aura-secondary, #e0f2fe) 35%, transparent 65%);
+  animation: aura-frost 1.5s ease-in-out infinite;
+}
+
+/* ── AURA FLAME (fast upward flow, flickering) ── */
+@keyframes aura-flame {
+  0%   { transform: translateY(0)     scaleX(1);    }
+  20%  { transform: translateY(-10px) scaleX(1.02); }
+  40%  { transform: translateY(-5px)  scaleX(0.99); }
+  60%  { transform: translateY(-13px) scaleX(1.01); }
+  80%  { transform: translateY(-7px)  scaleX(0.98); }
+  100% { transform: translateY(0)     scaleX(1);    }
+}
+.aura-flame {
+  background: linear-gradient(to top, var(--aura-color, #ef4444) 0%, var(--aura-secondary, #f97316) 30%, transparent 65%);
+  animation: aura-flame 0.9s ease-in-out infinite;
+}
+
+/* ── AURA ELECTRIC (rapid jagged pulse) ── */
+@keyframes aura-electric {
+  0%, 100% { transform: translateY(0)    skewX(0deg);  filter: brightness(1);   }
+  25%       { transform: translateY(-4px) skewX(2deg);  filter: brightness(1.5); }
+  50%       { transform: translateY(-2px) skewX(-1deg); filter: brightness(0.8); }
+  75%       { transform: translateY(-6px) skewX(1deg);  filter: brightness(1.8); }
+}
+.aura-electric {
+  background: linear-gradient(to top, var(--aura-color, #818cf8) 0%, var(--aura-secondary, #facc15) 40%, transparent 65%);
+  animation: aura-electric 0.4s ease-in-out infinite;
+}
+
+/* ── AURA ELECTRIC BURST (powered-up, slightly less rapid than full electric) ── */
+@keyframes aura-electric-burst {
+  0%, 100% { transform: translateY(0)    skewX(0deg);  filter: brightness(1);   }
+  25%       { transform: translateY(-4px) skewX(2deg);  filter: brightness(1.5); }
+  50%       { transform: translateY(-2px) skewX(-1deg); filter: brightness(0.8); }
+  75%       { transform: translateY(-6px) skewX(1deg);  filter: brightness(1.8); }
+}
+.aura-electric-burst {
+  background: linear-gradient(to top, var(--aura-color, #818cf8) 0%, var(--aura-secondary, #facc15) 40%, transparent 65%);
+  animation: aura-electric-burst 0.6s ease-in-out infinite;
+}
+
+/* ── AURA ELECTRIC WISP (soft, low-flash idle crackle) ── */
+@keyframes aura-electric-wisp {
+  0%, 100% { transform: translateY(0)    skewX(0deg);  filter: brightness(1);    }
+  25%       { transform: translateY(-3px) skewX(1deg);  filter: brightness(1.15); }
+  50%       { transform: translateY(-1px) skewX(-1deg); filter: brightness(0.95); }
+  75%       { transform: translateY(-4px) skewX(1deg);  filter: brightness(1.2);  }
+}
+.aura-electric-wisp {
+  background: linear-gradient(to top, var(--aura-color, #818cf8) 0%, var(--aura-secondary, #facc15) 40%, transparent 65%);
+  animation: aura-electric-wisp 0.5s ease-in-out infinite;
+}

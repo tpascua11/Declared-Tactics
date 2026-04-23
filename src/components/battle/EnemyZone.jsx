@@ -26,12 +26,15 @@ function AuraLayer({ auraConfig }) {
   const [outgoing, setOutgoing] = useState(null);
 
   useEffect(() => {
-    if (auraConfig?.style === current?.style) return;
+    if (auraConfig?.style === current?.style) {
+      setCurrent(auraConfig);
+      return;
+    }
     setOutgoing(current);
     setCurrent(auraConfig);
     const t = setTimeout(() => setOutgoing(null), AURA_FADE_OUT_MS);
     return () => clearTimeout(t);
-  }, [auraConfig?.style]);
+  }, [auraConfig]);
 
   return (
     <>
@@ -195,7 +198,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
                     return (
                       <span
                         key={i}
-                        className="aura-frost-particle"
+                        className={auraConfig.particles.class || 'aura-frost-particle'}
                         style={{
                           '--p-color': auraConfig.color,
                           '--p-delay': `${pct * auraConfig.particles.duration}s`,

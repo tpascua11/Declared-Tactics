@@ -11,6 +11,7 @@ import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/MUSIC/index';
 import { ANIMATIONS, playSfxBuffer, sfx } from '../battle/animationRegistry';
 import '../battle/animations.css';
+import '../battle/aura_animations.css';
 import EnemyZone from '../components/battle/EnemyZone';
 import BattleLog from '../components/battle/BattleLog';
 import BattleQueue from '../components/battle/BattleQueue';

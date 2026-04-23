@@ -5,15 +5,20 @@
 //    'wisp'     → slow, soft upward drift
 //    'frost'    → medium speed, crystalline shimmer
 //    'flame'    → fast upward flow, flickering
-//    'electric' → rapid jagged pulse
+//    'electric'      → rapid jagged pulse
+//    'electric-wisp' → soft idle crackle, low flash
 //  This registry is UI-only — battle logic never touches it.
 // ============================================================
 
 export const AURA_REGISTRY = {
   turtle_patient: { color: '#38bdf8', secondary: '#818cf8', style: 'wisp',     intensity: 0.40 },
   flame_burst:    { color: '#ef4444', secondary: '#f97316', style: 'flame',    intensity: 1.00 },
+  flame_ember:    { color: '#f97316', secondary: '#fbbf24', style: 'flame',    intensity: 0.28, particles: { count: 8, duration: 1.8, class: 'aura-ember-particle' } },
   fire_intense:   { color: '#f97316', secondary: '#ef4444', style: 'flame',    intensity: 0.90 },
   electric:       { color: '#818cf8', secondary: '#facc15', style: 'electric', intensity: 0.80 },
-  frost_wisp:     { color: '#7dd3fc', secondary: '#818cf8', style: 'wisp',  intensity: 0.45, particles: { count: 12, duration: 5.0 } },
-  frost_burst:    { color: '#38bdf8', secondary: '#e0f2fe', style: 'frost', intensity: 0.85, particles: { count: 18, duration: 3.0 } },
+  frost_wisp:     { color: '#7dd3fc', secondary: '#818cf8', style: 'wisp',     intensity: 0.45, particles: { count: 12, duration: 5.0, class: 'aura-frost-particle' } },
+  frost_burst:    { color: '#38bdf8', secondary: '#e0f2fe', style: 'frost',    intensity: 0.85, particles: { count: 18, duration: 1.8, class: 'aura-frost-particle' } },
+  lightning_wisp: { color: '#a78bfa', secondary: '#facc15', style: 'electric-wisp', intensity: 0.18, particles: { count: 6,  duration: 1.5, class: 'aura-lightning-particle' } },
+  lightning_burst:   { color: '#818cf8', secondary: '#facc15', style: 'electric-burst',  intensity: 0.45, particles: { count: 18, duration: 0.8, class: 'aura-lightning-particle' } },
+  lightning_particles:{ color: '#a78bfa', secondary: '#facc15', style: 'particles-only', intensity: 0.90, particles: { count: 22, duration: 0.7, class: 'aura-lightning-particle' } },
 };

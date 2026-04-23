@@ -62,6 +62,7 @@
   "action_sets": [
     {
       "id": "flame_burst",
+      "aura": "flame_ember",
       "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
       "actions": ["Flame Strike"]
     },

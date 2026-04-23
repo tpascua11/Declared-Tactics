@@ -17,6 +17,17 @@ BATTLE ENGINE TODOS
    - Currently inferred from (action.tags?.target ?? []).length === 0
    - Ties correctness to data shape — an explicit `self_buff: true` flag on the card would be safer
 
+6. Tag condition border glow (telegraph system)
+   - Instead of stacking aura layers, active tags/buffs pulse the card border via box-shadow
+   - Each tag condition maps to a color; multiple conditions comma-separate into one box-shadow
+   - Much simpler than multi-aura layering — no cross-fade state, no gradient stacking
+   - Border glow = buff/tag conditions; gradient aura = action set state (two distinct visual languages)
+
+7. "Read Enemy" player-facing logic using predictEnemyActionSet
+   - predictEnemyActionSet (enemy_ai.js:143) already resolves which action set the enemy will use
+   - Could expose this to the player as a "read" mechanic — hint or reveal the enemy's likely set
+   - Useful for UI telegraph, card tooltips, or a player skill that reveals enemy intent
+
 5. Enemy AI: OPPONENT_HAS_QUEUED condition type
    - Add condition that reads the player's committed queue at START_BATTLE (after Execute is pressed)
    - Enemy reacts to what the player actually declared that turn, not hand contents

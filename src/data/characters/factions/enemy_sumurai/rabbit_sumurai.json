@@ -63,6 +63,6 @@
   "action_sets": [
     { "id": "turn_1", "actions": ["Battojutsu", "Quick Steps"] },
     { "id": "turn_2", "actions": ["Quick Steps", "Quick Steps"] },
-    { "id": "turn_3", "actions": ["Flame Strike", "Quick Steps"] }
+    { "id": "turn_3", "aura": "flame_ember", "actions": ["Flame Strike", "Quick Steps"] }
   ]
 }

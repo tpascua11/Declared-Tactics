@@ -1,0 +1,95 @@
+TODO: EnemyTelegraph
+================================================================
+
+CONCEPT
+-------
+Each enemy has unique CSS visuals that telegraph their current state to the
+player. Two independent layers:
+
+  1. Resource bar  — auto-derived pip highlights from action_library costs
+  2. Card aura     — upward-flowing CSS aura driven by the enemy's active AI phase
+
+The aura IS the AI phase. The visual reflects what the enemy is currently doing,
+so the aura reference lives directly on the action_set that drives the behavior.
+
+
+LAYER 1: Resource Bar (auto-derive from action_library)
+-------------------------------------------------------
+Scan the enemy's action_library for any action with a BATTLE_SPIRIT cost.
+When current >= cost, those pips shift color to signal the ability is affordable.
+No new JSON fields needed — cost data already exists in action_library.
+
+  Pip states:
+    filled + affordable  → orange (#f97316)
+    filled + normal      → white
+    empty                → rgba(255,255,255,0.15)
+
+  File to change:
+    src/components/resources/enemy/SamuraiEnemyResourceBar.jsx
+
+
+LAYER 2: Card Aura (aura_registry + action_set reference)
+----------------------------------------------------------
+Same pattern as ui_registry. A dedicated registry maps preset names to CSS
+config. The active action_set determines which aura is shown — no separate
+condition logic needed, the AI phase transition already handles the switch.
+
+  NEW FILE: src/battle/registry/aura_registry.js
+  -----------------------------------------------
+  export const AURA_REGISTRY = {
+    turtle_patient: { color: '#38bdf8', secondary: '#818cf8', style: 'wisp',     intensity: 0.4 },
+    flame_burst:    { color: '#ef4444', secondary: '#f97316', style: 'flame',    intensity: 1.0 },
+    fire_intense:   { color: '#f97316', secondary: '#ef4444', style: 'flame',    intensity: 0.9 },
+    electric:       { color: '#818cf8', secondary: '#facc15', style: 'electric', intensity: 0.8 },
+    // add more presets as new enemies are designed
+  };
+
+  Style presets map to CSS animation behaviors in EnemyZone:
+    'wisp'     → slow, soft upward drift
+    'flame'    → fast upward flow, flickering
+    'electric' → rapid jagged pulse
+
+  AURA ON action_sets (phase-based enemies)
+  -----------------------------------------
+  The aura reference lives on each action_set entry. Active phase = active aura.
+
+  Example — turtle_sumurai:
+  "action_sets": [
+    { "id": "build", "aura": "turtle_patient", "candidates": [...] },
+    { "id": "spend", "aura": "flame_burst",    "actions": ["Shinsoku", "Flame Strike"] }
+  ]
+
+  AURA ON enemy root (non-phase enemies)
+  ---------------------------------------
+  For sequential/random enemies with no phases, a static root-level "aura" field.
+
+  Example — rabbit_sumurai:
+  "aura": "fire_intense"
+
+  File to change:
+    src/components/battle/EnemyZone.jsx  (reads active action_set → looks up registry → renders aura)
+
+
+ENEMY PLAN
+----------
+  turtle_sumurai   bar: orange at 3 BS   aura: turtle_patient (build) → flame_burst (spend)
+  rabbit_sumurai   bar: orange at 3 BS   aura: fire_intense (root, static)
+  falcon_sumurai   bar: orange at 3 BS   aura: fire_intense (root, static)
+  tiger_sumurai    bar: auto-detect       aura: electric (root, static)
+  others           bar: auto-detect       aura: none unless aura field added
+
+
+FILES TO CHANGE
+---------------
+  src/battle/registry/aura_registry.js                              ← NEW FILE
+  src/components/resources/enemy/SamuraiEnemyResourceBar.jsx        ← Layer 1
+  src/components/battle/EnemyZone.jsx                               ← Layer 2
+  src/data/characters/factions/enemy_sumurai/turtle_sumurai.json    ← aura on action_sets
+  src/data/characters/factions/enemy_sumurai/rabbit_sumurai.json    ← aura on root
+  src/data/characters/factions/enemy_sumurai/falcon_sumurai.json    ← aura on root
+  src/data/characters/factions/enemy_sumurai/falcon_sumurai_2.json  ← aura on root
+  src/data/characters/factions/enemy_sumurai/tiger_sumurai.json     ← aura on root
+
+NO CHANGES NEEDED
+-----------------
+  EnemyResourceBar.jsx, SamuraiResourceBar.jsx (player)
