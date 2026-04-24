@@ -31,10 +31,10 @@
       "name": "FOX DEN",
       "type": "COMBAT",
       "map_icon": "FOREST_1",
-      "desc": "Five rabbits have made themselves at home in the old fox den. They see you coming — and not one of them runs.",
-      "reward": "+20 Gold",
+      "desc": "Eight rabbits have made themselves at home in the old fox den. They see you coming — and not one of them runs.",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["still_wind"] }] },
       "defeat_tip": "The rabbits move as a pack — they always strike at the 3rd turn, first action. Let them think they have you. Then make it count.",
-      "clear_desc": "Five against one, and not one of them ran. When the last rabbit dropped, you heard slow clapping from the tree line. A turtle steps out of the shadows, arms folded. 'You have skill, fox,' he says. 'Let me show you something.'",
+      "clear_desc": "Eight against one, and not one of them ran. When the last rabbit dropped, you heard slow clapping from the tree line. A turtle steps out of the shadows, arms folded. 'You have skill, fox,' he says. 'Let me show you something.'",
       "scenario_id": "rabbit_full_squad"
     },
     {
@@ -54,7 +54,7 @@
       "type": "BOSS",
       "map_icon": "CITADEL_3",
       "desc": "The path ends here — for now. Two turtle masters stand side by side, a rabbit stationed between them. They've been watching you since the shrine. This is their answer.",
-      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["stream_slash"] }] },
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": [""] }] },
       "defeat_tip": "This is the hardest fight on the path. Don't rush it. You've seen Still Wind — you know their rhythm. Their patience is their strength, but patience cuts both ways. Find your moment and strike when they breathe.",
       "clear_desc": "The last turtle staggers back. The students watching from the ridge go silent. The elder turtle looks at you for a long moment — then bows, just slightly. 'We have not seen a fox fight like that,' he says. The students exchange glances. No one argues.",
       "scenario_id": "dual_turtles"
@@ -65,7 +65,7 @@
       "type": "BOSS",
       "map_icon": "CITADEL_3",
       "desc": "A shape drops from the treetops and lands before you — a falcon, arms folded, eyes sharp. 'I've been watching since the gate,' he says. 'Not bad for a fox. Let's see if you can keep up.'",
-      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["shinsoku"] }] },
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["speed_up"] }] },
       "defeat_tip": "The falcon moves fast — faster than anything you've faced. He acts before you can answer. Watch his rhythm and don't give him room to breathe.",
       "clear_desc": "The falcon tilts his head — then grins. 'Hah. You actually kept up.' He steps forward and shows you something. One motion, fluid and nearly invisible. 'Shinsoku,' he says. 'Speed your enemy can't answer. Strike before they can think.' He steps aside. 'That's yours now, fox.'",
       "scenario_id": "falcon_introduction"
@@ -82,7 +82,7 @@
       "scenario_id": "falcon_ambush"
     },
     {
-      "id": -1,
+      "id": 7,
       "note": "PLACEHOLDER — not yet placed on the map, order TBD",
       "name": "AGAINST THE TIDE",
       "type": "COMBAT",

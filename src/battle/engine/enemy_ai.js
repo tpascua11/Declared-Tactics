@@ -149,8 +149,17 @@ export function predictEnemyActionSet(enemy, opponent) {
   }
 
   if (enemy.ai_type === 'phase') {
-    const phaseId = enemy.current_phase ?? 'build';
-    return enemy.action_sets.find(s => s.id === phaseId) ?? null;
+    const resource = enemy.phase_resource ?? 'BATTLE_SPIRIT';
+    const res = enemy.resources?.[resource];
+    const current = res?.current ?? 0;
+    const max = res?.max ?? 0;
+    let phase = enemy.current_phase ?? 'build';
+    if (phase === 'spend') {
+      if (current <= 0) phase = 'build';
+    } else {
+      if (current >= max) phase = 'spend';
+    }
+    return enemy.action_sets.find(s => s.id === phase) ?? null;
   }
 
   for (const set of enemy.action_sets) {

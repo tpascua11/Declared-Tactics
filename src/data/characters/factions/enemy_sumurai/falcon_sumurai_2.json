@@ -146,6 +146,7 @@
     },
     {
       "id": "spirit_burst",
+      "aura": "fire_warm",
       "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
       "actions": ["Shinsoku", "Flame Strike"]
     },
@@ -161,6 +162,7 @@
     },
     {
       "id": "default",
+      "aura": "flame_ember",
       "actions": ["Quick Steps", "Still Winds"]
     }
   ]

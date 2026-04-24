@@ -3,11 +3,11 @@
   "name": "BEAR SUMURAI",
   "portrait": "ENEMY_BEAR_SUMURAI",
   "card_size": "large",
-  "health": 750,
-  "max_health": 750,
+  "health": 1750,
+  "max_health": 1750,
   "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
   "resource_bar_type": "sumurai",
-  "base_speed": 100,
+  "base_speed": 60,
   "total_action_slots": 1,
   "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
   "temp_hp": 0,
@@ -15,36 +15,18 @@
   "queue": [],
   "ai_type": "conditional",
   "action_library": {
-    "Stream Slash": {
-      "name": "Stream Slash",
-      "icon": "ENEMY_STREAM_SLASH",
-      "speed_mod": 0,
+    "Heavy Slice": {
+      "name": "Heavy Slice",
+      "icon": "ENM_SAM_HEAVY_STRIKE_1",
+      "speed_mod": -10,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL", "SLASH"],
-      "animation": "stream_slash",
-      "animation_intensity": 0.7,
-      "properties": [],
-      "tag_interactions": [
-        { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.5 }
-      ],
-      "tags": {
-        "self": [],
-        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 60 }]
-      }
-    },
-    "Flame Strike": {
-      "name": "Flame Strike",
-      "icon": "ENM_SAM_FLAME_STRIKE",
-      "cost": { "BATTLE_SPIRIT": 3 },
-      "speed_mod": 0,
-      "payload_type": "MAGIC",
-      "tag_type": ["MAGIC", "FIRE"],
-      "animation": "flame_strike",
-      "animation_intensity": 0.8,
+      "animation": "heavy_slice",
+      "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [],
-        "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 150 }, { "tag_name": "BURN", "power": 15, "duration": 2, "reset": "TICK_TURN" }]
+        "self": [{ "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 }],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 120 }]
       }
     },
     "Mend": {
@@ -58,25 +40,30 @@
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [{ "tag_name": "HEAL", "power": 500 }],
+        "self": [{ "tag_name": "HEAL", "power": 750 }],
         "target": []
       }
     }
   },
   "action_sets": [
     {
-      "id": "flame_burst",
-      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 9 },
-      "actions": ["Flame Strike"]
-    },
-    {
-      "id": "mend_heal",
-      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+      "id": "mend_low_hp",
+      "aura": "nature_surge",
+      "condition": { "all": [
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+        { "type": "HEALTH_PCT_LTE", "value": 0.5 }
+      ]},
       "actions": ["Mend"]
     },
     {
+      "id": "spirit_slash",
+      "aura": "nature_wisp",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+      "actions": ["Heavy Slice"]
+    },
+    {
       "id": "default",
-      "actions": ["Stream Slash"]
+      "actions": ["Heavy Slice"]
     }
   ]
 }

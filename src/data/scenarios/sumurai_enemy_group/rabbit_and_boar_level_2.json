@@ -10,7 +10,7 @@
       "enemies": ["rabbit_sumurai", "boar_sumurai", "rabbit_sumurai"]
     },
     {
-      "enemies": ["rabbit_sumurai", "boar_sumurai", "rabbit_sumurai", "boar_sumurai"]
+      "enemies": ["boar_sumurai", "boar_sumurai", "rabbit_sumurai", "rabbit_sumurai"]
     }
   ],
   "music": "WAY_OF_THE_SUMURAI_BATTLE_1",

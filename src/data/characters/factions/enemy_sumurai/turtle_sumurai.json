@@ -108,6 +108,7 @@
   "action_sets": [
     {
       "id": "build",
+      "aura": "flame_ember",
       "candidates": [
         {
           "condition": { "type": "SELF_HAS_TAG", "tag": "STILL_WIND" },
@@ -120,6 +121,7 @@
     },
     {
       "id": "spend",
+      "aura": "fire_intense",
       "actions": ["Shinsoku", "Flame Strike"]
     }
   ]

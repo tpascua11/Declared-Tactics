@@ -144,3 +144,4 @@ src/
 - Title screen
 - Persistent player state (PlayerContext + localStorage)
 - Dynamic player portrait per class
+- Refactor `JSON.parse(JSON.stringify(...))` deep copies in reducer.js to use Immer (`npm install immer`)

@@ -7,13 +7,10 @@
       "enemies": ["rabbit_sumurai", "rabbit_sumurai"]
     },
     {
-      "enemies": ["rabbit_sumurai", "rabbit_sumurai"]
+      "enemies": ["boar_sumurai", "rabbit_sumurai"]
     },
     {
-      "enemies": ["ferret_sumurai", "boar_sumurai", "ferret_sumurai"]
-    },
-    {
-      "enemies": ["boar_sumurai", "rabbit_sumurai", "ferret_sumurai"]
+      "enemies": ["ferret_sumurai", "ferret_sumurai", "boar_sumurai", "ferret_sumurai", "ferret_sumurai"]
     }
   ],
   "music": "WAY_OF_THE_SUMURAI_BATTLE_1",

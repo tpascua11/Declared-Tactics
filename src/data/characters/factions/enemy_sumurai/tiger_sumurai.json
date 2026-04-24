@@ -66,18 +66,15 @@
     },
     "Shinsoku": {
       "name": "Shinsoku",
-      "icon": "ENEMY_EVADE",
+      "icon": "ENEMY_SPEED_UP",
       "speed_mod": 20,
-      "ignores_slot_penalty": true,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL"],
-      "animation": "run_circle",
+      "animation": "speed_dash",
       "animation_intensity": 1.0,
-      "properties": ["SPEED_ACTION"],
+      "properties": [],
       "tags": {
-        "self": [
-          { "tag_name": "SPEED_BOOST", "amount": 20, "max_amount": 60 }
-        ],
+        "self": [{ "tag_name": "SPEED_BOOST", "amount": 40 }],
         "target": []
       }
     },

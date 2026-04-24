@@ -63,6 +63,7 @@
   "action_sets": [
     {
       "id": "double_slash",
+      "aura": "water_particles",
       "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 2 },
       "actions": ["Stream Slash", "Stream Slash"]
     },
