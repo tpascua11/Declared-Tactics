@@ -4,7 +4,7 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["bear_sumurai"]
+      "enemies": ["dragon_sumurai"]
     },
     {
       "enemies": ["bear_sumurai", "bear_sumurai", "tiger_sumurai"]

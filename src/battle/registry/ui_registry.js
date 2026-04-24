@@ -177,6 +177,12 @@ export const ui_registry = {
     },
   },
 
+  HARAI: {
+    icon: '🌿',
+    color: '#6ee7b7',
+    describe: () => '75% damage reduction · Expires on next action or end of turn',
+  },
+
 };
 
 export const UI_DEFAULT = { icon: '🔮', color: '#4da6ff', describe: () => 'active' };

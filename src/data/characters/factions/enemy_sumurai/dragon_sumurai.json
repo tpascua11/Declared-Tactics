@@ -1,0 +1,141 @@
+{
+  "id": "dragon_sumurai",
+  "name": "DRAGON SUMURAI",
+  "portrait": "ENEMY_DRAGON_SUMURAI",
+  "card_size": "large",
+  "health": 1200,
+  "max_health": 1200,
+  "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+  "resource_bar_type": "sumurai",
+  "base_speed": 100,
+  "total_action_slots": 2,
+  "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+  "temp_hp": 0,
+  "faction": "enemy",
+  "queue": [],
+  "ai_type": "conditional",
+  "action_library": {
+    "Heavy Slice": {
+      "name": "Heavy Slice",
+      "icon": "ENM_SAM_HEAVY_STRIKE_1",
+      "speed_mod": -10,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "heavy_slice",
+      "animation_intensity": 1.5,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 }],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 100 }]
+      }
+    },
+    "Stream Slash": {
+      "name": "Stream Slash",
+      "icon": "ENEMY_STREAM_SLASH",
+      "cost": { "BATTLE_SPIRIT": 1 },
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "stream_slash",
+      "animation_intensity": 0.7,
+      "properties": [],
+      "tag_interactions": [
+        { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.25 }
+      ],
+      "tags": {
+        "self": [],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 30 }]
+      }
+    },
+    "Speed Up": {
+      "name": "Speed Up",
+      "icon": "ENM_SAM_SPEED_UP",
+      "speed_mod": 1,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "STANCE"],
+      "animation": "speed_dash",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "SPEED_BOOST", "amount": 40 }],
+        "target": []
+      }
+    },
+    "Flame Strike": {
+      "name": "Flame Strike",
+      "icon": "ENM_SAM_FLAME_STRIKE",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": 0,
+      "payload_type": "MAGIC",
+      "tag_type": ["MAGIC", "FIRE"],
+      "animation": "flame_strike",
+      "animation_intensity": 1.2,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 120 }, { "tag_name": "BURN", "power": 20, "duration": 2, "reset": "TICK_TURN" }]
+      }
+    },
+    "Gouki": {
+      "name": "Gouki",
+      "icon": "ENEMY_RESOLVE",
+      "cost": { "BATTLE_SPIRIT": 1 },
+      "speed_mod": 10,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "GOUKI", "stacks": 3 }],
+        "target": []
+      }
+    }
+  },
+  "action_sets": [
+    {
+      "id": "gouki_then_flame",
+      "aura": "fire_burst",
+      "condition": { "all": [
+        { "type": "SELF_NOT_HAS_TAG", "tag": "GOUKI" },
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 6 }
+      ]},
+      "actions": ["Gouki", "Flame Strike"]
+    },
+    {
+      "id": "gouki_first",
+      "aura": "fire_wisp",
+      "condition": { "type": "SELF_NOT_HAS_TAG", "tag": "GOUKI" },
+      "actions": ["Gouki", "Heavy Slice"]
+    },
+    {
+      "id": "flame_strike_burst",
+      "aura": "fire_burst",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 6 },
+      "actions": ["Speed Up", "Flame Strike"]
+    },
+    {
+      "id": "gouki_punish",
+      "aura": "fire_wisp",
+      "condition": { "all": [
+        { "type": "OPPONENT_HAS_TAG", "tag": "GOUKI" },
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 2 }
+      ]},
+      "actions": ["Stream Slash", "Stream Slash"]
+    },
+    {
+      "id": "gouki_punish_no_bs",
+      "aura": "fire_wisp",
+      "condition": { "all": [
+        { "type": "OPPONENT_HAS_TAG", "tag": "GOUKI" },
+        { "type": "RESOURCE_LT", "resource": "BATTLE_SPIRIT", "value": 2 }
+      ]},
+      "actions": ["Heavy Slice", "Heavy Slice"]
+    },
+    {
+      "id": "default",
+      "aura": "fire_wisp",
+      "actions": ["Heavy Slice", "Heavy Slice"]
+    }
+  ]
+}

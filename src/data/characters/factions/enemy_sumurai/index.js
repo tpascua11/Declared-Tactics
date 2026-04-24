@@ -10,6 +10,7 @@ import turtle_sumurai        from './turtle_sumurai.json';
 import falcon_sumurai        from './falcon_sumurai.json';
 import falcon_sumurai_2      from './falcon_sumurai_2.json';
 import boar_sumurai          from './boar_sumurai.json';
+import dragon_sumurai        from './dragon_sumurai.json';
 
 export default [
   bear_sumurai_boss,
@@ -24,4 +25,5 @@ export default [
   falcon_sumurai,
   falcon_sumurai_2,
   boar_sumurai,
+  dragon_sumurai,
 ];

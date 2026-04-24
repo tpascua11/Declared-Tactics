@@ -51,6 +51,8 @@ function evalCondition(condition, enemy, opponent) {
     // enemy's own tag pool contains a tag with the given tag_name (any stacks)
     case 'SELF_HAS_TAG':
       return (enemy.active_tag_pool ?? []).some(t => t.tag_name === tag);
+    case 'SELF_NOT_HAS_TAG':
+      return !(enemy.active_tag_pool ?? []).some(t => t.tag_name === tag);
     default:
       return true;
   }

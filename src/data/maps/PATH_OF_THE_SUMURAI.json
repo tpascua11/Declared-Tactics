@@ -83,7 +83,6 @@
     },
     {
       "id": 7,
-      "note": "PLACEHOLDER — not yet placed on the map, order TBD",
       "name": "AGAINST THE TIDE",
       "type": "COMBAT",
       "map_icon": "PATH_1",
@@ -92,6 +91,50 @@
       "defeat_tip": "Stream Slash rides the current — you can dodge it, but you can't dodge forever. Stop running and fight back. Strike against the tide.",
       "clear_desc": "The lead otter splashes over, grinning ear to ear. 'Not bad, fox! Not bad at all!' He shows you the motion — a flowing cut that follows like water. 'Stream Slash,' he says. 'Cuts right through the slippery ones. Doesn't matter how fast they move.' He winks. 'Now you try.'",
       "scenario_id": "the_otter_test"
+    },
+    {
+      "id": 8,
+      "name": "MEET THE BEAR",
+      "type": "COMBAT",
+      "map_icon": "FOREST_1",
+      "desc": "A massive bear sumurai blocks the path, arms folded. You study his stance — thick, grounded, immovable. Something about him says he isn't going anywhere. You realize with some discomfort that you two have that in common.",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["mend"] }] },
+      "defeat_tip": "The bear hits hard and doesn't flinch. Mend your wounds before the second wave — you'll need to be standing when the boars arrive.",
+      "clear_desc": "The bear goes down on one knee, then looks up. He says nothing for a long moment. Then, slowly, he demonstrates it — a deliberate, focused stillness, and the wound on his arm closes. 'Mend,' he says. 'Because a warrior who cannot endure cannot protect.' He rises. 'Now you know why bears are necessary.'",
+      "scenario_id": "meet_the_bear"
+    },
+    {
+      "id": 9,
+      "name": "THE TIGER'S EYE",
+      "type": "COMBAT",
+      "map_icon": "PATH_1",
+      "desc": "A tiger sumurai steps into the path ahead, lightning crackling at his fingertips. He looks you over — slow, measuring. 'A fox,' he says. Not a question. He smiles. 'Let's see what you've got.'",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["storm_strike"] }] },
+      "defeat_tip": "The tiger moves with the storm — fast and unpredictable. Survive the first round and read his rhythm. The rabbits in the second wave keep him covered. Don't let them.",
+      "clear_desc": "The tiger stands there breathing hard, then breaks into a grin. 'Ha — a fox who can keep up with lightning.' He reaches out and taps two fingers against your chest. A current runs through you, quick and sharp. 'Storm Strike,' he says. 'Strike with the storm behind it and they won't see it coming. You've earned it, fox.'",
+      "scenario_id": "intro_to_lightning"
+    },
+    {
+      "id": 10,
+      "name": "THE RABBLE",
+      "type": "COMBAT",
+      "map_icon": "PATH_1",
+      "desc": "They come from everywhere at once — rabbits, boars, ferrets, a wall of bodies moving fast. Then you spot it: lightning, flashing from somewhere deep in the crowd. Tigers, mixed in. Waiting.",
+      "reward": { "general": { "type": "gold", "amount": 20 } },
+      "defeat_tip": "Don't get tunnel vision on the small ones — there are tigers buried in the ranks. If you lose track of them, they'll tear you apart while you're busy with the rabble.",
+      "clear_desc": "The last ferret hits the ground. You stand in the middle of fifteen downed enemies, breathing slow. The path ahead is quiet. You earned that quiet.",
+      "scenario_id": "the_rabble"
+    },
+    {
+      "id": 11,
+      "name": "THE WOLF'S GREETING",
+      "type": "COMBAT",
+      "map_icon": "PATH_1",
+      "desc": "A wolf sumurai steps from the treeline, frost curling off his blade. He tilts his head. 'A fox on the Path of the Sumurai?' He looks almost amused. 'Well. Canine blood is canine blood. Let's see if yours runs hot.'",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["freeze_slash"] }] },
+      "defeat_tip": "The wolf is methodical — he doesn't rush. He waits until you overcommit and punishes it. Two wolves in the second wave will try to split your attention. Pick one and finish it fast.",
+      "clear_desc": "Both wolves hit the ground. The first one sits up slowly, rubbing his jaw — then laughs, low and genuine. 'Ha. Fellow canine, you fight well.' He exchanges a look with the other wolf, who gives a reluctant nod. 'We don't teach this to just anyone,' he says. He draws his blade slow and drags it through the frost — a clean, biting arc. 'Freeze Slash. Cold that lingers. Your enemies will feel it long after the strike.' He sheathes it and steps aside. 'It suits a fox.'",
+      "scenario_id": "wolf_intro"
     }
   ]
 }

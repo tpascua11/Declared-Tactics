@@ -238,5 +238,24 @@ export const SAMURAI_CARDS = [
       ],
       target: [],
     },
-  }
+  },
+  {
+    id: 'harai',
+    name: 'Harai',
+    speed_mod: 10,
+    tag_type: ['SPIRITUAL', 'STANCE'],
+    cost: { BATTLE_SPIRIT: 1 },
+    icon: '🌿',
+    image: 'FOX_GUARD_STANCE',
+    color: '#6ee7b7',
+    desc: 'Enter a purifying stance. Reduce all incoming damage by 75% until your next action. Costs 1 Battle Spirit.',
+    animation: 'buff',
+    animation_intensity: 1.0,
+    tags: {
+      self: [
+        { tag_name: 'HARAI', reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] },
+      ],
+      target: [],
+    },
+  },
 ];
