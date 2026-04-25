@@ -29,17 +29,20 @@
         "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 50 }]
       }
     },
-    "Focus Spirit": {
-      "name": "Focus Spirit",
-      "icon": "ENM_SAM_BUFF_3",
-      "speed_mod": -30,
+    "Still Winds": {
+      "name": "Still Winds",
+      "icon": "ENM_SAM_BUFF_4",
+      "speed_mod": 0,
       "payload_type": "PHYSICAL",
-      "tag_type": ["SPIRITUAL"],
+      "tag_type": ["SPIRITUAL", "STANCE"],
       "animation": "buff",
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [{ "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 3 }],
+        "self": [
+          { "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 },
+          { "tag_name": "STILL_WIND", "stacks": 3 }
+        ],
         "target": []
       }
     },
@@ -69,7 +72,7 @@
     {
       "id": "default",
       "aura": "frost_wisp",
-      "actions": ["Heavy Slice", "Focus Spirit"]
+      "actions": ["Heavy Slice", "Still Winds"]
     }
   ]
 }

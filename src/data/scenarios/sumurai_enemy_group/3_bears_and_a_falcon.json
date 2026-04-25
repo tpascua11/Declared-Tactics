@@ -1,0 +1,15 @@
+{
+  "id": "3_bears_and_a_falcon",
+  "name": "3 Bears and a Falcon",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["bear_sumurai", "falcon_sumurai_2"]
+    },
+    {
+      "enemies": ["bear_sumurai", "bear_sumurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "rewards": {}
+}

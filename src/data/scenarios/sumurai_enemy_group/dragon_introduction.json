@@ -1,0 +1,15 @@
+{
+  "id": "dragon_introduction",
+  "name": "Dragon Introduction",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["dragon_sumurai"]
+    },
+    {
+      "enemies": ["dragon_sumurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "rewards": {}
+}

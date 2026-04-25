@@ -121,7 +121,7 @@ export const SAMURAI_CARDS = [
     icon: '❄️',
     image: 'FOX_SUMMURAI_FREEZE_SLASH',
     color: '#38bdf8',
-    desc: 'A chilling slash. Deal 300 Frost damage and apply FREEZE. FREEZE reduces action count by 1. At 3 or higher Reduce action count by 2.',
+    desc: 'A chilling slash. Deal 300 Frost damage and apply FREEZE. FREEZE reduces action count by 1. At stack 3 or higher Reduce action count by 2.',
     animation: 'ice_slash',
     animation_intensity: 1.0,
     tags: {
@@ -179,7 +179,7 @@ export const SAMURAI_CARDS = [
     icon: '🌬️',
     image: 'FOX_SUMMURAI_STILL_WIND',
     color: '#e879f9 ',
-    desc: 'Gain 1 Battle Spirit. Grants 1 Battle Spirit per action for 3 actions. Removed if you take damage.',
+    desc: 'Gain 1 Battle Spirit. Gain a buff that Grants 1 Battle Spirit per action for 3 actions. The Buff is entirely is removed if you take damage.',
     animation: 'buff',
     animation_intensity: 1.0,
     tags: {
@@ -221,25 +221,6 @@ export const SAMURAI_CARDS = [
     },
   },
   {
-    id: 'gouki',
-    name: 'Gouki',
-    speed_mod: 10,
-    tag_type: ['SPIRITUAL', 'STANCE'],
-    cost: { BATTLE_SPIRIT: 1 },
-    icon: '🛡️',
-    image: 'FOX_GUARD_STANCE',
-    color: '#ca8a04 ',
-    desc: 'Cleanse all debuffs and gain Gouki (3 stacks). Reduce incoming damage by 25% per stack. Each Damage taken reduce stack by 1.',
-    animation: 'buff',
-    animation_intensity: 1.0,
-    tags: {
-      self: [
-        { tag_name: 'GOUKI', stacks: 3 },
-      ],
-      target: [],
-    },
-  },
-  {
     id: 'harai',
     name: 'Harai',
     speed_mod: 10,
@@ -248,7 +229,7 @@ export const SAMURAI_CARDS = [
     icon: '🌿',
     image: 'FOX_GUARD_STANCE',
     color: '#6ee7b7',
-    desc: 'Enter a purifying stance. Reduce all incoming damage by 75% until your next action. Costs 1 Battle Spirit.',
+    desc: 'Enter a purifying stance. Reduce all incoming damage by 75% until your next action or until the end of turn. Costs 1 Battle Spirit.',
     animation: 'buff',
     animation_intensity: 1.0,
     tags: {

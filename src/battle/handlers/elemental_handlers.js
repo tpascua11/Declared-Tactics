@@ -59,7 +59,8 @@ function FreezeOnApply(pool, tag) {
 }
 
 function FreezeSpeedCalcHandler(action, character, tag) {
-  action.calc_speed -= 10;
+  // += adds to existing calc_speed; use = to hard-set instead
+  action.calc_speed += 0;
 }
 
 function FreezeOnTurnStartHandler(context, tag) {

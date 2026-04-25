@@ -6,7 +6,7 @@
 //
 // ============================================================
 
-import { STATUS_NATURE_1, STATUS_FROST_1, STATUS_FIRE_1, FOX_QUICK_STEPS, FOX_SUMMURAI_STILL_WIND, FOX_SUMMURAI_BATTOJUTSU, FOX_SUMMURAI_HEAVY_STRIKE,
+import { STATUS_NATURE_1, STATUS_FROST_1, STATUS_FIRE_1, STATUS_ELECTRIC_1, FOX_QUICK_STEPS, FOX_SUMMURAI_STILL_WIND, FOX_SUMMURAI_BATTOJUTSU, FOX_SUMMURAI_HEAVY_STRIKE,
          ENEMY_SPEED_UP, ENEMY_EVADE, STATUS_GOUKI_1, STATUS_HARAI_1, STATUS_STILL_WIND_1,
  } from '../../assets';
 
@@ -111,7 +111,7 @@ export const ui_registry = {
     describe: (tag) => {
       const s = tag.stacks ?? 1;
       const actions = s >= 3 ? 2 : 1;
-      return `-${actions} action${actions > 1 ? 's' : ''}, -10 speed (${s} stack${s !== 1 ? 's' : ''})`;
+      return `-${actions} action${actions > 1 ? 's' : ''} (${s} stack${s !== 1 ? 's' : ''})`; // speed → 0
     },
   },
 
@@ -153,10 +153,11 @@ export const ui_registry = {
 
   ELECTRIFIED: {
     icon: '⚡',
+    statusIcon: STATUS_ELECTRIC_1,
     color: '#facc15',
     describe: (tag) => {
       const s = tag.stacks ?? 10;
-      return `Injects SHOCKED each turn · ${s} stack${s !== 1 ? 's' : ''}`;
+      return `-20 Speed for ${s} turn${s !== 1 ? 's' : ''}`;
     },
   },
 

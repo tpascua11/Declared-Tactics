@@ -135,16 +135,6 @@
   },
   "action_sets": [
     {
-      "id": "gouki_punish",
-      "condition": { "type": "OPPONENT_HAS_TAG", "tag": "GOUKI" },
-      "actions": ["Heavy Slice", "Heavy Slice"]
-    },
-    {
-      "id": "still_wind_counter",
-      "condition": { "type": "OPPONENT_HAS_TAG", "tag": "STILL_WIND" },
-      "actions": ["Shinsoku", "Heavy Slice"]
-    },
-    {
       "id": "spirit_burst",
       "aura": "fire_warm",
       "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },

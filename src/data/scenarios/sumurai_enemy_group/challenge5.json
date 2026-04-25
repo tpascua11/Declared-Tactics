@@ -1,0 +1,12 @@
+{
+  "id": "challenge5",
+  "name": "Challenge 5",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["wolf_sumurai", "wolf_sumurai", "wolf_sumurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "rewards": {}
+}

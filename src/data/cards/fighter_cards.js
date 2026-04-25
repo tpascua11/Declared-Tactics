@@ -26,6 +26,25 @@ export const FIGHTER_CARDS = [
       ],
     },
   },
+    {
+    id: 'gouki',
+    name: 'Gouki',
+    speed_mod: 10,
+    tag_type: ['SPIRITUAL', 'STANCE'],
+    cost: { BATTLE_SPIRIT: 1 },
+    icon: '🛡️',
+    image: 'FOX_GUARD_STANCE',
+    color: '#ca8a04 ',
+    desc: 'Cleanse all debuffs and gain Gouki (3 stacks). Reduce incoming damage by 25% per stack. Each Damage taken reduce stack by 1.',
+    animation: 'buff',
+    animation_intensity: 1.0,
+    tags: {
+      self: [
+        { tag_name: 'GOUKI', stacks: 3 },
+      ],
+      target: [],
+    },
+  },
   {
     id: 'quick_slice',
     name: 'Quick Slice',
