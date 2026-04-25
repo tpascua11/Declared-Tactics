@@ -31,7 +31,7 @@ function BurnHandler(context, tag) {
 }
 
 registerTag('BURN', {
-  phases: ['ON_TURN_START'],
+  phases: ['END_OF_TURN'],
   status_type: 'debuff',
-  handlers: { ON_TURN_START: BurnHandler },
+  handlers: { END_OF_TURN: BurnHandler },
 });
