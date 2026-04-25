@@ -94,6 +94,17 @@
     },
     {
       "id": 8,
+      "name": "THE GREAT DEBATE",
+      "type": "COMBAT",
+      "map_icon": "PATH_1",
+      "desc": "You hear the argument before you see them. A falcon and a turtle are standing in the middle of the path, completely blocking it, deep in what appears to be a very serious disagreement. 'Speed,' the falcon is saying. 'Speed is everything.' The turtle shakes his head slowly. 'Endurance. Outlast everything.' They both stop when they see you. A long pause. Then the falcon says, '...settle this for us?' The turtle cracks his knuckles. 'Yes. Fight us both. Whoever you struggle with more — that one wins.' This is not how you expected this conversation to go.",
+      "reward": { "general": { "type": "gold", "amount": 20 } },
+      "defeat_tip": "The falcon hides behind Quick Steps — Stream Slash cuts right through his dodge, no matter how fast he moves. Stack Shinsoku first to push your own Quick Steps ahead of his, then hit him before he can set it up.",
+      "clear_desc": "The falcon and the turtle are both on the ground. There is a long silence. The falcon speaks first. 'You were faster than me.' The turtle nods gravely. 'And you outlasted me.' Another silence. They look at each other. Then they look at you. 'So...' the falcon starts. The turtle finishes: '...a fox is better?' You shrug. You don't make the rules. The falcon groans. The turtle puts his face in his hands. Somehow you have made this worse.",
+      "scenario_id": "falcon_turtle_gauntlet"
+    },
+    {
+      "id": 9,
       "name": "MEET THE BEAR",
       "type": "COMBAT",
       "map_icon": "FOREST_1",
@@ -104,7 +115,7 @@
       "scenario_id": "meet_the_bear"
     },
     {
-      "id": 9,
+      "id": 10,
       "name": "THE TIGER'S EYE",
       "type": "COMBAT",
       "map_icon": "PATH_1",
@@ -115,7 +126,7 @@
       "scenario_id": "intro_to_lightning"
     },
     {
-      "id": 10,
+      "id": 11,
       "name": "THE RABBLE",
       "type": "COMBAT",
       "map_icon": "PATH_1",
@@ -126,7 +137,7 @@
       "scenario_id": "the_rabble"
     },
     {
-      "id": 11,
+      "id": 12,
       "name": "THE WOLF'S GREETING",
       "type": "COMBAT",
       "map_icon": "PATH_1",

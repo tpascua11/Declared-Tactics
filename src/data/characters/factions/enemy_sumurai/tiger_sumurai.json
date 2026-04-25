@@ -78,8 +78,8 @@
         "target": []
       }
     },
-    "Gouki": {
-      "name": "Gouki",
+    "Harai": {
+      "name": "Harai",
       "icon": "ENEMY_RESOLVE",
       "cost": { "BATTLE_SPIRIT": 1 },
       "speed_mod": 10,
@@ -89,9 +89,7 @@
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [
-          { "tag_name": "GOUKI", "stacks": 3 }
-        ],
+        "self": [{ "tag_name": "HARAI", "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
         "target": []
       }
     }
@@ -112,7 +110,7 @@
     {
       "id": "default",
       "aura": "lightning_wisp",
-      "actions": ["Still Winds", "Gouki"]
+      "actions": ["Still Winds", "Harai"]
     }
   ]
 }

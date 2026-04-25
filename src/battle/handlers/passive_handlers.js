@@ -100,9 +100,17 @@ registerTag('GOUKI', {
 
 // ── HARAI ──
 // Buff applied when the Harai card is used. Costs 1 Battle Spirit.
+// On apply: cleanses all debuffs from the holder.
 // DAMAGE_REDUCE: reduces all incoming damage by 75% (flat, no stacks).
 // NOT consumed on damage — persists until the owner takes their next action
 // via reset: ['ON_OWNER_ACTION'] in the card tag data.
+
+function HaraiOnApply(pool, tag) {
+  for (let i = pool.length - 1; i >= 0; i--) {
+    if (pool[i].status_type === 'debuff') pool.splice(i, 1);
+  }
+  pool.push(tag);
+}
 
 function HaraiDamageReduceHandler(payload, tag) {
   const totalDamage = payload.damages.reduce((sum, d) => sum + d.power, 0);
@@ -123,5 +131,6 @@ function HaraiDamageReduceHandler(payload, tag) {
 registerTag('HARAI', {
   phases: ['DAMAGE_REDUCE'],
   status_type: 'buff',
+  onApply: HaraiOnApply,
   handlers: { DAMAGE_REDUCE: HaraiDamageReduceHandler },
 });

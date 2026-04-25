@@ -7,7 +7,7 @@
 // ============================================================
 
 import { STATUS_NATURE_1, STATUS_FROST_1, STATUS_FIRE_1, FOX_QUICK_STEPS, FOX_SUMMURAI_STILL_WIND, FOX_SUMMURAI_BATTOJUTSU, FOX_SUMMURAI_HEAVY_STRIKE,
-         ENEMY_SPEED_UP, ENEMY_EVADE, STATUS_GOUKI_1,
+         ENEMY_SPEED_UP, ENEMY_EVADE, STATUS_GOUKI_1, STATUS_HARAI_1, STATUS_STILL_WIND_1,
  } from '../../assets';
 
 export const ui_registry = {
@@ -146,7 +146,7 @@ export const ui_registry = {
 
   STILL_WIND: {
     icon: '🌬️',
-    statusIcon: FOX_SUMMURAI_STILL_WIND,
+    statusIcon: STATUS_STILL_WIND_1,
     color: '#a78bfa',
     describe: () => '+1 Battle Spirit per action. Removed on damage.',
   },
@@ -180,6 +180,7 @@ export const ui_registry = {
   HARAI: {
     icon: '🌿',
     color: '#6ee7b7',
+    statusIcon: STATUS_HARAI_1,
     describe: () => '75% damage reduction · Expires on next action or end of turn',
   },
 

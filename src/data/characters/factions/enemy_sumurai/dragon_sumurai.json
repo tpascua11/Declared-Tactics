@@ -29,6 +29,23 @@
         "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 100 }]
       }
     },
+    "Still Winds": {
+      "name": "Still Winds",
+      "icon": "ENM_SAM_BUFF_4",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [
+          { "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 },
+          { "tag_name": "STILL_WIND", "stacks": 3 }
+        ],
+        "target": []
+      }
+    },
     "Stream Slash": {
       "name": "Stream Slash",
       "icon": "ENEMY_STREAM_SLASH",
@@ -76,8 +93,8 @@
         "target": [{ "tag_name": "DAMAGE", "type": "FIRE", "power": 120 }, { "tag_name": "BURN", "power": 20, "duration": 2, "reset": "TICK_TURN" }]
       }
     },
-    "Gouki": {
-      "name": "Gouki",
+    "Harai": {
+      "name": "Harai",
       "icon": "ENEMY_RESOLVE",
       "cost": { "BATTLE_SPIRIT": 1 },
       "speed_mod": 10,
@@ -87,55 +104,116 @@
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [{ "tag_name": "GOUKI", "stacks": 3 }],
+        "self": [{ "tag_name": "HARAI", "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
         "target": []
+      }
+    },
+    "Battojutsu": {
+      "name": "Battojutsu",
+      "icon": "FOX_SUMMURAI_BATTOJUTSU",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "sumurai_sheath",
+      "animation_intensity": 1.2,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "BATTOJUTSU", "multiplier": 0.65, "tier": "advanced" }],
+        "target": []
+      }
+    },
+    "Storm Strike": {
+      "name": "Storm Strike",
+      "icon": "FOX_STORM_STRIKE",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": 0,
+      "payload_type": "MAGIC",
+      "tag_type": ["PHYSICAL", "SLASH", "STORM"],
+      "animation": "flame_strike",
+      "animation_intensity": 1.2,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [
+          { "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 150 },
+          { "tag_name": "ELECTRIFIED", "stacks": 4 }
+        ]
       }
     }
   },
   "action_sets": [
     {
-      "id": "gouki_then_flame",
+      "id": "debuff_response",
+      "aura": "nature_wisp",
+      "condition": { "all": [
+        { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 1 }
+      ]},
+      "actions": ["Harai", "Still Winds"]
+    },
+    {
+      "id": "debuff_response_no_bs",
+      "aura": "nature_surge",
+      "condition": { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
+      "actions": ["Still Winds", "Still Winds"]
+    },
+    {
+      "id": "has_battojutsu",
       "aura": "fire_burst",
       "condition": { "all": [
-        { "type": "SELF_NOT_HAS_TAG", "tag": "GOUKI" },
-        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 6 }
+        { "type": "SELF_HAS_TAG", "tag": "BATTOJUTSU" },
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 4 }
       ]},
-      "actions": ["Gouki", "Flame Strike"]
+      "actions": ["Harai", "Flame Strike"]
     },
     {
-      "id": "gouki_first",
+      "id": "low_health_aggro",
+      "aura": "flame_ember",
+      "condition": { "all": [
+        { "type": "OPPONENT_HEALTH_PCT_LTE", "value": 0.5 },
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 4 }
+      ]},
+      "actions": ["Battojutsu", "Harai"]
+    },
+    {
+      "id": "storm_strike_high",
+      "aura": "lightning_burst",
+      "condition": { "all": [
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 6 },
+        { "type": "OPPONENT_NOT_HAS_TAG", "tag": "ELECTRIFIED" },
+        { "type": "OPPONENT_RESOURCE_PCT_GTE", "resource": "BATTLE_SPIRIT", "value": 0.3 }
+      ]},
+      "actions": ["Storm Strike", "Harai"]
+    },
+    {
+      "id": "storm_strike_low",
+      "aura": "lightning_burst",
+      "condition": { "all": [
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 6 },
+        { "type": "OPPONENT_NOT_HAS_TAG", "tag": "ELECTRIFIED" }
+      ]},
+      "actions": ["Storm Strike", "Heavy Slice"]
+    },
+    {
+      "id": "low_spirit",
       "aura": "fire_wisp",
-      "condition": { "type": "SELF_NOT_HAS_TAG", "tag": "GOUKI" },
-      "actions": ["Gouki", "Heavy Slice"]
+      "condition": { "type": "OPPONENT_RESOURCE_PCT_LTE", "resource": "BATTLE_SPIRIT", "value": 0.2 },
+      "actions": ["Still Winds", "Heavy Slice"]
     },
     {
-      "id": "flame_strike_burst",
-      "aura": "fire_burst",
-      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 6 },
-      "actions": ["Speed Up", "Flame Strike"]
-    },
-    {
-      "id": "gouki_punish",
+      "id": "high_spirit",
       "aura": "fire_wisp",
       "condition": { "all": [
-        { "type": "OPPONENT_HAS_TAG", "tag": "GOUKI" },
-        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 2 }
+        { "type": "OPPONENT_RESOURCE_PCT_GTE", "resource": "BATTLE_SPIRIT", "value": 0.3 },
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 1 }
       ]},
-      "actions": ["Stream Slash", "Stream Slash"]
+      "actions": ["Heavy Slice", "Harai"]
     },
     {
-      "id": "gouki_punish_no_bs",
+      "id": "high_spirit_no_bs",
       "aura": "fire_wisp",
-      "condition": { "all": [
-        { "type": "OPPONENT_HAS_TAG", "tag": "GOUKI" },
-        { "type": "RESOURCE_LT", "resource": "BATTLE_SPIRIT", "value": 2 }
-      ]},
-      "actions": ["Heavy Slice", "Heavy Slice"]
-    },
-    {
-      "id": "default",
-      "aura": "fire_wisp",
-      "actions": ["Heavy Slice", "Heavy Slice"]
+      "condition": { "type": "OPPONENT_RESOURCE_PCT_GTE", "resource": "BATTLE_SPIRIT", "value": 0.3 },
+      "actions": ["Still Winds", "Harai"]
     }
   ]
 }

@@ -121,14 +121,14 @@ export const SAMURAI_CARDS = [
     icon: '❄️',
     image: 'FOX_SUMMURAI_FREEZE_SLASH',
     color: '#38bdf8',
-    desc: 'A chilling slash. Deal 150 Frost damage and apply FROST. FROST reduces action count by 1. At 3 or higher Reduce action count by 2.',
+    desc: 'A chilling slash. Deal 300 Frost damage and apply FREEZE. FREEZE reduces action count by 1. At 3 or higher Reduce action count by 2.',
     animation: 'ice_slash',
     animation_intensity: 1.0,
     tags: {
       self: [],
       target: [
-        { tag_name: 'DAMAGE', type: 'FROST', power: 150 },
-        { tag_name: 'FREEZE', stacks: 2 },
+        { tag_name: 'DAMAGE', type: 'FROST', power: 300 },
+        { tag_name: 'FREEZE', stacks: 3 },
       ],
     },
   },

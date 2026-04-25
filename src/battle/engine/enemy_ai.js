@@ -22,6 +22,8 @@ function evalCondition(condition, enemy, opponent) {
 
   // compound AND: every sub-condition must pass
   if (condition.all) return condition.all.every(c => evalCondition(c, enemy, opponent));
+  // compound OR: at least one sub-condition must pass
+  if (condition.any) return condition.any.some(c => evalCondition(c, enemy, opponent));
 
   const { type, resource, value, tag } = condition;
 
@@ -43,6 +45,24 @@ function evalCondition(condition, enemy, opponent) {
     // opponent's active_tag_pool contains a tag with the given tag_name
     case 'OPPONENT_HAS_TAG':
       return (opponent?.active_tag_pool ?? []).some(t => t.tag_name === tag);
+    case 'OPPONENT_NOT_HAS_TAG':
+      return !(opponent?.active_tag_pool ?? []).some(t => t.tag_name === tag);
+    case 'OPPONENT_RESOURCE_GTE':
+      return (opponent?.resources?.[resource]?.current ?? 0) >= value;
+    case 'OPPONENT_RESOURCE_LT':
+      return (opponent?.resources?.[resource]?.current ?? 0) < value;
+    case 'OPPONENT_RESOURCE_PCT_GTE': {
+      const res = opponent?.resources?.[resource];
+      return ((res?.current ?? 0) / (res?.max ?? 1)) >= value;
+    }
+    case 'OPPONENT_RESOURCE_PCT_LTE': {
+      const res = opponent?.resources?.[resource];
+      return ((res?.current ?? 0) / (res?.max ?? 1)) <= value;
+    }
+    case 'OPPONENT_HEALTH_PCT_LTE': {
+      const effective = (opponent?.health ?? 0) + (opponent?.temp_hp ?? 0);
+      return effective / (opponent?.max_health ?? 1) <= value;
+    }
     // enemy's own tag pool has a tag whose stack_count >= value
     case 'SELF_TAG_STACK_GTE': {
       const found = (enemy.active_tag_pool ?? []).find(t => t.tag_name === tag);

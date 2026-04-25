@@ -1,6 +1,6 @@
 {
-  "id": "testing_enemy_ground",
-  "name": "Testing Enemy Ground",
+  "id": "falcon_turtle_gauntlet",
+  "name": "Falcon and Turtle Gauntlet",
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {

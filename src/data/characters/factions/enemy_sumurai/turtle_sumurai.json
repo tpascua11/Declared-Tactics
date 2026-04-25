@@ -60,11 +60,11 @@
     },
     "Shinsoku": {
       "name": "Shinsoku",
-      "icon": "ENM_SAM_BUFF_3",
+      "icon": "ENEMY_SPEED_UP",
       "speed_mod": 20,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL"],
-      "animation": "run_circle",
+      "animation": "speed_dash",
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
