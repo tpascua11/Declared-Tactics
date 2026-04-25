@@ -61,3 +61,45 @@ aware of animation durations (via battleDelay in the animation registry) so it
 waits the right amount of time before advancing. This turns two racing timers
 into one orchestrated sequence.
 
+[3] SMALL ACCUMULATION BUGS THAT HIDE BEHIND USAGE PATTERNS
+-------------------------------------------------------------
+A tag system that merges stacks into a single growing value can produce wrong
+results in ways that are very hard to notice — because the bug only surfaces
+when the same mechanic is used more times than normal gameplay ever reaches.
+
+In the SPEED_BOOST case, SpeedBoostOnApply merged each Speed Up into one tag
+with a growing "amount" field. The stack count was derived with
+Math.round(amount / tag.amount), which worked fine for 1 or 2 stacks.
+The bug was invisible because in player gameplay Speed Up is only ever used
+once per turn — never twice in a row. The math always happened to be correct
+at that usage level.
+
+Dark Fox Sumurai was the trigger: his AI uses Speed Up twice in the same turn,
+which exposed the stale math. Stacks and amount got out of sync, producing
+inflated speed numbers (e.g. 207 in the tooltip) that had no logical basis.
+
+ROOT FIX: Each Speed Up application now pushes its own separate +20 entry into
+the pool. SPEED_CALC sums them naturally (+20 per entry). IMBUE consumes each
+one independently. No accumulation math, no derived stack count — the data
+structure directly reflects reality.
+
+BROADER LESSON: When designing a stacking system, prefer data that directly
+represents state over data that is derived from other data. A list of separate
+entries is easier to reason about than a single value with computed metadata.
+And always test mechanics at 2-3x the normal usage depth — the player may only
+ever use a card once, but an enemy AI might use it three times, and that is
+where accumulation logic breaks.
+
+RULE: Never accumulate a value that is read throughout the turn (like speed)
+into a single growing tag. Speed is evaluated during SPEED_CALC for every
+action — merging stacks into one amount means every subsequent read picks up
+a value that was meant for only the next attack, corrupting the sort order of
+unrelated actions.
+
+Other values CAN be accumulated, but only if they are consumed entirely inside
+a single action's execution bubble — damage multipliers, healing power, cost
+modifiers. These are read once, applied once, and gone. They never bleed into
+a separate action's calculation. Speed does not have this property, so it must
+stay as separate independent entries that each action reads and discards on its
+own terms.
+

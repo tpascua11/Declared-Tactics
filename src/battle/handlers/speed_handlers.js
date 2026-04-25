@@ -28,23 +28,18 @@ export function SpeedBoostOnMiss(action, owner, tag) {
 }
 
 export function SpeedBoostOnApply(pool, tag) {
-  const existing = pool.find(t => t.tag_name === 'SPEED_BOOST');
-
   if (tag.turns) {
-    // Turn-based mode
-    if (existing && existing.mode === 'turns') {
+    const existing = pool.find(t => t.tag_name === 'SPEED_BOOST' && t.mode === 'turns');
+    if (existing) {
       existing.duration = Math.max(existing.duration, tag.turns);
     } else {
       pool.push({ ...tag, mode: 'turns', duration: tag.turns, status_type: 'buff' });
     }
   } else {
-    // Action-based — accumulate amount up to max_amount, consumed all at once
-    if (existing && existing.mode === 'actions') {
-      const cap = tag.max_amount ?? Infinity;
-      existing.amount = Math.min(existing.amount + tag.amount, cap);
-      existing.stacks = Math.round(existing.amount / tag.amount);
-    } else {
-      pool.push({ ...tag, mode: 'actions', stacks: 1, status_type: 'buff' });
+    const currentStacks = pool.filter(t => t.tag_name === 'SPEED_BOOST' && t.mode === 'actions').length;
+    const maxStacks = tag.max_stacks ?? Infinity;
+    if (currentStacks < maxStacks) {
+      pool.push({ ...tag, mode: 'actions', status_type: 'buff' });
     }
   }
 }

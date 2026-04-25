@@ -4,12 +4,9 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["ferret_sumurai"]
-    },
-    {
-      "enemies": ["falcon_sumurai", "wolf_sumurai", "dragon_sumurai", "tiger_sumurai", "bear_sumurai"]
+      "enemies": ["dark_fox_sumurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "SUMURAI_BOSS_1",
   "rewards": {}
 }

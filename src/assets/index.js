@@ -59,6 +59,8 @@ export { default as ENEMY_TURTLE_SUMURAI } from './ENEMY/TURTLE_SUMURAI.png';
 export { default as ENEMY_FALCON_SUMURAI } from './ENEMY/FALCON_SUMURAI.png';
 export { default as ENEMY_BOAR_SUMURAI } from './ENEMY/BOAR_SUMURAI.png';
 export { default as ENEMY_DRAGON_SUMURAI } from './ENEMY/DRAGON_SUMURAI_2.png';
+export { default as BOSS_DARK_FOX_SUMURAI } from './ENEMY/Dark_Fox_Sumurai.png';
+export { default as BOSS_LIGHT_FOX_SUMURAI } from './ENEMY/Light_Fox_Sumurai.png';
 
 // --- Status Icons ---
 export { default as STATUS_DEFAULT } from './STATUS/DEFAULT.png';

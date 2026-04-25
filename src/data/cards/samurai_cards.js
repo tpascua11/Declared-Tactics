@@ -87,7 +87,7 @@ export const SAMURAI_CARDS = [
     animation_intensity: 1.0,
     tags: {
       self: [
-        { tag_name: 'SPEED_BOOST', amount: 20, max_amount: 60 },
+        { tag_name: 'SPEED_BOOST', amount: 20, max_stacks: 3 },
       ],
       target: [],
     },

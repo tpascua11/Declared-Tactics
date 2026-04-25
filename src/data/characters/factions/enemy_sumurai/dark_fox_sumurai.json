@@ -1,0 +1,125 @@
+{
+  "id": "dark_fox_sumurai",
+  "name": "DARK FOX SUMURAI",
+  "portrait": "BOSS_DARK_FOX_SUMURAI",
+  "card_size": "large",
+  "health": 3000,
+  "max_health": 3000,
+  "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+  "resource_bar_type": "sumurai",
+  "base_speed": 100,
+  "total_action_slots": 3,
+  "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+  "temp_hp": 0,
+  "faction": "enemy",
+  "queue": [],
+  "ai_type": "conditional",
+  "action_library": {
+    "Heavy Slice": {
+      "name": "Heavy Slice",
+      "icon": "ENM_SAM_HEAVY_STRIKE_1",
+      "speed_mod": -10,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "dual_heavy_slice",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "MOMENTUM", "multiplier": 0.2, "tier": "advanced" }],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 80 }]
+      }
+    },
+    "Speed Up": {
+      "name": "Speed Up",
+      "icon": "ENM_SAM_SPEED_UP",
+      "speed_mod": 20,
+      "ignores_slot_penalty": true,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL"],
+      "animation": "speed_dash",
+      "animation_intensity": 1.0,
+      "properties": ["SPEED_ACTION"],
+      "tags": {
+        "self": [{ "tag_name": "SPEED_BOOST", "amount": 20, "max_amount": 40 }],
+        "target": []
+      }
+    },
+    "Flame Strike": {
+      "name": "Flame Strike",
+      "icon": "ENM_SAM_FLAME_STRIKE",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": 0,
+      "payload_type": "MAGIC",
+      "tag_type": ["SPELL", "MAGIC"],
+      "animation": "flame_strike",
+      "animation_intensity": 1.2,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [
+          { "tag_name": "DAMAGE", "type": "FIRE", "power": 250 },
+          { "tag_name": "BURN", "power": 75, "duration": 3, "reset": "TICK_TURN" }
+        ]
+      }
+    },
+    "Still Wind": {
+      "name": "Still Wind",
+      "icon": "ENM_SAM_BUFF_4",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [
+          { "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 },
+          { "tag_name": "STILL_WIND", "stacks": 3 }
+        ],
+        "self_if": [
+          {
+            "owner_has": "STILL_WIND",
+            "tags": [
+              { "tag_name": "HEAL", "power": 50 },
+              { "tag_name": "STILL_WIND", "stacks": 3 }
+            ]
+          }
+        ],
+        "target": []
+      }
+    },
+    "Battojutsu": {
+      "name": "Battojutsu",
+      "icon": "FOX_SUMMURAI_BATTOJUTSU",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "sumurai_sheath",
+      "animation_intensity": 1.2,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "BATTOJUTSU", "multiplier": 0.65, "tier": "advanced" }],
+        "target": []
+      }
+    }
+  },
+  "action_sets": [
+    {
+      "id": "battojutsu_followup",
+      "aura": "fire_burst",
+      "condition": { "type": "SELF_HAS_TAG", "tag": "BATTOJUTSU" },
+      "actions": ["Speed Up", "Speed Up", "Flame Strike"]
+    },
+    {
+      "id": "bs_burst",
+      "aura": "flame_ember",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 2 },
+      "actions": ["Heavy Slice", "Heavy Slice", "Battojutsu"]
+    },
+    {
+      "id": "default",
+      "aura": "fire_wisp",
+      "actions": ["Heavy Slice", "Heavy Slice", "Heavy Slice"]
+    }
+  ]
+}

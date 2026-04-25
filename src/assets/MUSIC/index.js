@@ -11,6 +11,7 @@ import samuraiVictory from './Samurai Victory.mp3';
 import sumuraiDefeat from './Sumurai Defeat.mp3';
 import introMusic from './intro.mp3';
 import samuraiCompletion from './Samurai Completion.mp3';
+import sumuraiBoss1 from './Sumurai Boss 1.mp3';
 
 export { sumuraiDefeat as introMusic };
 
@@ -19,6 +20,7 @@ export const MUSIC_REGISTRY = {
   menu_map_theme: menuMapTheme,
   menu_map_theme_3: menuMapTheme3,
   WAY_OF_THE_SUMURAI_BATTLE_1: wayOfTheSumurai,
+  SUMURAI_BOSS_1: sumuraiBoss1,
   samurai_victory: samuraiVictory,
   sumurai_defeat: sumuraiDefeat,
   samurai_completion: samuraiCompletion,
