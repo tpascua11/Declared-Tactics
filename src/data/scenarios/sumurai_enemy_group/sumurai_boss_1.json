@@ -1,21 +1,19 @@
 {
-  "id": "testing_enemy_ground",
-  "name": "Testing Enemy Ground",
+  "id": "sumurai_boss",
+  "name": "Dark Light Fox",
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
       "enemies": ["dark_fox_sumurai"]
     },
     {
-      "enemies": ["light_fox_sumurai"],
-      "heal": 100
+      "enemies": ["light_fox_sumurai"]
     },
     {
       "enemies": [
         { "id": "dark_fox_sumurai",  "health": 1500, "max_health": 1500 },
         { "id": "light_fox_sumurai", "health": 1500, "max_health": 1500 }
-      ],
-      "heal": 500
+      ]
     }
 
   ],

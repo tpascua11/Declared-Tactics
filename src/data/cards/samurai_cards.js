@@ -54,7 +54,7 @@ export const SAMURAI_CARDS = [
   {
     id: 'mend',
     name: 'Mend',
-    speed_mod: -50,
+    speed_mod: 0,
     tag_type: ['MAGIC'],
     cost: { BATTLE_SPIRIT: 3 },
     icon: '💖',

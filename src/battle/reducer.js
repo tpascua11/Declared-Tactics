@@ -27,8 +27,8 @@ function advanceStageOrWin(state, logs) {
   const { currentStageIndex = 0, scenario } = state;
 
   const nextStageIndex = currentStageIndex + 1;
-  if (scenario?.stages?.[nextStageIndex]) {
-    const nextIds   = scenario.stages[nextStageIndex].enemies ?? [];
+  const nextIds = scenario?.stages?.[nextStageIndex]?.enemies ?? [];
+  if (nextIds.length > 0) {
     const newActive = buildStageEnemies(nextIds.slice(0, MAX_ENEMIES), nextStageIndex, 0);
     const newBench  = buildStageEnemies(nextIds.slice(MAX_ENEMIES),    nextStageIndex, MAX_ENEMIES);
 
@@ -43,6 +43,18 @@ function advanceStageOrWin(state, logs) {
     });
     const restedPlayers = restResults.map(r => r.player);
     const restLogs = restResults.flatMap(r => r.logs);
+
+    // Apply stage heal bonus if defined
+    const stageHeal = scenario.stages[nextStageIndex].heal ?? 0;
+    const healLogs = [];
+    if (stageHeal > 0) {
+      restedPlayers.forEach(p => {
+        const before = p.health;
+        p.health = Math.min(p.health + stageHeal, p.max_health);
+        const actual = p.health - before;
+        if (actual > 0) healLogs.push({ msg: `💊 ${p.name} restored ${actual} HP.`, type: 'heal' });
+      });
+    }
 
     const newChars = [
       ...restedPlayers,
@@ -60,7 +72,7 @@ function advanceStageOrWin(state, logs) {
       currentStageIndex: nextStageIndex,
       phase: 'QUEUE_SETUP',
       checkpoint: { stageIndex: nextStageIndex, player: checkpointPlayer },
-      logs: [...logs, { msg: `━━━ REST ━━━`, type: 'info' }, ...restLogs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
+      logs: [...logs, { msg: `━━━ REST ━━━`, type: 'info' }, ...restLogs, ...healLogs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
       activeEnemyId: null,
       pendingAnimation: newActive.map(e => ({ type: 'enemy_enter', targetId: e.id })),
       lastTargetId: newChars.find(c => c.id === state.lastTargetId && c.health > 0)?.id
