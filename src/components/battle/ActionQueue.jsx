@@ -154,9 +154,11 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
         </button>
       )}
 
-      {/* Result buttons — 3× card width, stacked */}
+      {/* Result — tip centered in slot-area space, button at natural position */}
       {isResult && (
-        <div className="flex flex-col gap-2" style={{ width: '16.5rem', marginTop: '5rem' }}>
+        <>
+          {/* Slot-area placeholder — same height as the hidden slot row, centers the tip */}
+          <div style={{ width: '16.5rem' }}>
           {showRetry ? (
             <button
               className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform"
@@ -190,7 +192,8 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
               CONTINUE
             </button>
           )}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

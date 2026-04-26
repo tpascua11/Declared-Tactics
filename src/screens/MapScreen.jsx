@@ -508,7 +508,7 @@ export default function MapScreen() {
     const scenario = SCENARIO_REGISTRY[level.scenario_id];
     if (!scenario) { flash("NO SCENARIO FOUND"); return; }
     playerDispatch({ type: 'SAVE_LAST_LEVEL', levelId: playerLevel });
-    goToBattle(scenario, { levelId: playerLevel });
+    goToBattle(scenario, { levelId: playerLevel, defeat_tip: level.defeat_tip ?? null });
   }, [playerLevel, levelStates, playerData, playerDispatch, flash, goToBattle]);
 
   // ── Memoized styles ───────────────────────────────────────

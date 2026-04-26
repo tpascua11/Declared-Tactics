@@ -27,6 +27,7 @@ export default function BattleScreen() {
   const [activeAnimations, setActiveAnimations] = useState({});
   const [floatingNumbers, setFloatingNumbers] = useState([]);
   const [resultVisible, setResultVisible] = useState(false);
+  const [typedTip, setTypedTip] = useState('');
   const floatIdRef = useRef(0);
   const floatTimersRef = useRef([]);
   const animClearTimersRef = useRef([]);
@@ -70,6 +71,19 @@ export default function BattleScreen() {
     const t = setTimeout(() => setResultVisible(true), 400);
     return () => clearTimeout(t);
   }, [gs.phase]);
+
+  useEffect(() => {
+    const tip = gs.sourceLevel?.defeat_tip;
+    if (gs.phase !== 'RESULT' || gs.result === 'WIN' || !tip) { setTypedTip(''); return; }
+    setTypedTip('');
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setTypedTip(tip.slice(0, i));
+      if (i >= tip.length) clearInterval(interval);
+    }, 18);
+    return () => clearInterval(interval);
+  }, [gs.phase, gs.result, gs.sourceLevel?.defeat_tip]);
 
   useEffect(() => {
     if (gs.phase !== 'RESULT') return;
@@ -372,6 +386,26 @@ export default function BattleScreen() {
 
           {/* Center row: Buff Column | Character Column | Slot Column */}
           <div className="flex-1 flex items-end justify-center overflow-hidden pt-2 pb-4 max-h-[26rem]" style={{ position: 'relative' }}>
+
+            {/* Defeat tip — top of player zone, result screen only */}
+            {gs.phase === 'RESULT' && gs.result !== 'WIN' && gs.sourceLevel?.defeat_tip && (
+              <div style={{
+                position: 'absolute',
+                top: '0.5rem',
+                left: 'calc(50% + 11.5rem)',
+                width: '30rem',
+                fontSize: 19,
+                color: '#7a9aaa',
+                lineHeight: 1.9,
+                fontStyle: 'italic',
+                fontWeight: 500,
+                padding: '8px 12px',
+                zIndex: 9003,
+                textAlign: 'left',
+              }}>
+                {typedTip}
+              </div>
+            )}
 
             {/* Battle Log — absolutely positioned in left column space, does not affect flex layout */}
             <BattleLog logs={gs.logs} turn={gs.turn} />
