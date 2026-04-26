@@ -21,8 +21,7 @@
       "type": "COMBAT",
       "map_icon": "PATH_1",
       "desc": "Boars and rabbits hold the trail. The boars are slow — but the rabbits won't stay still long enough to hit.",
-      "reward": "Unlocks 1 card",
-      "defeat_tip": "Rabbits are extremely evasive. Don't waste heavy strikes on them — wait for your opening.",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "hp_upgrade": 250 },      "defeat_tip": "Rabbits are extremely evasive. Don't waste heavy strikes on them — wait for your opening.",
       "clear_desc": "The trail is yours. The rabbits were slippery, but you found the gaps. You're starting to understand — speed isn't just about hitting first.",
       "scenario_id": "rabbit_and_boar_level_2"
     },
@@ -219,7 +218,7 @@
       "type": "COMBAT",
       "map_icon": "PATH_1",
       "desc": "You've been carrying the question for a long time now. What is a sumurai? You've gathered pieces — showing up, stillness, getting back up. But pieces aren't an answer. You're starting to think the answer isn't something you find. It might be something you build. One fight at a time, one choice at a time, until the question stops needing to be asked.",
-      "reward": { "general": { "type": "gold", "amount": 20 } },
+      "reward": { "general": { "type": "gold", "amount": 20 }, "hp_upgrade": 250 },
       "defeat_tip": "You know what to do. Trust it.",
       "clear_desc": "Standing at the end of it, the question is still there — but it's quieter now. Less urgent. Maybe a sumurai isn't a thing you become. Maybe it's a thing you keep deciding to be. Not once. Every day. Every road. Every fight that asks you to show up and answer. You take a breath. Keep walking.",
       "scenario_id": "challenge5"
@@ -230,7 +229,7 @@
       "type": "BOSS",
       "map_icon": "CITADEL_3",
       "desc": "The path ends here — or rather, it folds back on itself. Something is waiting at the edge of the road that stops you cold. Not a wolf, not a bear, not a dragon. A fox. Standing the way you stand. Breathing the way you breathe. It doesn't speak. It doesn't have to. Every question you've carried this whole road — what is a sumurai, what does it mean, what are you — has led here. To this. The answer isn't waiting at the end of the path. It was following you the whole time.",
-      "reward": { "general": { "type": "gold", "amount": 20 } },
+      "reward": { "general": { "type": "gold", "amount": 1000 } },
       "defeat_tip": "The dark fox is a mirror. It knows every move you know — because they are your moves. The question isn't how to beat it. The question is how well you know yourself. Do you?",
       "clear_desc": "It's over. You stand looking at where the dark fox was, and there is nothing left but the road and the quiet. The question has finally gone still. A sumurai is not defined by their strikes or their footwork or the names of their techniques. A sumurai is someone who knows themselves completely — their habits, their hesitations, the patterns they fall into under pressure. You faced every version of that tonight. And you answered. That's what you are.",
       "scenario_id": "dark_fox_sumurai"

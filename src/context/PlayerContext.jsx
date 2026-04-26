@@ -128,9 +128,15 @@ function playerReducer(state, action) {
     case 'UNLOCK_CARD':
       return { ...state, unlocked_cards: [...(state.unlocked_cards ?? []), action.cardId] };
 
-    // Apply a stat upgrade delta — stacks, never replaces
-    case 'UPGRADE_STAT':
-      return { ...state, stat_boosts: [...state.stat_boosts, { stat: action.stat, amount: action.amount }] };
+    // Apply a stat upgrade delta — stacks, never replaces. If level_id is provided,
+    // acts as a one-time reward guard (same level can't grant the same stat twice).
+    case 'UPGRADE_STAT': {
+      if (action.level_id != null) {
+        const already = (state.stat_boosts ?? []).some(b => b.stat === action.stat && b.level_id === action.level_id);
+        if (already) return state;
+      }
+      return { ...state, stat_boosts: [...(state.stat_boosts ?? []), { stat: action.stat, amount: action.amount, level_id: action.level_id ?? null }] };
+    }
 
     // Called by MapScreen to record level completion after a victory.
     case 'SAVE_MAP_PROGRESS': {

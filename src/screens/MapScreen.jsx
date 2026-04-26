@@ -421,6 +421,9 @@ export default function MapScreen() {
           const classDef = CLASS_REGISTRY[playerData.class_id];
           unlockedCards = classUnlock.card_ids.map(id => classDef?.cards.find(c => c.id === id)).filter(Boolean);
         }
+        if (level.reward.hp_upgrade) {
+          playerDispatch({ type: 'UPGRADE_STAT', stat: 'max_health', amount: level.reward.hp_upgrade, level_id: `${MAP_DATA.id}:${levelId}` });
+        }
       }
       setWinModal({ levelId, reward: level?.reward, unlockedCards, mapIconSrc: level?.map_icon ? MAP_ICON_LOOKUP[level.map_icon] : null,});
     } else if (!gs.battleResult.victory && levelId != null) {
@@ -468,6 +471,9 @@ export default function MapScreen() {
         classUnlock.card_ids.forEach(id => playerDispatch({ type: 'UNLOCK_CARD', cardId: id }));
         const classDef = CLASS_REGISTRY[playerData.class_id];
         unlockedCards = classUnlock.card_ids.map(id => classDef?.cards.find(c => c.id === id)).filter(Boolean);
+      }
+      if (level.reward.hp_upgrade) {
+        playerDispatch({ type: 'UPGRADE_STAT', stat: 'max_health', amount: level.reward.hp_upgrade, level_id: `${MAP_DATA.id}:${playerLevel}` });
       }
     }
     setWinModal({ levelId: playerLevel, reward: level.reward, unlockedCards, mapIconSrc: level.map_icon ? MAP_ICON_LOOKUP[level.map_icon] : null,});

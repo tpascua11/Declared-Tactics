@@ -156,6 +156,20 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
             </div>
           )}
 
+          {/* HP upgrade */}
+          {typeof reward === 'object' && reward?.hp_upgrade && (
+            <div style={{
+              display: "flex", alignItems: "center", gap: 8,
+              border: "1px solid rgba(233,69,96,0.25)",
+              borderRadius: 6, padding: "6px 12px",
+              background: "rgba(233,69,96,0.05)",
+            }}>
+              <span style={{ fontSize: 13, lineHeight: 1, color: "#e94560" }}>♥</span>
+              <span style={{ fontSize: 9, letterSpacing: 2, color: "#e9456066" }}>MAX HP</span>
+              <span style={{ fontSize: 13, color: "#e94560", fontWeight: "bold", marginLeft: 2 }}>+{reward.hp_upgrade}</span>
+            </div>
+          )}
+
           {/* String reward */}
           {typeof reward === 'string' && (
             <div style={{ fontSize: 12, color: "#8aaabb", letterSpacing: 1, textAlign: "center", padding: "8px 0" }}>
