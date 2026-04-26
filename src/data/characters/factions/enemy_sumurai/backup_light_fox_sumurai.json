@@ -141,6 +141,16 @@
   },
   "action_sets": [
     {
+      "id": "queue_read_simple",
+      "aura": "reading",
+      "mode": "queue_mirror",
+      "on_damage": "Quick Steps",
+      "on_no_damage": "Still Wind",
+      "on_name": {
+        "Shinsoku": "Speed Up"
+      }
+    },
+    {
       "id": "freeze_one_slot",
       "aura": "ice_guard",
       "condition": { "all": [
@@ -181,20 +191,9 @@
       ]
     },
     {
-      "id": "queue_read_simple",
-      "aura": "reading",
-      "mode": "queue_mirror",
-      "condition": { "type": "TURN_MOD", "modulo": 3, "remainder": 1 },
-      "on_damage": "Quick Steps",
-      "on_no_damage": "Still Wind",
-      "on_name": {
-        "Shinsoku": "Speed Up"
-      }
-    },
-    {
       "id": "default_original",
       "aura": "ice_wisp",
-      "actions": ["Still Wind", "Heavy Slice", "Heavy Slice"]
+      "actions": ["Still Wind", "Speed Up", "Heavy Slice"]
     }
   ]
 }

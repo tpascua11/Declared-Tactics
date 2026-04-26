@@ -89,6 +89,8 @@ function evalCondition(condition, enemy, opponent) {
       return getEffectiveSlots(enemy) <= value;
     case 'EFFECTIVE_SLOTS_GTE':
       return getEffectiveSlots(enemy) >= value;
+    case 'TURN_MOD':
+      return ((enemy.enemy_turn ?? 1) % condition.modulo) === (condition.remainder ?? 0);
     default:
       return true;
   }

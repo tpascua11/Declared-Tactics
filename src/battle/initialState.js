@@ -37,6 +37,7 @@ export function buildStageEnemies(enemyIds, stageIndex, offset = 0) {
 
 // ── BUILD ENEMY QUEUE ──
 export function buildEnemyQueue(enemy, opponent) {
+  enemy.enemy_turn = (enemy.enemy_turn ?? 0) + 1;
   const actions = selectActionSet(enemy, opponent);
   return actions.map((act, i) => ({
     ...act,
