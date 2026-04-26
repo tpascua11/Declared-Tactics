@@ -4,15 +4,17 @@
 
 import { projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 
-export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, tagPool, baseSpeed }) {
+export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, tagPool, baseSpeed, allowRetry, onRetry }) {
   const filledCount = queue.filter(Boolean).length;
   const canExecute = !isBattling && filledCount > 0 && filledCount >= totalSlots;
+
+  const showRetry = isResult && result !== 'WIN' && allowRetry;
 
   return (
     <div className="flex flex-col items-start gap-3">
 
-      {/* Slots — horizontal row, same card size as Hand */}
-      <div className="relative flex flex-row gap-2" style={{ paddingTop: '5rem', willChange: 'transform' }}>
+      {/* Slots — hidden during result screen */}
+      <div className="relative flex flex-row gap-2" style={{ paddingTop: '5rem', willChange: 'transform', display: isResult ? 'none' : undefined }}>
 
         {/* Fizzle popup — placeholder until animation is implemented */}
         {fizzlingCard && (
@@ -137,26 +139,8 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
         })}
       </div>
 
-      {/* Execute Button */}
-      {isResult ? (
-        <button
-          className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform"
-          style={result !== 'WIN' ? {
-            position: 'relative',
-            zIndex: 9003,
-            background: 'linear-gradient(to right, #e2e8f0, #ffffff)',
-            color: '#0f0f1a',
-            boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25)',
-          } : {
-            background: '#4da6ff',
-            color: '#fff',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.4)',
-          }}
-          onClick={onExecute}
-        >
-          CONTINUE
-        </button>
-      ) : (
+      {/* Execute Plan — normal gameplay only */}
+      {!isResult && (
         <button
           disabled={!canExecute}
           onClick={onExecute}
@@ -168,6 +152,45 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
         >
           {isBattling ? 'RESOLVING...' : 'EXECUTE PLAN'}
         </button>
+      )}
+
+      {/* Result buttons — 3× card width, stacked */}
+      {isResult && (
+        <div className="flex flex-col gap-2" style={{ width: '16.5rem', marginTop: '5rem' }}>
+          {showRetry ? (
+            <button
+              className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform"
+              style={{
+                position: 'relative',
+                zIndex: 9003,
+                background: 'linear-gradient(to right, #e94560, #b83b5e)',
+                color: '#fff',
+                boxShadow: '0 0 14px rgba(233,69,96,0.5)',
+              }}
+              onClick={onRetry}
+            >
+              Keep on Fighting!
+            </button>
+          ) : (
+            <button
+              className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform"
+              style={result !== 'WIN' ? {
+                position: 'relative',
+                zIndex: 9003,
+                background: 'linear-gradient(to right, #e2e8f0, #ffffff)',
+                color: '#0f0f1a',
+                boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25)',
+              } : {
+                background: '#4da6ff',
+                color: '#fff',
+                boxShadow: '0 0 14px rgba(77,166,255,0.4)',
+              }}
+              onClick={onExecute}
+            >
+              CONTINUE
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

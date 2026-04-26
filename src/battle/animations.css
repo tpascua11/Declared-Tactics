@@ -8,6 +8,11 @@
    in the BattleScreen useEffect.
    ============================================================ */
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* ── VICTORY overlay pulse ── */
 @keyframes victoryPulse {
   0%, 100% { opacity: 1; text-shadow: 0 0 30px #f5d76e, 0 0 60px #c8a135, 2px 2px 0 #3a2800; }

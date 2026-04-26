@@ -21,7 +21,7 @@ import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
 
 export default function BattleScreen() {
-  const { gs, dispatch, onBattleEnd } = useGame();
+  const { gs, dispatch, onBattleEnd, retry } = useGame();
   const [retargetingSlot, setRetargetingSlot] = useState(null);
   const [lineCoords, setLineCoords] = useState(null);
   const [activeAnimations, setActiveAnimations] = useState({});
@@ -47,7 +47,7 @@ export default function BattleScreen() {
     };
   }, []);
 
-  // Battle music — start on mount, stop on RESULT or unmount
+  // Battle music — start on mount, restart on retry, stop on RESULT or unmount
   useEffect(() => {
     const src = gs.music ? MUSIC_REGISTRY[gs.music] : null;
     if (!src) return;
@@ -61,7 +61,7 @@ export default function BattleScreen() {
       audio.currentTime = 0;
       musicRef.current = null;
     };
-  }, [gs.music]);
+  }, [gs.music, gs.retryKey]);
 
   const victoryMusicRef = useRef(null);
 
@@ -100,6 +100,21 @@ export default function BattleScreen() {
     const t = setTimeout(() => setActiveAnimations(prev => ({ ...prev, [player.id]: null })), 2000);
     return () => clearTimeout(t);
   }, [gs.currentStageIndex]);
+
+  // Retry — stop defeat music, play rest animation, clear result overlay
+  useEffect(() => {
+    if (!gs.retryKey) return;
+    if (victoryMusicRef.current) {
+      victoryMusicRef.current.pause();
+      victoryMusicRef.current.currentTime = 0;
+      victoryMusicRef.current = null;
+    }
+    setResultVisible(false);
+    setActiveAnimations(prev => ({ ...prev, [player.id]: { cssClass: 'animate-stage-clear', intensity: 1 } }));
+    playSfx(sfx('BATTLE_NEXT.wav'), 0.4);
+    const t = setTimeout(() => setActiveAnimations(prev => ({ ...prev, [player.id]: null })), 2000);
+    return () => clearTimeout(t);
+  }, [gs.retryKey]);
 
   // Drive battle loop with timed steps.
   // If pending animations define a battleDelay, use the longest one — otherwise fall back to duration.
@@ -386,6 +401,8 @@ export default function BattleScreen() {
                 fizzlingCard={gs.pendingAnimation?.find(a => a.type === 'fizzle') ? { name: gs.pendingAnimation.find(a => a.type === 'fizzle').cardName } : null}
                 tagPool={player.active_tag_pool}
                 baseSpeed={player.base_speed}
+                allowRetry={!!gs.scenario?.allow_retry}
+                onRetry={retry}
               />
             </div>
 

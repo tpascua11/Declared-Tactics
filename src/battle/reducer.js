@@ -37,7 +37,9 @@ function advanceStageOrWin(state, logs) {
     const restResults = playersBefore.map(p => {
       const restored = JSON.parse(JSON.stringify(p));
       const classDef = CLASS_REGISTRY[restored.class_id];
-      return classDef?.short_rest ? classDef.short_rest(restored) : { player: restored, logs: [] };
+      const result = classDef?.short_rest ? classDef.short_rest(restored) : { player: restored, logs: [] };
+      result.player.active_tag_pool = (result.player.active_tag_pool ?? []).filter(t => t.tier === 'permanent');
+      return result;
     });
     const restedPlayers = restResults.map(r => r.player);
     const restLogs = restResults.flatMap(r => r.logs);
@@ -48,12 +50,16 @@ function advanceStageOrWin(state, logs) {
     ].map(c => ({ ...c, queue: [] }));
     primeDisplayAura(newChars);
 
+    // Checkpoint: rested player entering this stage — used by RETRY
+    const checkpointPlayer = JSON.parse(JSON.stringify(restedPlayers[0]));
+
     return {
       ...state,
       characters: newChars,
       enemyBench: newBench,
       currentStageIndex: nextStageIndex,
       phase: 'QUEUE_SETUP',
+      checkpoint: { stageIndex: nextStageIndex, player: checkpointPlayer },
       logs: [...logs, { msg: `━━━ REST ━━━`, type: 'info' }, ...restLogs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
       activeEnemyId: null,
       pendingAnimation: newActive.map(e => ({ type: 'enemy_enter', targetId: e.id })),
@@ -319,7 +325,39 @@ export function battleReducer(state, action) {
       const prevTargetAlive = prevTargetId &&
         freshState.characters.some(c => c.id === prevTargetId && c.health > 0);
       const lastTargetId = prevTargetAlive ? prevTargetId : freshState.lastTargetId;
-      return { ...freshState, phase: 'QUEUE_SETUP', sourceLevel: sourceLevel ?? null, lastTargetId };
+      const startPlayer = freshState.characters.find(c => c.faction === 'player');
+      return {
+        ...freshState,
+        phase: 'QUEUE_SETUP',
+        sourceLevel: sourceLevel ?? null,
+        lastTargetId,
+        checkpoint: { stageIndex: 0, player: JSON.parse(JSON.stringify(startPlayer)) },
+      };
+    }
+
+    case 'RETRY': {
+      const { checkpoint, scenario } = state;
+      const stageIds  = scenario?.stages?.[checkpoint.stageIndex]?.enemies ?? [];
+      const newActive = buildStageEnemies(stageIds.slice(0, MAX_ENEMIES), checkpoint.stageIndex, 0);
+      const newBench  = buildStageEnemies(stageIds.slice(MAX_ENEMIES),    checkpoint.stageIndex, MAX_ENEMIES);
+      const player    = JSON.parse(JSON.stringify(checkpoint.player));
+      const characters = [{ ...player, queue: [] }, ...newActive];
+      primeDisplayAura(characters);
+      return {
+        ...state,
+        phase: 'QUEUE_SETUP',
+        result: null,
+        turn: 1,
+        stepCount: 0,
+        characters,
+        enemyBench: newBench,
+        currentStageIndex: checkpoint.stageIndex,
+        activeEnemyId: null,
+        pendingAnimation: [],
+        retryKey: (state.retryKey ?? 0) + 1,
+        logs: [{ msg: `⚔️  Retrying stage ${checkpoint.stageIndex + 1}...`, type: 'info' }],
+        lastTargetId: newActive[0]?.id ?? null,
+      };
     }
 
     case 'BATTLE_END': {

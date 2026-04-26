@@ -223,7 +223,7 @@ export const SAMURAI_CARDS = [
   {
     id: 'harai',
     name: 'Harai',
-    speed_mod: 10,
+    speed_mod: 20,
     tag_type: ['SPIRITUAL', 'STANCE'],
     cost: { BATTLE_SPIRIT: 1 },
     icon: '🌿',

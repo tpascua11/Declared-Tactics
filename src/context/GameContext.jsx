@@ -31,8 +31,10 @@ export function GameProvider({ children }) {
     dispatch({ type: 'BATTLE_END', payload: { currentHP, victory } });
   };
 
+  const retry = () => dispatch({ type: 'RETRY' });
+
   return (
-    <GameContext.Provider value={{ gs, dispatch, goToBattle, onBattleEnd }}>
+    <GameContext.Provider value={{ gs, dispatch, goToBattle, onBattleEnd, retry }}>
       {children}
     </GameContext.Provider>
   );
