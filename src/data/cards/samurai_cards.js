@@ -82,7 +82,7 @@ export const SAMURAI_CARDS = [
     icon: '💨',
     image: 'FOX_SHINSOKU',
     color: '#38bdf8',
-    desc: 'Boost the speed of your next action by 20. Ignores Speed Penalty',
+    desc: 'Boost the speed of your next action by 20. Ignores Speed Penalty. Explosive movement — does not trigger Still Wind.',
     animation: 'speed_dash_player',
     animation_intensity: 1.0,
     tags: {
@@ -179,7 +179,7 @@ export const SAMURAI_CARDS = [
     icon: '🌬️',
     image: 'FOX_SUMMURAI_STILL_WIND',
     color: '#e879f9 ',
-    desc: 'Gain 1 Battle Spirit. Gain a buff that Grants 1 Battle Spirit per action for 3 actions. The Buff is entirely is removed if you take damage.',
+    desc: 'Gain 1 Battle Spirit. Gain a buff that Grants 1 Battle Spirit per action for 3 actions. The Buff is entirely removed if you take damage. You become Breathless — Still Wind does not trigger on Speed Actions.',
     animation: 'buff',
     animation_intensity: 1.0,
     tags: {

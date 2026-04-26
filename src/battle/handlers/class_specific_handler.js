@@ -11,6 +11,9 @@ import { registerTag } from '../registry/battle_registry';
 // ON_RECEIVE: consumed entirely when the owner takes a HIT.
 
 function StillWindPreActionHandler(action, owner, tag) {
+  if (action.properties?.includes('SPEED_ACTION')) {
+    return { cancelled: false, consumed: false };
+  }
   const res = owner.resources?.BATTLE_SPIRIT;
   if (res) {
     res.current = Math.min(res.current + 1, res.max);

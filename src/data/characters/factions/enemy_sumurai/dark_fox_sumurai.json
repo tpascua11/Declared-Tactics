@@ -88,6 +88,21 @@
         "target": []
       }
     },
+    "Harai": {
+      "name": "Harai",
+      "icon": "ENEMY_RESOLVE",
+      "cost": { "BATTLE_SPIRIT": 1 },
+      "speed_mod": 10,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "HARAI", "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
+        "target": []
+      }
+    },
     "Battojutsu": {
       "name": "Battojutsu",
       "icon": "FOX_SUMMURAI_BATTOJUTSU",
@@ -105,6 +120,30 @@
   },
   "action_sets": [
     {
+      "id": "freeze_one_slot",
+      "aura": "ice_guard",
+      "condition": { "all": [
+        { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
+        { "type": "EFFECTIVE_SLOTS_LTE", "value": 1 }
+      ]},
+      "actions": ["Harai"]
+    },
+    {
+      "id": "freeze_two_slots",
+      "aura": "ice_guard",
+      "condition": { "all": [
+        { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
+        { "type": "EFFECTIVE_SLOTS_LTE", "value": 2 }
+      ]},
+      "actions": ["Still Wind", "Harai"]
+    },
+    {
+      "id": "freeze_fallback",
+      "aura": "ice_guard",
+      "condition": { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
+      "actions": ["Still Wind"]
+    },
+    {
       "id": "battojutsu_followup",
       "aura": "fire_burst",
       "condition": { "type": "SELF_HAS_TAG", "tag": "BATTOJUTSU" },
@@ -113,8 +152,12 @@
     {
       "id": "bs_burst",
       "aura": "flame_ember",
+      "mode": "cycle",
       "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 2 },
-      "actions": ["Heavy Slice", "Heavy Slice", "Battojutsu"]
+      "variants": [
+        ["Heavy Slice", "Heavy Slice", "Battojutsu"],
+        ["Heavy Slice", "Battojutsu", "Speed Up"]
+      ]
     },
     {
       "id": "default",

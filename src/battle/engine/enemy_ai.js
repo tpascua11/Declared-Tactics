@@ -1,3 +1,5 @@
+import { battle_registry as tagRegistry } from '../registry/battle_registry.js';
+
 // ============================================================
 //  ENEMY AI — selects action set for a given enemy each turn
 //
@@ -16,6 +18,16 @@
 //
 //  Falls back to base_actions for enemies without action_sets.
 // ============================================================
+
+function getEffectiveSlots(enemy) {
+  const base = enemy.total_action_slots ?? 1;
+  const reduction = (enemy.active_tag_pool ?? []).reduce((sum, tag) => {
+    const entry = tagRegistry[tag.tag_name];
+    const mod = entry?.action_slot_mod ? entry.action_slot_mod(tag) : 0;
+    return sum + mod;
+  }, 0);
+  return Math.max(0, base + reduction);
+}
 
 function evalCondition(condition, enemy, opponent) {
   if (!condition) return true;
@@ -73,9 +85,29 @@ function evalCondition(condition, enemy, opponent) {
       return (enemy.active_tag_pool ?? []).some(t => t.tag_name === tag);
     case 'SELF_NOT_HAS_TAG':
       return !(enemy.active_tag_pool ?? []).some(t => t.tag_name === tag);
+    case 'EFFECTIVE_SLOTS_LTE':
+      return getEffectiveSlots(enemy) <= value;
+    case 'EFFECTIVE_SLOTS_GTE':
+      return getEffectiveSlots(enemy) >= value;
     default:
       return true;
   }
+}
+
+// Advances and returns the next action list from a cycling set.
+// cycle_key is a unique string per set so multiple sets can cycle independently.
+function resolveCycle(set, cycle_key, enemy) {
+  const variants = set.variants ?? [set.actions];
+  const idx = (enemy[cycle_key] ?? 0) % variants.length;
+  enemy[cycle_key] = idx + 1;
+  return variants[idx].map(name => enemy.action_library[name]).filter(Boolean);
+}
+
+// Returns the opponent's currently queued action cards (nulls filtered out).
+// Each entry has: name, payload_type, tag_type[], properties[], tags, owner_id.
+// Available during selectActionSet — player commits queue before buildEnemyQueue runs.
+export function getOpponentQueue(opponent) {
+  return (opponent?.queue ?? []).filter(Boolean);
 }
 
 export function selectActionSet(enemy, opponent) {
@@ -117,9 +149,13 @@ export function selectActionSet(enemy, opponent) {
       for (const candidate of set.candidates) {
         if (evalCondition(candidate.condition ?? null, enemy, opponent)) {
           const resolved = candidate.actions.map(name => enemy.action_library[name]).filter(Boolean);
-          return candidate.mode === 'random'
-            ? [resolved[Math.floor(Math.random() * resolved.length)]]
-            : resolved;
+          if (candidate.mode === 'random') {
+            return [resolved[Math.floor(Math.random() * resolved.length)]];
+          }
+          if (candidate.mode === 'cycle') {
+            return resolveCycle(candidate, `${set.id}_cycle`, enemy);
+          }
+          return resolved;
         }
       }
       return [];
@@ -137,6 +173,9 @@ export function selectActionSet(enemy, opponent) {
   for (const set of enemy.action_sets) {
     if (evalCondition(set.condition ?? null, enemy, opponent)) {
       enemy.current_action_set_id = set.id;
+      if (set.mode === 'cycle') {
+        return resolveCycle(set, `${set.id}_cycle`, enemy);
+      }
       const resolved = set.actions
         .map(name => enemy.action_library[name])
         .filter(Boolean);

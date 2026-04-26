@@ -3,37 +3,187 @@
   "name": "LIGHT FOX SUMURAI",
   "portrait": "BOSS_LIGHT_FOX_SUMURAI",
   "card_size": "large",
-  "health": 800,
-  "max_health": 800,
+  "health": 3000,
+  "max_health": 3000,
   "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
   "resource_bar_type": "sumurai",
-  "base_speed": 100,
-  "total_action_slots": 2,
-  "active_tag_pool": [],
+  "base_speed": 101,
+  "total_action_slots": 3,
+  "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
   "temp_hp": 0,
   "faction": "enemy",
   "queue": [],
   "ai_type": "conditional",
   "action_library": {
+    "Quick Steps": {
+      "name": "Quick Steps",
+      "icon": "FOX_QUICK_STEPS",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "STANCE"],
+      "animation": "run_circle",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "QUICK_STEPS", "dodge_range": 10, "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
+        "target": []
+      }
+    },
+    "Storm Strike": {
+      "name": "Storm Strike",
+      "icon": "FOX_STORM_STRIKE",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH", "STORM"],
+      "animation": "flame_strike",
+      "animation_intensity": 1.2,
+      "properties": ["AOE"],
+      "tags": {
+        "self": [],
+        "target": [
+          { "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 150 },
+          { "tag_name": "ELECTRIFIED", "stacks": 4 }
+        ]
+      }
+    },
+    "Speed Up": {
+      "name": "Speed Up",
+      "icon": "ENM_SAM_SPEED_UP",
+      "speed_mod": 20,
+      "ignores_slot_penalty": true,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL"],
+      "animation": "speed_dash",
+      "animation_intensity": 1.0,
+      "properties": ["SPEED_ACTION"],
+      "tags": {
+        "self": [{ "tag_name": "SPEED_BOOST", "amount": 20, "max_amount": 40 }],
+        "target": []
+      }
+    },
+    "Freeze Slash": {
+      "name": "Freeze Slash",
+      "icon": "FOX_SUMMURAI_FREEZE_SLASH",
+      "cost": { "BATTLE_SPIRIT": 5 },
+      "speed_mod": -10,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH", "FROST"],
+      "animation": "ice_slash",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [
+          { "tag_name": "DAMAGE", "type": "FROST", "power": 300 },
+          { "tag_name": "FREEZE", "stacks": 3 }
+        ]
+      }
+    },
+    "Stream Slash": {
+      "name": "Stream Slash",
+      "icon": "FOX_SUMMURAI_STREAM_SLASH",
+      "cost": { "BATTLE_SPIRIT": 1 },
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "stream_slash",
+      "animation_intensity": 0.7,
+      "properties": [],
+      "tag_interactions": [
+        { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.5 }
+      ],
+      "tags": {
+        "self": [{ "tag_name": "MOMENTUM", "multiplier": 0.5, "tier": "advanced" }],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 150 }]
+      }
+    },
+    "Still Wind": {
+      "name": "Still Wind",
+      "icon": "ENM_SAM_BUFF_4",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [
+          { "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 },
+          { "tag_name": "STILL_WIND", "stacks": 3 }
+        ],
+        "self_if": [
+          {
+            "owner_has": "STILL_WIND",
+            "tags": [
+              { "tag_name": "HEAL", "power": 50 },
+              { "tag_name": "STILL_WIND", "stacks": 3 }
+            ]
+          }
+        ],
+        "target": []
+      }
+    },
     "Heavy Slice": {
       "name": "Heavy Slice",
       "icon": "ENM_SAM_HEAVY_STRIKE_1",
       "speed_mod": -10,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL", "SLASH"],
-      "animation": "heavy_slice",
+      "animation": "dual_heavy_slice",
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [],
-        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 60 }]
+        "self": [{ "tag_name": "MOMENTUM", "multiplier": 0.2, "tier": "advanced" }],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 80 }]
       }
     }
   },
   "action_sets": [
     {
+      "id": "freeze_one_slot",
+      "aura": "ice_guard",
+      "condition": { "all": [
+        { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
+        { "type": "EFFECTIVE_SLOTS_LTE", "value": 1 }
+      ]},
+      "actions": ["Still Wind"]
+    },
+    {
+      "id": "freeze_two_slots",
+      "aura": "ice_guard",
+      "condition": { "all": [
+        { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
+        { "type": "EFFECTIVE_SLOTS_LTE", "value": 2 }
+      ]},
+      "actions": ["Still Wind", "Quick Steps"]
+    },
+    {
+      "id": "freeze_fallback",
+      "aura": "ice_guard",
+      "condition": { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
+      "actions": ["Quick Steps", "Still Wind", "Heavy Slice"]
+    },
+    {
+      "id": "freeze_burst",
+      "aura": "ice_burst",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 5 },
+      "actions": ["Speed Up", "Freeze Slash", "Stream Slash"]
+    },
+    {
+      "id": "storm_burst",
+      "aura": "storm_burst",
+      "mode": "cycle",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+      "variants": [
+        ["Quick Steps", "Storm Strike", "Heavy Slice"],
+        ["Speed Up", "Stream Slash", "Heavy Slice"]
+      ]
+    },
+    {
       "id": "default",
-      "actions": ["Heavy Slice", "Heavy Slice"]
+      "aura": "ice_wisp",
+      "actions": ["Still Wind", "Speed Up", "Heavy Slice"]
     }
   ]
 }

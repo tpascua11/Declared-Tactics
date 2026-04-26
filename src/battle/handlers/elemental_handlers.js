@@ -67,7 +67,8 @@ function FreezeOnTurnStartHandler(context, tag) {
   const owner = context.owner;
   const reduce = (tag.stacks ?? 1) >= 3 ? 2 : 1;
   if (owner.faction === 'enemy' && owner.queue.length > 0) {
-    owner.queue = owner.queue.slice(0, Math.max(0, owner.queue.length - reduce));
+    const target = Math.max(0, (owner.total_action_slots ?? owner.queue.length) - reduce);
+    owner.queue = owner.queue.slice(0, Math.min(owner.queue.length, target));
   }
   return {
     consumed: false,
@@ -273,7 +274,8 @@ function SlowOnTurnStartHandler(context, tag) {
   const owner = context.owner;
   const reduce = Math.min(2, tag.stacks ?? 1);
   if (owner.faction === 'enemy' && owner.queue.length > 0) {
-    owner.queue = owner.queue.slice(0, Math.max(0, owner.queue.length - reduce));
+    const target = Math.max(0, (owner.total_action_slots ?? owner.queue.length) - reduce);
+    owner.queue = owner.queue.slice(0, Math.min(owner.queue.length, target));
   }
   return {
     consumed: false,
