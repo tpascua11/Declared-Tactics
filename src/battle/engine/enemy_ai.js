@@ -110,6 +110,22 @@ export function getOpponentQueue(opponent) {
   return (opponent?.queue ?? []).filter(Boolean);
 }
 
+export function bypassesEvasion(card) {
+  return (card?.tag_interactions ?? []).some(i => i.traits?.includes('EVASION') && i.bypass);
+}
+
+function resolveQueueMirror(set, enemy, opponent) {
+  const opponentQueue = getOpponentQueue(opponent);
+  const slots = enemy.total_action_slots ?? 1;
+  return Array.from({ length: slots }, (_, i) => {
+    const card = opponentQueue[i];
+    const nameMatch = card && set.on_name?.[card.name];
+    const isDamaging = (card?.tags?.target ?? []).some(t => t.tag_name === 'DAMAGE');
+    const name = nameMatch ?? ((card && isDamaging) ? set.on_damage : set.on_no_damage);
+    return enemy.action_library[name] ?? null;
+  }).filter(Boolean);
+}
+
 export function selectActionSet(enemy, opponent) {
   if (!enemy.action_sets || !enemy.action_library) {
     return enemy.base_actions ?? [];
@@ -173,6 +189,9 @@ export function selectActionSet(enemy, opponent) {
   for (const set of enemy.action_sets) {
     if (evalCondition(set.condition ?? null, enemy, opponent)) {
       enemy.current_action_set_id = set.id;
+      if (set.mode === 'queue_mirror') {
+        return resolveQueueMirror(set, enemy, opponent);
+      }
       if (set.mode === 'cycle') {
         return resolveCycle(set, `${set.id}_cycle`, enemy);
       }

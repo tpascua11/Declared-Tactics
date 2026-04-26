@@ -27,4 +27,5 @@ export const AURA_REGISTRY = {
   nature_surge:       { color: '#22c55e', secondary: '#4ade80', style: 'wisp',           intensity: 0.55, particles: { count: 14, duration: 2.5, class: 'aura-frost-particle' } },
   fire_wisp:          { color: '#f97316', secondary: '#fbbf24', style: 'flame',          intensity: 0.25, particles: { count: 8,  duration: 1.8, class: 'aura-ember-particle' } },
   fire_burst:         { color: '#ef4444', secondary: '#f97316', style: 'flame',          intensity: 0.90, particles: { count: 16, duration: 1.2, class: 'aura-ember-particle' } },
+  reading:            { color: '#c4b5fd', secondary: '#f5f3ff', style: 'mist',           intensity: 0.55, particles: { count: 20, duration: 7.0, class: 'aura-frost-particle' } },
 };

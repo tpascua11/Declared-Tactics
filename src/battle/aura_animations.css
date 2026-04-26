@@ -156,6 +156,17 @@
   animation: aura-electric-burst 0.6s ease-in-out infinite;
 }
 
+/* ── AURA MIST (slow breathing, fills most of the card) ── */
+@keyframes aura-mist {
+  0%, 100% { transform: translateY(0)    scaleX(1);     opacity: 1;    }
+  33%       { transform: translateY(-5px) scaleX(1.012); opacity: 0.88; }
+  66%       { transform: translateY(-9px) scaleX(0.995); opacity: 0.94; }
+}
+.aura-mist {
+  background: linear-gradient(to top, var(--aura-color, #c4b5fd) 0%, var(--aura-secondary, #f5f3ff) 55%, transparent 92%);
+  animation: aura-mist 5s ease-in-out infinite;
+}
+
 /* ── AURA ELECTRIC WISP (soft, low-flash idle crackle) ── */
 @keyframes aura-electric-wisp {
   0%, 100% { transform: translateY(0)    skewX(0deg);  filter: brightness(1);    }

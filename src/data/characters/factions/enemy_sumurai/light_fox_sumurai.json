@@ -25,7 +25,7 @@
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [{ "tag_name": "QUICK_STEPS", "dodge_range": 10, "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
+        "self": [{ "tag_name": "QUICK_STEPS", "dodge_range": 11, "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
         "target": []
       }
     },
@@ -141,6 +141,16 @@
   },
   "action_sets": [
     {
+      "id": "queue_read_simple",
+      "aura": "reading",
+      "mode": "queue_mirror",
+      "on_damage": "Quick Steps",
+      "on_no_damage": "Still Wind",
+      "on_name": {
+        "Shinsoku": "Speed Up"
+      }
+    },
+    {
       "id": "freeze_one_slot",
       "aura": "ice_guard",
       "condition": { "all": [
@@ -181,7 +191,7 @@
       ]
     },
     {
-      "id": "default",
+      "id": "default_original",
       "aura": "ice_wisp",
       "actions": ["Still Wind", "Speed Up", "Heavy Slice"]
     }
