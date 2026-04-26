@@ -74,8 +74,6 @@ export function derivePlayerSnapshot(playerData) {
       })
     : resolvedCards;
 
-  const currentHealth = playerData.current_hp ?? maxHealth;
-
   return {
     id: 'vrax',
     name: 'VRAX',
@@ -84,7 +82,7 @@ export function derivePlayerSnapshot(playerData) {
     icon:               classDef.icon,
     faction:            'player',
     class_id:           classDef.id,
-    health:             currentHealth,
+    health:             maxHealth,
     max_health:         maxHealth,
     temp_hp:            0,
     base_speed:         classDef.base_speed,

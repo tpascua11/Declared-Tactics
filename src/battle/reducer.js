@@ -64,6 +64,7 @@ function advanceStageOrWin(state, logs) {
 
     // Checkpoint: rested player entering this stage — used by RETRY
     const checkpointPlayer = JSON.parse(JSON.stringify(restedPlayers[0]));
+    console.log('[Checkpoint] player HP:', checkpointPlayer.health);
 
     return {
       ...state,
@@ -338,17 +339,24 @@ export function battleReducer(state, action) {
         freshState.characters.some(c => c.id === prevTargetId && c.health > 0);
       const lastTargetId = prevTargetAlive ? prevTargetId : freshState.lastTargetId;
       const startPlayer = freshState.characters.find(c => c.faction === 'player');
+      const checkpointPlayer = JSON.parse(JSON.stringify(startPlayer));
+      console.log('[Checkpoint] stat_boosts in:', playerData?.stat_boosts);
+      console.log('[Checkpoint] player HP:', checkpointPlayer.health, '/ max:', checkpointPlayer.max_health);
       return {
         ...freshState,
         phase: 'QUEUE_SETUP',
         sourceLevel: sourceLevel ?? null,
         lastTargetId,
-        checkpoint: { stageIndex: 0, player: JSON.parse(JSON.stringify(startPlayer)) },
+        checkpoint: { stageIndex: 0, player: checkpointPlayer },
       };
     }
 
     case 'RETRY': {
-      const { checkpoint, scenario } = state;
+      const { scenario } = state;
+      const checkpoint = state.checkpoint ?? {
+        stageIndex: 0,
+        player: JSON.parse(JSON.stringify(state.characters.find(c => c.faction === 'player'))),
+      };
       const stageIds  = scenario?.stages?.[checkpoint.stageIndex]?.enemies ?? [];
       const newActive = buildStageEnemies(stageIds.slice(0, MAX_ENEMIES), checkpoint.stageIndex, 0);
       const newBench  = buildStageEnemies(stageIds.slice(MAX_ENEMIES),    checkpoint.stageIndex, MAX_ENEMIES);

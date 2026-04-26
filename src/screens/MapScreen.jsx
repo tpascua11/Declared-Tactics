@@ -13,7 +13,12 @@ import {
   MAP_ICON_COOL_1, MAP_ICON_MOUNTAIN_ARC_1, MAP_ICON_NOT_SURE_1,
   MAP_ICON_GRASS_1, MAP_ICON_GRASS_2, MAP_ICON_GRASS_3,
   MAP_ICON_GRASS_4, MAP_ICON_GRASS_5, MAP_ICON_GRASS_6,
-  MAP_ICON_2_SNOWY_FOREST, MAP_ICON_2_GREEN_TREE_AT_SNOW,
+  Snowy_Forest, Green_Tree_At_Snow,
+  Big_Snow_Cave, Big_Snow_Cave_2, Home,
+  Snow_Cherry_Path_1, Snow_Field_Path_1, Snow_Field_Path_2, Snow_Field_Path_3,
+  Snow_Field_Shrine, Snow_Iron_Gate, Snow_Mountain_1, Snow_Mountain_2,
+  Snow_and_Water, Snow_and_Water_2, Snowy_Field_Bamboo, Snowy_Field_Den,
+  Sunset, Sunset_2, Tree_At_Snow, Water,
 } from '../assets';
 import { DEBUG_MAP } from '../debug';
 import './MapScreen.css';
@@ -44,12 +49,33 @@ const MAP_ICON_LOOKUP = {
   GRASS_1:        MAP_ICON_GRASS_1,
   GRASS_2:        MAP_ICON_GRASS_2,
   GRASS_3:        MAP_ICON_GRASS_3,
-  GRASS_4:        MAP_ICON_GRASS_4,
-  GRASS_5:        MAP_ICON_GRASS_5,
-  GRASS_6:        MAP_ICON_GRASS_6,
+  GRASS_4:          MAP_ICON_GRASS_4,
+  GRASS_5:          MAP_ICON_GRASS_5,
+  GRASS_6:          MAP_ICON_GRASS_6,
+  Snowy_Forest,
+  Green_Tree_At_Snow,
+  Big_Snow_Cave,
+  Big_Snow_Cave_2,
+  Home,
+  Snow_Cherry_Path_1,
+  Snow_Field_Path_1,
+  Snow_Field_Path_2,
+  Snow_Field_Path_3,
+  Snow_Field_Shrine,
+  Snow_Iron_Gate,
+  Snow_Mountain_1,
+  Snow_Mountain_2,
+  Snow_and_Water,
+  Snow_and_Water_2,
+  Snowy_Field_Bamboo,
+  Snowy_Field_Den,
+  Sunset,
+  Sunset_2,
+  Tree_At_Snow,
+  Water,
 };
 
-const ALL_MAP_ICONS = Object.values(MAP_ICON_LOOKUP).concat([MAP_ICON_2_SNOWY_FOREST, MAP_ICON_2_GREEN_TREE_AT_SNOW]);
+const ALL_MAP_ICONS = Object.values(MAP_ICON_LOOKUP);
 
 const MAX_LEVEL_ID = Math.max(...Object.keys(MAP_DATA.levels).map(Number));
 

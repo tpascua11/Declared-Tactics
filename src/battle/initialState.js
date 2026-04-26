@@ -79,6 +79,7 @@ export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
     characters,
     scenario,
     currentStageIndex: 0,
+    checkpoint: { stageIndex: 0, player: JSON.parse(JSON.stringify(player)) },
     enemyBench,
     logs: [{ msg: '⚔️  System Ready. Queue your actions and execute.', type: 'info' }],
     stepCount: 0,
