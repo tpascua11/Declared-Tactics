@@ -63,6 +63,7 @@ function resolveAura(enemy) {
 }
 
 function getMidCardOffset(enemies) {
+  if (enemies.length % 2 === 0) return 0;
   const cardWidths = enemies.map(e => CARD_WIDTH_REM[e.card_size] ?? 12);
   const unitWidths = cardWidths.map(w => 2 * TAG_POOL_REM + w);
   const midIdx = Math.floor(enemies.length / 2);

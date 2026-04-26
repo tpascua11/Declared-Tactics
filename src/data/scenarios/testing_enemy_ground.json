@@ -4,8 +4,12 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["light_fox_sumurai"]
+      "enemies": [
+        { "id": "dark_fox_sumurai",  "health": 1500, "max_health": 1500 },
+        { "id": "light_fox_sumurai", "health": 1500, "max_health": 1500 }
+      ]
     }
+
   ],
   "music": "SUMURAI_BOSS_1",
   "rewards": {}

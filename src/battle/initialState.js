@@ -23,11 +23,14 @@ export const MAX_ENEMIES = 5;
 // stageIndex + offset are used to generate unique IDs across stages and bench slots.
 export function buildStageEnemies(enemyIds, stageIndex, offset = 0) {
   return enemyIds
-    .map((id, i) => {
+    .map((entry, i) => {
+      const id = typeof entry === 'string' ? entry : entry.id;
+      const { id: _id, ...overrides } = typeof entry === 'string' ? {} : entry;
       const def = ENEMY_REGISTRY[id];
       if (!def) return null;
       return {
         ...JSON.parse(JSON.stringify(def)),
+        ...overrides,
         id: `${def.id}_s${stageIndex}_${offset + i + 1}`,
         action_count: 0,
       };
