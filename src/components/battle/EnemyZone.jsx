@@ -58,7 +58,7 @@ function AuraLayer({ auraConfig }) {
 
 function resolveAura(enemy) {
   const set = enemy.action_sets?.find(s => s.id === enemy.display_action_set_id);
-  const auraKey = set?.aura ?? enemy.aura ?? null;
+  const auraKey = enemy.display_aura ?? set?.aura ?? enemy.aura ?? null;
   return auraKey ? AURA_REGISTRY[auraKey] ?? null : null;
 }
 

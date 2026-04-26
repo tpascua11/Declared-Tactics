@@ -231,6 +231,16 @@ export function primeDisplayAura(characters) {
   characters.filter(c => c.faction === 'enemy').forEach(e => {
     const set = predictEnemyActionSet(e, opponent);
     e.display_action_set_id = set?.id ?? null;
+
+    if (set?.mode === 'cycle') {
+      const variants = set.variants ?? [];
+      const nextEnemy = { ...e, enemy_turn: (e.enemy_turn ?? 0) + 1 };
+      const idx = (nextEnemy[`${set.id}_cycle`] ?? 0) % variants.length;
+      const variant = variants[idx];
+      e.display_aura = (!Array.isArray(variant) && variant.aura) ? variant.aura : null;
+    } else {
+      e.display_aura = null;
+    }
   });
 }
 

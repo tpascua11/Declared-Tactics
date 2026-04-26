@@ -15,6 +15,21 @@
   "queue": [],
   "ai_type": "conditional",
   "action_library": {
+    "Harai": {
+      "name": "Harai",
+      "icon": "ENEMY_RESOLVE",
+      "cost": { "BATTLE_SPIRIT": 1 },
+      "speed_mod": 10,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "HARAI", "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
+        "target": []
+      }
+    },
     "Quick Steps": {
       "name": "Quick Steps",
       "icon": "FOX_QUICK_STEPS",
@@ -124,6 +139,20 @@
         "target": []
       }
     },
+    "Battojutsu": {
+      "name": "Battojutsu",
+      "icon": "FOX_SUMMURAI_BATTOJUTSU",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "sumurai_sheath",
+      "animation_intensity": 1.2,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "BATTOJUTSU", "multiplier": 0.65, "tier": "advanced" }],
+        "target": []
+      }
+    },
     "Heavy Slice": {
       "name": "Heavy Slice",
       "icon": "ENM_SAM_HEAVY_STRIKE_1",
@@ -147,7 +176,7 @@
         { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
         { "type": "EFFECTIVE_SLOTS_LTE", "value": 1 }
       ]},
-      "actions": ["Still Wind"]
+      "actions": ["Harai"]
     },
     {
       "id": "freeze_two_slots",
@@ -156,7 +185,7 @@
         { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
         { "type": "EFFECTIVE_SLOTS_LTE", "value": 2 }
       ]},
-      "actions": ["Still Wind", "Quick Steps"]
+      "actions": ["Still Wind", "Harai"]
     },
     {
       "id": "freeze_fallback",
@@ -170,12 +199,19 @@
       "mode": "cycle",
       "variants": [
         {
+          "aura": "lightning_burst",
           "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
-          "actions": ["Still Wind", "Speed Up", "Storm Strike"]
+          "actions": ["Speed Up", "Storm Strike", "Still Wind" ]
         },
         {
+          "aura": "frost_burst",
           "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 5 },
-          "actions": ["Still Wind", "Speed Up", "Freeze Slash"]
+          "actions": ["Speed Up", "Freeze Slash", "Still Wind"]
+        },
+        {
+          "aura": "lightning_frost_burst",
+          "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 8 },
+          "actions": ["Storm Strike", "Battojutsu", "Freeze Slash"]
         }
       ]
     },
@@ -189,6 +225,12 @@
       "on_name": {
         "Shinsoku": "Speed Up"
       }
+    },
+    {
+      "id": "low_hp_rally",
+      "aura": "frost_wisp",
+      "condition": { "type": "HEALTH_PCT_LTE", "value": 0.33 },
+      "actions": ["Still Wind", "Speed Up", "Harai"]
     },
     {
       "id": "default_original",
