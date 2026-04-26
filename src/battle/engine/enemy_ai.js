@@ -98,11 +98,21 @@ function evalCondition(condition, enemy, opponent) {
 
 // Advances and returns the next action list from a cycling set.
 // cycle_key is a unique string per set so multiple sets can cycle independently.
-function resolveCycle(set, cycle_key, enemy) {
+// If the current variant has a condition that isn't met, returns null without advancing
+// (the cycle holds until the condition is satisfied).
+function resolveCycle(set, cycle_key, enemy, opponent) {
   const variants = set.variants ?? [set.actions];
   const idx = (enemy[cycle_key] ?? 0) % variants.length;
+  const variant = variants[idx];
+
+  if (!Array.isArray(variant)) {
+    if (!evalCondition(variant.condition ?? null, enemy, opponent)) return null;
+    enemy[cycle_key] = idx + 1;
+    return variant.actions.map(name => enemy.action_library[name]).filter(Boolean);
+  }
+
   enemy[cycle_key] = idx + 1;
-  return variants[idx].map(name => enemy.action_library[name]).filter(Boolean);
+  return variant.map(name => enemy.action_library[name]).filter(Boolean);
 }
 
 // Returns the opponent's currently queued action cards (nulls filtered out).
@@ -171,7 +181,7 @@ export function selectActionSet(enemy, opponent) {
             return [resolved[Math.floor(Math.random() * resolved.length)]];
           }
           if (candidate.mode === 'cycle') {
-            return resolveCycle(candidate, `${set.id}_cycle`, enemy);
+            return resolveCycle(candidate, `${set.id}_cycle`, enemy, opponent);
           }
           return resolved;
         }
@@ -189,22 +199,26 @@ export function selectActionSet(enemy, opponent) {
   }
 
   for (const set of enemy.action_sets) {
-    if (evalCondition(set.condition ?? null, enemy, opponent)) {
+    if (!evalCondition(set.condition ?? null, enemy, opponent)) continue;
+
+    if (set.mode === 'queue_mirror') {
       enemy.current_action_set_id = set.id;
-      if (set.mode === 'queue_mirror') {
-        return resolveQueueMirror(set, enemy, opponent);
-      }
-      if (set.mode === 'cycle') {
-        return resolveCycle(set, `${set.id}_cycle`, enemy);
-      }
-      const resolved = set.actions
-        .map(name => enemy.action_library[name])
-        .filter(Boolean);
-      if (set.mode === 'random') {
-        return [resolved[Math.floor(Math.random() * resolved.length)]];
-      }
-      return resolved;
+      return resolveQueueMirror(set, enemy, opponent);
     }
+    if (set.mode === 'cycle') {
+      const result = resolveCycle(set, `${set.id}_cycle`, enemy, opponent);
+      if (result !== null) {
+        enemy.current_action_set_id = set.id;
+        return result;
+      }
+      continue;
+    }
+    enemy.current_action_set_id = set.id;
+    const resolved = set.actions.map(name => enemy.action_library[name]).filter(Boolean);
+    if (set.mode === 'random') {
+      return [resolved[Math.floor(Math.random() * resolved.length)]];
+    }
+    return resolved;
   }
 
   return [];
@@ -244,10 +258,21 @@ export function predictEnemyActionSet(enemy, opponent) {
     return enemy.action_sets.find(s => s.id === phase) ?? null;
   }
 
+  // Simulate the enemy_turn increment that buildEnemyQueue performs before selectActionSet,
+  // so TURN_MOD conditions predict the correct upcoming turn rather than the one just played.
+  const nextEnemy = { ...enemy, enemy_turn: (enemy.enemy_turn ?? 0) + 1 };
+
   for (const set of enemy.action_sets) {
-    if (evalCondition(set.condition ?? null, enemy, opponent)) {
-      return set;
+    if (!evalCondition(set.condition ?? null, nextEnemy, opponent)) continue;
+
+    if (set.mode === 'cycle') {
+      const variants = set.variants ?? [set.actions];
+      const idx = (nextEnemy[`${set.id}_cycle`] ?? 0) % variants.length;
+      const variant = variants[idx];
+      if (!Array.isArray(variant) && !evalCondition(variant.condition ?? null, nextEnemy, opponent)) continue;
     }
+
+    return set;
   }
 
   return null;

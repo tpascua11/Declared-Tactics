@@ -7,7 +7,7 @@
   "max_health": 3000,
   "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
   "resource_bar_type": "sumurai",
-  "base_speed": 101,
+  "base_speed": 100,
   "total_action_slots": 3,
   "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
   "temp_hp": 0,
@@ -18,7 +18,7 @@
     "Quick Steps": {
       "name": "Quick Steps",
       "icon": "FOX_QUICK_STEPS",
-      "speed_mod": 0,
+      "speed_mod": 1,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL", "STANCE"],
       "animation": "run_circle",
@@ -142,7 +142,7 @@
   "action_sets": [
     {
       "id": "freeze_one_slot",
-      "aura": "ice_guard",
+      "aura": "frost_wisp",
       "condition": { "all": [
         { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
         { "type": "EFFECTIVE_SLOTS_LTE", "value": 1 }
@@ -151,7 +151,7 @@
     },
     {
       "id": "freeze_two_slots",
-      "aura": "ice_guard",
+      "aura": "frost_wisp",
       "condition": { "all": [
         { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
         { "type": "EFFECTIVE_SLOTS_LTE", "value": 2 }
@@ -160,24 +160,23 @@
     },
     {
       "id": "freeze_fallback",
-      "aura": "ice_guard",
+      "aura": "frost_wisp",
       "condition": { "type": "SELF_HAS_TAG", "tag": "FREEZE" },
       "actions": ["Quick Steps", "Still Wind", "Heavy Slice"]
     },
     {
-      "id": "freeze_burst",
-      "aura": "ice_burst",
-      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 5 },
-      "actions": ["Speed Up", "Freeze Slash", "Stream Slash"]
-    },
-    {
       "id": "storm_burst",
-      "aura": "storm_burst",
+      "aura": "lightning_burst",
       "mode": "cycle",
-      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
       "variants": [
-        ["Quick Steps", "Storm Strike", "Heavy Slice"],
-        ["Speed Up", "Stream Slash", "Heavy Slice"]
+        {
+          "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+          "actions": ["Still Wind", "Speed Up", "Storm Strike"]
+        },
+        {
+          "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 5 },
+          "actions": ["Still Wind", "Speed Up", "Freeze Slash"]
+        }
       ]
     },
     {
@@ -193,7 +192,7 @@
     },
     {
       "id": "default_original",
-      "aura": "ice_wisp",
+      "aura": "frost_wisp",
       "actions": ["Still Wind", "Heavy Slice", "Heavy Slice"]
     }
   ]
