@@ -18,7 +18,7 @@ const COLORS = [
   [140, 170, 215],
 ];
 
-const CARD_COUNT = 300;
+const CARD_COUNT = 100;
 
 function buildCards() {
   return Array.from({ length: CARD_COUNT }, (_, i) => {

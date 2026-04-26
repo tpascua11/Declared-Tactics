@@ -238,6 +238,7 @@
   object-fit: cover;
   object-position: top;
   border-radius: 8px;
+  image-rendering: pixelated;
   filter: drop-shadow(0 0 30px rgba(var(--showcase-accent, 212, 168, 75), 0.5));
 }
 
@@ -371,6 +372,7 @@
   border: 2px solid rgba(var(--card-accent), 0.5);
   border-radius: var(--radius-sm);
   filter: grayscale(0.2);
+  image-rendering: pixelated;
   transition: opacity var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base), filter var(--transition-base);
 }
 

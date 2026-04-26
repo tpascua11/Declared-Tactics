@@ -232,7 +232,7 @@
       "reward": { "general": { "type": "gold", "amount": 1000 } },
       "defeat_tip": "The dark fox is a mirror. It knows every move you know — because they are your moves. The question isn't how to beat it. The question is how well you know yourself. Do you?",
       "clear_desc": "It's over. You stand looking at where the dark fox was, and there is nothing left but the road and the quiet. The question has finally gone still. A sumurai is not defined by their strikes or their footwork or the names of their techniques. A sumurai is someone who knows themselves completely — their habits, their hesitations, the patterns they fall into under pressure. You faced every version of that tonight. And you answered. That's what you are.",
-      "scenario_id": "dark_fox_sumurai"
+      "scenario_id": "dark_light_fox_sumurai"
     }
   ]
 }
