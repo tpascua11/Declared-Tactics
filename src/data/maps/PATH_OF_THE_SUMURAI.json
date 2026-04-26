@@ -9,10 +9,10 @@
       "name": "IRON GATE",
       "type": "COMBAT",
       "map_icon": "CITADEL_1",
-      "desc": "A pair of ferrets block the iron gate. One of them snorts. 'Hah — a fox? On the Path of the Sumurai? Go home, kit.'",
+      "desc": "Snow falls steady against iron. The gate looms ahead — old metal gone gray with frost, chains thick as your arm. You've been walking through cold you can't name, following a path you can't explain. Your paws are numb. Your breath clouds the air in front of you. You don't know why you're here. That's the honest truth. Something pulled you toward this road — not hunger, not anger, not revenge. Just... forward. Like your feet knew something your head didn't. And now you're standing at a gate that feels like it should mean something, guarded by two ferrets who look like they've seen a thousand foxes come and go. One of them snorts. 'Hah — a fox? On the Path of the Sumurai? Go home, kit.' The other one doesn't even laugh. He just looks at you — really looks — like he's waiting to see what you'll do next. The snow keeps falling. The gate doesn't move. And somewhere underneath the doubt, underneath the cold, there's a quiet thing that refuses to turn around. You came this far. Might as well see what's on the other side.",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["quick_steps"] }] },
       "defeat_tip": "Hestiation is defeat! Attack!",
-      "clear_desc": "The ferrets go quiet. One of them laughs despite himself — 'Not bad, fox.' Watching them weave and sidestep, something clicks. Quick Steps. You're going to need that.",
+      "clear_desc": "The ferrets go quiet. One of them laughs despite himself — low, surprised, almost respectful. 'Not bad, fox.' Snow settles on all three of you. You're breathing hard. Your muscles burn from the cold and the effort. But you're standing, and they're not — and that means something, even if you don't know what yet. Then you notice it: the way they moved. Not fast, exactly. Efficient. Every step placed just so, no wasted motion, like they'd already decided where to be before they got there. Watching them weave and sidestep, something clicks. Quick Steps. You're going to need that. The gate groans open behind them. Wind cuts through, sharp and clean. Beyond it, the path stretches into white nothing — trees, shadows, the promise of more fights, more questions, more snow. You step forward. You still don't know why you're here. But you're not turning back.",
       "scenario_id": "rabbit_and_boar_level_1"
     },
     {
@@ -21,7 +21,8 @@
       "type": "COMBAT",
       "map_icon": "PATH_1",
       "desc": "Boars and rabbits hold the trail. The boars are slow — but the rabbits won't stay still long enough to hit.",
-      "reward": { "general": { "type": "gold", "amount": 20 }, "hp_upgrade": 250 },      "defeat_tip": "Rabbits are extremely evasive. Don't waste heavy strikes on them — wait for your opening.",
+      "reward": { "general": { "type": "gold", "amount": 20 } },    
+      "defeat_tip": "Rabbits are extremely evasive. Don't waste heavy strikes on them — wait for your opening.",
       "clear_desc": "The trail is yours. The rabbits were slippery, but you found the gaps. You're starting to understand — speed isn't just about hitting first.",
       "scenario_id": "rabbit_and_boar_level_2"
     },

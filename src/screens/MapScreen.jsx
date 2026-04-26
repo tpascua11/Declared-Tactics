@@ -149,14 +149,8 @@ const STATIC_STYLES = {
 // ── Pure helpers ─────────────────────────────────────────────
 
 function getNeighbors(id) {
-  const cols = MAP_DATA.cols, rows = MAP_DATA.rows;
-  const col = id % cols, row = Math.floor(id / cols);
-  const n = [];
-  if (row > 0)       n.push(id - cols);
-  if (row < rows - 1) n.push(id + cols);
-  if (col > 0)       n.push(id - 1);
-  if (col < cols - 1) n.push(id + 1);
-  return n;
+  const total = MAP_DATA.levels.length;
+  return id + 1 < total ? [id + 1] : [];
 }
 
 const DEBUG_UNLOCK_ALL = false;

@@ -4,7 +4,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { GameProvider, useGame } from './context/GameContext';
-import { PlayerProvider } from './context/PlayerContext';
+import { PlayerProvider, usePlayer } from './context/PlayerContext';
 import GameCanvas from './components/shared/GameCanvas';
 import TitleScreen from './screens/TitleScreen';
 import CharacterSelectScreen from './screens/CharacterSelectScreen';
@@ -32,6 +32,7 @@ function getIntroAudio() {
 
 function PhaseRouter() {
   const { gs, dispatch } = useGame();
+  const { playerData } = usePlayer();
   const [displayedPhase, setDisplayedPhase] = useState(gs.phase);
   const [showShower, setShowShower] = useState(false);
   const displayedPhaseRef = useRef(displayedPhase);
@@ -76,7 +77,13 @@ function PhaseRouter() {
   let screen;
   switch (displayedPhase) {
     case 'TITLE':
-      screen = <TitleScreen onNewGame={() => dispatch({ type: 'START_NEW_GAME' })} />;
+      screen = (
+        <TitleScreen
+          onNewGame={() => dispatch({ type: 'START_NEW_GAME' })}
+          hasSave={!!playerData}
+          onContinue={() => dispatch({ type: 'GO_TO_MAP' })}
+        />
+      );
       break;
     case 'CHARACTER_SELECT':
       screen = <CharacterSelectScreen />;

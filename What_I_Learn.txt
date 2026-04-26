@@ -103,3 +103,125 @@ a separate action's calculation. Speed does not have this property, so it must
 stay as separate independent entries that each action reads and discards on its
 own terms.
 
+[4] BATTLE DATA ACCESS — THE CASE FOR A CENTRALIZED BATTLE STORE
+-----------------------------------------------------------------
+Building the battle system revealed how many different kinds of data need to be
+reached mid-execution. Three distinct layers kept appearing:
+
+  1. Static definitions — card definitions, class definitions, scenario configs,
+     animation registries. These never change during a fight.
+
+  2. Live game state — current HP, active tags, queues, turn counters.
+     These are already in the reducer and accessed through dispatch/state.
+
+  3. Prediction / lookahead data — what will the enemy do next, what cards will
+     be available after this action, how will speed rankings shift. This is the
+     hardest layer: it requires reading static defs AND live state together to
+     simulate a future frame.
+
+Because these were pulled from scattered places (top-level imports, reducer
+state, inline calculations inside engine functions), any logic that needed to
+cross layers — like enemy AI or card effect previews — had to thread data
+through function arguments manually. This creates long parameter lists and makes
+it easy to miss a piece of data the engine actually needs.
+
+WHAT COULD HAVE HELPED: A single BattleDataStore or BattleContext that holds
+a snapshot of all three layers and is updated once at the start of each step.
+Engine functions read from it freely without needing it passed in. Prediction
+logic reads the same store and runs a dry simulation against a copy.
+
+TRADEOFF: A global store is easy to over-read. Components start depending on
+data they have no business touching, and isolated testing gets harder. The
+right scope is read-only reference data + current state snapshot — mutations
+still go through the reducer, not the store. The store is a lens, not a sink.
+
+BROADER LESSON: When a system has multiple execution layers that all need to
+share context, define that context structure early — even as a plain object —
+and pass it through deliberately. It's much harder to retrofit later when the
+engine functions, AI logic, and UI preview components have all grown their own
+ad-hoc imports.
+
+[5] REACT IS A WEB FRAMEWORK, NOT A GAME FRAMEWORK
+----------------------------------------------------
+React was designed for a specific problem: display server data as UI, respond
+to user input, send that input back to a server. Its entire model is built
+around that loop. Building a game in it means constantly working against
+assumptions that are invisible until they hurt you.
+
+WEB REACT'S ASSUMPTIONS:
+  - State is a cache of server data. It changes in discrete events (a fetch
+    returns, a user clicks a button). Between events, nothing happens.
+  - UI is a pure function of state: UI = f(state). Re-render is cheap and
+    correct — just call the function again with new data.
+  - Side effects (timers, subscriptions) are exceptions that get cleaned up
+    when the component unmounts or the dependency changes.
+  - Components are isolated. They receive what they need via props or context
+    and do not reach into each other.
+
+GAME LOGIC'S ASSUMPTIONS:
+  - State mutates continuously in a simulation loop. Many systems read and
+    write shared state in a defined sequence every frame/step.
+  - Timing is a first-class concern — animations, delays, and state transitions
+    must coordinate with each other precisely.
+  - Side effects ARE the product. The battle loop, the animation system, the
+    AI — these are not exceptions to manage around, they are the entire point.
+  - Systems need to reach across boundaries freely. The engine needs card
+    definitions, character state, scenario config, and animation config
+    simultaneously, in one execution pass.
+
+WHERE THE MISMATCH SHOWS UP IN THIS PROJECT:
+  - useEffect's cleanup model cancelled animation timers when the battle loop
+    re-rendered (logged in [2]). That is React doing exactly what it is
+    supposed to do — and it was wrong for a game.
+  - Every piece of game data that needed to cross a component boundary had to
+    be threaded through context, props, or imports — because React has no
+    concept of "engine-scoped data" that lives outside the component tree.
+  - The reducer (designed for discrete UI events) had to carry animation flags
+    like STOP_SHAKE and STOP_FIZZLE — because there was no better place to
+    coordinate state between the engine and the UI layer.
+  - Prediction logic (simulating a future turn) requires running the engine
+    against a copy of state — but in React, state is owned by the component
+    tree, so "copying it" is not straightforward.
+
+THE CORE INSIGHT: In a web app, state is data waiting to be displayed. In a
+game, state IS the game — it runs, simulates, and evolves on its own, and the
+UI is just a window into it. React's tools (useEffect, useReducer, context)
+were built for the first model. Using them for the second works, but you end
+up building a game engine inside a framework that does not know a game engine
+is there.
+
+WHAT THIS MEANS GOING FORWARD: The game logic (engine, AI, simulation) should
+be as framework-agnostic as possible — plain functions and plain objects that
+do not know about React. React's job is to read the output of that logic and
+render it. The more the engine depends on React primitives (state, effects,
+context), the more the two models fight each other.
+
+BUT REACT STILL HAS REAL ADVANTAGES FOR THIS KIND OF GAME:
+
+  1. AI tooling knows it extremely well. Claude, Copilot, and every major AI
+     assistant has deep React training. For a solo or small-team project, this
+     alone is a force multiplier — you get high-quality help on every problem
+     instead of fighting obscure engine documentation alone.
+
+  2. The game IS mostly UI. Avormore: Declared Tactics is a card game —
+     menus, card displays, HP bars, battle logs, map screens, modals. These
+     are web UI problems. React is genuinely excellent at them. A platformer
+     or physics game would suffer much more from the framework mismatch.
+
+  3. Turn-based timing fits React's model better than real-time would.
+     Steps happen in seconds, not frames. React's re-render cost is invisible
+     at that cadence. A 60fps action game in React would be painful;
+     a 1-step-per-second card battle is manageable.
+
+  4. CSS and Tailwind are first-class. Styling a card game UI — animations,
+     hover states, layout, responsive design — is trivial compared to doing
+     the same thing in a canvas-based or custom engine environment.
+
+  5. Deployment is frictionless. It's a website. No runtime to install, no
+     platform store, no build target per OS. Share a URL and it runs.
+
+  6. Hot reload speeds up iteration. Changing a card's layout or a battle
+     log style and seeing it instantly — without restarting a game loop —
+     is something native game engines still don't do as smoothly.
+
+

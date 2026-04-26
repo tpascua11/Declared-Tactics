@@ -89,7 +89,7 @@ const EMBER_CONFIG = [
   { left: 78, top: 76, color: '#f0d090', delay: 3.5, duration: 14 },
 ];
 
-export default function TitleScreen({ onNewGame }) {
+export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
 
   return (
     <div className="title-screen">
@@ -156,10 +156,12 @@ export default function TitleScreen({ onNewGame }) {
         </div>
 
         <nav className="menu">
-          <button
-            className="menu-btn"
-            onClick={onNewGame}
-          >
+          {hasSave && (
+            <button className="menu-btn" onClick={onContinue}>
+              Continue
+            </button>
+          )}
+          <button className="menu-btn" onClick={onNewGame}>
             New Game
           </button>
         </nav>
