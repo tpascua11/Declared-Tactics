@@ -164,44 +164,31 @@
 }
 
 .title-main {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(42px, 8vw, 72px);
-  font-weight: 200;
-  letter-spacing: 0.25em;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(32px, 6vw, 58px);
+  font-weight: bold;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   line-height: 1.1;
-  color: #f0e6d3;
-  text-shadow:
-    0 0 40px rgba(232, 197, 109, 0.4),
-    0 0 80px rgba(212, 168, 75, 0.25),
-    0 0 120px rgba(212, 118, 90, 0.12);
+  color: #f5d76e;
+  text-shadow: 0 0 20px #c8a135;
   animation: titleBreath 6s ease-in-out infinite;
 }
 
 @keyframes titleBreath {
-  0%, 100% {
-    text-shadow:
-      0 0 40px rgba(232, 197, 109, 0.4),
-      0 0 80px rgba(212, 168, 75, 0.25),
-      0 0 120px rgba(212, 118, 90, 0.12);
-  }
-  50% {
-    text-shadow:
-      0 0 55px rgba(240, 208, 144, 0.5),
-      0 0 100px rgba(212, 168, 75, 0.3),
-      0 0 140px rgba(212, 118, 90, 0.18);
-  }
+  0%, 100% { text-shadow: 0 0 20px #c8a135, 0 0 50px rgba(200, 161, 53, 0.3); }
+  50%       { text-shadow: 0 0 30px #ddb948, 0 0 70px rgba(212, 168, 75, 0.4); }
 }
 
 .title-world {
-  font-size: clamp(12px, 2vw, 16px);
-  font-weight: 300;
-  letter-spacing: 0.6em;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(10px, 1.5vw, 13px);
+  font-weight: normal;
+  letter-spacing: 0.45em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: #4a6a8a;
   margin-top: 20px;
-  opacity: 0.75;
-  text-shadow: 0 0 15px rgba(155, 139, 171, 0.3);
+  opacity: 1;
 }
 
 .title-world::before { content: '— '; opacity: 0.5; margin-right: 4px; }
@@ -233,42 +220,53 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 14px;
   animation: fadeUp var(--duration-entrance) ease 0.4s both;
 }
 
 .menu-btn {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
   cursor: pointer;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(20px, 4vw, 26px);
-  font-weight: 400;
-  letter-spacing: 0.15em;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(14px, 2.5vw, 20px);
+  font-weight: bold;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: #e8e0d3;
-  padding: 12px 52px;
+  color: #ffffff;
+  padding: 16px 64px;
   position: relative;
-  transition: all 0.4s var(--ease-smooth);
   outline: none;
+  transition: all 0.15s;
+  animation: btnPulse 2.8s ease-in-out infinite;
+  will-change: box-shadow, border-color;
+}
+
+@keyframes btnPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(255, 255, 255, 0.4), 0 0 55px rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 0 22px rgba(255, 255, 255, 0.8), 0 0 45px rgba(255, 255, 255, 0.3);
+  }
 }
 
 .menu-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.9);
   color: #ffffff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(232, 220, 200, 0.25);
-  letter-spacing: 0.2em;
+  text-shadow: 0 0 25px rgba(255, 255, 255, 0.9), 0 0 55px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 70px rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.4em;
+  animation: none;
 }
 
-.menu-btn::before {
-  content: '';
-  position: absolute;
-  bottom: 8px; left: 50%;
-  transform: translateX(-50%);
-  width: 0; height: 1px;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent);
-  transition: width 0.4s ease;
-}
-
-.menu-btn:hover::before { width: 85%; }
+.menu-btn:active { transform: scale(0.97); }
 
 /* Corner Ornaments */
 .corner {
@@ -291,7 +289,7 @@
   display: flex;
   justify-content: center;
   gap: clamp(20px, 4vw, 36px);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Courier New', monospace;
   font-size: clamp(8px, 1.5vw, 10px);
   letter-spacing: 0.2em;
   color: #6b6070;
