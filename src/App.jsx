@@ -41,17 +41,27 @@ function PhaseRouter() {
     displayedPhaseRef.current = displayedPhase;
   }, [displayedPhase]);
 
+  const introAllowed = useRef(false);
+
   useEffect(() => {
     const audio = getIntroAudio();
     if (INTRO_PHASES.has(gs.phase)) {
-      audio.play().catch(() => {
-        const resume = () => {
-          audio.play().catch(() => {});
-        };
-        document.addEventListener('click',   resume, { once: true });
-        document.addEventListener('keydown', resume, { once: true });
-      });
+      introAllowed.current = true;
+      const resume = () => { if (introAllowed.current) audio.play().catch(() => {}); };
+      audio.play()
+        .then(() => { if (!introAllowed.current) { audio.pause(); audio.currentTime = 0; } })
+        .catch(() => {
+          if (!introAllowed.current) return;
+          document.addEventListener('click',   resume, { once: true });
+          document.addEventListener('keydown', resume, { once: true });
+        });
+      return () => {
+        introAllowed.current = false;
+        document.removeEventListener('click',   resume);
+        document.removeEventListener('keydown', resume);
+      };
     } else {
+      introAllowed.current = false;
       audio.pause();
       audio.currentTime = 0;
     }
@@ -79,9 +89,9 @@ function PhaseRouter() {
     case 'TITLE':
       screen = (
         <TitleScreen
-          onNewGame={() => dispatch({ type: 'START_NEW_GAME' })}
+          onNewGame={() => { introAllowed.current = false; dispatch({ type: 'START_NEW_GAME' }); }}
           hasSave={!!playerData}
-          onContinue={() => dispatch({ type: 'GO_TO_MAP' })}
+          onContinue={() => { introAllowed.current = false; dispatch({ type: 'GO_TO_MAP' }); }}
         />
       );
       break;
