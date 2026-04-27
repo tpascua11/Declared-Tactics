@@ -476,12 +476,16 @@
   text-shadow: none;
 }
 
-.lock-icon {
+.unwritten-label {
   display: block;
-  width: 16px;
-  height: 19px;
   margin: 3px auto 0;
-  color: rgba(150, 130, 100, 0.55);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  color: rgb(210, 100, 100);
+  text-shadow: 0 0 6px rgba(210, 80, 80, 0.6), 0 1px 2px rgba(0, 0, 0, 0.8);
+  text-transform: uppercase;
 }
 
 .locked-overlay {
@@ -520,6 +524,7 @@
 /* ════════════════════════════════════════════════════════════════ */
 .start-button {
   position: relative;
+  overflow: hidden;
   background: rgba(212, 168, 75, 0.1);
   border: 1.5px solid rgba(232, 197, 109, 0.4);
   border-radius: 6px;
@@ -559,15 +564,23 @@
   outline-offset: 2px;
 }
 
-.start-glow {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
+@keyframes startBtnShimmer {
+  0%,  60%, 100% { left: -80%; }
+  35%             { left: 130%; }
 }
 
-.start-button:hover .start-glow { transform: translateX(100%); }
+.start-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(232, 197, 109, 0.45), transparent);
+  transform: skewX(-15deg);
+  animation: startBtnShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
 
 .start-text {
   position: relative;

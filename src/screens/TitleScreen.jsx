@@ -33,9 +33,9 @@ function buildCardConfig() {
 
   // Storm wave: 95 bg cards spreading over 0→55 s with a gentle linear-ish curve
   // so density builds slowly and steadily before plateauing into a full downpour.
-  for (let i = 0; i < 190; i++) {
+  for (let i = 0; i < 140; i++) {
     const color = COLORS[i % COLORS.length];
-    const t     = i / 189;
+    const t     = i / 139;
     const delay = 4 + Math.pow(t, 0.75) * 116;
     bg.push({
       color,
@@ -168,7 +168,7 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
       </div>
 
       {/* Foreground falling cards (in front of title/menu) */}
-      <div className="particle-container cards-rain-fg">
+      {/* <div className="particle-container cards-rain-fg">
         {FG_CARDS.map((cfg, i) => (
           <div
             key={i}
@@ -188,7 +188,7 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
             }}
           />
         ))}
-      </div>
+      </div> */}
 
       {/* Footer */}
       <div className="title-footer">
