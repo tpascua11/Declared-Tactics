@@ -640,7 +640,7 @@ export default function MapScreen() {
         </div>
       </div>
 
-      {/* BOTTOM BAR */}
+      {/* BOTTOM BAR — hidden until implemented
       <div style={STATIC_STYLES.bottom}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", maxWidth: 800 }}>
           {MENU_ITEMS.map(item => (
@@ -664,6 +664,7 @@ export default function MapScreen() {
           ))}
         </div>
       </div>
+      */}
 
       {/* FLASH MESSAGE */}
       <div
