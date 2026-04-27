@@ -59,8 +59,8 @@
 
 .falling-card {
   position: absolute;
-  background: rgba(10, 8, 16, 0.4);
-  border: 1px solid var(--card-color, rgba(212, 168, 75, 0.35));
+  background: rgba(var(--card-rgb, 212, 168, 75), 0.14);
+  border: 1.5px solid rgba(var(--card-rgb, 212, 168, 75), 0.55);
   border-radius: 5px;
   opacity: 0;
   contain: layout style paint;
@@ -72,28 +72,18 @@
   animation-delay: var(--delay, 0s);
 
   box-shadow:
-    inset 0 0 12px rgba(var(--card-rgb, 212, 168, 75), 0.08),
     0 2px 8px rgba(0, 0, 0, 0.3),
-    0 0 15px rgba(var(--card-rgb, 212, 168, 75), 0.1);
+    0 0 22px rgba(var(--card-rgb, 212, 168, 75), 0.35);
 }
 
 .falling-card::before {
   content: '';
   position: absolute;
   top: 6px; left: 6px; right: 6px; bottom: 6px;
-  border: 1px solid rgba(var(--card-rgb, 212, 168, 75), 0.12);
+  border: 1px solid rgba(var(--card-rgb, 212, 168, 75), 0.35);
   border-radius: 2px;
 }
 
-.falling-card::after {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 4px; height: 4px;
-  background: rgba(var(--card-rgb, 212, 168, 75), 0.25);
-  border-radius: 50%;
-}
 
 @keyframes cardFall {
   0%   { opacity: 0; transform: translateY(-10%) rotate(var(--start-rot, -8deg)); }
@@ -106,6 +96,7 @@
   0%   { margin-left: -15px; }
   100% { margin-left: 15px; }
 }
+
 
 .ember {
   position: absolute;
@@ -226,8 +217,9 @@
 
 .menu-btn {
   background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
+  border: none;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
   cursor: pointer;
   font-family: 'Courier New', monospace;
   font-size: clamp(14px, 2.5vw, 20px);
@@ -235,35 +227,36 @@
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: #ffffff;
-  padding: 16px 64px;
+  padding: 10px 64px;
   position: relative;
+  overflow: hidden;
   outline: none;
   transition: all 0.15s;
-  animation: btnPulse 2.8s ease-in-out infinite;
-  will-change: box-shadow, border-color;
 }
 
-@keyframes btnPulse {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.3);
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 22px rgba(255, 255, 255, 0.4), 0 0 55px rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.75);
-    text-shadow: 0 0 22px rgba(255, 255, 255, 0.8), 0 0 45px rgba(255, 255, 255, 0.3);
-  }
+@keyframes menuBtnShimmer {
+  0%,  60%, 100% { left: -80%; }
+  35%             { left: 130%; }
+}
+
+.menu-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transform: skewX(-15deg);
+  animation: menuBtnShimmer 3s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .menu-btn:hover {
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.9);
+  border-bottom-color: rgba(255, 255, 255, 0.9);
   color: #ffffff;
-  text-shadow: 0 0 25px rgba(255, 255, 255, 0.9), 0 0 55px rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 70px rgba(255, 255, 255, 0.2);
   letter-spacing: 0.4em;
-  animation: none;
 }
 
 .menu-btn:active { transform: scale(0.97); }
