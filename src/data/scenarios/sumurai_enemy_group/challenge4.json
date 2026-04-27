@@ -1,12 +1,12 @@
 {
   "id": "challenge4",
   "name": "Challenge 4",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_4",
   "stages": [
     {
       "enemies": ["turtle_sumurai", "dragon_sumurai", "bear_sumurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_2",
   "rewards": {}
 }

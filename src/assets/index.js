@@ -31,7 +31,16 @@ import SCENARIO_MOUNTAIN_2_WIDE    from './SCENARIO/MOUNTAIN_2_WIDE.png';
 import SCENARIO_MOUNTAIN_3_WIDE    from './SCENARIO/MOUNTAIN_3_WIDE.png';
 import SCENARIO_SECRET_DOOR_1_WIDE from './SCENARIO/SECRET_DOOR_1_WIDE.png';
 import SCENARIO_SECRET_DOOR_2_WIDE from './SCENARIO/SECRET_DOOR_2_WIDE.png';
-import SCENARIO_SNOW_BATTLE_FIELD_WIDE from './SCENARIO/SNOW_BATTLE_FIELD_WIDE.png';
+import SCENARIO_SNOW_BATTLE_FIELD_WIDE    from './SCENARIO/SNOW_BATTLE_FIELD_WIDE.png';
+import sumurai_battlefield_2  from './SCENARIO/sumurai_battlefield_2.png';
+import sumurai_battlefield_3  from './SCENARIO/sumurai_battlefield_3.png';
+import sumurai_battlefield_4  from './SCENARIO/sumurai_battlefield_4.png';
+import sumurai_battlefield_6  from './SCENARIO/sumurai_battlefield_6.png';
+import sumurai_battlefield_7  from './SCENARIO/sumurai_battlefield_7.png';
+import sumurai_battlefield_8  from './SCENARIO/sumurai_battlefield_8.png';
+import sumurai_battlefield_9  from './SCENARIO/sumurai_battlefield_9.png';
+import sumurai_battlefield_10 from './SCENARIO/sumurai_battlefield_10.png';
+import sumurai_battlefield_11 from './SCENARIO/sumurai_battlefield_11.png';
 
 export const SCENARIO_BACKGROUNDS = {
   CITADEL_1_ENEMY:        SCENARIO_CITADEL_1_ENEMY,
@@ -42,7 +51,16 @@ export const SCENARIO_BACKGROUNDS = {
   MOUNTAIN_3_WIDE:        SCENARIO_MOUNTAIN_3_WIDE,
   SECRET_DOOR_1_WIDE:     SCENARIO_SECRET_DOOR_1_WIDE,
   SECRET_DOOR_2_WIDE:     SCENARIO_SECRET_DOOR_2_WIDE,
-  SNOW_BATTLE_FIELD_WIDE: SCENARIO_SNOW_BATTLE_FIELD_WIDE,
+  SNOW_BATTLE_FIELD_WIDE:      SCENARIO_SNOW_BATTLE_FIELD_WIDE,
+  sumurai_battlefield_2,
+  sumurai_battlefield_3,
+  sumurai_battlefield_4,
+  sumurai_battlefield_6,
+  sumurai_battlefield_7,
+  sumurai_battlefield_8,
+  sumurai_battlefield_9,
+  sumurai_battlefield_10,
+  sumurai_battlefield_11,
 };
 
 // --- Enemy Portraits ---

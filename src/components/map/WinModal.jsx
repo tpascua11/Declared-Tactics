@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import MAP_DATA from '../../data/maps/PATH_OF_THE_SUMURAI.json';
 
 const CARD_W = 88;
@@ -89,6 +90,19 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
   const levelName = level?.name ?? "";
   const clearDesc = level?.clear_desc ?? "";
 
+  const [typedDesc, setTypedDesc] = useState('');
+  useEffect(() => {
+    if (!clearDesc) return;
+    setTypedDesc('');
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setTypedDesc(clearDesc.slice(0, i));
+      if (i >= clearDesc.length) clearInterval(id);
+    }, 18);
+    return () => clearInterval(id);
+  }, [clearDesc]);
+
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 300,
@@ -101,7 +115,7 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
         border: "1.5px solid #4da6ff33",
         borderRadius: 12,
         padding: "36px 44px",
-        width: 560,
+        width: 880,
         maxWidth: "90vw",
         maxHeight: "85vh",
         overflowY: "auto",
@@ -132,16 +146,22 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
               border: "1px solid rgba(255,255,255,0.07)",
               borderRadius: 3,
               padding: "10px 14px",
+              position: "relative",
             }}>
-              <div style={{ fontSize: 14, color: "#7a9aaa", lineHeight: 1.9, fontStyle: "italic", fontWeight: 500 }}>
+              {/* invisible full text holds the box size */}
+              <div style={{ fontSize: 14, lineHeight: 1.9, fontStyle: "italic", fontWeight: 500, visibility: "hidden" }}>
                 {clearDesc}
+              </div>
+              {/* typed text overlaid */}
+              <div style={{ fontSize: 14, color: "#7a9aaa", lineHeight: 1.9, fontStyle: "italic", fontWeight: 500, position: "absolute", top: "10px", left: "14px", right: "14px" }}>
+                {typedDesc}
               </div>
             </div>
           )}
         </div>
 
         {/* Rewards */}
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ width: "100%", maxWidth: 472, display: "flex", flexDirection: "column", gap: 12 }}>
 
           {/* Gold */}
           {typeof reward === 'object' && reward?.general?.type === 'gold' && (
@@ -195,7 +215,7 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
         <button
           onClick={onClose}
           style={{
-            marginTop: 4, padding: "10px 40px",
+            marginTop: 4, padding: "10px 40px", alignSelf: "center",
             border: "1.5px solid #4da6ff44", borderRadius: 6,
             background: "rgba(77,166,255,0.07)",
             color: "#4da6ff", fontSize: 10, letterSpacing: 3,

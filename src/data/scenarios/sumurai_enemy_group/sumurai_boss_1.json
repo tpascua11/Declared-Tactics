@@ -1,7 +1,7 @@
 {
   "id": "sumurai_boss",
   "name": "Dark Light Fox",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_7",
   "stages": [
     {
       "enemies": ["dark_fox_sumurai"]
@@ -13,7 +13,8 @@
       "enemies": [
         { "id": "dark_fox_sumurai",  "health": 1500, "max_health": 1500 },
         { "id": "light_fox_sumurai", "health": 1500, "max_health": 1500 }
-      ]
+      ],
+      "heal": 500
     }
 
   ],

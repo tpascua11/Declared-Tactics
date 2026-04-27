@@ -202,7 +202,7 @@ function deriveStates(completedLevels = []) {
 
 // ── LevelCell ─────────────────────────────────────────────────
 
-const LevelCell = ({ level, levelState, levelType, isPlayerHere, canEnter, playerTypeColor, playerGlow, tokenPortrait, tokenName, mapIconSrc, onClick, onEnter }) => {
+const LevelCell = ({ level, levelState, levelType, isPlayerHere, playerTypeColor, playerGlow, tokenPortrait, tokenName, mapIconSrc, onClick, onEnter }) => {
   const isLocked  = levelState === "locked";
   const isCleared = levelState === "cleared";
 
@@ -311,49 +311,45 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, canEnter, playe
           </div>
 
           {/* Bottom: portrait (if player is here) + enter button */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%", position: "relative", zIndex: 1 }}>
-            {isPlayerHere && (
-              <div className="map-token-glow" style={{
-                width: 50, height: 70,
-                border: "2px solid #4da6ff", borderRadius: 6,
-                background: "linear-gradient(180deg,#0a1525,#061018)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                overflow: "hidden",
-              }}>
-                {tokenPortrait
-                  ? <img src={tokenPortrait} alt={tokenName} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
-                  : <span style={{ fontSize: 24 }}>👤</span>
-                }
-              </div>
-            )}
-            {isPlayerHere ? (
+          {!isCleared && (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%", position: "relative", zIndex: 1 }}>
+              {isPlayerHere && (
+                <div className="map-token-glow" style={{
+                  width: 50, height: 70,
+                  border: "2px solid #4da6ff", borderRadius: 6,
+                  background: "linear-gradient(180deg,#0a1525,#061018)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  overflow: "hidden",
+                }}>
+                  {tokenPortrait
+                    ? <img src={tokenPortrait} alt={tokenName} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                    : <span style={{ fontSize: 24 }}>👤</span>
+                  }
+                </div>
+              )}
               <button
                 className="map-enter-btn-cell"
-                onClick={e => { e.stopPropagation(); onEnter(); }}
-                disabled={!canEnter}
+                onClick={e => { e.stopPropagation(); onEnter(level.id); }}
                 style={{
                   position: "relative",
                   padding: "5px 14px",
-                  border: `1.5px solid ${canEnter ? "#ffffff" : "#1a2a3a"}`,
+                  border: "1.5px solid #ffffff",
                   borderRadius: 5,
                   fontSize: 9,
                   letterSpacing: 2,
-                  cursor: canEnter ? "pointer" : "not-allowed",
-                  background: canEnter ? "#ffffff" : "#070c14",
-                  color: canEnter ? "#000000" : "#2a3a4a",
+                  cursor: "pointer",
+                  background: "#ffffff",
+                  color: "#000000",
                   fontWeight: "bold",
                   whiteSpace: "nowrap",
                   "--glow": "rgba(255,255,255,0.35)",
                   transition: "all 0.15s",
-                  opacity: canEnter ? 1 : 0.45,
                 }}
               >
                 ENTER
               </button>
-            ) : (
-              <div style={{ fontSize: 24, lineHeight: 1 }}>{levelType.icon}</div>
-            )}
-          </div>
+            </div>
+          )}
         </>
       ) : (
         <>
@@ -512,31 +508,31 @@ export default function MapScreen() {
     setPlayerLevel(lid);
   }, [levelStates, flash]);
 
-  const handleEnter = useCallback(() => {
-    const level = MAP_DATA.levels[playerLevel];
+  const handleEnter = useCallback((levelId) => {
+    const level = MAP_DATA.levels[levelId];
     if (!level) return;
+    setPlayerLevel(levelId);
 
     if (!level.scenario_id) {
-      // Non-combat level: resolve immediately
       setLevelStates(prev => {
-        const next = { ...prev, [playerLevel]: "cleared" };
-        getNeighbors(playerLevel).forEach(nid => { if (next[nid] === "locked") next[nid] = "available"; });
+        const next = { ...prev, [levelId]: "cleared" };
+        getNeighbors(levelId).forEach(nid => { if (next[nid] === "locked") next[nid] = "available"; });
         return next;
       });
       if (typeof level.reward === 'object' && level.reward !== null) {
         const classUnlock = level.reward.unlocks?.find(u => u.class === playerData.class_id);
         if (classUnlock) classUnlock.card_ids.forEach(id => playerDispatch({ type: 'UNLOCK_CARD', cardId: id }));
       }
-      playerDispatch({ type: 'SAVE_MAP_PROGRESS', levelId: playerLevel });
+      playerDispatch({ type: 'SAVE_MAP_PROGRESS', levelId });
       flash(typeof level.reward === 'string' ? level.reward : "LEVEL CLEARED");
       return;
     }
 
     const scenario = SCENARIO_REGISTRY[level.scenario_id];
     if (!scenario) { flash("NO SCENARIO FOUND"); return; }
-    playerDispatch({ type: 'SAVE_LAST_LEVEL', levelId: playerLevel });
-    goToBattle(scenario, { levelId: playerLevel, defeat_tip: level.defeat_tip ?? null });
-  }, [playerLevel, levelStates, playerData, playerDispatch, flash, goToBattle]);
+    playerDispatch({ type: 'SAVE_LAST_LEVEL', levelId });
+    goToBattle(scenario, { levelId, defeat_tip: level.defeat_tip ?? null });
+  }, [levelStates, playerData, playerDispatch, flash, goToBattle]);
 
   // ── Memoized styles ───────────────────────────────────────
   const gridStyle = useMemo(() => ({
@@ -616,7 +612,6 @@ export default function MapScreen() {
                   levelState={st}
                   levelType={t}
                   isPlayerHere={playerLevel === l.id}
-                  canEnter={playerLevel === l.id && canEnter}
                   playerTypeColor={playerTypeCfg?.color}
                   playerGlow={playerTypeCfg?.glow}
                   tokenPortrait={playerLevel === l.id ? tokenPortrait : null}
