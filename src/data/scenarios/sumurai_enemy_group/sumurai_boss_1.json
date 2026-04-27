@@ -1,7 +1,7 @@
 {
   "id": "sumurai_boss",
   "name": "Dark Light Fox",
-  "battle_background": "sumurai_battlefield_7",
+  "battle_background": "sumurai_battlefield_8",
   "stages": [
     {
       "enemies": ["dark_fox_sumurai"]

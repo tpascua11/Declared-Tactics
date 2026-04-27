@@ -54,7 +54,7 @@ export default function BattleScreen() {
     if (!src) return;
     const audio = new Audio(src);
     audio.loop = true;
-    audio.volume = 0.2;
+    audio.volume = gs.musicVolume ?? 0.2;
     audio.play().catch(() => {}); // ignore autoplay policy errors
     musicRef.current = audio;
     return () => {
@@ -62,7 +62,7 @@ export default function BattleScreen() {
       audio.currentTime = 0;
       musicRef.current = null;
     };
-  }, [gs.music, gs.retryKey]);
+  }, [gs.music, gs.musicVolume, gs.retryKey]);
 
   const victoryMusicRef = useRef(null);
 

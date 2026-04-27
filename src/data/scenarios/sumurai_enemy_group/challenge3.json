@@ -10,6 +10,7 @@
       "enemies": ["otter_sumurai", "otter_sumurai", "tiger_sumurai", "otter_sumurai", "otter_sumurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_2",
+  "music_volume": 0.22,
   "rewards": {}
 }

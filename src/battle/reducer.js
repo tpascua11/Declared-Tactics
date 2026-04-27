@@ -56,6 +56,21 @@ function advanceStageOrWin(state, logs) {
       });
     }
 
+    // Apply stage resource restore if defined — e.g. { "BATTLE_SPIRIT": 5 }
+    const stageRestoreResource = scenario.stages[nextStageIndex].restore_resource ?? {};
+    const resourceLogs = [];
+    Object.entries(stageRestoreResource).forEach(([resourceType, amount]) => {
+      if (!amount || amount <= 0) return;
+      restedPlayers.forEach(p => {
+        if (!p.resources?.[resourceType]) return;
+        const res = p.resources[resourceType];
+        const before = res.current;
+        res.current = Math.min(res.current + amount, res.max);
+        const actual = res.current - before;
+        if (actual > 0) resourceLogs.push({ msg: `🌀 ${p.name} restored ${actual} ${resourceType.replace(/_/g, ' ')}.`, type: 'heal' });
+      });
+    });
+
     const newChars = [
       ...restedPlayers,
       ...newActive,
@@ -73,7 +88,7 @@ function advanceStageOrWin(state, logs) {
       currentStageIndex: nextStageIndex,
       phase: 'QUEUE_SETUP',
       checkpoint: { stageIndex: nextStageIndex, player: checkpointPlayer },
-      logs: [...logs, { msg: `━━━ REST ━━━`, type: 'info' }, ...restLogs, ...healLogs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
+      logs: [...logs, { msg: `━━━ REST ━━━`, type: 'info' }, ...restLogs, ...healLogs, ...resourceLogs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
       activeEnemyId: null,
       pendingAnimation: newActive.map(e => ({ type: 'enemy_enter', targetId: e.id })),
       lastTargetId: newChars.find(c => c.id === state.lastTargetId && c.health > 0)?.id

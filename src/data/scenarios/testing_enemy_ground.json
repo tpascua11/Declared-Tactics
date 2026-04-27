@@ -1,18 +1,15 @@
 {
   "id": "testing_enemy_ground",
   "name": "Testing Enemy Ground",
-  "battle_background": "sumurai_battlefield_8",
+  "battle_background": "sumurai_battlefield_7",
   "stages": [
     {
-      "enemies": [
-        { "id": "dark_fox_sumurai",  "health": 1500, "max_health": 1500 },
-        { "id": "light_fox_sumurai", "health": 1500, "max_health": 1500 }
-      ],
-      "heal": 500
+    "enemies": ["wolf_sumurai", "falcon_sumurai_2", "tiger_sumurai"],
+     "restore_resource": { "BATTLE_SPIRIT": 5 }
     }
-
   ],
-  "music": "SUMURAI_BOSS_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_2",
+  "music_volume": 0.20,
   "allow_retry": true,
   "rewards": {}
 }

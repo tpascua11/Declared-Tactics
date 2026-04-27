@@ -7,6 +7,7 @@
       "enemies": ["wolf_sumurai", "bear_sumurai", "wolf_sumurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_2",
+  "music_volume": 0.22,
   "rewards": {}
 }

@@ -73,6 +73,7 @@ export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
   return {
     phase: new URLSearchParams(window.location.search).has('debug') ? 'QUEUE_SETUP' : 'TITLE',
     music: scenario?.music ?? null,
+    musicVolume: scenario?.music_volume ?? 0.2,
     battleBackground: scenario?.battle_background ?? null,
     turn: 1,
     result: null,          // WIN | LOSS
