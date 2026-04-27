@@ -65,25 +65,25 @@
 }
 
 .page-title {
-  font-family: var(--font-display);
-  font-size: clamp(22px, 3vw, 38px);
-  font-weight: 400;
-  letter-spacing: 0.3em;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(20px, 2.8vw, 34px);
+  font-weight: bold;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--text-light);
+  color: #f5d76e;
   margin-bottom: var(--spacing-sm);
-  text-shadow: 0 0 40px var(--gold-glow), 0 0 80px rgba(212, 168, 75, 0.25);
+  text-shadow: 0 0 20px #c8a135;
   animation: fadeInDown 0.8s ease both;
 }
 
 .page-subtitle {
-  font-family: var(--font-body);
-  font-size: clamp(9px, 1.2vw, 12px);
-  font-weight: 300;
-  letter-spacing: 0.5em;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(9px, 1.2vw, 11px);
+  font-weight: normal;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: var(--text-secondary);
-  opacity: 0.75;
+  color: #4a6a8a;
+  opacity: 0.9;
   animation: fadeInDown 0.8s ease 0.15s both;
 }
 
@@ -252,8 +252,8 @@
 .showcase-info--empty { opacity: 0.85; }
 
 .showcase-name--empty {
-  color: rgba(140, 170, 220, 0.9);
-  text-shadow: 0 0 30px rgba(80, 120, 200, 0.35);
+  color: #4a6a8a;
+  text-shadow: none;
 }
 
 .showcase-class--empty {
@@ -262,35 +262,36 @@
 }
 
 .showcase-name {
-  font-family: var(--font-display);
-  font-size: clamp(19px, 2.5vw, 32px);
-  font-weight: 400;
-  letter-spacing: 0.18em;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(17px, 2.2vw, 26px);
+  font-weight: bold;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-light);
-  text-shadow: 0 0 30px rgba(var(--showcase-accent, 212, 168, 75), 0.4);
+  color: #f5d76e;
+  text-shadow: 0 0 20px #c8a135;
   transition: all 0.4s ease;
   margin-bottom: 4px;
 }
 
 .showcase-class {
-  font-family: var(--font-mono);
-  font-size: clamp(8px, 1.2vw, 11px);
-  letter-spacing: 0.28em;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(8px, 1.1vw, 10px);
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(var(--showcase-accent, 212, 168, 75), 0.85);
-  opacity: 0.9;
+  color: #4a6a8a;
+  opacity: 1;
   transition: all 0.4s ease;
   margin-bottom: 14px;
 }
 
 .showcase-description {
-  font-family: var(--font-body);
-  font-size: clamp(9px, 1.4vw, 13px);
-  font-weight: 300;
-  line-height: 1.6;
-  color: var(--text-muted);
-  letter-spacing: 0.02em;
+  font-family: 'Courier New', monospace;
+  font-size: clamp(9px, 1.3vw, 13px);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.9;
+  color: #7a9aaa;
+  letter-spacing: 0.01em;
   max-width: 380px;
   margin: 0 auto;
   transition: opacity var(--transition-fast);
@@ -314,7 +315,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 2px;
   padding: 8px;
   animation: cardFadeIn 0.5s ease both;
   will-change: transform, box-shadow;
@@ -359,9 +360,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   width: 100%;
-  min-height: 0;
 }
 
 .portrait-icon {
@@ -392,9 +392,9 @@
 }
 
 .character-name {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 400;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-weight: bold;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-light);
@@ -470,10 +470,18 @@
 }
 
 .character-card.locked .character-name {
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  color: rgba(150, 130, 100, 0.5);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: rgba(150, 130, 100, 0.6);
   text-shadow: none;
+}
+
+.lock-icon {
+  display: block;
+  width: 16px;
+  height: 19px;
+  margin: 3px auto 0;
+  color: rgba(150, 130, 100, 0.55);
 }
 
 .locked-overlay {
@@ -512,19 +520,19 @@
 /* ════════════════════════════════════════════════════════════════ */
 .start-button {
   position: relative;
-  background: linear-gradient(135deg, rgba(212, 168, 75, 0.15), rgba(180, 140, 60, 0.08));
-  border: 1px solid rgba(232, 197, 109, 0.4);
-  border-radius: var(--radius-sm);
+  background: rgba(212, 168, 75, 0.1);
+  border: 1.5px solid rgba(232, 197, 109, 0.4);
+  border-radius: 6px;
   cursor: pointer;
   padding: 10px 40px;
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 400;
-  letter-spacing: 0.25em;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--gold-light);
+  color: #f5d76e;
   text-shadow: 0 0 20px rgba(232, 197, 109, 0.3);
-  transition: all 0.35s var(--ease-smooth);
+  transition: all 0.15s;
   z-index: 5;
   overflow: hidden;
   margin-top: auto;
@@ -575,7 +583,7 @@
   justify-content: center;
   gap: 36px;
   padding: 12px 20px 24px;
-  font-family: var(--font-mono);
+  font-family: 'Courier New', monospace;
   font-size: 10px;
   letter-spacing: 0.2em;
   color: var(--text-footer);

@@ -95,7 +95,13 @@ function CharacterCard({ id, index, selectedId, onSelect }) {
         <img className="portrait-icon" src={data.icon} alt={data.name} />
       </div>
       <div className="character-label">
-        <span className="character-name">{locked ? 'LOCKED' : data.name}</span>
+        <span className="character-name">{data.name}</span>
+        {locked && (
+          <svg className="lock-icon" viewBox="0 0 10 13" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="5.5" width="8" height="7" rx="1.2" />
+            <path d="M3 5.5V3.5a2 2 0 0 1 4 0v2" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+          </svg>
+        )}
       </div>
       {locked && <div className="locked-overlay" />}
     </article>
