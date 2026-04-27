@@ -4,7 +4,7 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["dark_fox_sumurai"]
+      "enemies": ["light_fox_sumurai"]
     },
     {
       "enemies": ["light_fox_sumurai"],

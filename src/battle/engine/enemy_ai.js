@@ -126,16 +126,48 @@ export function bypassesEvasion(card) {
   return (card?.tag_interactions ?? []).some(i => i.traits?.includes('EVASION') && i.bypass);
 }
 
+function getEffectiveSpeed(character, card, slotIndex) {
+  const mockAction = {
+    calc_speed: (character.base_speed ?? 0) + (card?.speed_mod ?? 0) - slotIndex * 20,
+  };
+  for (const tag of character.active_tag_pool ?? []) {
+    const entry = tagRegistry[tag.tag_name];
+    if (entry?.phases?.includes('SPEED_CALC')) {
+      entry.handlers['SPEED_CALC'](mockAction, character, tag);
+    }
+  }
+  return mockAction.calc_speed;
+}
+
 function resolveQueueMirror(set, enemy, opponent) {
   const opponentQueue = getOpponentQueue(opponent);
-  const slots = enemy.total_action_slots ?? 1;
-  return Array.from({ length: slots }, (_, i) => {
-    const card = opponentQueue[i];
+  const slots = getEffectiveSlots(enemy);
+
+  const playerBase = getEffectiveSpeed(opponent, opponentQueue[0], 0);
+  const enemyBase  = getEffectiveSpeed(enemy, null, 0);
+  const shift = Math.ceil((playerBase - enemyBase) / 20);
+
+  // Slide the player queue by shift. Nulls pad the gaps and resolve to Still Wind.
+  // shift > 0 (enemy faster): remove from front, pad end   → [B, C, null]
+  // shift < 0 (enemy slower): pad front,  remove from end  → [null, A, B]
+  // Full null array is valid — player is just too fast or enemy is too slow.
+  // WARNING: this logic was designed for max 3 slots. If slots ever exceeds 3,
+  // re-examine — the shift/slice assumptions may produce unexpected mirror reads.
+  const abs = Math.abs(shift);
+  const shiftedQueue = shift < 0
+    ? [...Array(abs).fill(null), ...opponentQueue].slice(0, slots)
+    : [...opponentQueue, ...Array(abs).fill(null)].slice(shift, shift + slots);
+
+  const resolved = [];
+  for (let i = 0; i < slots; i++) {
+    const card = shiftedQueue[i];
     const nameMatch = card && set.on_name?.[card.name];
     const isDamaging = (card?.tags?.target ?? []).some(t => t.tag_name === 'DAMAGE');
     const name = nameMatch ?? ((card && isDamaging) ? set.on_damage : set.on_no_damage);
-    return enemy.action_library[name] ?? null;
-  }).filter(Boolean);
+    resolved.push(enemy.action_library[name] ?? null);
+  }
+
+  return resolved.filter(Boolean);
 }
 
 export function selectActionSet(enemy, opponent) {
