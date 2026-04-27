@@ -95,12 +95,12 @@ const CELL_SIZE = CELL_SIZE_BY_ROWS[TARGET_ROWS] ?? 160;
 // ── Constants ────────────────────────────────────────────────
 
 const LEVEL_TYPES = {
-  COMBAT:    { label: "COMBAT",    color: "#e94560", dim: "rgba(233,69,96,0.08)",   icon: "⚔️",  glow: "rgba(233,69,96,0.4)"  },
+  COMBAT:    { label: "COMBAT",    color: "#ffffff", dim: "rgba(255,255,255,0.08)", icon: "⚔️",  glow: "rgba(255,255,255,0.4)"  },
   CHALLENGE: { label: "CHALLENGE", color: "#c084fc", dim: "rgba(192,132,252,0.08)", icon: "💀",  glow: "rgba(192,132,252,0.4)" },
   EXPLORE:   { label: "EXPLORE",   color: "#4da6ff", dim: "rgba(77,166,255,0.08)",  icon: "🏛️", glow: "rgba(77,166,255,0.4)"  },
   RESTORE:   { label: "RESTORE",   color: "#69d99a", dim: "rgba(105,217,154,0.08)", icon: "💖",  glow: "rgba(105,217,154,0.4)" },
   SHOP:      { label: "SHOP",      color: "#ffd700", dim: "rgba(255,215,0,0.08)",   icon: "⬡",  glow: "rgba(255,215,0,0.4)"  },
-  BOSS:      { label: "BOSS",      color: "#e94560", dim: "rgba(233,69,96,0.14)",   icon: "👑",  glow: "rgba(233,69,96,0.5)"  },
+  BOSS:      { label: "BOSS",      color: "#ffffff", dim: "rgba(255,255,255,0.14)", icon: "👑",  glow: "rgba(255,255,255,0.5)"  },
 };
 
 const MENU_ITEMS = [
@@ -332,17 +332,18 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, canEnter, playe
                 onClick={e => { e.stopPropagation(); onEnter(); }}
                 disabled={!canEnter}
                 style={{
+                  position: "relative",
                   padding: "5px 14px",
-                  border: `1.5px solid ${canEnter ? (playerTypeColor || "#4da6ff") : "#1a2a3a"}`,
+                  border: `1.5px solid ${canEnter ? "#ffffff" : "#1a2a3a"}`,
                   borderRadius: 5,
                   fontSize: 9,
                   letterSpacing: 2,
                   cursor: canEnter ? "pointer" : "not-allowed",
-                  background: canEnter ? `${playerTypeColor || "#4da6ff"}15` : "transparent",
-                  color: canEnter ? (playerTypeColor || "#4da6ff") : "#2a3a4a",
+                  background: canEnter ? "#ffffff" : "#070c14",
+                  color: canEnter ? "#000000" : "#2a3a4a",
                   fontWeight: "bold",
                   whiteSpace: "nowrap",
-                  "--glow": playerGlow || "rgba(77,166,255,0.3)",
+                  "--glow": "rgba(255,255,255,0.35)",
                   transition: "all 0.15s",
                   opacity: canEnter ? 1 : 0.45,
                 }}

@@ -3,9 +3,14 @@
   to   { opacity: 1; transform: scale(1)    translateY(0);    }
 }
 
-@keyframes btnPulse {
-  0%,  100% { box-shadow: 0 2px 15px var(--glow); }
-  50%       { box-shadow: 0 2px 25px var(--glow), 0 0 30px var(--glow); }
+@keyframes btnReady {
+  0%, 100% { transform: scale(1);    box-shadow: 0 0 10px var(--glow); }
+  50%       { transform: scale(1.06); box-shadow: 0 0 22px var(--glow), 0 0 42px var(--glow); }
+}
+
+@keyframes btnShimmer {
+  0%,  60%, 100% { left: -80%; }
+  35%            { left: 130%; }
 }
 
 @keyframes tokenGlow {
@@ -14,8 +19,25 @@
 }
 
 .map-modal-content  { animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.map-enter-btn-cell { animation: btnPulse 2s ease-in-out infinite; }
 .map-token-glow     { animation: tokenGlow 3s ease-in-out infinite; }
+
+.map-enter-btn-cell {
+  overflow: hidden;
+  animation: btnReady 1.6s ease-in-out infinite;
+}
+
+.map-enter-btn-cell::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(77,166,255,0.5), transparent);
+  transform: skewX(-15deg);
+  animation: btnShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
 
 .map-menu-btn { transition: all 0.2s ease; }
 .map-menu-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(77,166,255,0.15); }
