@@ -1,7 +1,7 @@
 {
   "id": "falcon_ambush",
   "name": "Falcon Ambush",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_14",
   "stages": [
     {
       "enemies": ["falcon_sumurai_2"]
@@ -14,6 +14,7 @@
     }
 
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_3",
+  "music_volume": 0.22,
   "rewards": {}
 }

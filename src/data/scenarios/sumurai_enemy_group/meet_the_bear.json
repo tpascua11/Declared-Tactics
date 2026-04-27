@@ -1,7 +1,7 @@
 {
   "id": "meet_the_bear",
   "name": "Meet the Bear",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_3",
   "stages": [
     {
       "enemies": ["bear_sumurai"]
@@ -10,6 +10,6 @@
       "enemies": ["boar_sumurai", "bear_sumurai", "boar_sumurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_4",
   "rewards": {}
 }

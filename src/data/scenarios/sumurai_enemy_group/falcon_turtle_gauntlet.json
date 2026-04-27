@@ -1,7 +1,7 @@
 {
   "id": "falcon_turtle_gauntlet",
   "name": "Falcon and Turtle Gauntlet",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_15",
   "stages": [
     {
       "enemies": ["rabbit_sumurai", "falcon_sumurai_2", "rabbit_sumurai"]
@@ -13,6 +13,6 @@
       "enemies": ["falcon_sumurai_2", "turtle_sumurai", "falcon_sumurai_2"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_4",
   "rewards": {}
 }

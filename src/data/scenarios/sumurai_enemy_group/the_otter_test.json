@@ -1,7 +1,7 @@
 {
   "id": "the_otter_test",
   "name": "The Otter Test",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_3",
   "stages": [
     {
       "enemies": ["otter_sumurai", "otter_sumurai", "otter_sumurai"]
@@ -10,6 +10,6 @@
       "enemies": ["otter_sumurai", "otter_sumurai", "otter_sumurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_4",
   "rewards": {}
 }

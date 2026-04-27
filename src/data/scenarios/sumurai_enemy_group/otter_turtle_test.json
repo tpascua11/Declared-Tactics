@@ -1,7 +1,7 @@
 {
   "id": "otter_turtle_test",
   "name": "Turtle Test",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_13",
   "stages": [
     {
       "enemies": ["otter_sumurai", "turtle_sumurai", "otter_sumurai"]

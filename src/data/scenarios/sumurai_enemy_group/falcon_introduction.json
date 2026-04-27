@@ -1,7 +1,7 @@
 {
   "id": "falcon_introduction",
   "name": "Rabbits and Falcon",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_14",
   "stages": [
     {
       "enemies": ["rabbit_sumurai", "falcon_sumurai_2", "rabbit_sumurai"]

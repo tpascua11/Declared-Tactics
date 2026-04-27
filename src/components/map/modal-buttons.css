@@ -1,0 +1,22 @@
+@keyframes modalBtnShimmer {
+  0%,  60%, 100% { left: -80%; }
+  35%             { left: 130%; }
+}
+
+.modal-shine-btn {
+  overflow: hidden;
+  position: relative;
+}
+
+.modal-shine-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, var(--shine-color, rgba(77,166,255,0.45)), transparent);
+  transform: skewX(-15deg);
+  animation: modalBtnShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}

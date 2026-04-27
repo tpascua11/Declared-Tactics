@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import MAP_DATA from '../../data/maps/PATH_OF_THE_SUMURAI.json';
+import './modal-buttons.css';
 
 const CARD_W = 88;
 const CARD_H = 132;
@@ -123,10 +124,18 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
         display: "flex", flexDirection: "column", alignItems: "center", gap: 22,
       }}>
 
-        {/* Icon + header */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, width: "100%" }}>
+        {/* Level name */}
+        <div style={{ fontSize: 26, color: "#f5d76e", textShadow: "0 0 20px #c8a135", letterSpacing: 2, textAlign: "center", width: "100%" }}>
+          {levelName}
+        </div>
+
+        {/* Icon + rewards side by side */}
+        <div style={{ display: "flex", gap: 28, alignItems: "flex-start", width: "100%" }}>
+
+          {/* Left: zone icon */}
           {mapIconSrc && (
             <div style={{
+              flexShrink: 0,
               width: 220, height: 220,
               border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: 8,
@@ -136,83 +145,83 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
               <img src={mapIconSrc} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
             </div>
           )}
-          <div style={{ fontSize: 26, color: "#f5d76e", textShadow: "0 0 20px #c8a135", letterSpacing: 2, textAlign: "center" }}>
-            {levelName}
+
+          {/* Right: rewards */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12, paddingTop: 4 }}>
+
+            {/* Gold */}
+            {typeof reward === 'object' && reward?.general?.type === 'gold' && (
+              <div style={{
+                display: "flex", alignItems: "center", gap: 8,
+                border: "1px solid rgba(255,215,0,0.15)",
+                borderRadius: 6, padding: "6px 12px",
+              }}>
+                <span style={{ fontSize: 13, lineHeight: 1 }}>⬡</span>
+                <span style={{ fontSize: 9, letterSpacing: 2, color: "#ffd70066" }}>GOLD</span>
+                <span style={{ fontSize: 13, color: "#ffd700", fontWeight: "bold", marginLeft: 2 }}>+{reward.general.amount}</span>
+              </div>
+            )}
+
+            {/* HP upgrade */}
+            {typeof reward === 'object' && reward?.hp_upgrade && (
+              <div style={{
+                display: "flex", alignItems: "center", gap: 8,
+                border: "1px solid rgba(233,69,96,0.25)",
+                borderRadius: 6, padding: "6px 12px",
+                background: "rgba(233,69,96,0.05)",
+              }}>
+                <span style={{ fontSize: 13, lineHeight: 1, color: "#e94560" }}>♥</span>
+                <span style={{ fontSize: 9, letterSpacing: 2, color: "#e9456066" }}>MAX HP</span>
+                <span style={{ fontSize: 13, color: "#e94560", fontWeight: "bold", marginLeft: 2 }}>+{reward.hp_upgrade}</span>
+              </div>
+            )}
+
+            {/* String reward */}
+            {typeof reward === 'string' && (
+              <div style={{ fontSize: 12, color: "#8aaabb", letterSpacing: 1, padding: "8px 0" }}>
+                {reward}
+              </div>
+            )}
+
+            {/* Unlocked cards */}
+            {unlockedCards?.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ fontSize: 9, letterSpacing: 3, color: "#c084fc77" }}>
+                  {unlockedCards.length === 1 ? 'CARD UNLOCKED' : 'CARDS UNLOCKED'}
+                </div>
+                {unlockedCards.map(card => <CardWidget key={card.id} card={card} />)}
+              </div>
+            )}
+
+            {!unlockedCards?.length && !reward && (
+              <div style={{ fontSize: 11, color: "#4a6a8a" }}>No rewards this time.</div>
+            )}
           </div>
-          {clearDesc && (
-            <div style={{
-              width: "100%",
-              background: "rgba(9,9,15,0.72)",
-              border: "1px solid rgba(255,255,255,0.07)",
-              borderRadius: 3,
-              padding: "10px 14px",
-              position: "relative",
-            }}>
-              {/* invisible full text holds the box size */}
-              <div style={{ fontSize: 14, lineHeight: 1.9, fontStyle: "italic", fontWeight: 500, visibility: "hidden" }}>
-                {clearDesc}
-              </div>
-              {/* typed text overlaid */}
-              <div style={{ fontSize: 14, color: "#7a9aaa", lineHeight: 1.9, fontStyle: "italic", fontWeight: 500, position: "absolute", top: "10px", left: "14px", right: "14px" }}>
-                {typedDesc}
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Rewards */}
-        <div style={{ width: "100%", maxWidth: 472, display: "flex", flexDirection: "column", gap: 12 }}>
-
-          {/* Gold */}
-          {typeof reward === 'object' && reward?.general?.type === 'gold' && (
-            <div style={{
-              display: "flex", alignItems: "center", gap: 8,
-              border: "1px solid rgba(255,215,0,0.15)",
-              borderRadius: 6, padding: "6px 12px",
-            }}>
-              <span style={{ fontSize: 13, lineHeight: 1 }}>⬡</span>
-              <span style={{ fontSize: 9, letterSpacing: 2, color: "#ffd70066" }}>GOLD</span>
-              <span style={{ fontSize: 13, color: "#ffd700", fontWeight: "bold", marginLeft: 2 }}>+{reward.general.amount}</span>
+        {/* Clear description */}
+        {clearDesc && (
+          <div style={{
+            width: "100%",
+            background: "rgba(9,9,15,0.72)",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 3,
+            padding: "10px 14px",
+            position: "relative",
+          }}>
+            {/* invisible full text holds the box size */}
+            <div style={{ fontSize: 14, lineHeight: 1.9, fontStyle: "italic", fontWeight: 500, visibility: "hidden" }}>
+              {clearDesc}
             </div>
-          )}
-
-          {/* HP upgrade */}
-          {typeof reward === 'object' && reward?.hp_upgrade && (
-            <div style={{
-              display: "flex", alignItems: "center", gap: 8,
-              border: "1px solid rgba(233,69,96,0.25)",
-              borderRadius: 6, padding: "6px 12px",
-              background: "rgba(233,69,96,0.05)",
-            }}>
-              <span style={{ fontSize: 13, lineHeight: 1, color: "#e94560" }}>♥</span>
-              <span style={{ fontSize: 9, letterSpacing: 2, color: "#e9456066" }}>MAX HP</span>
-              <span style={{ fontSize: 13, color: "#e94560", fontWeight: "bold", marginLeft: 2 }}>+{reward.hp_upgrade}</span>
+            {/* typed text overlaid */}
+            <div style={{ fontSize: 14, color: "#7a9aaa", lineHeight: 1.9, fontStyle: "italic", fontWeight: 500, position: "absolute", top: "10px", left: "14px", right: "14px" }}>
+              {typedDesc}
             </div>
-          )}
-
-          {/* String reward */}
-          {typeof reward === 'string' && (
-            <div style={{ fontSize: 12, color: "#8aaabb", letterSpacing: 1, textAlign: "center", padding: "8px 0" }}>
-              {reward}
-            </div>
-          )}
-
-          {/* Unlocked cards */}
-          {unlockedCards?.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <div style={{ fontSize: 9, letterSpacing: 3, color: "#c084fc77" }}>
-                {unlockedCards.length === 1 ? 'CARD UNLOCKED' : 'CARDS UNLOCKED'}
-              </div>
-              {unlockedCards.map(card => <CardWidget key={card.id} card={card} />)}
-            </div>
-          )}
-
-          {!unlockedCards?.length && !reward && (
-            <div style={{ fontSize: 11, color: "#4a6a8a", textAlign: "center" }}>No rewards this time.</div>
-          )}
-        </div>
+          </div>
+        )}
 
         <button
+          className="modal-shine-btn"
           onClick={onClose}
           style={{
             marginTop: 4, padding: "10px 40px", alignSelf: "center",
@@ -221,6 +230,7 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
             color: "#4da6ff", fontSize: 10, letterSpacing: 3,
             cursor: "pointer", fontFamily: "'Courier New', monospace", fontWeight: "bold",
             transition: "all 0.15s",
+            "--shine-color": "rgba(77,166,255,0.45)",
           }}
           onMouseEnter={e => { e.currentTarget.style.background = "rgba(77,166,255,0.14)"; e.currentTarget.style.borderColor = "#4da6ff88"; }}
           onMouseLeave={e => { e.currentTarget.style.background = "rgba(77,166,255,0.07)"; e.currentTarget.style.borderColor = "#4da6ff44"; }}

@@ -109,9 +109,11 @@ export default function GameFinishScreen() {
           <div className="finish-subtitle">You are a force few dare to face.</div>
           {/* TODO: replace title, subtitle, and body with class-specific flavour text per future class */}
           <p className="finish-body">
-            The path asked for discipline, cunning, and the will to rise when the odds were
-            stacked. You answered — every time. Others carry blades. You carry intent.
-            A true sumurai walks not because the road is safe, but because retreat was never an option.
+              From the iron gate to the storm at the end of everything — 
+              you fought, learned, bled, and rose every single time.
+              No past. No excuses. Just forward.
+              A true samurai isn't made from where they came from.
+              They're made from the moment they refuse to fall.
           </p>
 
         </div>

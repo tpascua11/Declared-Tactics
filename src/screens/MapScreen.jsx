@@ -25,6 +25,7 @@ import './MapScreen.css';
 import menuMapTheme from '../assets/MUSIC/Menu Map Theme.mp3';
 import WinModal from '../components/map/WinModal';
 import LosePopup from '../components/map/LosePopup';
+import IntroModal from '../components/map/IntroModal';
 
 const MAP_ICON_LOOKUP = {
   GARDEN_TOWN:    MAP_ICON_GARDEN_TOWN,
@@ -385,6 +386,7 @@ export default function MapScreen() {
   const [activeMenu,  setActiveMenu]  = useState(null);
   const [winModal,    setWinModal]    = useState(null); // { levelId, reward, unlockedCards }
   const [losePopup,   setLosePopup]   = useState(null); // defeat_tip string
+  const [introModal,  setIntroModal]  = useState(null); // { levelId }
 
   const [gridDims, setGridDims] = useState({ cols: 5, rows: TARGET_ROWS });
   const gridWrapRef = useRef(null);
@@ -534,6 +536,18 @@ export default function MapScreen() {
     goToBattle(scenario, { levelId, defeat_tip: level.defeat_tip ?? null });
   }, [levelStates, playerData, playerDispatch, flash, goToBattle]);
 
+  // Opens IntroModal for scenario levels; bypasses it for non-combat (explore/reward) levels.
+  const handleCellEnter = useCallback((levelId) => {
+    const level = MAP_DATA.levels[levelId];
+    if (!level) return;
+    setPlayerLevel(levelId);
+    if (level.scenario_id) {
+      setIntroModal({ levelId });
+    } else {
+      handleEnter(levelId);
+    }
+  }, [handleEnter]);
+
   // ── Memoized styles ───────────────────────────────────────
   const gridStyle = useMemo(() => ({
     display: "grid",
@@ -618,7 +632,7 @@ export default function MapScreen() {
                   tokenName={tokenName}
                   mapIconSrc={l.map_icon ? MAP_ICON_LOOKUP[l.map_icon] : null}
                   onClick={() => handleCellClick(l.id)}
-                  onEnter={handleEnter}
+                  onEnter={handleCellEnter}
                 />
               );
             })}
@@ -657,6 +671,20 @@ export default function MapScreen() {
       >
         {flashMsg}
       </div>
+
+      {introModal && (() => {
+        const lvl = MAP_DATA.levels[introModal.levelId];
+        const lvlType = LEVEL_TYPES[lvl?.type];
+        return (
+          <IntroModal
+            level={lvl}
+            levelType={lvlType}
+            mapIconSrc={lvl?.map_icon ? MAP_ICON_LOOKUP[lvl.map_icon] : null}
+            onBattle={() => { setIntroModal(null); handleEnter(introModal.levelId); }}
+            onClose={() => setIntroModal(null)}
+          />
+        );
+      })()}
 
       {winModal && (
         <WinModal

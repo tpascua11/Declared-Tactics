@@ -1,7 +1,7 @@
 {
   "id": "challenge1",
   "name": "Challenge 1",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_14",
   "stages": [
     {
       "enemies": ["wolf_sumurai", "bear_sumurai", "wolf_sumurai"]

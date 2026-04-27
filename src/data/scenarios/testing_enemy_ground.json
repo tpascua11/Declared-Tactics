@@ -4,8 +4,12 @@
   "battle_background": "sumurai_battlefield_7",
   "stages": [
     {
+      "enemies": ["bear_sumurai"]
+    }, 
+    {
     "enemies": ["wolf_sumurai", "falcon_sumurai_2", "tiger_sumurai"],
-     "restore_resource": { "BATTLE_SPIRIT": 5 }
+          "heal": 9999
+
     }
   ],
   "music": "WAY_OF_THE_SUMURAI_BATTLE_2",

@@ -1,13 +1,13 @@
 {
   "id": "challenge4",
   "name": "Challenge 4",
-  "battle_background": "sumurai_battlefield_4",
+  "battle_background": "sumurai_battlefield_7",
   "stages": [
     {
       "enemies": ["turtle_sumurai", "dragon_sumurai", "bear_sumurai"]
     }
   ],
-  "music_volume": 0.22,
+  "music_volume": 0.23,
   "music": "WAY_OF_THE_SUMURAI_BATTLE_2",
   "rewards": {}
 }

@@ -1,7 +1,7 @@
 {
   "id": "rabbit_and_boar_level_2",
   "name": "Boars And Rabbits",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_10",
   "stages": [
     {
       "enemies": ["boar_sumurai", "rabbit_sumurai", "boar_sumurai"]

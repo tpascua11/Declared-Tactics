@@ -1,7 +1,7 @@
 {
   "id": "rabbit_full_squad",
   "name": "Rabbit  Squad",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_11",
   "stages": [
     {
       "enemies": ["rabbit_sumurai", "rabbit_sumurai", "rabbit_sumurai", "rabbit_sumurai", "rabbit_sumurai", "rabbit_sumurai", "rabbit_sumurai"]

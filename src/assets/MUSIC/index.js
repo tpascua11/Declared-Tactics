@@ -8,6 +8,9 @@ import menuMapTheme from './Menu Map Theme.mp3';
 import menuMapTheme3 from './Menu Map Theme 3.mp3';
 import wayOfTheSumurai from './WAY_OF_THE_SUMURAI_BATTLE_1.mp3';
 import wayOfTheSumurai2 from './WAY_OF_THE_SUMURAI_BATTLE_2.mp3';
+import wayOfTheSumurai3 from './WAY_OF_THE_SUMURAI_BATTLE_3.mp3';
+import wayOfTheSumurai4 from './WAY_OF_THE_SUMURAI_BATTLE_4.mp3';
+import wayOfTheSumurai5 from './WAY_OF_THE_SUMURAI_BATTLE_5.mp3';
 import samuraiVictory from './Samurai Victory.mp3';
 import sumuraiDefeat from './Sumurai Defeat.mp3';
 import introMusic from './intro.mp3';
@@ -22,6 +25,11 @@ export const MUSIC_REGISTRY = {
   menu_map_theme_3: menuMapTheme3,
   WAY_OF_THE_SUMURAI_BATTLE_1: wayOfTheSumurai,
   WAY_OF_THE_SUMURAI_BATTLE_2: wayOfTheSumurai2,
+  WAY_OF_THE_SUMURAI_BATTLE_3: wayOfTheSumurai3,
+  WAY_OF_THE_SUMURAI_BATTLE_4: wayOfTheSumurai4,
+  WAY_OF_THE_SUMURAI_BATTLE_5: wayOfTheSumurai5,
+
+
   SUMURAI_BOSS_1: sumuraiBoss1,
   samurai_victory: samuraiVictory,
   sumurai_defeat: sumuraiDefeat,

@@ -42,6 +42,12 @@ import sumurai_battlefield_9  from './SCENARIO/sumurai_battlefield_9.png';
 import sumurai_battlefield_10 from './SCENARIO/sumurai_battlefield_10.png';
 import sumurai_battlefield_11 from './SCENARIO/sumurai_battlefield_11.png';
 
+import sumurai_battlefield_13 from './SCENARIO/sumurai_battlefield_13.png';
+import sumurai_battlefield_14 from './SCENARIO/sumurai_battlefield_14.png';
+import sumurai_battlefield_15 from './SCENARIO/sumurai_battlefield_15.png';
+
+
+
 export const SCENARIO_BACKGROUNDS = {
   CITADEL_1_ENEMY:        SCENARIO_CITADEL_1_ENEMY,
   CABIN_WOOD_1_WIDE:      SCENARIO_CABIN_WOOD_1_WIDE,
@@ -61,6 +67,9 @@ export const SCENARIO_BACKGROUNDS = {
   sumurai_battlefield_9,
   sumurai_battlefield_10,
   sumurai_battlefield_11,
+  sumurai_battlefield_13,
+  sumurai_battlefield_14,
+  sumurai_battlefield_15
 };
 
 // --- Enemy Portraits ---

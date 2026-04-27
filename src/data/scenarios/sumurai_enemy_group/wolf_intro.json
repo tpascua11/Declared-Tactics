@@ -1,7 +1,7 @@
 {
   "id": "wolf_intro",
   "name": "Wolf Intro",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "sumurai_battlefield_9",
   "stages": [
     {
       "enemies": ["wolf_sumurai"]
@@ -10,6 +10,6 @@
       "enemies": ["wolf_sumurai", "wolf_sumurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_5",
   "rewards": {}
 }
