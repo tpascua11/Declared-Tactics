@@ -141,7 +141,7 @@ export const SAMURAI_CARDS = [
     icon: '🔦',
     image: 'FOX_SUMMURAI_BATTOJUTSU',
     color: '#c084fc',
-    desc: 'Enter a focused draw stance. Your next attack deals 75% more damage. Gain An Additiona 10% per each non-action.',
+    desc: 'Enter a focused draw stance. Your next attack deals 75% more damage. Additional Usaage would instead give you addtional stack causing 10% more damage. Each Non-attack gives you an addtional stack.',
     animation: 'sumurai_sheath',
     animation_intensity: 1.2,
     tags: {

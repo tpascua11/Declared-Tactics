@@ -2,6 +2,7 @@
 //  GuideModal — How To Play overlay (template)
 // ============================================================
 
+import '../shared/shine-btn.css';
 import {
   FOX_SUMMURAI_STILL_WIND,
   FOX_SUMMURAI_BATTOJUTSU,
@@ -10,12 +11,12 @@ import {
 } from '../../assets/index.js';
 
 const EXAMPLE_CARDS = [
-  { name: 'Still Wind',   image: FOX_SUMMURAI_STILL_WIND,   color: '#e879f9', speed: 100 },
-  { name: 'Battojutsu',   image: FOX_SUMMURAI_BATTOJUTSU,   color: '#c084fc', speed: 80  },
-  { name: 'Stream Slash', image: FOX_SUMMURAI_STREAM_SLASH, color: '#38bdf8', speed: 60  },
+  { name: 'Still Wind',   image: FOX_SUMMURAI_STILL_WIND,   color: '#e879f9', speed: 100, penalty: 0  },
+  { name: 'Battojutsu',   image: FOX_SUMMURAI_BATTOJUTSU,   color: '#c084fc', speed: 80,  penalty: 1  },
+  { name: 'Stream Slash', image: FOX_SUMMURAI_STREAM_SLASH, color: '#38bdf8', speed: 60,  penalty: 2  },
 ];
 
-function ExampleCard({ name, image, color, speed }) {
+function ExampleCard({ name, image, color, speed, penalty }) {
   return (
     <div className="flex flex-col items-center gap-2">
       <div
@@ -61,13 +62,19 @@ function ExampleCard({ name, image, color, speed }) {
 
       {/* Speed label below card */}
       <span className="text-base font-bold font-mono text-white">SPD {speed}</span>
+
+      {/* Speed penalty label */}
+      <span className="flex flex-col items-center text-[11px] font-mono text-center leading-tight" style={{ color: '#9ca3af', marginTop: '8px' }}>
+        <span>{penalty} Speed Penalty</span>
+        <span style={{ visibility: penalty > 0 ? 'visible' : 'hidden' }}>(−{penalty * 20} Speed)</span>
+      </span>
     </div>
   );
 }
 
-export default function GuideModal({ onClose }) {
+export default function GuideModal({ onClose, onOpenAdvanced, nudgeUp = 0 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={onClose}>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70" style={{ paddingBottom: nudgeUp }} onClick={onClose}>
       <div
         className="relative w-[80%] max-w-2xl bg-gray-900 border border-white/20 rounded-lg p-8 text-white font-mono"
         onClick={e => e.stopPropagation()}
@@ -95,7 +102,7 @@ export default function GuideModal({ onClose }) {
             Each action applies a <span className="text-white font-bold">−20 Speed Penalty</span> to the next queued action. That's why your actions drop from 100 → 80 → 60.
           </p>
           <p>
-            Enemies also start at <span className="text-white font-bold">SPD 100</span> and suffer the same <span className="text-white font-bold">Speed Penalty</span>. Most enemies queue <span className="text-white font-bold">1–2 actions</span> per turn. Bosses queue <span className="text-white font-bold">3</span>.
+            Most enemies have a base speed of <span className="text-white font-bold">SPD 100</span> and suffer the same <span className="text-white font-bold">−20 Speed Penalty</span>. Enemies queue <span className="text-white font-bold">1 or 2 actions</span> per turn. Bosses queue <span className="text-white font-bold">3</span>.
           </p>
         </div>
 
@@ -116,6 +123,17 @@ export default function GuideModal({ onClose }) {
             </p>
           </div>
         </div>
+
+        {onOpenAdvanced && (
+          <div className="flex justify-end mt-6 border-t border-white/10 pt-4">
+            <button
+              className="shine-btn text-xs font-mono tracking-widest text-white border border-white/20 rounded px-4 py-2 hover:bg-white/5 transition-colors"
+              onClick={onOpenAdvanced}
+            >
+              ADVANCED GUIDE
+            </button>
+          </div>
+        )}
 
         <button
           className="absolute top-3 right-4 text-gray-500 hover:text-white text-lg leading-none"

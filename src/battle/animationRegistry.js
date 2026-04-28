@@ -156,7 +156,8 @@ export const ANIMATIONS = {
     cssClass: 'animate-harai',
     duration: 500,
     sfx: [
-      { src: sfx('CLING_1.wav'), delay: 0, volume: 0.7 },
+      { src: sfx('CLING_1.wav'), delay: 0, volume: 0.4 },
+      { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.4 },
     ],
     floatingNumber: null,
   },

@@ -27,6 +27,8 @@ import menuMapTheme from '../assets/MUSIC/Menu Map Theme.mp3';
 import WinModal from '../components/map/WinModal';
 import LosePopup from '../components/map/LosePopup';
 import IntroModal from '../components/map/IntroModal';
+import GuideModal from '../components/battle/GuideModal';
+import AdvancedGuideModal from '../components/battle/AdvancedGuideModal';
 
 const MAP_ICON_LOOKUP = {
   GARDEN_TOWN:    MAP_ICON_GARDEN_TOWN,
@@ -388,6 +390,8 @@ export default function MapScreen() {
   const [winModal,    setWinModal]    = useState(null); // { levelId, reward, unlockedCards }
   const [losePopup,   setLosePopup]   = useState(null); // defeat_tip string
   const [introModal,  setIntroModal]  = useState(null); // { levelId }
+  const [guideOpen,         setGuideOpen]         = useState(false);
+  const [advancedGuideOpen, setAdvancedGuideOpen] = useState(false);
 
   const [gridDims, setGridDims] = useState({ cols: 5, rows: TARGET_ROWS });
   const gridWrapRef = useRef(null);
@@ -641,31 +645,43 @@ export default function MapScreen() {
         </div>
       </div>
 
-      {/* BOTTOM BAR — hidden until implemented
+      {/* BOTTOM BAR */}
       <div style={STATIC_STYLES.bottom}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", maxWidth: 800 }}>
-          {MENU_ITEMS.map(item => (
-            <button
-              key={item.id}
-              className={`map-menu-btn${activeMenu === item.id ? ' active' : ''}`}
-              onClick={() => setActiveMenu(activeMenu === item.id ? null : item.id)}
-              style={{
-                flex: 1, padding: "12px 8px",
-                border: `1px solid ${activeMenu === item.id ? item.color + "55" : "rgba(255,255,255,0.06)"}`,
-                borderRadius: 8, fontSize: 9, letterSpacing: 2, cursor: "pointer",
-                background: activeMenu === item.id ? item.color + "15" : "rgba(255,255,255,0.02)",
-                color: activeMenu === item.id ? item.color : "#4a6a8a",
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                minHeight: 60, fontFamily: "'Courier New', monospace",
-              }}
-            >
-              <span style={{ fontSize: 18 }}>{item.icon}</span>
-              <span>{item.label}</span>
-            </button>
-          ))}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, width: "100%", maxWidth: 800 }}>
+          <button
+            className="shine-btn"
+            onClick={() => { setGuideOpen(true); setAdvancedGuideOpen(false); }}
+            style={{
+              padding: "12px 32px",
+              border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8,
+              background: "rgba(255,255,255,0.02)", color: "#ffffff",
+              fontSize: 13, letterSpacing: 3, cursor: "pointer",
+              fontFamily: "'Courier New', monospace", fontWeight: "bold",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+              width: 220,
+            }}
+          >
+            <span style={{ fontSize: 20 }}>📖</span>
+            <span>HOW TO PLAY</span>
+          </button>
+          <button
+            className="shine-btn"
+            onClick={() => { setAdvancedGuideOpen(true); setGuideOpen(false); }}
+            style={{
+              padding: "12px 32px",
+              border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8,
+              background: "rgba(255,255,255,0.02)", color: "#ffffff",
+              fontSize: 13, letterSpacing: 3, cursor: "pointer",
+              fontFamily: "'Courier New', monospace", fontWeight: "bold",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+              width: 220,
+            }}
+          >
+            <span style={{ fontSize: 20 }}>📗</span>
+            <span>ADVANCED</span>
+          </button>
         </div>
       </div>
-      */}
 
       {/* FLASH MESSAGE */}
       <div
@@ -673,6 +689,9 @@ export default function MapScreen() {
       >
         {flashMsg}
       </div>
+
+      {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} onOpenAdvanced={() => { setGuideOpen(false); setAdvancedGuideOpen(true); }} />}
+      {advancedGuideOpen && <AdvancedGuideModal onClose={() => setAdvancedGuideOpen(false)} />}
 
       {introModal && (() => {
         const lvl = MAP_DATA.levels[introModal.levelId];

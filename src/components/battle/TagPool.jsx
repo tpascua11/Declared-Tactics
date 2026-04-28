@@ -19,14 +19,14 @@ const FULL_SZ = {
 };
 
 const COMPACT_SZ = {
-  tile:         '2.00rem',
-  stackFont:    '15px',
-  barWidth:     '8rem',
-  barMinHeight: '1.75rem',
-  barIconWidth: '1.75rem',
-  barFont:      '10px',
+  tile:         '2.35rem',
+  stackFont:    '16px',
+  barWidth:     '9.5rem',
+  barMinHeight: '2.1rem',
+  barIconWidth: '2.1rem',
+  barFont:      '11px',
   gap:          'gap-1',
-  barMargin:    '8px',
+  barMargin:    '10px',
 };
 
 // ── Icon-only square tile (condition tier) ───────────────────
@@ -59,15 +59,15 @@ function IconTag({ icon, color, stacks, name, duration, tooltip, sz }) {
       {tooltip && (
         <div
           className="pointer-events-none absolute bottom-[calc(100%+6px)] left-0
-            w-44 rounded-lg border border-gray-600 shadow-xl z-[100]
+            w-60 rounded-lg border border-gray-600 shadow-xl z-[100]
             opacity-0 group-hover:opacity-100 transition-opacity duration-150"
           style={{ background: '#1a1a2e' }}
         >
           <div className="h-1 rounded-t-lg" style={{ background: color }} />
-          <div className="px-3 py-2 flex flex-col gap-1">
-            <div className="text-[11px] font-bold font-body" style={{ color }}>{name}</div>
-            <div className="text-[10px] text-gray-300 font-mono leading-tight">{tooltip}</div>
-            {duration && <div className="text-[9px] text-[#ffd700] font-mono">{duration} turns remaining</div>}
+          <div className="px-3 py-2.5 flex flex-col gap-1.5">
+            <div className="text-[13px] font-bold font-body" style={{ color }}>{name}</div>
+            <div className="text-[12px] text-gray-300 font-mono leading-tight">{tooltip}</div>
+            {duration && <div className="text-[11px] text-[#ffd700] font-mono">{duration} turns remaining</div>}
           </div>
         </div>
       )}
@@ -117,15 +117,15 @@ function BarTag({ icon, color, stacks, name, duration, tooltip, sz }) {
       {tooltip && (
         <div
           className="pointer-events-none absolute bottom-[calc(100%+6px)] left-0
-            w-44 rounded-lg border border-gray-600 shadow-xl z-[100]
+            w-60 rounded-lg border border-gray-600 shadow-xl z-[100]
             opacity-0 group-hover:opacity-100 transition-opacity duration-150"
           style={{ background: '#1a1a2e' }}
         >
           <div className="h-1 rounded-t-lg" style={{ background: color }} />
-          <div className="px-3 py-2 flex flex-col gap-1">
-            <div className="text-[11px] font-bold font-body" style={{ color }}>{name}</div>
-            <div className="text-[10px] text-gray-300 font-mono leading-tight">{tooltip}</div>
-            {duration && <div className="text-[9px] text-[#ffd700] font-mono">{duration} turns remaining</div>}
+          <div className="px-3 py-2.5 flex flex-col gap-1.5">
+            <div className="text-[13px] font-bold font-body" style={{ color }}>{name}</div>
+            <div className="text-[12px] text-gray-300 font-mono leading-tight">{tooltip}</div>
+            {duration && <div className="text-[11px] text-[#ffd700] font-mono">{duration} turns remaining</div>}
           </div>
         </div>
       )}

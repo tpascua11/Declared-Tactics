@@ -7,10 +7,12 @@ import { effectiveResourceAtExecution, projectedSpeedPenalty, projectedSpeedInfl
 import { battle_registry } from '../../battle/registry/battle_registry';
 import { DEBUG_HAND_COST } from '../../debug';
 import GuideModal from './GuideModal';
+import AdvancedGuideModal from './AdvancedGuideModal';
 
 export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, tagPool, onRestartBattle, isDefeated }) {
   const [holdProgress, setHoldProgress] = useState(0);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [advancedGuideOpen, setAdvancedGuideOpen] = useState(false);
   const holdIntervalRef = useRef(null);
 
   function handleHoldStart(e) {
@@ -103,7 +105,8 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
           <span className="text-[11px] font-mono tracking-widest relative z-10" style={{ color: '#ffffff' }}>HOW TO PLAY</span>
         </div>
 
-        {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} />}
+        {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} onOpenAdvanced={() => { setGuideOpen(false); setAdvancedGuideOpen(true); }} nudgeUp={180} />}
+        {advancedGuideOpen && <AdvancedGuideModal onClose={() => setAdvancedGuideOpen(false)} nudgeUp={180} />}
 
       </div>
 
