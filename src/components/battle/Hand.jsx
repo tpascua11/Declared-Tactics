@@ -6,9 +6,11 @@ import { useRef, useState } from 'react';
 import { effectiveResourceAtExecution, projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import { DEBUG_HAND_COST } from '../../debug';
+import GuideModal from './GuideModal';
 
 export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, tagPool, onRestartBattle, isDefeated }) {
   const [holdProgress, setHoldProgress] = useState(0);
+  const [guideOpen, setGuideOpen] = useState(false);
   const holdIntervalRef = useRef(null);
 
   function handleHoldStart(e) {
@@ -92,10 +94,16 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
           }
         </div>
 
-        {/* RIGHT — bag / inventory */}
-        <div className="w-[25%] flex items-center justify-center border-l border-white/10 cursor-pointer hover:bg-white/5 transition-colors">
-          <span className="text-[9px] font-mono tracking-widest text-gray-500">BAG</span>
+        {/* RIGHT — how to play */}
+        <div
+          className="w-[25%] flex items-center justify-center border-l border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10 hover:border-white/30"
+          style={{ cursor: 'pointer' }}
+          onClick={() => setGuideOpen(true)}
+        >
+          <span className="text-[11px] font-mono tracking-widest relative z-10" style={{ color: '#ffffff' }}>HOW TO PLAY</span>
         </div>
+
+        {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} />}
 
       </div>
 
