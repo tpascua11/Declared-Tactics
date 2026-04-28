@@ -85,7 +85,7 @@
       "speed_mod": 10,
       "payload_type": "PHYSICAL",
       "tag_type": ["SPIRITUAL", "STANCE"],
-      "animation": "buff",
+      "animation": "harai",
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {

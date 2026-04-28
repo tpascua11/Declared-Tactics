@@ -33,7 +33,7 @@
       "map_icon": "Snowy_Field_Den",
       "desc": "You hear them before you see them. Snickering. Lots of snickering. You round the corner and — eight rabbits. Just... sitting there. Blocking the path like a fuzzy, twitching roadblock. One's leaning against a pine, picking his teeth with a twig. Another's stretching his legs out like he's at a spa. They see you and not a single one flinches. The big one in the center grins wide. 'Look who it is, boys. A samurai fox.' He says it like it's a punchline. The others snicker. One tosses a pebble at your paw. 'Cute sword, fluffy. Your mama give you that?' More laughter. This is humiliating. This is *absurd*. Eight rabbits. Not running. Not scared. Just... mean.",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["still_wind"] }] },
-      "defeat_tip": "The rabbits move as a pack — they always strike at the 3rd turn, first action. Let them think they have you. Then make it count.",
+      "defeat_tip": "Watch for the small fiery aura — it appears just before the Rabbit strikes. That aura is your tell. They always attack on the 3rd turn, first action. Let them think they have you. Then make it count.",
       "clear_desc": "Eight against one, and not one of them ran. That's the part that stings. The last rabbit hits the dirt and suddenly — slow clapping. From the tree line. A turtle steps out of the shadows, arms folded, expression unreadable. Old. The kind of old that means dangerous or wise. Possibly both. 'You have skill, fox,' he says, voice like gravel sliding on stone. 'But you fight angry. Sloppy.' He watches you for a moment, those slow eyes taking in everything — your stance, your grip, the way you're still bristling from those rabbits. 'Still Wind,' he says at last. 'When the world moves, you move less. Let me show you.' The rabbits groan in the dirt behind you. At least you agree on something.",
       "scenario_id": "rabbit_full_squad"
     },
@@ -50,7 +50,7 @@
     },
     {
       "id": 4,
-      "name": "2 Turtles and a Rabbit",
+      "name": "PATH BEYOND",
       "type": "BOSS",
       "map_icon": "Snow_Field_Path_1",
       "desc": "The path ends here. Not fades — *ends*. Like someone drew a line in the snow and said 'no further.' Two turtles stand side by side ahead, planted like stones that learned to think. You recognize the stance. Still Wind, held so long it's become part of them. Between them, one rabbit — different from the others. Stiller. Watching you with eyes that don't twitch. They've been waiting. You know that now. Since the shrine, maybe before. The elder turtle speaks first, voice like old wood splitting. 'You've come far, fox. Farther than we expected.' He doesn't sound surprised. He sounds like he's been waiting to say those words for a long time. 'This is our answer.' The rabbit cracks his knuckles. The second turtle settles into silence. No one's moving aside.",
@@ -88,7 +88,7 @@
       "map_icon": "Water",
       "desc": "The path runs straight into a river. No bridge. No stones. Just water — cold, fast, and deep enough to soak everything. And standing in the middle of it like they own the current: four otters. Splashing. Laughing. One's doing a backflip off a rock for no reason. They see you freeze at the water's edge and *that* makes them grin wider. 'Aww,' one coos, voice dripping with fake sympathy. 'Look at him. All fluffy and dry.' Another snorts. 'Don't worry, fox! We'll help you!' He splashes water directly at your paws. Your ears flatten. You hate this already. The lead otter falls into something resembling a stance — still dripping, still grinning. 'Come on in! Water's great! We'll make it quick. Probably.'",
       "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["stream_slash"] }] },
-      "defeat_tip": "Stream Slash rides the current — you can dodge it, but you can't dodge forever. Stop running and fight back. Strike against the tide.",
+      "defeat_tip": "Stream Slash rides the current — you can't dodge it. Stop running and fight back. Strike against the tide.",
       "clear_desc": "You're soaked. Every inch of you. Fur plastered flat, dripping, weighing twice what it should. The lead otter paddles over, grinning ear to ear, absolutely delighted by your misery. 'Not bad, fox! Not bad at all for someone fighting while trying to stay dry!' You're not sure if that's a compliment or mockery. Both, probably. He shows you the motion — a flowing cut that moves like water itself, smooth and impossible to dodge once it starts. 'Stream Slash,' he says proudly. 'Cuts right through the slippery ones. Speed doesn't matter if you can ride the current.' He winks, completely unbothered by the fact that you look like a drowned rat. 'Now you try. And hey — next time? Just swim. It's faster.' You shake yourself off. It doesn't help.",
       "scenario_id": "the_otter_test"
     },
@@ -226,12 +226,12 @@
     },
     {
       "id": 20,
-      "name": "THE DARK FOX",
+      "name": "THE FOX SUMURAI",
       "type": "BOSS",
       "map_icon": "Sunset",
       "desc": "The path opens onto a ridge where the whole world spreads out below — valleys carved in white, pines bending under wind, and above it all, a sunset bleeding orange and gold through a winter storm. Beautiful. Terrible. The kind of beautiful that reminds you how small you are. Lightning flickers somewhere in the clouds, soundless from this distance. Snow swirls in patterns that almost look intentional. And then they're just... there. Two foxes. Your shape. Your size. Your colors. One standing where the light hits him, all sharp edges and cold certainty, still as death. The other half-hidden in the storm's shadow, coiled tight, grinning with teeth that know every empty place inside you. They don't speak. You don't speak. The wind screams between you and the sunset paints everything gold and for one perfect, terrible moment, the whole universe is just three foxes on a mountain waiting to see what happens next.",
       "reward": { "general": { "type": "gold", "amount": 1000 } },
-      "defeat_tip": "The dark fox is a mirror. It knows every move you know — because they are your moves. The question isn't how to beat it. The question is how well you know yourself. Do you?",
+      "defeat_tip": "Two foxes — and they fight like you do. The Dark Fox is aggression, all pressure, all commitment. Let it come. The Light Fox is patience; it watches, and the moment it finds your pattern, it will Freeze and Shock you before you realize it had you figured out. Vary your timing. Give them nothing.",
       "clear_desc": "Both of them stand — dark rising from his crouch, light turning from the sunset like he was never fighting at all — and the storm seems to hold its breath around you all. The dark fox watches you with those too-knowing eyes, blood on his muzzle, something shifting behind them that isn't quite smile and isn't quite surrender. The light fox inclines his head. Slight. Barely there. But deliberate. Meant. Then they turn together — toward the storm, toward the dying light — and walk into the swirling snow without looking back. Not fading. Not shattering. Just walking until the white takes them. Gone. Wind fills the space where they were. Sunset burns lower. Gold turns to amber turns to purple. You're alone on the ridge. Tired in ways that go past muscle and bone. But something settled in that fight. Something quiet. You fought your own doubt and your own certainty and you're still standing, and maybe that's the whole point — not knowing who you were before, but choosing who you are now. The path stretches ahead into the darkening snow. Yours. You start walking. And somewhere underneath the exhaustion, underneath everything — that was fun.",
       "scenario_id": "sumurai_boss"
     }

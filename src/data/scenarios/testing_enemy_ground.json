@@ -7,9 +7,7 @@
       "enemies": ["bear_sumurai"]
     }, 
     {
-    "enemies": ["wolf_sumurai", "falcon_sumurai_2", "tiger_sumurai"],
-          "heal": 9999
-
+    "enemies": ["wolf_sumurai", "falcon_sumurai_2", "tiger_sumurai"]
     }
   ],
   "music": "WAY_OF_THE_SUMURAI_BATTLE_2",

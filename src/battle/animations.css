@@ -242,6 +242,23 @@
   animation: march 0.1s linear infinite;
 }
 
+/* ── RESTART BUTTON — white marching ants ── */
+.restart-marching-ants::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(90deg,  rgba(255,255,255,0.85) 0, rgba(255,255,255,0.85) 5px, transparent 5px, transparent 10px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.85) 0, rgba(255,255,255,0.85) 5px, transparent 5px, transparent 10px),
+    repeating-linear-gradient(90deg,  rgba(255,255,255,0.85) 0, rgba(255,255,255,0.85) 5px, transparent 5px, transparent 10px),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.85) 0, rgba(255,255,255,0.85) 5px, transparent 5px, transparent 10px);
+  background-size:   10px 1.5px, 1.5px 10px, 10px 1.5px, 1.5px 10px;
+  background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
+  animation: march 0.4s linear infinite;
+}
+
 /* ── STAGE CLEAR (shine sweep across player portrait) ── */
 @keyframes stage-clear-shine {
   0%   { transform: translateX(-120%) skewX(-15deg); opacity: 0; }
@@ -280,6 +297,41 @@
   overflow: hidden;
   background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0.4) 55%, transparent 65%);
   animation: stage-clear-shine 1.2s ease-in-out forwards;
+}
+
+/* ── HARAI (purifying stance — single teal shine sweep) ── */
+@keyframes harai-shine {
+  0%   { transform: translateX(-120%) skewX(-15deg); opacity: 0; }
+  12%  { opacity: 1; }
+  85%  { transform: translateX(220%) skewX(-15deg); opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes harai-flash {
+  0%   { opacity: 0; }
+  10%  { opacity: 0.28; }
+  45%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+.animate-harai::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  border-radius: inherit;
+  background: #6ee7b7;
+  animation: harai-flash 0.9s ease-out forwards;
+}
+.animate-harai::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+  background: linear-gradient(105deg, transparent 35%, rgba(110,231,183,0.75) 47%, rgba(255,255,255,0.65) 52%, rgba(110,231,183,0.45) 58%, transparent 68%);
+  animation: harai-shine 0.9s ease-in-out forwards;
 }
 
 /* ── ENEMY EXIT (dead card dissolves before stage transition) ── */
@@ -373,6 +425,36 @@
   animation:
     speed_dash_march_down 0.04s linear infinite,
     speed_dash_lines_fade calc(0.75s / var(--anim-intensity, 1)) ease-in-out forwards;
+}
+
+/* ── Execute Button ──────────────────────────────────────────
+
+   Gold-border, red-text execute button with a repeating shine sweep.
+   .execute-btn-active keeps the border glow on :hover.
+   .execute-shine is the pseudo-like overlay that sweeps left→right.
+   ─────────────────────────────────────────────────────────── */
+
+@keyframes execute_shine_sweep {
+  0%   { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateX(220%) skewX(-20deg); opacity: 0; }
+}
+
+.execute-shine {
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0.18) 60%,
+    transparent 100%
+  );
+  animation: execute_shine_sweep 2.4s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* ── Placeholders (not yet implemented) ──────────────────────

@@ -363,6 +363,7 @@ export function battleReducer(state, action) {
         sourceLevel: sourceLevel ?? null,
         lastTargetId,
         checkpoint: { stageIndex: 0, player: checkpointPlayer },
+        initialCheckpoint: { stageIndex: 0, player: checkpointPlayer },
       };
     }
 
@@ -392,6 +393,22 @@ export function battleReducer(state, action) {
         retryKey: (state.retryKey ?? 0) + 1,
         logs: [{ msg: `⚔️  Retrying stage ${checkpoint.stageIndex + 1}...`, type: 'info' }],
         lastTargetId: newActive[0]?.id ?? null,
+      };
+    }
+
+    case 'RESTART_BATTLE': {
+      const { playerData } = action.payload ?? {};
+      const freshState = buildInitialState(state.scenario, playerData);
+      const startPlayer = freshState.characters.find(c => c.faction === 'player');
+      const checkpointPlayer = JSON.parse(JSON.stringify(startPlayer));
+      return {
+        ...freshState,
+        phase: 'QUEUE_SETUP',
+        sourceLevel: state.sourceLevel ?? null,
+        initialCheckpoint: { stageIndex: 0, player: checkpointPlayer },
+        checkpoint: { stageIndex: 0, player: checkpointPlayer },
+        retryKey: (state.retryKey ?? 0) + 1,
+        logs: [{ msg: `⚔️  Restarting battle from the beginning...`, type: 'info' }],
       };
     }
 

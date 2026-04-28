@@ -230,7 +230,7 @@ export const SAMURAI_CARDS = [
     image: 'FOX_GUARD_STANCE',
     color: '#6ee7b7',
     desc: 'Enter a purifying stance. Reduce all incoming damage by 75% until your next action or until the end of turn. Costs 1 Battle Spirit.',
-    animation: 'buff',
+    animation: 'harai',
     animation_intensity: 1.0,
     tags: {
       self: [

@@ -2,11 +2,41 @@
 //  Hand — Bottom section showing available cards to play
 // ============================================================
 
+import { useRef, useState } from 'react';
 import { effectiveResourceAtExecution, projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import { DEBUG_HAND_COST } from '../../debug';
 
-export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, tagPool }) {
+export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, tagPool, onRestartBattle, isDefeated }) {
+  const [holdProgress, setHoldProgress] = useState(0);
+  const holdIntervalRef = useRef(null);
+
+  function handleHoldStart(e) {
+    if (!onRestartBattle) return;
+    e.preventDefault();
+    if (holdIntervalRef.current) return;
+    let elapsed = 0;
+    holdIntervalRef.current = setInterval(() => {
+      elapsed += 20;
+      const progress = Math.min(elapsed / 1800, 1);
+      setHoldProgress(progress);
+      if (progress >= 1) {
+        clearInterval(holdIntervalRef.current);
+        holdIntervalRef.current = null;
+        setHoldProgress(0);
+        onRestartBattle();
+      }
+    }, 20);
+  }
+
+  function handleHoldEnd() {
+    if (holdIntervalRef.current) {
+      clearInterval(holdIntervalRef.current);
+      holdIntervalRef.current = null;
+    }
+    setHoldProgress(0);
+  }
+
   const filledCount = queue.filter(Boolean).length;
   const nullIdx = queue.findIndex(s => !s);
   const nextSlotIndex = filledCount >= totalSlots ? -1 : (nullIdx !== -1 ? nullIdx : queue.length);
@@ -36,11 +66,22 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
       style={{ background: 'rgba(0,0,0,0.25)' }}>
 
       {/* Button row — 3 sections */}
-      <div className="flex-shrink-0 flex border-b border-white/10" style={{ height: '2.5rem', position: 'relative', zIndex: 0 }}>
+      <div className="flex-shrink-0 flex border-b border-white/10" style={{ height: '2.5rem', position: 'relative', zIndex: isDefeated ? 9003 : 0 }}>
 
-        {/* LEFT — bag / inventory */}
-        <div className="w-[25%] flex items-center justify-center border-r border-white/10 cursor-pointer hover:bg-white/5 transition-colors">
-          <span className="text-[9px] font-mono tracking-widest text-gray-500">BAG</span>
+        {/* LEFT — restart battle (hold to activate) */}
+        <div
+          className={`w-[25%] flex items-center justify-center border-r border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10 hover:border-white/30${isDefeated ? ' restart-marching-ants' : ''}`}
+          style={{ cursor: onRestartBattle ? 'pointer' : 'default' }}
+          onMouseDown={handleHoldStart}
+          onMouseUp={handleHoldEnd}
+          onMouseLeave={handleHoldEnd}
+          onTouchStart={handleHoldStart}
+          onTouchEnd={handleHoldEnd}
+        >
+          <span className="text-[11px] font-mono tracking-widest relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : '#ffffff', textShadow: isDefeated ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>HOLD TO RESTART BATTLE</span>
+          {holdProgress > 0 && (
+            <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
+          )}
         </div>
 
         {/* MIDDLE — resource bar */}
@@ -51,9 +92,9 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
           }
         </div>
 
-        {/* RIGHT — options */}
+        {/* RIGHT — bag / inventory */}
         <div className="w-[25%] flex items-center justify-center border-l border-white/10 cursor-pointer hover:bg-white/5 transition-colors">
-          <span className="text-[9px] font-mono tracking-widest text-gray-500">OPT</span>
+          <span className="text-[9px] font-mono tracking-widest text-gray-500">BAG</span>
         </div>
 
       </div>

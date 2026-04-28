@@ -144,12 +144,20 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
         <button
           disabled={!canExecute}
           onClick={onExecute}
-          className={`w-full py-2 rounded-lg font-display tracking-widest text-sm text-white transition-all
-            ${!canExecute
-              ? 'bg-gray-700 opacity-40 cursor-not-allowed'
-              : 'bg-gradient-to-r from-[#e94560] to-[#b83b5e] hover:scale-105 shadow-[0_0_15px_rgba(233,69,96,0.4)]'
-            }`}
+          className={`w-full py-2 rounded-lg font-display tracking-widest text-sm relative overflow-hidden
+            ${!canExecute ? 'cursor-not-allowed' : 'hover:scale-105'}`}
+          style={{
+            background: canExecute ? '#b91c1c' : '#374151',
+            color: canExecute ? '#fff' : '#9ca3af',
+            opacity: canExecute ? 1 : 0.4,
+            border: canExecute ? '2px solid #b8860b' : '2px solid transparent',
+            boxShadow: canExecute
+              ? '0 0 10px rgba(184,134,11,0.5), inset 0 0 8px rgba(184,134,11,0.15)'
+              : 'none',
+            transition: 'background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease, transform 0.15s ease',
+          }}
         >
+          {canExecute && <span className="execute-shine" />}
           {isBattling ? 'RESOLVING...' : 'EXECUTE PLAN'}
         </button>
       )}
@@ -161,34 +169,39 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
           <div style={{ width: '16.5rem' }}>
           {showRetry ? (
             <button
-              className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform"
+              className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
               style={{
                 position: 'relative',
                 zIndex: 9003,
                 background: 'linear-gradient(to right, #e94560, #b83b5e)',
                 color: '#fff',
-                boxShadow: '0 0 14px rgba(233,69,96,0.5)',
+                border: '2px solid #b8860b',
+                boxShadow: '0 0 14px rgba(233,69,96,0.5), 0 0 10px rgba(184,134,11,0.4)',
               }}
               onClick={onRetry}
             >
+              <span className="execute-shine" />
               Keep on Fighting!
             </button>
           ) : (
             <button
-              className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform"
+              className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
               style={result !== 'WIN' ? {
                 position: 'relative',
                 zIndex: 9003,
                 background: 'linear-gradient(to right, #e2e8f0, #ffffff)',
                 color: '#0f0f1a',
-                boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25)',
+                border: '2px solid #b8860b',
+                boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25), 0 0 10px rgba(184,134,11,0.4)',
               } : {
                 background: '#4da6ff',
                 color: '#fff',
-                boxShadow: '0 0 14px rgba(77,166,255,0.4)',
+                border: '2px solid #b8860b',
+                boxShadow: '0 0 14px rgba(77,166,255,0.4), 0 0 10px rgba(184,134,11,0.4)',
               }}
               onClick={onExecute}
             >
+              <span className="execute-shine" />
               CONTINUE
             </button>
           )}

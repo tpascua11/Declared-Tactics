@@ -149,7 +149,15 @@ export const ANIMATIONS = {
     duration: 650,
     sfx: [
       { src: sfx('SHEATH.wav'), delay: 0,   volume: 0.7 },
-    ], 
+    ],
+    floatingNumber: null,
+  },
+  harai: {
+    cssClass: 'animate-harai',
+    duration: 500,
+    sfx: [
+      { src: sfx('CLING_1.wav'), delay: 0, volume: 0.7 },
+    ],
     floatingNumber: null,
   },
   burn: {
@@ -163,8 +171,10 @@ export const ANIMATIONS = {
     cssClass: 'animate-ice_shake',
     duration: 500,
     sfx: [
-      { src: sfx('ICE'), delay: 0,   volume: 0.7 },
+      { src: sfx('STREAM_SLASH.wav'), delay: 25,   volume: 0.3 },
+      { src: sfx('ICE'), delay: 100,   volume: 0.7 },
       { src: sfx('ICE'), delay: 200, volume: 0.5 },
+      { src: sfx('ICE'), delay: 300, volume: 0.4 },
     ],
     floatingNumber: { color: '#7dd3fc' },
   },
@@ -181,7 +191,7 @@ export const ANIMATIONS = {
     cssClass: 'animate-green-marching-ants',
     duration: 1000,
     sfx: [
-      { src: sfx('REGEN_3.wav'), delay: 0,   volume: 0.7 },
+      { src: sfx('REGEN_3.wav'), delay: 0,   volume: 0.47 },
     ], 
     floatingNumber: null,
   },

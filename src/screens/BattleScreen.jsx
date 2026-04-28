@@ -12,6 +12,7 @@ import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/MUSIC/ind
 import { ANIMATIONS, playSfxBuffer, sfx } from '../battle/animationRegistry';
 import '../battle/animations.css';
 import '../battle/aura_animations.css';
+import CardRiseTransition from '../components/shared/CardRiseTransition';
 import EnemyZone from '../components/battle/EnemyZone';
 import BattleLog from '../components/battle/BattleLog';
 import BattleQueue from '../components/battle/BattleQueue';
@@ -21,8 +22,10 @@ import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
 
 export default function BattleScreen() {
-  const { gs, dispatch, onBattleEnd, retry } = useGame();
+  const { gs, dispatch, onBattleEnd, retry, restartBattle } = useGame();
   const [retargetingSlot, setRetargetingSlot] = useState(null);
+  const [showRestartTransition, setShowRestartTransition] = useState(false);
+  const restartTransitionTimerRef = useRef(null);
   const [lineCoords, setLineCoords] = useState(null);
   const [activeAnimations, setActiveAnimations] = useState({});
   const [floatingNumbers, setFloatingNumbers] = useState([]);
@@ -45,8 +48,17 @@ export default function BattleScreen() {
     return () => {
       floatTimersRef.current.forEach(clearTimeout);
       animClearTimersRef.current.forEach(clearTimeout);
+      clearTimeout(restartTransitionTimerRef.current);
     };
   }, []);
+
+  function handleRestartBattle() {
+    setShowRestartTransition(true);
+    restartTransitionTimerRef.current = setTimeout(() => {
+      restartBattle();
+    }, 1050);
+    setTimeout(() => setShowRestartTransition(false), 2300);
+  }
 
   // Battle music — start on mount, restart on retry, stop on RESULT or unmount
   useEffect(() => {
@@ -286,6 +298,8 @@ export default function BattleScreen() {
 
   return (
     <>
+      {showRestartTransition && <CardRiseTransition />}
+
       {/* Retarget line overlay — portalled to document.body so it sits outside the CSS-transformed GameCanvas */}
       {lineCoords && createPortal(
         <svg className="fixed inset-0 pointer-events-none" style={{ zIndex: 9999 }} width="100%" height="100%">
@@ -453,6 +467,8 @@ export default function BattleScreen() {
             ResourceBar={ResourceBar}
             baseSpeed={player.base_speed}
             tagPool={player.active_tag_pool}
+            onRestartBattle={handleRestartBattle}
+            isDefeated={gs.phase === 'RESULT' && gs.result !== 'WIN'}
           />
 
         </div>

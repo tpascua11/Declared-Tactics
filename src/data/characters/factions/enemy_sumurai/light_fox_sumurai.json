@@ -22,7 +22,7 @@
       "speed_mod": 10,
       "payload_type": "PHYSICAL",
       "tag_type": ["SPIRITUAL", "STANCE"],
-      "animation": "buff",
+      "animation": "harai",
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
@@ -141,7 +141,7 @@
     },
     "Battojutsu": {
       "name": "Battojutsu",
-      "icon": "FOX_SUMMURAI_BATTOJUTSU",
+      "icon": "ENM_SAM_SHEATH",
       "speed_mod": 0,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL", "SLASH"],

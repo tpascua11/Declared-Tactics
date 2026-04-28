@@ -32,9 +32,10 @@ export function GameProvider({ children }) {
   };
 
   const retry = () => dispatch({ type: 'RETRY' });
+  const restartBattle = () => dispatch({ type: 'RESTART_BATTLE', payload: { playerData } });
 
   return (
-    <GameContext.Provider value={{ gs, dispatch, goToBattle, onBattleEnd, retry }}>
+    <GameContext.Provider value={{ gs, dispatch, goToBattle, onBattleEnd, retry, restartBattle }}>
       {children}
     </GameContext.Provider>
   );
