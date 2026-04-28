@@ -1,0 +1,28 @@
+/* ── Shared button shine sweep ─────────────────────────────────
+   Add class "shine-btn" to any button to get the sweep.
+   Override the color with --shine-color (CSS variable).
+   Default: rgba(255,255,255,0.25) (white, used by TitleScreen)
+   ───────────────────────────────────────────────────────────── */
+
+@keyframes btnShimmer {
+  0%,  60%, 100% { left: -80%; }
+  35%             { left: 130%; }
+}
+
+.shine-btn {
+  overflow: hidden;
+  position: relative;
+}
+
+.shine-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, var(--shine-color, rgba(255,255,255,0.25)), transparent);
+  transform: skewX(-15deg);
+  animation: btnShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}

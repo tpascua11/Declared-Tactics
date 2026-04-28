@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './modal-buttons.css';
+import '../shared/shine-btn.css';
 
 export default function IntroModal({ level, levelType, mapIconSrc, onBattle, onClose }) {
   const typeColor = levelType?.color ?? '#4da6ff';
@@ -104,7 +104,7 @@ export default function IntroModal({ level, levelType, mapIconSrc, onBattle, onC
 
         {/* Battle button */}
         <button
-          className="modal-shine-btn"
+          className="shine-btn"
           onClick={onBattle}
           style={{
             marginTop: 4, padding: "11px 48px", alignSelf: "center",

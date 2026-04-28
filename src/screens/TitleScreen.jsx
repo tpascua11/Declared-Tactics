@@ -1,4 +1,5 @@
 import './TitleScreen.css';
+import '../components/shared/shine-btn.css';
 
 // ── Particle configs (computed once at module load) ──────────────
 const COLORS = [
@@ -157,11 +158,11 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
 
         <nav className="menu">
           {hasSave && (
-            <button className="menu-btn" onClick={onContinue}>
+            <button className="menu-btn shine-btn" onClick={onContinue}>
               Continue
             </button>
           )}
-          <button className="menu-btn" onClick={onNewGame}>
+          <button className="menu-btn shine-btn" onClick={onNewGame}>
             New Game
           </button>
         </nav>

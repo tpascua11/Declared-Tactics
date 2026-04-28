@@ -542,6 +542,7 @@
   overflow: hidden;
   margin-top: auto;
   will-change: transform, box-shadow;
+  --shine-color: rgba(232, 197, 109, 0.45);
 }
 
 .start-button:hover {
@@ -562,24 +563,6 @@
 .start-button:focus-visible {
   outline: 2px solid var(--gold-light);
   outline-offset: 2px;
-}
-
-@keyframes startBtnShimmer {
-  0%,  60%, 100% { left: -80%; }
-  35%             { left: 130%; }
-}
-
-.start-button::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -80%;
-  width: 45%;
-  height: 200%;
-  background: linear-gradient(90deg, transparent, rgba(232, 197, 109, 0.45), transparent);
-  transform: skewX(-15deg);
-  animation: startBtnShimmer 3s ease-in-out infinite;
-  pointer-events: none;
 }
 
 .start-text {

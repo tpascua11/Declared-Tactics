@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import MAP_DATA from '../../data/maps/PATH_OF_THE_SUMURAI.json';
-import './modal-buttons.css';
+import '../shared/shine-btn.css';
 
 const CARD_W = 88;
 const CARD_H = 132;
@@ -221,7 +221,7 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
         )}
 
         <button
-          className="modal-shine-btn"
+          className="shine-btn"
           onClick={onClose}
           style={{
             marginTop: 4, padding: "10px 40px", alignSelf: "center",

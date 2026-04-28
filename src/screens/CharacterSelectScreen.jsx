@@ -1,4 +1,5 @@
 import './CharacterSelectScreen.css';
+import '../components/shared/shine-btn.css';
 import { useState, useCallback, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
@@ -222,7 +223,7 @@ export default function CharacterSelectScreen() {
                   <TypewriterText text={showcaseData.description} className="showcase-description" style={fadeTextStyle} />
                 </div>
                 <button
-                  className="start-button"
+                  className="start-button shine-btn"
                   type="button"
                   onClick={() => {
                     playerDispatch({ type: 'CONFIRM_CLASS', classId: selectedId });

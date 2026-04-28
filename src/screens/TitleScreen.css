@@ -234,23 +234,6 @@
   transition: all 0.15s;
 }
 
-@keyframes menuBtnShimmer {
-  0%,  60%, 100% { left: -80%; }
-  35%             { left: 130%; }
-}
-
-.menu-btn::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -80%;
-  width: 45%;
-  height: 200%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-  transform: skewX(-15deg);
-  animation: menuBtnShimmer 3s ease-in-out infinite;
-  pointer-events: none;
-}
 
 .menu-btn:hover {
   background: rgba(255, 255, 255, 0.12);

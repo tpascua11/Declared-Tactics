@@ -22,6 +22,7 @@ import {
 } from '../assets';
 import { DEBUG_MAP } from '../debug';
 import './MapScreen.css';
+import '../components/shared/shine-btn.css';
 import menuMapTheme from '../assets/MUSIC/Menu Map Theme.mp3';
 import WinModal from '../components/map/WinModal';
 import LosePopup from '../components/map/LosePopup';
@@ -329,7 +330,7 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, playerTypeColor
                 </div>
               )}
               <button
-                className="map-enter-btn-cell"
+                className="map-enter-btn-cell shine-btn"
                 onClick={e => { e.stopPropagation(); onEnter(level.id); }}
                 style={{
                   position: "relative",
