@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import './TitleScreen.css';
 import '../components/shared/shine-btn.css';
+import SettingsModal from '../components/map/SettingsModal';
 
 // ── Particle configs (computed once at module load) ──────────────
 const COLORS = [
@@ -91,6 +93,7 @@ const EMBER_CONFIG = [
 ];
 
 export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
     <div className="title-screen">
@@ -165,6 +168,9 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
           <button className="menu-btn shine-btn" onClick={onNewGame}>
             New Game
           </button>
+          <button className="menu-btn shine-btn" onClick={() => setSettingsOpen(true)}>
+            Settings
+          </button>
         </nav>
       </div>
 
@@ -190,6 +196,8 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
           />
         ))}
       </div> */}
+
+      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
 
       {/* Footer */}
       <div className="title-footer">

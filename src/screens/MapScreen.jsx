@@ -24,11 +24,13 @@ import { DEBUG_MAP } from '../debug';
 import './MapScreen.css';
 import '../components/shared/shine-btn.css';
 import menuMapTheme from '../assets/MUSIC/Menu Map Theme.mp3';
+import { useMusic } from '../hooks/useMusic';
 import WinModal from '../components/map/WinModal';
 import LosePopup from '../components/map/LosePopup';
 import IntroModal from '../components/map/IntroModal';
 import GuideModal from '../components/battle/GuideModal';
 import AdvancedGuideModal from '../components/battle/AdvancedGuideModal';
+import SettingsModal from '../components/map/SettingsModal';
 
 const MAP_ICON_LOOKUP = {
   GARDEN_TOWN:    MAP_ICON_GARDEN_TOWN,
@@ -392,17 +394,12 @@ export default function MapScreen() {
   const [introModal,  setIntroModal]  = useState(null); // { levelId }
   const [guideOpen,         setGuideOpen]         = useState(false);
   const [advancedGuideOpen, setAdvancedGuideOpen] = useState(false);
+  const [settingsOpen,      setSettingsOpen]      = useState(false);
 
   const [gridDims, setGridDims] = useState({ cols: 5, rows: TARGET_ROWS });
   const gridWrapRef = useRef(null);
-  const audioRef    = useRef(null);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    audio.volume = 0.1;
-    audio.play().catch(() => {});
-    return () => { audio.pause(); audio.currentTime = 0; };
-  }, []);
+  useMusic(menuMapTheme, { loop: true, baseVolume: 0.1 });
 
   useEffect(() => {
     const el = gridWrapRef.current;
@@ -567,7 +564,6 @@ export default function MapScreen() {
   // ── Render ────────────────────────────────────────────────
   return (
     <div style={STATIC_STYLES.root}>
-      <audio ref={audioRef} src={menuMapTheme} loop />
       <div style={STATIC_STYLES.scanlines} />
 
       {/* TOPBAR */}
@@ -680,6 +676,22 @@ export default function MapScreen() {
             <span style={{ fontSize: 20 }}>📗</span>
             <span>ADVANCED</span>
           </button>
+          <button
+            className="shine-btn"
+            onClick={() => setSettingsOpen(true)}
+            style={{
+              padding: "12px 32px",
+              border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8,
+              background: "rgba(255,255,255,0.02)", color: "#ffffff",
+              fontSize: 13, letterSpacing: 3, cursor: "pointer",
+              fontFamily: "'Courier New', monospace", fontWeight: "bold",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+              width: 220,
+            }}
+          >
+            <span style={{ fontSize: 20 }}>⚙️</span>
+            <span>SETTINGS</span>
+          </button>
         </div>
       </div>
 
@@ -692,6 +704,7 @@ export default function MapScreen() {
 
       {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} onOpenAdvanced={() => { setGuideOpen(false); setAdvancedGuideOpen(true); }} />}
       {advancedGuideOpen && <AdvancedGuideModal onClose={() => setAdvancedGuideOpen(false)} />}
+      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
 
       {introModal && (() => {
         const lvl = MAP_DATA.levels[introModal.levelId];

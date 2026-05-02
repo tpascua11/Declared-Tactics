@@ -9,6 +9,7 @@ import { useGame } from '../context/GameContext';
 import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/MUSIC/index';
+import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playSfxBuffer, sfx } from '../battle/animationRegistry';
 import '../battle/animations.css';
 import '../battle/aura_animations.css';
@@ -35,12 +36,19 @@ export default function BattleScreen() {
   const floatTimersRef = useRef([]);
   const animClearTimersRef = useRef([]);
   const battleTimerRef = useRef(null);
-  const musicRef = useRef(null);
 
   const player = gs.characters.find(c => c.faction === 'player');
   const enemies = gs.characters.filter(c => c.faction === 'enemy');
   const { ResourceBar } = CLASS_REGISTRY[player.class_id] ?? {};
   const effectiveSlots = getEffectiveActionSlots(player);
+
+  const battleTrack = gs.music ? MUSIC_REGISTRY[gs.music] : null;
+  const victoryRegistry = gs.result === 'WIN' ? VICTORY_MUSIC : DEFEAT_MUSIC;
+  const victoryTrackId = (victoryRegistry[player.class_id] ?? victoryRegistry.default);
+  const victoryTrack = MUSIC_REGISTRY[victoryTrackId];
+
+  useMusic(battleTrack, { loop: true, baseVolume: gs.musicVolume ?? 0.2, enabled: gs.phase === 'QUEUE_SETUP' || gs.phase === 'BATTLE', restartKey: gs.retryKey });
+  useMusic(victoryTrack, { loop: false, baseVolume: 0.35, enabled: gs.phase === 'RESULT' });
 
 
   // Clean up any in-flight float/anim timers on unmount
@@ -59,24 +67,6 @@ export default function BattleScreen() {
     }, 1050);
     setTimeout(() => setShowRestartTransition(false), 2300);
   }
-
-  // Battle music — start on mount, restart on retry, stop on RESULT or unmount
-  useEffect(() => {
-    const src = gs.music ? MUSIC_REGISTRY[gs.music] : null;
-    if (!src) return;
-    const audio = new Audio(src);
-    audio.loop = true;
-    audio.volume = gs.musicVolume ?? 0.2;
-    audio.play().catch(() => {}); // ignore autoplay policy errors
-    musicRef.current = audio;
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-      musicRef.current = null;
-    };
-  }, [gs.music, gs.musicVolume, gs.retryKey]);
-
-  const victoryMusicRef = useRef(null);
 
   useEffect(() => {
     if (gs.phase !== 'RESULT') { setResultVisible(false); return; }
@@ -97,27 +87,6 @@ export default function BattleScreen() {
     return () => clearInterval(interval);
   }, [gs.phase, gs.result, gs.sourceLevel?.defeat_tip]);
 
-  useEffect(() => {
-    if (gs.phase !== 'RESULT') return;
-    if (musicRef.current) {
-      musicRef.current.pause();
-      musicRef.current.currentTime = 0;
-    }
-    const registry = gs.result === 'WIN' ? VICTORY_MUSIC : DEFEAT_MUSIC;
-    const trackId = registry[player.class_id] ?? registry.default;
-    const src = MUSIC_REGISTRY[trackId];
-    if (!src) return;
-    const audio = new Audio(src);
-    audio.volume = 0.35;
-    audio.play().catch(() => {});
-    victoryMusicRef.current = audio;
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-      victoryMusicRef.current = null;
-    };
-  }, [gs.phase, gs.result]);
-
   // Stage-clear shine — fires when advancing to a new stage, completely outside the battle loop.
   useEffect(() => {
     if (!gs.currentStageIndex) return;
@@ -127,14 +96,9 @@ export default function BattleScreen() {
     return () => clearTimeout(t);
   }, [gs.currentStageIndex]);
 
-  // Retry — stop defeat music, play rest animation, clear result overlay
+  // Retry — play rest animation, clear result overlay
   useEffect(() => {
     if (!gs.retryKey) return;
-    if (victoryMusicRef.current) {
-      victoryMusicRef.current.pause();
-      victoryMusicRef.current.currentTime = 0;
-      victoryMusicRef.current = null;
-    }
     setResultVisible(false);
     setActiveAnimations(prev => ({ ...prev, [player.id]: { cssClass: 'animate-stage-clear', intensity: 1 } }));
     playSfx(sfx('BATTLE_NEXT.wav'), 0.4);
