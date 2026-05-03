@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import './CardRiseTransition.css';
-import rainSfx from '../../assets/SOUND EFFECTS/RAIN.wav';
+import rainSfx from '../../assets/Sound_Effects/RAIN.wav';
 
 const _rainAudio = new Audio(rainSfx);
 _rainAudio.volume = 0.1;

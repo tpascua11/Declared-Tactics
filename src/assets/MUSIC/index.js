@@ -3,19 +3,19 @@
 //  Maps music track IDs (used in scenario JSON) to audio files.
 // ============================================================
 
-import battleTheme from './Battle Theme.mp3';
-import menuMapTheme from './Menu Map Theme.mp3';
-import menuMapTheme3 from './Menu Map Theme 3.mp3';
+import battleTheme from './BATTLE_THEME.mp3';
+import menuMapTheme from './MENU_MAP_THEME.mp3';
+import menuMapTheme3 from './MENU_MAP_THEME_3.mp3';
 import wayOfTheSumurai from './WAY_OF_THE_SUMURAI_BATTLE_1.mp3';
 import wayOfTheSumurai2 from './WAY_OF_THE_SUMURAI_BATTLE_2.mp3';
 import wayOfTheSumurai3 from './WAY_OF_THE_SUMURAI_BATTLE_3.mp3';
 import wayOfTheSumurai4 from './WAY_OF_THE_SUMURAI_BATTLE_4.mp3';
 import wayOfTheSumurai5 from './WAY_OF_THE_SUMURAI_BATTLE_5.mp3';
-import samuraiVictory from './Samurai Victory.mp3';
-import sumuraiDefeat from './Sumurai Defeat.mp3';
-import introMusic from './intro.mp3';
-import samuraiCompletion from './Samurai Completion.mp3';
-import sumuraiBoss1 from './Sumurai Boss 1.mp3';
+import samuraiVictory from './SAMURAI_VICTORY.mp3';
+import sumuraiDefeat from './SUMURAI_DEFEAT.mp3';
+import introMusic from './INTRO.mp3';
+import samuraiCompletion from './SAMURAI_COMPLETION.mp3';
+import sumuraiBoss1 from './SUMURAI_BOSS_1.mp3';
 
 export { sumuraiDefeat as introMusic };
 

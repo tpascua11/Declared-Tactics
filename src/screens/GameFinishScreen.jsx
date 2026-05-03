@@ -1,11 +1,11 @@
-// ============================================================
+﻿// ============================================================
 //  GameFinishScreen — shown when a zone is fully cleared
 // ============================================================
 
 import { useEffect, useMemo } from 'react';
 import { usePlayer } from '../context/PlayerContext';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
-import { COMPLETION_MUSIC, MUSIC_REGISTRY } from '../assets/MUSIC/index';
+import { COMPLETION_MUSIC, MUSIC_REGISTRY } from '../assets/Music/index';
 import './GameFinishScreen.css';
 
 const COLORS = [

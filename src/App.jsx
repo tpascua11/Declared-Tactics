@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 //  App — phase router
 // ============================================================
 
@@ -12,7 +12,7 @@ import BattleScreen from './screens/BattleScreen';
 import MapScreen from './screens/MapScreen';
 import GameFinishScreen from './screens/GameFinishScreen';
 import CardShowerTransition from './components/shared/CardShowerTransition';
-import { introMusic } from './assets/MUSIC/index';
+import { introMusic } from './assets/Music/index';
 import { useMusicVolume } from './hooks/useMusic';
 import * as ASSETS from './assets';
 

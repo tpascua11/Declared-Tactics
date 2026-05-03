@@ -33,15 +33,15 @@ function useTypewriter(text, speed = 18, delay = 500) {
 // ── Character data ───────────────────────────────────────────────
 const CHARACTER_DATA = {
   samurai: {
-    name: 'Samurai', classTitle: 'Way of the Blade', icon: CLASS_ICON_SAMURAI, portrait: PORTRAIT_SUMURAI,
+    name: 'Samurai', classTitle: 'Battle Spirit', icon: CLASS_ICON_SAMURAI, portrait: PORTRAIT_SUMURAI,
     bgStart: '45, 20, 25', bgEnd: '30, 15, 20', accent: '200, 80, 80',
-    description: 'Bound by honor and the ancient code of Bushido, these warriors walk the path of perfect discipline. Their steel sings with the weight of generations—each strike a meditation, each victory a testament to unwavering resolve.',
+    description: 'No orders. No master. No memory of a life before the road. The Samurai walks anyway, drawn forward by something that has no name and asks for no reason. It burns in the chest whether the mind wants it to or not. Some warriors train for years to find that fire. This one just woke up with it, and kept moving.',
     tooltip: 'Battle Spirit — The longer the Samurai endures in battle, the more their Battle Spirit rises. Spend it to unleash devastating slashes that grow stronger with every blow survived.',
   },
   warrior: {
-    name: 'Warrior', classTitle: 'Master of Arms', icon: CLASS_ICON_WARRIOR, portrait: PORTRAIT_WARRIOR,
+    name: 'Warrior', classTitle: 'Temper', icon: CLASS_ICON_WARRIOR, portrait: PORTRAIT_WARRIOR,
     bgStart: '25, 30, 40', bgEnd: '18, 22, 32', accent: '130, 150, 180',
-    description: 'Forged in countless battles, the Warrior stands as an unbreakable wall between allies and annihilation. No tactic too simple, no enemy too formidable—they face the tide of war with raw strength and indomitable will.',
+    description: 'Every battle leaves a mark. The Warrior knows this better than anyone. They have the scars to prove it, inside and out. What keeps them going is not glory or purpose or some promise waiting at the end of the road. Something builds in them with every fight, every hit taken, every enemy that made them work for it. It grows. It hardens. And lately, standing over a finished battle, catching their breath, the Warrior keeps noticing something they cannot quite name',
     tooltip: 'Class mechanic coming soon.',
   },
   fighter: {
@@ -51,9 +51,9 @@ const CHARACTER_DATA = {
     tooltip: 'Class mechanic coming soon.',
   },
   monk: {
-    name: 'Monk', classTitle: 'Disciple of Spirit', icon: CLASS_ICON_MONK, portrait: PORTRAIT_MONK,
+    name: 'Monk', classTitle: 'Pulse', icon: CLASS_ICON_MONK, portrait: PORTRAIT_MONK,
     bgStart: '20, 35, 28', bgEnd: '15, 26, 20', accent: '100, 170, 130',
-    description: 'Through years of meditation and physical perfection, Monks channel inner energy into devastating force. They need no weapon—their body is the instrument, their mind the forge where flesh and spirit become one.',
+    description: 'Not the most graceful fighter in the room. Not yet. But something keeps pulling him back into it, past the bruises and the losses and the moments that should have been enough to quit. Every now and then the chaos settles, just for a second, into something that feels less like brawling and more like breathing. He does not have a word for it yet. But he knows what it feels like. And he wants more.',
     tooltip: 'Class mechanic coming soon.',
   },
   rogue: {
@@ -69,9 +69,9 @@ const CHARACTER_DATA = {
     tooltip: 'Class mechanic coming soon.',
   },
   paladin: {
-    name: 'Paladin', classTitle: 'Beacon of Light', icon: CLASS_ICON_PALADIN, portrait: PORTRAIT_PALADIN,
+    name: 'Paladin', classTitle: 'Chalice', icon: CLASS_ICON_PALADIN, portrait: PORTRAIT_PALADIN,
     bgStart: '28, 32, 42', bgEnd: '20, 24, 32', accent: '190, 210, 235',
-    description: 'Radiating hope in the darkest hours, Paladins stand as living embodiments of courage and compassion. Their oath is their strength—shielding the innocent, smiting the wicked, and inspiring all who witness their luminous example.',
+    description: 'Nobody appointed him. Nobody handed him a destiny with a ribbon on it. He decided. That is the part that keeps him awake, wondering if deciding is enough, if wanting it this badly means something or nothing. The old ones had gods to confirm them. He has only himself. And whatever it is that fills when he chooses to believe it. Which is everything, until the doubt comes back',
     tooltip: 'Class mechanic coming soon.',
   },
   wizard: {
@@ -86,7 +86,7 @@ const LEFT_CARDS  = ['samurai', 'warrior', 'fighter', 'monk'];
 const RIGHT_CARDS = ['rogue', 'templar', 'paladin', 'wizard'];
 const LEFT_EMPTY  = 3;
 const RIGHT_EMPTY = 4;
-const UNLOCKED    = new Set(['samurai']);
+const UNLOCKED    = new Set(['samurai', 'warrior', 'monk', 'paladin']);
 
 // ── Card component ───────────────────────────────────────────────
 function CharacterCard({ id, index, selectedId, onSelect }) {

@@ -12,7 +12,7 @@
 // Resolves a sound file from the SOUND EFFECTS folder by name.
 // Webpack bundles the entire folder so any file dropped in is instantly available —
 // no entry in assets/index.js needed.
-export const sfx = (name) => { const m = require(`../assets/SOUND EFFECTS/${name}`); return m.default ?? m; };
+export const sfx = (name) => { const m = require(`../assets/Sound_Effects/${name}`); return m.default ?? m; };
 
 // Web Audio API — pre-decodes audio into PCM buffers for zero-latency playback.
 // HTMLAudioElement.load() only fetches; the browser still decodes on first play.

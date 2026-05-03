@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+﻿import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
 import MAP_DATA from '../data/maps/PATH_OF_THE_SUMURAI.json';
@@ -13,17 +13,17 @@ import {
   MAP_ICON_COOL_1, MAP_ICON_MOUNTAIN_ARC_1, MAP_ICON_NOT_SURE_1,
   MAP_ICON_GRASS_1, MAP_ICON_GRASS_2, MAP_ICON_GRASS_3,
   MAP_ICON_GRASS_4, MAP_ICON_GRASS_5, MAP_ICON_GRASS_6,
-  Snowy_Forest, Green_Tree_At_Snow,
-  Big_Snow_Cave, Big_Snow_Cave_2, Home,
-  Snow_Cherry_Path_1, Snow_Field_Path_1, Snow_Field_Path_2, Snow_Field_Path_3,
-  Snow_Field_Shrine, Snow_Iron_Gate, Snow_Mountain_1, Snow_Mountain_2,
-  Snow_and_Water, Snow_and_Water_2, Snowy_Field_Bamboo, Snowy_Field_Den,
-  Sunset, Sunset_2, Tree_At_Snow, Water,
+  MAP_ICON_SNOWY_FOREST, MAP_ICON_GREEN_TREE_AT_SNOW,
+  MAP_ICON_BIG_SNOW_CAVE, MAP_ICON_BIG_SNOW_CAVE_2, MAP_ICON_HOME,
+  MAP_ICON_SNOW_CHERRY_PATH_1, MAP_ICON_SNOW_FIELD_PATH_1, MAP_ICON_SNOW_FIELD_PATH_2, MAP_ICON_SNOW_FIELD_PATH_3,
+  MAP_ICON_SNOW_FIELD_SHRINE, MAP_ICON_SNOW_IRON_GATE, MAP_ICON_SNOW_MOUNTAIN_1, MAP_ICON_SNOW_MOUNTAIN_2,
+  MAP_ICON_SNOW_AND_WATER, MAP_ICON_SNOW_AND_WATER_2, MAP_ICON_SNOWY_FIELD_BAMBOO, MAP_ICON_SNOWY_FIELD_DEN,
+  MAP_ICON_SUNSET, MAP_ICON_SUNSET_2, MAP_ICON_TREE_AT_SNOW, MAP_ICON_WATER,
 } from '../assets';
 import { DEBUG_MAP } from '../debug';
 import './MapScreen.css';
 import '../components/shared/shine-btn.css';
-import menuMapTheme from '../assets/MUSIC/Menu Map Theme.mp3';
+import menuMapTheme from '../assets/Music/MENU_MAP_THEME.mp3';
 import { useMusic } from '../hooks/useMusic';
 import WinModal from '../components/map/WinModal';
 import LosePopup from '../components/map/LosePopup';
@@ -58,27 +58,27 @@ const MAP_ICON_LOOKUP = {
   GRASS_4:          MAP_ICON_GRASS_4,
   GRASS_5:          MAP_ICON_GRASS_5,
   GRASS_6:          MAP_ICON_GRASS_6,
-  Snowy_Forest,
-  Green_Tree_At_Snow,
-  Big_Snow_Cave,
-  Big_Snow_Cave_2,
-  Home,
-  Snow_Cherry_Path_1,
-  Snow_Field_Path_1,
-  Snow_Field_Path_2,
-  Snow_Field_Path_3,
-  Snow_Field_Shrine,
-  Snow_Iron_Gate,
-  Snow_Mountain_1,
-  Snow_Mountain_2,
-  Snow_and_Water,
-  Snow_and_Water_2,
-  Snowy_Field_Bamboo,
-  Snowy_Field_Den,
-  Sunset,
-  Sunset_2,
-  Tree_At_Snow,
-  Water,
+  Snowy_Forest:       MAP_ICON_SNOWY_FOREST,
+  Green_Tree_At_Snow: MAP_ICON_GREEN_TREE_AT_SNOW,
+  Big_Snow_Cave:      MAP_ICON_BIG_SNOW_CAVE,
+  Big_Snow_Cave_2:    MAP_ICON_BIG_SNOW_CAVE_2,
+  Home:               MAP_ICON_HOME,
+  Snow_Cherry_Path_1: MAP_ICON_SNOW_CHERRY_PATH_1,
+  Snow_Field_Path_1:  MAP_ICON_SNOW_FIELD_PATH_1,
+  Snow_Field_Path_2:  MAP_ICON_SNOW_FIELD_PATH_2,
+  Snow_Field_Path_3:  MAP_ICON_SNOW_FIELD_PATH_3,
+  Snow_Field_Shrine:  MAP_ICON_SNOW_FIELD_SHRINE,
+  Snow_Iron_Gate:     MAP_ICON_SNOW_IRON_GATE,
+  Snow_Mountain_1:    MAP_ICON_SNOW_MOUNTAIN_1,
+  Snow_Mountain_2:    MAP_ICON_SNOW_MOUNTAIN_2,
+  Snow_and_Water:     MAP_ICON_SNOW_AND_WATER,
+  Snow_and_Water_2:   MAP_ICON_SNOW_AND_WATER_2,
+  Snowy_Field_Bamboo: MAP_ICON_SNOWY_FIELD_BAMBOO,
+  Snowy_Field_Den:    MAP_ICON_SNOWY_FIELD_DEN,
+  Sunset:             MAP_ICON_SUNSET,
+  Sunset_2:           MAP_ICON_SUNSET_2,
+  Tree_At_Snow:       MAP_ICON_TREE_AT_SNOW,
+  Water:              MAP_ICON_WATER,
 };
 
 const ALL_MAP_ICONS = Object.values(MAP_ICON_LOOKUP);

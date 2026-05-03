@@ -1,4 +1,4 @@
-// ============================================================
+﻿// ============================================================
 //  BattleScreen — battle and queue setup UI
 // ============================================================
 
@@ -8,7 +8,7 @@ import { CLASS_REGISTRY } from '../data/classes/class_registry';
 import { useGame } from '../context/GameContext';
 import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 
-import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/MUSIC/index';
+import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/Music/index';
 import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playSfxBuffer, sfx } from '../battle/animationRegistry';
 import '../battle/animations.css';
