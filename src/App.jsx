@@ -14,6 +14,7 @@ import GameFinishScreen from './screens/GameFinishScreen';
 import CardShowerTransition from './components/shared/CardShowerTransition';
 import { introMusic } from './assets/MUSIC/index';
 import { useMusicVolume } from './hooks/useMusic';
+import * as ASSETS from './assets';
 
 const INTRO_PHASES = new Set(['TITLE', 'CHARACTER_SELECT']);
 const TRANSITION_PHASES = new Set(['TITLE', 'CHARACTER_SELECT', 'MAP', 'GAME_FINISH']);
@@ -41,6 +42,15 @@ function PhaseRouter() {
   useEffect(() => {
     displayedPhaseRef.current = displayedPhase;
   }, [displayedPhase]);
+
+  useEffect(() => {
+    Object.values(ASSETS).forEach(val => {
+      if (typeof val === 'string' && val.startsWith('/static/media/')) {
+        const img = new Image();
+        img.src = val;
+      }
+    });
+  }, []);
 
   const introAllowed = useRef(false);
   const [masterVolume] = useMusicVolume();
