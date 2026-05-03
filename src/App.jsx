@@ -13,6 +13,7 @@ import MapScreen from './screens/MapScreen';
 import GameFinishScreen from './screens/GameFinishScreen';
 import CardShowerTransition from './components/shared/CardShowerTransition';
 import { introMusic } from './assets/MUSIC/index';
+import { useMusicVolume } from './hooks/useMusic';
 
 const INTRO_PHASES = new Set(['TITLE', 'CHARACTER_SELECT']);
 const TRANSITION_PHASES = new Set(['TITLE', 'CHARACTER_SELECT', 'MAP', 'GAME_FINISH']);
@@ -42,6 +43,11 @@ function PhaseRouter() {
   }, [displayedPhase]);
 
   const introAllowed = useRef(false);
+  const [masterVolume] = useMusicVolume();
+
+  useEffect(() => {
+    getIntroAudio().volume = Math.min(1, 0.2 * masterVolume);
+  }, [masterVolume]);
 
   useEffect(() => {
     const audio = getIntroAudio();
