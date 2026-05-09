@@ -10,9 +10,9 @@
 export { default as COOL_FOX } from './COOL_FOX.png';
 export { default as PORTRAIT_SUMURAI } from './Player_Portraits/SUMURAI_2.png';
 export { default as PORTRAIT_SUMURAI_VICTORY } from './Player_Portraits/SUMURAI_2_VICTORY.png';
-export { default as PORTRAIT_PALADIN } from './Player_Portraits/PALADIN_2.png';
+export { default as PORTRAIT_PALADIN } from './Player_Portraits/PALADIN_3.png';
 export { default as PORTRAIT_ROGUE } from './Player_Portraits/ROGUE_3.png';
-export { default as PORTRAIT_WARRIOR } from './Player_Portraits/WARRIOR_2.png';
+export { default as PORTRAIT_WARRIOR } from './Player_Portraits/WARRIOR_3.png';
 export { default as PORTRAIT_FIGHTER } from './Player_Portraits/FIGHTER_2.png';
 export { default as PORTRAIT_MONK } from './Player_Portraits/MONK_2.png';
 export { default as PORTRAIT_TEMPLAR } from './Player_Portraits/TEMPLAR.png';

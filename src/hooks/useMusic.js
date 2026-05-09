@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 const STORAGE_KEY = 'daq_music_volume';
-const DEFAULT_VOLUME = 1;
+const DEFAULT_VOLUME = 0.75;
 
 function getStoredVolume() {
   return parseFloat(localStorage.getItem(STORAGE_KEY) ?? DEFAULT_VOLUME);

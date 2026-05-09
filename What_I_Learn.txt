@@ -55,6 +55,13 @@ local array into a useRef. Store them the same way float timers already were:
 Prune stale IDs from the ref at the start of each new step so they don't
 accumulate across a long battle.
 
+BOTH FIXES ARE IN PLAY: The ref approach and the battleDelay approach solve
+different halves of the problem. The ref ensures animation clear timers always
+fire regardless of re-renders — they are no longer effect-scoped and cannot be
+cancelled by the battle loop. The battleDelay ensures the battle loop waits long
+enough for animations to complete before advancing to the next step. One handles
+cleanup reliability; the other handles sequencing. You need both.
+
 BROADER LESSON: When two async timers need to coordinate — one should drive
 the other, not run independently. In this case, the battle loop delay was made
 aware of animation durations (via battleDelay in the animation registry) so it
@@ -141,7 +148,7 @@ and pass it through deliberately. It's much harder to retrofit later when the
 engine functions, AI logic, and UI preview components have all grown their own
 ad-hoc imports.
 
-[5] REACT IS A WEB FRAMEWORK, NOT A GAME FRAMEWORK
+[5] IS REACT WRONG FOR GAMES?
 ----------------------------------------------------
 React was designed for a specific problem: display server data as UI, respond
 to user input, send that input back to a server. Its entire model is built
@@ -190,12 +197,6 @@ were built for the first model. Using them for the second works, but you end
 up building a game engine inside a framework that does not know a game engine
 is there.
 
-WHAT THIS MEANS GOING FORWARD: The game logic (engine, AI, simulation) should
-be as framework-agnostic as possible — plain functions and plain objects that
-do not know about React. React's job is to read the output of that logic and
-render it. The more the engine depends on React primitives (state, effects,
-context), the more the two models fight each other.
-
 BUT REACT STILL HAS REAL ADVANTAGES FOR THIS KIND OF GAME:
 
   1. AI tooling knows it extremely well. Claude, Copilot, and every major AI
@@ -220,8 +221,9 @@ BUT REACT STILL HAS REAL ADVANTAGES FOR THIS KIND OF GAME:
   5. Deployment is frictionless. It's a website. No runtime to install, no
      platform store, no build target per OS. Share a URL and it runs.
 
-  6. Hot reload speeds up iteration. Changing a card's layout or a battle
-     log style and seeing it instantly — without restarting a game loop —
-     is something native game engines still don't do as smoothly.
+  6. For UI-heavy turn-based games, React's hot reload workflow is exceptionally
+     efficient. Iterating on layouts, card presentation, logs, and interface
+     behavior is often faster and simpler than equivalent workflows in traditional
+     game engines.
 
 

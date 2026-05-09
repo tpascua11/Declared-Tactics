@@ -86,7 +86,7 @@ const LEFT_CARDS  = ['samurai', 'warrior', 'fighter', 'monk'];
 const RIGHT_CARDS = ['rogue', 'templar', 'paladin', 'wizard'];
 const LEFT_EMPTY  = 3;
 const RIGHT_EMPTY = 4;
-const UNLOCKED    = new Set(['samurai', 'warrior', 'monk', 'paladin']);
+const UNLOCKED    = new Set(['samurai', 'monk', 'paladin', 'warrior']);
 
 // ── Card component ───────────────────────────────────────────────
 function CharacterCard({ id, index, selectedId, onSelect }) {

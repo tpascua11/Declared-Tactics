@@ -1,0 +1,103 @@
+UPGRADABLE CARD PLAN
+====================
+
+CONCEPT
+-------
+Cards have a base definition and an optional upgrade layer.
+The two are kept in separate data structures — like two DB tables joined by card id.
+
+  SAMURAI_CARDS           — source of truth for what a card is
+  SAMURAI_CARD_UPGRADES   — lookup keyed by card id, stores only what changes
+
+This keeps base card files as zero-dependency data contracts, portable across
+vertical slices and future classes without dragging upgrade logic with them.
+
+
+WHY NOT INLINE ON THE CARD
+---------------------------
+- Mixes two concerns: what a card IS vs. what it BECOMES
+- Cards carry dead weight in contexts where upgrades are irrelevant (engine, hand display)
+- Upgrade system changes force edits to every card definition
+- Harder to read base card at a glance once upgrade noise is present
+- Breaks down at scale (100+ cards across multiple classes/slices)
+
+References: Slay the Spire, Monster Train, Across the Obelisk all use separate
+upgrade layers on top of a stable base card definition.
+
+
+UPGRADE BEHAVIORS
+-----------------
+Two distinct types of upgrade:
+
+1. OVERRIDE — replaces a field value
+   e.g. cost drops from 3 → 2, damage increases from 140 → 180
+
+2. ADDON — appends to an array field
+   e.g. adds a new tag, adds a new tag_type
+
+
+UPGRADE RECORD STRUCTURE
+------------------------
+Top level split between overrides and addons:
+
+  SAMURAI_CARD_UPGRADES = {
+    mend: {
+      overrides: {
+        cost: { BATTLE_SPIRIT: 2 },       // was 3
+      },
+      addons: {
+        tags: {
+          self: [{ tag_name: 'REGEN', power: 50, duration: 2 }],
+        }
+      }
+    }
+  }
+
+
+EDGE CASE — OVERRIDE + ADDON ON THE SAME ARRAY
+------------------------------------------------
+When tags.target (or any array field) needs both an override (change existing tag)
+AND an addon (add new tag), go tag-level:
+
+  heavy_slice: {
+    tags: {
+      target: {
+        override: [{ tag_name: 'DAMAGE', type: 'PHYSICAL', power: 180 }],  // replaces existing DAMAGE tag by tag_name match
+        addon:    [{ tag_name: 'BURN', power: 50, duration: 2 }],          // appended as new tag
+      }
+    }
+  }
+
+
+RESOLVER LOGIC (pseudocode)
+----------------------------
+function resolveCard(baseCard, upgradesMap) {
+  const upgrade = upgradesMap[baseCard.id];
+  if (!upgrade) return baseCard;
+
+  let resolved = { ...baseCard };
+
+  // apply overrides (spread)
+  if (upgrade.overrides) {
+    resolved = { ...resolved, ...upgrade.overrides };
+  }
+
+  // apply addons (concat arrays)
+  if (upgrade.addons) {
+    // merge addons into array fields recursively
+  }
+
+  // apply tag-level override+addon
+  // for each tags.side array: replace by tag_name match, then append addons
+
+  return resolved;
+}
+
+
+WHAT STILL NEEDS TO BE DONE
+----------------------------
+1. Write SAMURAI_CARD_UPGRADES data file
+2. Implement resolveCard() resolver (handles override, addon, tag-level mixed)
+3. Decide where resolution happens — at deck build time or at card render time
+4. UI — show upgrade diff (highlight what changed, same pattern as Slay the Spire)
+5. Hook into progression system (when/how does a card become upgraded)
