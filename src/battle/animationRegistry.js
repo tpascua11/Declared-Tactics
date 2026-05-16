@@ -9,6 +9,8 @@
 //    3. Set `animation: 'your_key'` on the card
 // ============================================================
 
+import { getUiVolume } from '../hooks/useMusic';
+
 // Resolves a sound file from the SOUND EFFECTS folder by name.
 // Webpack bundles the entire folder so any file dropped in is instantly available —
 // no entry in assets/index.js needed.
@@ -40,6 +42,10 @@ export function playSfxBuffer(src, volume = 0.6) {
   source.connect(gain);
   gain.connect(_ctx.destination);
   source.start();
+}
+
+export function playUiSfx(src, volume = 0.6) {
+  playSfxBuffer(src, Math.min(1, volume * getUiVolume()));
 }
 
 export const ANIMATIONS = {
@@ -219,5 +225,5 @@ Object.values(ANIMATIONS).forEach(({ sfx: s }) => {
 });
 
 // UI sounds used directly in BattleScreen (not tied to an animation entry).
-['BATTLE_NEXT.wav', 'FUN_SELECT_2.wav', 'SELECT.wav', 'DESELECT.wav', 'START_1.wav']
+['BATTLE_NEXT.wav', 'FUN_SELECT_2.wav', 'SELECT.wav', 'SELECT_2.wav', 'DESELECT.wav', 'START_1.wav']
   .forEach(name => preloadSfx(sfx(name)));

@@ -28,6 +28,38 @@ export function useMusicVolume() {
   return [volume, setGlobalVolume];
 }
 
+// ── UI volume (menu/button sounds) ───────────────────────────────────────────
+const UI_STORAGE_KEY = 'daq_ui_volume';
+const UI_DEFAULT_VOLUME = 1.0;
+
+function getStoredUiVolume() {
+  return parseFloat(localStorage.getItem(UI_STORAGE_KEY) ?? UI_DEFAULT_VOLUME);
+}
+
+let _uiVolume = getStoredUiVolume();
+const _uiListeners = new Set();
+
+export function getUiVolume() {
+  return _uiVolume;
+}
+
+function setGlobalUiVolume(v) {
+  _uiVolume = Math.max(0, Math.min(1.0, v));
+  localStorage.setItem(UI_STORAGE_KEY, String(_uiVolume));
+  _uiListeners.forEach(fn => fn(_uiVolume));
+}
+
+export function useUiVolume() {
+  const [volume, setVolume] = useState(getStoredUiVolume);
+
+  useEffect(() => {
+    _uiListeners.add(setVolume);
+    return () => _uiListeners.delete(setVolume);
+  }, []);
+
+  return [volume, setGlobalUiVolume];
+}
+
 // Plays a single music track. Cleans up on unmount or when deps change.
 // baseVolume  — the track's natural mix level (from scenario data or a hardcoded default)
 // enabled     — set false to stop without unmounting (e.g. when entering RESULT phase)

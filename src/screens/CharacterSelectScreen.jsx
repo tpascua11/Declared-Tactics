@@ -3,6 +3,7 @@ import '../components/shared/shine-btn.css';
 import { useState, useCallback, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
+import { playUiSfx, sfx } from '../battle/animationRegistry';
 import {
   CLASS_ICON_SAMURAI, CLASS_ICON_WARRIOR, CLASS_ICON_FIGHTER, CLASS_ICON_MONK,
   CLASS_ICON_ROGUE, CLASS_ICON_TEMPLAR, CLASS_ICON_PALADIN, CLASS_ICON_WIZARD,
@@ -75,9 +76,9 @@ const CHARACTER_DATA = {
     tooltip: 'Class mechanic coming soon.',
   },
   wizard: {
-    name: 'Wizard', classTitle: 'Arcane Scholar', icon: CLASS_ICON_WIZARD, portrait: PORTRAIT_WIZARD,
+    name: 'Wizard', classTitle: 'Oculus', icon: CLASS_ICON_WIZARD, portrait: PORTRAIT_WIZARD,
     bgStart: '32, 24, 42', bgEnd: '24, 18, 32', accent: '160, 130, 220',
-    description: 'Keepers of forbidden knowledge and weavers of reality itself, Wizards perceive the threads of magic that bind all existence. With gesture and word, they reshape the impossible—scholars whose curiosity rivals the stars themselves.',
+    description: "He has been doing this longer than most people have been alive. There is always another spell to learn, another theory to pull apart, another quiet hour watching magic do something it was not supposed to do. He never got tired of it. That part still surprises him. There is something underneath all of it. A secret the magic keeps almost telling him. He has been chasing it his whole life without meaning to. Something feels different lately. He does not know what that means yet. He is already looking.",
     tooltip: 'Class mechanic coming soon.',
   },
 };
@@ -86,7 +87,7 @@ const LEFT_CARDS  = ['samurai', 'warrior', 'fighter', 'monk'];
 const RIGHT_CARDS = ['rogue', 'templar', 'paladin', 'wizard'];
 const LEFT_EMPTY  = 3;
 const RIGHT_EMPTY = 4;
-const UNLOCKED    = new Set(['samurai', 'monk', 'paladin', 'warrior']);
+const UNLOCKED    = new Set(['samurai', 'monk', 'paladin', 'warrior', 'wizard']);
 
 // ── Card component ───────────────────────────────────────────────
 function CharacterCard({ id, index, selectedId, onSelect }) {
@@ -153,6 +154,7 @@ export default function CharacterSelectScreen() {
   }, [isTransitioning]);
 
   const handleSelect = useCallback((id) => {
+    playUiSfx(sfx('SELECT_2.wav'), 0.25);
     setSelectedId(id);
     showDescription(id);
   }, [showDescription]);
@@ -226,6 +228,7 @@ export default function CharacterSelectScreen() {
                   className="start-button shine-btn"
                   type="button"
                   onClick={() => {
+                    playUiSfx(sfx('START_1.wav'), 0.7);
                     playerDispatch({ type: 'CONFIRM_CLASS', classId: selectedId });
                     dispatch({ type: 'GO_TO_MAP' });
                   }}
