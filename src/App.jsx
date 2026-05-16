@@ -21,15 +21,16 @@ const TRANSITION_PHASES = new Set(['TITLE', 'CHARACTER_SELECT', 'MAP', 'GAME_FIN
 const SHOWER_MIDPOINT = 1500;
 const SHOWER_DONE     = 3000;
 
-// Module-level singleton so HMR re-mounts don't spawn a second instance.
-let _introAudio = null;
+// On HMR, module re-evaluation hits this and kills any stale instance.
+if (window._introAudio) { window._introAudio.pause(); window._introAudio = null; }
+
 function getIntroAudio() {
-  if (!_introAudio) {
-    _introAudio = new Audio(introMusic);
-    _introAudio.loop = true;
-    _introAudio.volume = 0.2;
+  if (!window._introAudio) {
+    window._introAudio = new Audio(introMusic);
+    window._introAudio.loop = true;
+    window._introAudio.volume = 0.2;
   }
-  return _introAudio;
+  return window._introAudio;
 }
 
 function PhaseRouter() {
