@@ -1,6 +1,6 @@
 import './CharacterSelectScreen.css';
 import '../components/shared/shine-btn.css';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
 import { playUiSfx, sfx } from '../battle/animationRegistry';
@@ -135,6 +135,7 @@ export default function CharacterSelectScreen() {
   const [isTransitioning, setTransitioning] = useState(false);
   const [fadeOut, setFadeOut]               = useState(false);
   const [previewMode, setPreviewMode]       = useState(false);
+  const holdTimer = useRef(null);
   // Preload all portraits on mount so swaps are instant
   useEffect(() => {
     Object.values(CHARACTER_DATA).forEach(({ portrait }) => {
@@ -262,7 +263,9 @@ export default function CharacterSelectScreen() {
       <button
         className={`preview-toggle${previewMode ? ' preview-toggle--active' : ''}`}
         type="button"
-        onClick={() => setPreviewMode(p => !p)}
+        onMouseDown={() => { holdTimer.current = setTimeout(() => setPreviewMode(p => !p), 1000); }}
+        onMouseUp={() => clearTimeout(holdTimer.current)}
+        onMouseLeave={() => clearTimeout(holdTimer.current)}
       >
         {previewMode ? '[ HIDE SECRET PREVIEW ]' : '[ SECRET PREVIEW ]'}
       </button>

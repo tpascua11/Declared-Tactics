@@ -596,7 +596,7 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-footer);
-  opacity: 0.5;
+  opacity: 0.25;
   padding: 0;
   transition: opacity 0.2s;
   z-index: 100;
