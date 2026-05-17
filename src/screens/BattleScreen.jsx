@@ -275,25 +275,20 @@ export default function BattleScreen() {
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
-          {lineCoords.map(({ key, isActive, x1, y1, x2, y2 }) => isActive ? (
+          {lineCoords.map(({ key, isActive, x1, y1, x2, y2 }) => (
             <g key={key}>
-              <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#4da6ff" strokeWidth="0.5" opacity="0.12"/>
+              <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#4da6ff" strokeWidth="0.5" opacity={isActive ? 0.18 : 0.07}/>
               <line x1={x1} y1={y1} x2={x2} y2={y2}
-                stroke="#4da6ff" strokeWidth="3" opacity="0.5"
+                stroke="#4da6ff" strokeWidth={isActive ? 3 : 2} opacity={isActive ? 0.6 : 0.2}
                 strokeDasharray="10 5 2 8 14 3 6 4"
                 filter="url(#arc-glow)"
                 style={{ animation: 'electricA 0.6s linear infinite' }}
               />
               <line x1={x1} y1={y1} x2={x2} y2={y2}
-                stroke="#a0d4ff" strokeWidth="1.2" opacity="0.9"
+                stroke={isActive ? "#a0d4ff" : "#4da6ff"} strokeWidth="1.2" opacity={isActive ? 0.9 : 0.3}
                 strokeDasharray="3 11 8 4 2 9 5 6"
                 style={{ animation: 'electricB 0.4s linear infinite' }}
               />
-            </g>
-          ) : (
-            <g key={key}>
-              <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#4da6ff" strokeWidth="2" opacity="0.12" filter="url(#arc-glow)"/>
-              <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#4da6ff" strokeWidth="1" opacity="0.35" strokeDasharray="4 6"/>
             </g>
           ))}
         </svg>,
