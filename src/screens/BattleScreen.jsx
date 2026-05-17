@@ -214,6 +214,7 @@ export default function BattleScreen() {
   function handleEnemyClick(targetId) {
     if (gs.phase !== 'QUEUE_SETUP') return;
     if (retargetingSlot !== null) {
+      playSfx(sfx('FUN_SELECT_2.wav'), 0.4);
       dispatch({ type: 'RETARGET_SLOT', index: retargetingSlot, targetId });
     } else {
       dispatch({ type: 'SELECT_TARGET', targetId });
