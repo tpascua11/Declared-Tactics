@@ -1,4 +1,5 @@
 import { useMusicVolume, useUiVolume } from '../../hooks/useMusic';
+import { playSelectSfx } from '../../battle/animationRegistry';
 
 export default function SettingsModal({ onClose }) {
   const [musicVolume, setMusicVolume] = useMusicVolume();
@@ -63,7 +64,7 @@ export default function SettingsModal({ onClose }) {
 
         {/* Close */}
         <button
-          onClick={onClose}
+          onClick={() => { playSelectSfx(); onClose(); }}
           style={{
             marginTop: 32,
             width: '100%',

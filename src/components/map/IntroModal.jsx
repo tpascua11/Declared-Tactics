@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../shared/shine-btn.css';
+import { playSelectSfx } from '../../battle/animationRegistry';
 
 export default function IntroModal({ level, levelType, mapIconSrc, onBattle, onClose }) {
   const typeColor = levelType?.color ?? '#4da6ff';
@@ -41,7 +42,7 @@ export default function IntroModal({ level, levelType, mapIconSrc, onBattle, onC
 
         {/* Close button */}
         <button
-          onClick={onClose}
+          onClick={() => { playSelectSfx(); onClose(); }}
           style={{
             position: "absolute", top: 16, right: 18,
             background: "none", border: "none", cursor: "pointer",
@@ -105,7 +106,7 @@ export default function IntroModal({ level, levelType, mapIconSrc, onBattle, onC
         {/* Battle button */}
         <button
           className="shine-btn"
-          onClick={onBattle}
+          onClick={() => { playSelectSfx(); onBattle(); }}
           style={{
             marginTop: 4, padding: "11px 48px", alignSelf: "center",
             border: `1.5px solid ${typeColor}66`,

@@ -3,6 +3,7 @@
 // ============================================================
 
 import { FOX_QUICK_STEPS, ENM_SAM_HEAVY_STRIKE_1 } from '../../assets/index.js';
+import { playSelectSfx } from '../../battle/animationRegistry';
 
 function ExampleCard({ name, image, color, speed }) {
   return (
@@ -107,7 +108,7 @@ export default function AdvancedGuideModal({ onClose, nudgeUp = 0 }) {
 
         <button
           className="absolute top-3 right-4 text-gray-500 hover:text-white text-lg leading-none"
-          onClick={onClose}
+          onClick={() => { playSelectSfx(); onClose(); }}
         >
           ✕
         </button>

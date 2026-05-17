@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './TitleScreen.css';
 import '../components/shared/shine-btn.css';
 import SettingsModal from '../components/map/SettingsModal';
-import { playUiSfx, sfx } from '../battle/animationRegistry';
+import { playSelectSfx } from '../battle/animationRegistry';
 
 // ── Particle configs (computed once at module load) ──────────────
 const COLORS = [
@@ -162,14 +162,14 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
 
         <nav className="menu">
           {hasSave && (
-            <button className="menu-btn shine-btn" onClick={() => { playUiSfx(sfx('SELECT_2.wav'), 0.25); onContinue(); }}>
+            <button className="menu-btn shine-btn" onClick={() => { playSelectSfx(); onContinue(); }}>
               Continue
             </button>
           )}
-          <button className="menu-btn shine-btn" onClick={() => { playUiSfx(sfx('SELECT_2.wav'), 0.25); onNewGame(); }}>
+          <button className="menu-btn shine-btn" onClick={() => { playSelectSfx(); onNewGame(); }}>
             New Game
           </button>
-          <button className="menu-btn shine-btn" onClick={() => { playUiSfx(sfx('SELECT_2.wav'), 0.25); setSettingsOpen(true); }}>
+          <button className="menu-btn shine-btn" onClick={() => { playSelectSfx(); setSettingsOpen(true); }}>
             Settings
           </button>
         </nav>

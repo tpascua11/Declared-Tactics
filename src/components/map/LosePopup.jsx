@@ -1,3 +1,5 @@
+import { playSelectSfx } from '../../battle/animationRegistry';
+
 export default function LosePopup({ tip, onClose }) {
   return (
     <div style={{
@@ -15,7 +17,7 @@ export default function LosePopup({ tip, onClose }) {
       </div>
       <div style={{ fontSize: 11, color: "#9aaabb", lineHeight: 1.7 }}>{tip}</div>
       <button
-        onClick={onClose}
+        onClick={() => { playSelectSfx(); onClose(); }}
         style={{
           alignSelf: "flex-end", padding: "5px 16px",
           border: "1px solid rgba(233,69,96,0.28)", borderRadius: 5,

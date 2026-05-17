@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import MAP_DATA from '../../data/maps/PATH_OF_THE_SUMURAI.json';
 import '../shared/shine-btn.css';
+import { playSelectSfx } from '../../battle/animationRegistry';
 
 const CARD_W = 88;
 const CARD_H = 132;
@@ -222,7 +223,7 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
 
         <button
           className="shine-btn"
-          onClick={onClose}
+          onClick={() => { playSelectSfx(); onClose(); }}
           style={{
             marginTop: 4, padding: "10px 40px", alignSelf: "center",
             border: "1.5px solid #4da6ff44", borderRadius: 6,

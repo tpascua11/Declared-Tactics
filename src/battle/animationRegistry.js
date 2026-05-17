@@ -48,6 +48,8 @@ export function playUiSfx(src, volume = 0.6) {
   playSfxBuffer(src, Math.min(1, volume * getUiVolume()));
 }
 
+export const playSelectSfx = () => playUiSfx(sfx('SELECT_2.wav'), 0.25);
+
 export const ANIMATIONS = {
   shake: {
     cssClass: 'animate-shake',

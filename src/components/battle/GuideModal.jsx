@@ -3,6 +3,7 @@
 // ============================================================
 
 import '../shared/shine-btn.css';
+import { playSelectSfx } from '../../battle/animationRegistry';
 import {
   FOX_SUMMURAI_STILL_WIND,
   FOX_SUMMURAI_BATTOJUTSU,
@@ -128,7 +129,7 @@ export default function GuideModal({ onClose, onOpenAdvanced, nudgeUp = 0 }) {
           <div className="flex justify-end mt-6 border-t border-white/10 pt-4">
             <button
               className="shine-btn text-xs font-mono tracking-widest text-white border border-white/20 rounded px-4 py-2 hover:bg-white/5 transition-colors"
-              onClick={onOpenAdvanced}
+              onClick={() => { playSelectSfx(); onOpenAdvanced(); }}
             >
               ADVANCED GUIDE
             </button>
@@ -137,7 +138,7 @@ export default function GuideModal({ onClose, onOpenAdvanced, nudgeUp = 0 }) {
 
         <button
           className="absolute top-3 right-4 text-gray-500 hover:text-white text-lg leading-none"
-          onClick={onClose}
+          onClick={() => { playSelectSfx(); onClose(); }}
         >
           ✕
         </button>

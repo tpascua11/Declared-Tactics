@@ -3,7 +3,7 @@ import '../components/shared/shine-btn.css';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
-import { playUiSfx, sfx } from '../battle/animationRegistry';
+import { playUiSfx, sfx, playSelectSfx } from '../battle/animationRegistry';
 import {
   CLASS_ICON_SAMURAI, CLASS_ICON_WARRIOR, CLASS_ICON_FIGHTER, CLASS_ICON_MONK,
   CLASS_ICON_ROGUE, CLASS_ICON_TEMPLAR, CLASS_ICON_PALADIN, CLASS_ICON_WIZARD,
@@ -155,7 +155,7 @@ export default function CharacterSelectScreen() {
   }, [isTransitioning]);
 
   const handleSelect = useCallback((id) => {
-    playUiSfx(sfx('SELECT_2.wav'), 0.25);
+    playSelectSfx();
     setSelectedId(id);
     showDescription(id);
   }, [showDescription]);

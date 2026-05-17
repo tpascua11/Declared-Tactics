@@ -21,6 +21,7 @@ import {
   MAP_ICON_SUNSET, MAP_ICON_SUNSET_2, MAP_ICON_TREE_AT_SNOW, MAP_ICON_WATER,
 } from '../assets';
 import { DEBUG_MAP } from '../debug';
+import { playSelectSfx } from '../battle/animationRegistry';
 import './MapScreen.css';
 import '../components/shared/shine-btn.css';
 import menuMapTheme from '../assets/Music/MENU_MAP_THEME.mp3';
@@ -509,6 +510,7 @@ export default function MapScreen() {
   // ── Handlers ─────────────────────────────────────────────
   const handleCellClick = useCallback((lid) => {
     if (levelStates[lid] === "locked") { flash("🔒 LOCKED"); return; }
+    playSelectSfx();
     setPlayerLevel(lid);
   }, [levelStates, flash]);
 
@@ -542,6 +544,7 @@ export default function MapScreen() {
   const handleCellEnter = useCallback((levelId) => {
     const level = MAP_DATA.levels[levelId];
     if (!level) return;
+    playSelectSfx();
     setPlayerLevel(levelId);
     if (level.scenario_id) {
       setIntroModal({ levelId });
@@ -646,7 +649,7 @@ export default function MapScreen() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, width: "100%", maxWidth: 800 }}>
           <button
             className="shine-btn"
-            onClick={() => { setGuideOpen(true); setAdvancedGuideOpen(false); }}
+            onClick={() => { playSelectSfx(); setGuideOpen(true); setAdvancedGuideOpen(false); }}
             style={{
               padding: "12px 32px",
               border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8,
@@ -662,7 +665,7 @@ export default function MapScreen() {
           </button>
           <button
             className="shine-btn"
-            onClick={() => { setAdvancedGuideOpen(true); setGuideOpen(false); }}
+            onClick={() => { playSelectSfx(); setAdvancedGuideOpen(true); setGuideOpen(false); }}
             style={{
               padding: "12px 32px",
               border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8,
@@ -678,7 +681,7 @@ export default function MapScreen() {
           </button>
           <button
             className="shine-btn"
-            onClick={() => setSettingsOpen(true)}
+            onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
             style={{
               padding: "12px 32px",
               border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8,
