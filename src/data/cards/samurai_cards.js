@@ -14,7 +14,7 @@ export const SAMURAI_CARDS = [
     icon: '⚔️',
     image: 'FOX_SUMMURAI_HEAVY_STRIKE',
     color: '#f97316',
-    desc: '140 Damage Total. A powerful slash attack. For Each Strike done gain 1 stack of Momentum. Each stack powers up your next attack by 20%. Last Until the end of Turn.',
+    desc: '140 damage. Each hit grants Momentum (+20% next attack). Lasts until end of turn.',
     animation: 'dual_heavy_slice',
     animation_intensity: 1.0,
     tags: {
@@ -35,7 +35,7 @@ export const SAMURAI_CARDS = [
     icon: '⚔️',
     image: 'FOX_SUMMURAI_STREAM_SLASH',
     color: '#38bdf8',
-    desc: '150 Damage. A flowing slash attack. Cannot be evaded. Deals 50% more damage to evasive targets. Each Strike done gain 1 stack of Momentum',
+    desc: '150 damage. Bypasses evasion (+50% damage to evasive targets). Each hit grants Momentum.',
     tag_interactions: [
       { traits: ['EVASION'], bypass: true, bonus_multiplier: 0.5 },
     ],
@@ -60,7 +60,7 @@ export const SAMURAI_CARDS = [
     icon: '💖',
     image: 'FOX_SUMMURAI_MEND',
     color: '#4caf50',
-    desc: 'Restore 250  HP. Costs 3 Battle Spirit.',
+    desc: 'Restore 250 HP and regen 33 HP/turn for 3 turns. Costs 3 Battle Spirit.',
     animation: 'green_marching_ants',
     animation_intensity: 1.0,
     tags: {
@@ -82,7 +82,7 @@ export const SAMURAI_CARDS = [
     icon: '💨',
     image: 'FOX_SHINSOKU',
     color: '#38bdf8',
-    desc: 'Boost the speed of your next action by 20. Ignores Speed Penalty. Explosive movement — does not trigger Still Wind.',
+    desc: '+20 speed to your next action. Ignores slot penalty. Does not trigger Still Wind.',
     animation: 'speed_dash_player',
     animation_intensity: 1.0,
     tags: {
@@ -101,7 +101,7 @@ export const SAMURAI_CARDS = [
     icon: '🔥',
     image: 'FOX_SUMMURAI_FLAME_STRIKE',
     color: '#ef4444',
-    desc: 'Strike target with fire for 400 damage. Costs 3 Battle Spirit.',
+    desc: '400 fire damage. Applies Burn. Costs 3 Battle Spirit.',
     animation: 'flame_strike',
     animation_intensity: 1.2,
     tags: {
@@ -121,7 +121,7 @@ export const SAMURAI_CARDS = [
     icon: '❄️',
     image: 'FOX_SUMMURAI_FREEZE_SLASH',
     color: '#38bdf8',
-    desc: 'A chilling slash. Deal 300 Frost damage and apply FREEZE. FREEZE reduces action count by 1. At stack 3 or higher Reduce action count by 2.',
+    desc: '300 frost damage. Applies Freeze — reduces enemy actions (-2 at 3+ stacks). Costs 5 Battle Spirit.',
     animation: 'ice_slash',
     animation_intensity: 1.0,
     tags: {
@@ -141,7 +141,7 @@ export const SAMURAI_CARDS = [
     icon: '🔦',
     image: 'FOX_SUMMURAI_BATTOJUTSU',
     color: '#c084fc',
-    desc: 'Enter a focused draw stance. Your next attack deals 75% more damage. Additional Usaage would instead give you addtional stack causing 10% more damage. Each Non-attack gives you an addtional stack.',
+    desc: 'Stance: next attack deals +75% damage, then consumes. Each extra use or non-attack adds a stack (+10% each).',
     animation: 'sumurai_sheath',
     animation_intensity: 1.2,
     tags: {
@@ -160,7 +160,7 @@ export const SAMURAI_CARDS = [
     icon: '👣',
     image: 'FOX_QUICK_STEPS',
     color: '#a5f3fc',
-    desc: 'Enter a dodge stance. Side Step all attack actions to you within within -10 speed range when this action is used. This effects end after your next action.',
+    desc: 'Dodge stance: evade all attacks within -10 speed of this action. Ends after your next action.',
     animation: 'run_circle',
     animation_intensity: 1.0,
     tags: {
@@ -179,7 +179,7 @@ export const SAMURAI_CARDS = [
     icon: '🌬️',
     image: 'FOX_SUMMURAI_STILL_WIND',
     color: '#e879f9 ',
-    desc: 'Gain 1 Battle Spirit. Gain a buff that Grants 1 Battle Spirit per action for 3 actions. The Buff is entirely removed if you take damage. You become Breathless — Still Wind does not trigger on Speed Actions.',
+    desc: 'Gain 1 Battle Spirit. Earn +1 Spirit per action for 3 actions. Breaks if you take damage. Does not trigger on speed actions.',
     animation: 'buff',
     animation_intensity: 1.0,
     tags: {
@@ -209,7 +209,7 @@ export const SAMURAI_CARDS = [
     icon: '⚡',
     image: 'FOX_STORM_STRIKE',
     color: '#818cf8',
-    desc: 'Unleash a storm that strikes all enemies for 150 damage. Costs 3 Battle Spirit. Applies ELETRIFIED, slows enemies down by -20 speed. Last until the next 3 turns.',
+    desc: '150 lightning damage to all enemies. Applies Electrified (-20 speed for 3 turns). Costs 3 Battle Spirit.',
     animation: 'flame_strike',
     animation_intensity: 1.2,
     tags: {
@@ -229,7 +229,7 @@ export const SAMURAI_CARDS = [
     icon: '🌿',
     image: 'FOX_GUARD_STANCE',
     color: '#6ee7b7',
-    desc: 'Enter a purifying stance. Reduce all incoming damage by 75% until your next action or until the end of turn. Costs 1 Battle Spirit.',
+    desc: 'Clears all debuffs. Reduce incoming damage by 75% until your next action or end of turn. Costs 1 Battle Spirit.',
     animation: 'harai',
     animation_intensity: 1.0,
     tags: {

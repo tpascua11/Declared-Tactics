@@ -16,7 +16,7 @@ export { default as PORTRAIT_WARRIOR } from './Player_Portraits/WARRIOR_3.png';
 export { default as PORTRAIT_FIGHTER } from './Player_Portraits/FIGHTER_2.png';
 export { default as PORTRAIT_MONK } from './Player_Portraits/MONK_2.png';
 export { default as PORTRAIT_TEMPLAR } from './Player_Portraits/TEMPLAR.png';
-export { default as PORTRAIT_WIZARD } from './Player_Portraits/WIZARD_DARK.png';
+export { default as PORTRAIT_WIZARD } from './Player_Portraits/WIZARD.png';
 export { default as UPSCALED_00017 } from './Player_Portraits/UPSCALED_00017.png';
 export { default as UPSCALED_00028 } from './Player_Portraits/UPSCALED_00028.png';
 export { default as UPSCALED_00203 } from './Player_Portraits/UPSCALED_00203.png';

@@ -1,0 +1,52 @@
+CURRENT TODO — Connecting the Samurai Class (JSON-driven architecture)
+=======================================================================
+
+GOAL
+----
+Move the samurai class toward pure data (JSON as source of truth).
+The samurai.json file we created is the schema.
+The JS file still owns the code-bound things (ResourceBar component, short_rest function)
+but those should be generic — not class-specific.
+
+
+STEPS
+-----
+
+1. GENERIC short_rest ENGINE FUNCTION
+   - Write a single short_rest(player, classDef) in the battle engine (or a class_utils.js)
+   - It reads classDef.short_rest: { resource_reset, heal_floor_pct, heal_above_pct }
+   - Replaces the per-class short_rest method in samurai.js, fighter.js, wizard.js
+   - Update reducer.js (calls classDef.short_rest) to call the generic function instead
+   - Files: src/battle/reducer.js, src/data/classes/samurai.js, fighter.js, wizard.js
+
+2. RESOURCE BAR REGISTRY
+   - Create src/components/resources/resource_bar_registry.js
+   - Maps class id string → ResourceBar component: { samurai: SamuraiResourceBar, ... }
+   - Remove ResourceBar: SamuraiResourceBar from the class JS object
+   - Update BattleScreen.jsx (uses classDef.ResourceBar) to pull from registry instead
+   - Files: src/screens/BattleScreen.jsx, src/data/classes/samurai.js, fighter.js, wizard.js
+
+3. WIRE samurai.js TO IMPORT FROM samurai.json
+   - Have samurai.js import the static fields from samurai.json and spread them
+   - JSON becomes the single source of truth for all serializable data
+   - samurai.js only adds: cards import + ResourceBar (via registry after step 2)
+   - File: src/data/classes/samurai.js
+
+4. CLASS CONSISTENCY VALIDATOR
+   - Write a validateClass(classDef) function (or a test file)
+   - Checks all required fields from the JSON schema are present and correct types:
+     id, name, portrait, base_health, base_speed, total_action_slots,
+     resources, short_rest, permanent_tags, combat_start_tags,
+     starting_cards, card_order
+   - Runs against all entries in CLASS_REGISTRY at dev time (warn, don't throw)
+   - File: src/data/classes/class_validator.js (new)
+
+
+NOTES
+-----
+- CharacterSelectScreen.jsx has CHARACTER_DATA hardcoded (portraits, descriptions, colors)
+  — that is UI flavor data, NOT class data. Fine to leave it separate.
+- class_registry.js resolveClass() already handles portrait + card image resolution.
+  No changes needed there once samurai.js is cleaned up.
+- samurai.json has no "cards" array — card definitions stay in samurai_cards.js (too large for JSON).
+  card_order in the JSON is sufficient as the schema reference.
