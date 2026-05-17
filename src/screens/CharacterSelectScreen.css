@@ -275,10 +275,11 @@
 
 .showcase-class {
   font-family: 'Courier New', monospace;
-  font-size: clamp(8px, 1.1vw, 10px);
+  font-size: clamp(9px, 1.2vw, 11px);
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #4a6a8a;
+  color: rgba(100, 140, 200, 0.9);
+  text-shadow: 0 0 10px rgba(120, 160, 255, 0.8), 0 0 28px rgba(80, 120, 200, 0.4);
   opacity: 1;
   transition: all 0.4s ease;
   margin-bottom: 14px;
@@ -529,9 +530,9 @@
   border: 1.5px solid rgba(232, 197, 109, 0.4);
   border-radius: 6px;
   cursor: pointer;
-  padding: 10px 40px;
+  padding: 9px 60px;
   font-family: 'Courier New', monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: bold;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -539,7 +540,6 @@
   text-shadow: 0 0 20px rgba(232, 197, 109, 0.3);
   transition: all 0.15s;
   z-index: 5;
-  overflow: hidden;
   margin-top: auto;
   will-change: transform, box-shadow;
   --shine-color: rgba(232, 197, 109, 0.45);
@@ -560,6 +560,17 @@
 
 .start-button:active { transform: scale(0.98); }
 
+.start-button--unwritten {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.2) !important;
+  text-shadow: none !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  --shine-color: transparent;
+}
+
 .start-button:focus-visible {
   outline: 2px solid var(--gold-light);
   outline-offset: 2px;
@@ -573,6 +584,31 @@
 /* ════════════════════════════════════════════════════════════════ */
 /* FOOTER                                                          */
 /* ════════════════════════════════════════════════════════════════ */
+.preview-toggle {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-footer);
+  opacity: 0.5;
+  padding: 0;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+
+.preview-toggle:hover,
+.preview-toggle--active {
+  opacity: 1;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
 .cs-footer {
   flex: 0 0 auto;
   display: flex;

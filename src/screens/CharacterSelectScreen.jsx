@@ -46,27 +46,26 @@ const CHARACTER_DATA = {
     tooltip: 'Class mechanic coming soon.',
   },
   fighter: {
-    name: 'Fighter', classTitle: 'Versatile Combatant', icon: CLASS_ICON_FIGHTER, portrait: PORTRAIT_FIGHTER,
+    name: 'Fighter', classTitle: 'Guts', icon: CLASS_ICON_FIGHTER, portrait: PORTRAIT_FIGHTER,
     bgStart: '40, 28, 18', bgEnd: '30, 20, 14', accent: '210, 140, 80',
-    description: 'Adaptable, relentless, unpredictable—the Fighter masters no single style but excels in all. From tavern brawls to duels of honor, they write their legend in sweat, blood, and the scars of a hundred different disciplines.',
+    description: "He has never been the best at anything. That used to bother him more than it does now. Somewhere along the way he stopped measuring himself against the ones who had a gift and started measuring himself against yesterday. What he knows is that every time something should have stopped him and didn't, something in him got a little harder to stop. Lately it has been showing up faster than the thing trying to put him down.",
     tooltip: 'Class mechanic coming soon.',
   },
   monk: {
-    name: 'Monk', classTitle: 'Pulse', icon: CLASS_ICON_MONK, portrait: PORTRAIT_MONK,
+    name: 'Monk', classTitle: 'Flow', icon: CLASS_ICON_MONK, portrait: PORTRAIT_MONK,
     bgStart: '20, 35, 28', bgEnd: '15, 26, 20', accent: '100, 170, 130',
     description: 'Not the most graceful fighter in the room. Not yet. But something keeps pulling him back into it, past the bruises and the losses and the moments that should have been enough to quit. Every now and then the chaos settles, just for a second, into something that feels less like brawling and more like breathing. He does not have a word for it yet. But he knows what it feels like. And he wants more.',
     tooltip: 'Class mechanic coming soon.',
   },
   rogue: {
-    name: 'Rogue', classTitle: 'Shadow Walker', icon: CLASS_ICON_ROGUE, portrait: PORTRAIT_ROGUE,
+    name: 'Rogue', classTitle: 'Stride', icon: CLASS_ICON_ROGUE, portrait: PORTRAIT_ROGUE,
     bgStart: '30, 22, 38', bgEnd: '22, 16, 30', accent: '155, 120, 185',
-    description: 'In the spaces between light and darkness, Rogues find their truth. Masters of misdirection and precision strikes, they turn the battlefield into a dance where only they know the steps—and the blade always finds its mark.',
-    tooltip: 'Class mechanic coming soon.',
+    description: "She doesn't know where she's going. That stopped feeling like a problem a while ago, which might be its own kind of problem. When she moves, something moves with her. Not behind her, not ahead, just with. Like the space between places has a current and she found it without looking. Lately it has been pulling harder than usual. Toward something. She doesn't know what.",    tooltip: 'Class mechanic coming soon.',
   },
   templar: {
-    name: 'Templar', classTitle: 'Holy Enforcer', icon: CLASS_ICON_TEMPLAR, portrait: PORTRAIT_TEMPLAR,
+    name: 'Templar', classTitle: 'Brazier', icon: CLASS_ICON_TEMPLAR, portrait: PORTRAIT_TEMPLAR,
     bgStart: '35, 30, 18', bgEnd: '26, 22, 14', accent: '220, 185, 110',
-    description: 'Sworn to sacred duty, Templars blend martial prowess with divine authority. They are the sword arm of faith itself—judging, purging, and protecting with the weight of conviction that burns brighter than any earthly fire.',
+    description: "He knows what he is supposed to feel. That is not the same as feeling it, but the difference has always been small enough not to matter. Something in his chest burns at the right moments, responds correctly to the things it is supposed to respond to. He was made well. What he cannot account for is the heat that stays after it should have gone. He does not know if that is a flaw or an emergence. He is not sure those are different things.",
     tooltip: 'Class mechanic coming soon.',
   },
   paladin: {
@@ -78,7 +77,7 @@ const CHARACTER_DATA = {
   wizard: {
     name: 'Wizard', classTitle: 'Oculus', icon: CLASS_ICON_WIZARD, portrait: PORTRAIT_WIZARD,
     bgStart: '32, 24, 42', bgEnd: '24, 18, 32', accent: '160, 130, 220',
-    description: "He has been doing this longer than most people have been alive. There is always another spell to learn, another theory to pull apart, another quiet hour watching magic do something it was not supposed to do. He never got tired of it. That part still surprises him. There is something underneath all of it. A secret the magic keeps almost telling him. He has been chasing it his whole life without meaning to. Something feels different lately. He does not know what that means yet. He is already looking.",
+    description: "He has been doing this longer than most people have been alive. There is always another spell to learn, another theory to pull apart, another quiet hour watching magic do something it was not supposed to do. He never got tired of it. That part still surprises him. There is something underneath all of it. A secret the magic keeps almost telling him. He has been chasing it his whole life without meaning to. Something feels different lately. He does not know what that means yet.",
     tooltip: 'Class mechanic coming soon.',
   },
 };
@@ -87,12 +86,12 @@ const LEFT_CARDS  = ['samurai', 'warrior', 'fighter', 'monk'];
 const RIGHT_CARDS = ['rogue', 'templar', 'paladin', 'wizard'];
 const LEFT_EMPTY  = 3;
 const RIGHT_EMPTY = 4;
-const UNLOCKED    = new Set(['samurai', 'monk', 'paladin', 'warrior', 'wizard']);
+const PLAYABLE    = new Set(['samurai']);
 
 // ── Card component ───────────────────────────────────────────────
-function CharacterCard({ id, index, selectedId, onSelect }) {
+function CharacterCard({ id, index, selectedId, onSelect, previewMode }) {
   const data   = CHARACTER_DATA[id];
-  const locked = !UNLOCKED.has(id);
+  const locked = !PLAYABLE.has(id) && !previewMode;
   return (
     <article
       className={`character-card${selectedId === id ? ' selected' : ''}${locked ? ' locked' : ''}`}
@@ -135,6 +134,7 @@ export default function CharacterSelectScreen() {
   const [showcasedId, setShowcasedId]       = useState('samurai');
   const [isTransitioning, setTransitioning] = useState(false);
   const [fadeOut, setFadeOut]               = useState(false);
+  const [previewMode, setPreviewMode]       = useState(false);
   // Preload all portraits on mount so swaps are instant
   useEffect(() => {
     Object.values(CHARACTER_DATA).forEach(({ portrait }) => {
@@ -188,7 +188,7 @@ export default function CharacterSelectScreen() {
           {/* Left panel */}
           <aside className="side-panel left-panel">
             {LEFT_CARDS.map((id, i) => (
-              <CharacterCard key={id} id={id} index={i} selectedId={selectedId} onSelect={handleSelect} />
+              <CharacterCard key={id} id={id} index={i} selectedId={selectedId} onSelect={handleSelect} previewMode={previewMode} />
             ))}
             {Array.from({ length: LEFT_EMPTY }, (_, i) => (
               <div key={i} className="empty-slot" />
@@ -224,17 +224,23 @@ export default function CharacterSelectScreen() {
                   <p className="showcase-class" style={fadeTextStyle}>{showcaseData.classTitle}</p>
                   <TypewriterText text={showcaseData.description} className="showcase-description" style={fadeTextStyle} />
                 </div>
-                <button
-                  className="start-button shine-btn"
-                  type="button"
-                  onClick={() => {
-                    playUiSfx(sfx('START_1.wav'), 0.7);
-                    playerDispatch({ type: 'CONFIRM_CLASS', classId: selectedId });
-                    dispatch({ type: 'GO_TO_MAP' });
-                  }}
-                >
-                  <span className="start-text">START</span>
-                </button>
+                {PLAYABLE.has(selectedId) ? (
+                  <button
+                    className="start-button shine-btn"
+                    type="button"
+                    onClick={() => {
+                      playUiSfx(sfx('START_1.wav'), 0.7);
+                      playerDispatch({ type: 'CONFIRM_CLASS', classId: selectedId });
+                      dispatch({ type: 'GO_TO_MAP' });
+                    }}
+                  >
+                    <span className="start-text">START</span>
+                  </button>
+                ) : (
+                  <button className="start-button start-button--unwritten" type="button" disabled>
+                    <span className="start-text">UNWRITTEN</span>
+                  </button>
+                )}
               </>
             )}
           </section>
@@ -242,7 +248,7 @@ export default function CharacterSelectScreen() {
           {/* Right panel */}
           <aside className="side-panel right-panel">
             {RIGHT_CARDS.map((id, i) => (
-              <CharacterCard key={id} id={id} index={LEFT_CARDS.length + i} selectedId={selectedId} onSelect={handleSelect} />
+              <CharacterCard key={id} id={id} index={LEFT_CARDS.length + i} selectedId={selectedId} onSelect={handleSelect} previewMode={previewMode} />
             ))}
             {Array.from({ length: RIGHT_EMPTY }, (_, i) => (
               <div key={i} className="empty-slot" />
@@ -251,6 +257,15 @@ export default function CharacterSelectScreen() {
 
         </div>
       </main>
+
+      {/* Secret preview toggle */}
+      <button
+        className={`preview-toggle${previewMode ? ' preview-toggle--active' : ''}`}
+        type="button"
+        onClick={() => setPreviewMode(p => !p)}
+      >
+        {previewMode ? '[ HIDE SECRET PREVIEW ]' : '[ SECRET PREVIEW ]'}
+      </button>
 
       {/* Footer */}
       <footer className="cs-footer">
