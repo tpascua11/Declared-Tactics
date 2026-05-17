@@ -217,6 +217,7 @@ export default function BattleScreen() {
       playSfx(sfx('FUN_SELECT_2.wav'), 0.4);
       dispatch({ type: 'RETARGET_SLOT', index: retargetingSlot, targetId });
     } else {
+      playSfx(sfx('FUN_SELECT_2.wav'), 0.4);
       dispatch({ type: 'SELECT_TARGET', targetId });
     }
   }
