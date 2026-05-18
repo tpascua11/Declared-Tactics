@@ -210,7 +210,7 @@ export const SAMURAI_CARDS = [
     image: 'FOX_STORM_STRIKE',
     color: '#818cf8',
     desc: '150 lightning damage to all enemies. Applies Electrified (-20 speed for 3 turns). Costs 3 Battle Spirit.',
-    animation: 'flame_strike',
+    animation: 'storm_strike',
     animation_intensity: 1.2,
     tags: {
       self: [],

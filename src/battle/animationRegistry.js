@@ -196,6 +196,15 @@ export const ANIMATIONS = {
     ],
     floatingNumber: { color: '#f97316' },
   },
+  storm_strike: {
+    cssClass: 'animate-burn',
+    duration: 750,
+    sfx: [
+      { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
+      { src: sfx('THUNDER.wav'),     delay: 300, volume: 1.0 },
+    ],
+    floatingNumber: { color: '#818cf8' },
+  },
   green_marching_ants: {
     cssClass: 'animate-green-marching-ants',
     duration: 1000,
