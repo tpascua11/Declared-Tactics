@@ -1,0 +1,46 @@
+IMPORTANT ARCHITECTURE NOTES
+=============================
+
+[1] COPIES IN JAVASCRIPT — REFERENCE vs SHALLOW vs DEEP
+---------------------------------------------------------
+There are three levels of "copy" in JS. Knowing which one you have tells
+you whether a mutation will bleed back to the original.
+
+  REFERENCE (no copy at all):
+    let b = a;
+    // b and a point to the same object. Mutating b.x also changes a.x.
+
+  SHALLOW COPY (new container, shared contents):
+    let b = { ...a };
+    let b = Object.assign({}, a);
+    let arr = [...original];
+    // New array/object, but nested objects inside are still shared references.
+    // Safe to mutate top-level primitives (b.x = 1 won't affect a.x),
+    // but mutating a nested object (b.nested.y = 1) WILL affect a.nested.y.
+
+  ONE-LEVEL DEEP (new container, new top-level objects, shared deeper nesting):
+    let tags = pool.map(t => ({ ...t }));
+    // Each element is a new object. Safe as long as properties are flat
+    // primitives (numbers, strings, booleans) — which tag objects are.
+    // If tags ever gain nested objects, upgrade to structuredClone.
+
+  DEEP COPY (fully independent at every level):
+    let b = structuredClone(a);
+    let b = JSON.parse(JSON.stringify(a));  // drops undefined and functions
+    // Every level is a new object. Mutations at any depth stay isolated.
+
+RULE FOR THIS CODEBASE:
+  - Engine execution (battle_engine.js):
+      structuredClone(state) — state is deep, full independence required.
+  - Preview/simulation paths (preview_utils.js, BattleQueue):
+      pool.map(t => ({ ...t })) — tags are flat, one level is sufficient.
+  - NEVER use [...pool] alone before calling onApply — the tag objects
+    inside are still shared and mutations will bleed to the real state.
+
+WHY THIS MATTERS IN A TAG SYSTEM:
+  Every onApply that does `existing.X = ...` is a mutation. If that
+  onApply runs on a shallow-copied pool, it silently corrupts the real
+  character state with no error or warning. The symptom shows up later,
+  in a completely different system (e.g. wrong speed during SpeedCheck),
+  making it very hard to trace back to the preview render that caused it.
+  See What_I_Learn.txt [6] for the full incident write-up.

@@ -227,3 +227,62 @@ BUT REACT STILL HAS REAL ADVANTAGES FOR THIS KIND OF GAME:
      game engines.
 
 
+[6] SHALLOW COPY + MUTATING onApply = SILENT STATE CORRUPTION
+--------------------------------------------------------------
+The most dangerous bugs in a tag system are the ones that corrupt state
+silently, from a distance, with no error — just wrong numbers later.
+
+THE BUG:
+  projectedSpeedInfluence() was previewing future speed values for the hand
+  UI. It needed a copy of the tag pool to simulate tags from earlier queue
+  cards. It used a shallow copy:
+
+    let tags = [...(tagPool ?? [])];
+
+  This creates a new array, but the tag objects inside are still shared
+  references to the REAL character state. When onApply() ran on this array
+  to simulate a Shinsoku self-tag being applied, it did:
+
+    existing.stacks = Math.min(maxStacks, existing.stacks + 1);
+
+  That line mutated the original tag object — not the preview copy. Every
+  time the hand rendered (once per card shown), the real SPEED_BOOST stacks
+  incremented by 1. With max_stacks: 3 and 5 cards in hand, it hit 3 almost
+  instantly. The next SpeedCheck saw stacks: 3 and returned +60 speed instead
+  of +20. No error. No warning. Just silently wrong.
+
+ROOT RULE: A preview or simulation function must NEVER mutate real state.
+  If it calls any function that finds-and-mutates an existing object
+  (like onApply), it needs a deep clone of every object it touches:
+
+    let tags = (tagPool ?? []).map(t => ({ ...t }));   ← CORRECT
+    let tags = [...(tagPool ?? [])];                    ← DANGEROUS
+
+WATCH LIST — every onApply that mutates via `existing.X = ...` is
+  a potential bleeding point if called from a shallow-copied context:
+  - SpeedBoostOnApply       (existing.stacks)
+  - OldFreezeOnApply        (existing.stacks)
+  - FreezeOnApply           (existing.stacks)
+  - OldElectrifiedOnApply   (existing.stacks)
+  - ElectrifiedOnApply      (existing.stacks)
+  - ParalysisOnApply        (existing.stacks)
+  - SlowOnApply             (existing.stacks)
+  - GoukiOnApply            (existing.stacks)
+  - STILL_WIND onApply      (existing.stacks)
+  - MagicChargeOnApply      (existing.stack_count)
+  - FuelToTheFlamesOnApply  (existing.flat)
+  - MomentumOnApply         (existing.stack_count)
+  - BattojutsuOnApply       (existing.stack_count)
+
+RULE: Any function that accepts a tag pool and calls onApply must either:
+  (a) deep-clone the pool objects before passing them in, OR
+  (b) only be called with pools that were structuredCloned (engine paths).
+  Preview/simulation paths must always use (a).
+
+BROADER LESSON: Mutation bugs in systems with shared references are the
+  hardest to track because the corruption site and the symptom site are
+  far apart in both code and time. The corruption happens during a render
+  (preview), the symptom appears during a battle step (engine). By the time
+  you see the wrong number, the call that caused it is long gone.
+
+

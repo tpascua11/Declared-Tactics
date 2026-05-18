@@ -58,11 +58,6 @@ function FreezeOnApply(pool, tag) {
   }
 }
 
-function FreezeSpeedCalcHandler(action, character, tag) {
-  // += adds to existing calc_speed; use = to hard-set instead
-  action.calc_speed += 0;
-}
-
 function FreezeOnTurnStartHandler(context, tag) {
   const owner = context.owner;
   const reduce = (tag.stacks ?? 1) >= 3 ? 2 : 1;
@@ -91,13 +86,12 @@ function FreezeEndOfTurnHandler(context, tag) {
 }
 
 registerTag('FREEZE', {
-  phases: ['SPEED_CALC', 'ON_TURN_START', 'END_OF_TURN'],
+  phases: ['ON_TURN_START', 'END_OF_TURN'],
   status_type: 'debuff',
   traits: ['FREEZE'],
   action_slot_mod: (tag) => (tag.stacks ?? 1) >= 3 ? -2 : -1,
   onApply: FreezeOnApply,
   handlers: {
-    SPEED_CALC: FreezeSpeedCalcHandler,
     ON_TURN_START: FreezeOnTurnStartHandler,
     END_OF_TURN: FreezeEndOfTurnHandler,
   },

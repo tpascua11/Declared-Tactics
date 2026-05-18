@@ -127,16 +127,15 @@ export function bypassesEvasion(card) {
 }
 
 function getEffectiveSpeed(character, card, slotIndex) {
-  const mockAction = {
-    calc_speed: (character.base_speed ?? 0) + (card?.speed_mod ?? 0) - slotIndex * 20,
-  };
+  const base = (character.base_speed ?? 0) + (card?.speed_mod ?? 0) - slotIndex * 20;
+  let speedMod = 0;
   for (const tag of character.active_tag_pool ?? []) {
     const entry = tagRegistry[tag.tag_name];
     if (entry?.phases?.includes('SPEED_CALC')) {
-      entry.handlers['SPEED_CALC'](mockAction, character, tag);
+      speedMod += entry.handlers['SPEED_CALC'](null, character, tag) ?? 0;
     }
   }
-  return mockAction.calc_speed;
+  return base + speedMod;
 }
 
 function resolveQueueMirror(set, enemy, opponent) {
