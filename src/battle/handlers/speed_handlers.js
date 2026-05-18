@@ -8,7 +8,7 @@
 import { registerTag } from '../registry/battle_registry';
 
 export function SpeedBoostHandler(action, character, tag) {
-  action.calc_speed += tag.amount;
+  return tag.amount;
 }
 
 export function SpeedBoostImbueHandler(payload, character, tag) {

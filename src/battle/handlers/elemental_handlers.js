@@ -18,7 +18,7 @@ function OldFreezeOnApply(pool, tag) {
 }
 
 function OldFreezeSpeedCalcHandler(action, character, tag) {
-  action.calc_speed -= tag.stacks * 5;
+  return -(tag.stacks * 5);
 }
 
 function OldFreezeEndOfTurnHandler(context, tag) {
@@ -158,7 +158,7 @@ function ElectrifiedOnApply(pool, tag) {
 }
 
 function ElectrifiedSpeedCalcHandler(action, character, tag) {
-  action.calc_speed -= 20;
+  return -20;
 }
 
 function ElectrifiedEndOfTurnHandler(context, tag) {
@@ -206,9 +206,7 @@ function ParalysisOnApply(pool, tag) {
 }
 
 function ParalysisSpeedCalcHandler(action, character, tag) {
-  if ((character?.action_count ?? 0) === 0) {
-    action.calc_speed -= 20;
-  }
+  return (character?.action_count ?? 0) === 0 ? -20 : 0;
 }
 
 function ParalysisEndOfTurnHandler(context, tag) {
@@ -244,7 +242,7 @@ registerTag('PARALYSIS', {
 // consumed after the first action fires via reset: ON_OWNER_ACTION.
 
 function ShockedSpeedCalcHandler(action, character, tag) {
-  action.calc_speed -= 20;
+  return -20;
 }
 
 registerTag('SHOCKED', {

@@ -65,19 +65,20 @@ export function SpeedCheckAllAvailableActions(characters) {
     if (!action) continue;
     if (action.priority_flag === 'SKIP') continue;
 
-    // Base speed from character state, not baked queue value
-    action.calc_speed = (character.base_speed + (action.speed_mod ?? 0)) - (character.action_count ?? 0) * 20;
-
-    // Apply SPEED_CALC tags
+    // Collect speed modifiers from tags — handlers return a number, never mutate calc_speed
+    let speedMod = 0;
     for (const tag of character.active_tag_pool) {
       const entry = battle_registry[tag.tag_name];
       if (entry?.phases?.includes('SPEED_CALC')) {
-        entry.handlers['SPEED_CALC'](action, character, tag);
+        speedMod += entry.handlers['SPEED_CALC'](action, character, tag) ?? 0;
       }
     }
+    action.calc_speed = (character.base_speed + (action.speed_mod ?? 0)) - (character.action_count ?? 0) * 20 + speedMod;
+    console.log('[SpeedCheck]', character.name, '|', action.name, '| calc_speed:', action.calc_speed, '| speedMod:', speedMod, '| action_count:', character.action_count ?? 0);
     actions.push({ ...action, owner_id: character.id, owner_name: character.name });
   }
 
+  console.log('─────────── SpeedCheck ───────────');
   const next_actions = actions.filter(a => a.priority_flag === 'NEXT');
   const normal_actions = actions.filter(a => a.priority_flag !== 'NEXT');
   normal_actions.sort((a, b) => b.calc_speed - a.calc_speed);
