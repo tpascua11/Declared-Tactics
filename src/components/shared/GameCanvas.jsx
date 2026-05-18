@@ -9,12 +9,12 @@ import { useState, useEffect } from 'react';
 
 export default function GameCanvas({ children }) {
   const [scale, setScale] = useState(
-    () => Math.min(1, window.innerWidth / 1920, window.innerHeight / 1080)
+    () => Math.min(0.85, window.innerWidth / 1920, window.innerHeight / 1080)
   );
 
   useEffect(() => {
     const onResize = () =>
-      setScale(Math.min(1, window.innerWidth / 1920, window.innerHeight / 1080));
+      setScale(Math.min(0.85, window.innerWidth / 1920, window.innerHeight / 1080));
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);

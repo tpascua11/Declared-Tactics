@@ -92,7 +92,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(10, 5, 20, 0.45)' }} />
       {/* Scanlines */}
       <div className="absolute inset-0 pointer-events-none"
-        style={{ background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px)' }} />
+        style={{ background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 3px)' }} />
 
       <div className="relative flex flex-row items-end gap-20" style={{ transform: `translateX(${offset}rem)` }}>
       {enemies.map(enemy => {

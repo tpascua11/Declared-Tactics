@@ -164,7 +164,7 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
                     }
                     {/* Scanlines */}
                     <div className="absolute inset-0 pointer-events-none"
-                      style={{ background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px)' }} />
+                      style={{ background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 3px)' }} />
                   </div>
                 </div>
 
