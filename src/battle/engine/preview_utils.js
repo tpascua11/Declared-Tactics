@@ -45,7 +45,7 @@ export function projectedSpeedPenalty(queue, slotIndex) {
 // buff would be consumed. Acceptable simplification for queue preview — revisit if a card
 // needs accurate multi-action boost display.
 export function projectedSpeedInfluence(tagPool, queue, slotIndex) {
-  let tags = [...(tagPool ?? [])];
+  let tags = (tagPool ?? []).map(t => ({ ...t }));
 
   for (let i = 0; i < slotIndex; i++) {
     const slot = queue[i];

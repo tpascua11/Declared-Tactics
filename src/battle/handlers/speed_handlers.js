@@ -8,7 +8,7 @@
 import { registerTag } from '../registry/battle_registry';
 
 export function SpeedBoostHandler(action, character, tag) {
-  return tag.amount;
+  return tag.amount * (tag.stacks ?? 1);
 }
 
 export function SpeedBoostImbueHandler(payload, character, tag) {
@@ -36,10 +36,12 @@ export function SpeedBoostOnApply(pool, tag) {
       pool.push({ ...tag, mode: 'turns', duration: tag.turns, status_type: 'buff' });
     }
   } else {
-    const currentStacks = pool.filter(t => t.tag_name === 'SPEED_BOOST' && t.mode === 'actions').length;
+    const existing = pool.find(t => t.tag_name === 'SPEED_BOOST' && t.mode === 'actions');
     const maxStacks = tag.max_stacks ?? Infinity;
-    if (currentStacks < maxStacks) {
-      pool.push({ ...tag, mode: 'actions', status_type: 'buff' });
+    if (existing) {
+      existing.stacks = Math.min(maxStacks, (existing.stacks ?? 1) + 1);
+    } else {
+      pool.push({ ...tag, mode: 'actions', stacks: 1, status_type: 'buff' });
     }
   }
 }
