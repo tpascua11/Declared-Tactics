@@ -101,14 +101,14 @@ export const SAMURAI_CARDS = [
     icon: '🔥',
     image: 'FOX_SUMMURAI_FLAME_STRIKE',
     color: '#ef4444',
-    desc: '400 fire damage. Applies Burn. Costs 3 Battle Spirit.',
+    desc: '333 fire damage. Applies Burn. Costs 3 Battle Spirit.',
     animation: 'flame_strike',
     animation_intensity: 1.2,
     tags: {
       self: [],
       target: [
-        { tag_name: 'DAMAGE', type: 'FIRE', power: 400 },
-        { tag_name: 'BURN', power: 75, duration: 3, reset: 'TICK_TURN' },
+        { tag_name: 'DAMAGE', type: 'FIRE', power: 333 },
+        { tag_name: 'BURN', power: 33, duration: 3, reset: 'TICK_TURN' },
       ],
     },
   },

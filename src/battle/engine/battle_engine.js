@@ -74,11 +74,11 @@ export function SpeedCheckAllAvailableActions(characters) {
       }
     }
     action.calc_speed = (character.base_speed + (action.speed_mod ?? 0)) - (character.action_count ?? 0) * 20 + speedMod;
-    console.log('[SpeedCheck]', character.name, '|', action.name, '| calc_speed:', action.calc_speed, '| speedMod:', speedMod, '| action_count:', character.action_count ?? 0);
+    //console.log('[SpeedCheck]', character.name, '|', action.name, '| calc_speed:', action.calc_speed, '| speedMod:', speedMod, '| action_count:', character.action_count ?? 0);
     actions.push({ ...action, owner_id: character.id, owner_name: character.name });
   }
 
-  console.log('─────────── SpeedCheck ───────────');
+  //console.log('─────────── SpeedCheck ───────────');
   const next_actions = actions.filter(a => a.priority_flag === 'NEXT');
   const normal_actions = actions.filter(a => a.priority_flag !== 'NEXT');
   normal_actions.sort((a, b) => b.calc_speed - a.calc_speed);

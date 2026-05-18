@@ -4,7 +4,7 @@
   "battle_background": "sumurai_battlefield_7",
   "stages": [
     {
-      "enemies": ["ferret_sumurai"]
+      "enemies": ["light_fox_sumurai"]
     }
   ],
   "music": "WAY_OF_THE_SUMURAI_BATTLE_2",

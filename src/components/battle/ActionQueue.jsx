@@ -56,7 +56,9 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
                     <div className="relative w-full h-full flex flex-col items-center justify-around py-1 transition-all duration-150 group-hover:brightness-125 group-hover:-translate-y-[2px]"
                       style={{
                         background: '#09090f',
-                        border: `1px solid ${isRetargeting ? '#4da6ff' : '#e94560'}`,
+                        borderTop: `1px solid ${isRetargeting ? '#4da6ff' : '#e94560'}`,
+                        borderLeft: `1px solid ${isRetargeting ? '#4da6ff' : '#e94560'}`,
+                        borderRight: `1px solid ${isRetargeting ? '#4da6ff' : '#e94560'}`,
                         borderBottom: 'none',
                         borderRadius: '3px 3px 0 0',
                         boxShadow: isRetargeting
