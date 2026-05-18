@@ -21,7 +21,7 @@ export default function PlayerPortrait({ player, activeAnimations = {}, floating
       >
 
         {/* Portrait fills entire card */}
-        <img src={portrait} alt={player.name} className="absolute inset-0 w-full h-full object-cover" />
+        <img src={portrait} alt={player.name} className="absolute inset-0 w-full h-full object-cover" style={{ imageRendering: 'pixelated' }} />
 
         {/* Overlay UI */}
         <div className="absolute inset-0 flex flex-col justify-between">
