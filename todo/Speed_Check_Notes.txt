@@ -1,0 +1,132 @@
+SPEED CHECK NOTES
+=================
+All files that touch speed calculation, what they do, and mutation warnings.
+
+─────────────────────────────────────────────────────────────
+CORE — WHERE calc_speed IS ACTUALLY DECIDED
+─────────────────────────────────────────────────────────────
+
+src/battle/engine/battle_engine.js — SpeedCheckAllAvailableActions()
+  THE source of truth. Called every BATTLE_STEP to sort actions.
+  Formula: calc_speed = (base_speed + speed_mod) - action_count * 20 + speedMod
+  - Clones character.queue[0] fresh each call (structuredClone)
+  - Collects SPEED_CALC return values into speedMod, applies once
+  - NEXT priority actions always go first regardless of speed
+  ⚠ MUTATION RULE: SPEED_CALC handlers MUST return a number.
+    Never do action.calc_speed += x. The engine sums return values.
+
+src/battle/engine/battle_engine.js — calcSpeed() helper (line ~13)
+  Legacy export. Simple formula: base_speed - slot_index * 20.
+  Only used by the reducer when baking calc_speed into queue items.
+  SpeedCheckAllAvailableActions IGNORES this baked value and recomputes
+  fresh — so this is effectively a stale preview, not the real speed.
+  ⚠ WATCH: If any future code reads queue[0].calc_speed before
+    SpeedCheck runs, it will get the stale reducer-baked value,
+    not the real one with tag modifiers applied.
+
+─────────────────────────────────────────────────────────────
+SPEED_CALC HANDLERS — ALL FIXED, RETURN VALUES ONLY
+─────────────────────────────────────────────────────────────
+
+src/battle/handlers/speed_handlers.js
+  SPEED_BOOST — returns tag.amount * tag.stacks
+  ⚠ Any new SPEED_CALC handler added here must RETURN a number.
+
+src/battle/handlers/elemental_handlers.js
+  OLD_FREEZE     — returns -(tag.stacks * 5)
+  ELECTRIFIED    — returns -20
+  PARALYSIS      — returns action_count === 0 ? -20 : 0
+  SHOCKED        — returns -20
+  FREEZE         — SPEED_CALC removed entirely (no speed effect)
+  ⚠ Same rule: return a number, never mutate.
+
+─────────────────────────────────────────────────────────────
+PREVIEW / SIMULATION PATHS — MUTATION RISK ZONE
+─────────────────────────────────────────────────────────────
+These run OUTSIDE of structuredClone. Any call to onApply here
+must operate on deep-cloned tag objects or mutations will bleed
+back into real character state silently.
+
+src/battle/engine/preview_utils.js — projectedSpeedInfluence()
+  Used by Hand.jsx and ActionQueue.jsx to show speed preview per slot.
+  FIXED: uses pool.map(t => ({ ...t })) to deep-clone tag objects
+  before calling onApply. Safe as long as tags stay flat (no nested objects).
+  ⚠ If tags ever gain nested object properties, upgrade to structuredClone.
+
+src/battle/engine/preview_utils.js — projectedSpeedPenalty()
+  Pure math — counts action_count penalty for slots before this one.
+  No tag pool involved. Safe.
+
+src/battle/engine/preview_utils.js — effectiveResourceAtExecution()
+  Reads resource deltas from earlier queue slots. No mutation risk.
+
+src/components/battle/BattleQueue.jsx — applySpeedCalc() / simulateExecutionOrder()
+  Simulates full execution order for the timeline display.
+  FIXED: applySpeedCalc uses return-value pattern.
+  tagPools built with [...pool] (shallow array copy) — safe because
+  applySpeedCalc never calls onApply, only reads SPEED_CALC return values.
+  ⚠ If simulateExecutionOrder ever needs to call onApply in future,
+    upgrade tagPools to pool.map(t => ({ ...t })).
+
+src/battle/engine/enemy_ai.js — getEffectiveSpeed()
+  Used by resolveQueueMirror() to calculate enemy vs player speed gap (shift).
+  FIXED: uses return-value pattern, no dummy object mutation.
+  ⚠ card.speed_mod is currently COMMENTED OUT.
+    Only applies to player slot 0, enemy passes null — asymmetric.
+    Needs full per-slot speed simulation on both sides before re-enabling.
+    See comment in getEffectiveSpeed for details.
+
+─────────────────────────────────────────────────────────────
+UI DISPLAY — READ ONLY, NO MUTATION RISK
+─────────────────────────────────────────────────────────────
+
+src/components/battle/Hand.jsx
+  Calls projectedSpeedInfluence + projectedSpeedPenalty per card.
+  Note: projectedSpeedInfluence is called once per card in the map
+  but nextSlotIndex is the same for all — redundant calls, minor perf.
+
+src/components/battle/ActionQueue.jsx
+  Calls projectedSpeedInfluence + projectedSpeedPenalty per slot.
+
+src/components/battle/EnemyZone.jsx
+  Just displays action.calc_speed. Read only.
+
+src/screens/BattleScreen.jsx
+  Passes player.base_speed down as a prop. No calculation here.
+
+─────────────────────────────────────────────────────────────
+SPEED-DEPENDENT MECHANICS — WORTH KNOWING
+─────────────────────────────────────────────────────────────
+
+src/battle/handlers/incoming_handlers.js — QUICK_STEPS
+  Dodge window is based on calc_speed. Uses enrichFromAction to stamp
+  the action's calc_speed as dodge_anchor when Quick Steps resolves.
+  Dodge range: dodge_anchor - dodge_range <= incoming.calc_speed <= dodge_anchor
+  ⚠ Depends on calc_speed being accurate at execution time.
+    If speed tags are ever applied/removed between SpeedCheck and
+    ExecuteAction, the dodge window could be wrong.
+
+src/battle/engine/battle_engine.js — InteractionCheck()
+  CLASH and INTERRUPT both use calc_speed for comparisons.
+  speedDiff <= 2 for CLASH, actionA.calc_speed > actionB.calc_speed for INTERRUPT.
+  These read the already-computed calc_speed — safe.
+
+─────────────────────────────────────────────────────────────
+STATIC DATA — base_speed AND speed_mod DEFINITIONS
+─────────────────────────────────────────────────────────────
+
+src/data/classes/samurai.js, fighter.js, wizard.js  — base_speed: 100
+src/data/player.js, src/context/PlayerContext.jsx   — passes base_speed through
+src/data/cards/samurai_cards.js, fighter_cards.js   — speed_mod per card
+
+─────────────────────────────────────────────────────────────
+THE GOLDEN RULE FOR FUTURE SPEED WORK
+─────────────────────────────────────────────────────────────
+1. SPEED_CALC handlers return a number. Never mutate action.calc_speed.
+2. Preview/simulation functions deep-clone tag objects before onApply:
+     pool.map(t => ({ ...t }))   for flat tags (current state)
+     structuredClone(pool)        if tags ever gain nested objects
+3. calc_speed is recomputed fresh every SpeedCheck call.
+   Never rely on a baked queue value being accurate.
+4. getEffectiveSpeed in enemy_ai.js still has speed_mod commented out.
+   Come back to this when the mirror logic gets a proper per-slot simulation.

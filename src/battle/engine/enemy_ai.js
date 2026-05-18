@@ -127,7 +127,9 @@ export function bypassesEvasion(card) {
 }
 
 function getEffectiveSpeed(character, card, slotIndex) {
-  const base = (character.base_speed ?? 0) + (card?.speed_mod ?? 0) - slotIndex * 20;
+  // TODO: card.speed_mod excluded — applying it only to slot 0 is asymmetric.
+  // Needs a full per-slot speed simulation on both sides before re-enabling.
+  const base = (character.base_speed ?? 0) /* + (card?.speed_mod ?? 0) */ - slotIndex * 20;
   let speedMod = 0;
   for (const tag of character.active_tag_pool ?? []) {
     const entry = tagRegistry[tag.tag_name];
