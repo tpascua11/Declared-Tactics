@@ -15,14 +15,14 @@ const GAP    = 10;   // px between card slots
 // ── helpers ──────────────────────────────────────────────────
 
 function applySpeedCalc(baseSpeed, tagPool, char) {
-  const clone = { calc_speed: baseSpeed };
+  let speedMod = 0;
   for (const tag of tagPool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('SPEED_CALC')) {
-      entry.handlers['SPEED_CALC'](clone, char, tag);
+      speedMod += entry.handlers['SPEED_CALC'](null, char, tag) ?? 0;
     }
   }
-  return clone.calc_speed;
+  return baseSpeed + speedMod;
 }
 
 // initialLengths: { [char.id]: original queue length at battle start }

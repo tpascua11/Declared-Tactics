@@ -62,14 +62,14 @@ export function projectedSpeedInfluence(tagPool, queue, slotIndex) {
     }
   }
 
-  const dummy = { calc_speed: 0 };
+  let speedMod = 0;
   for (const tag of tags) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('SPEED_CALC')) {
       // action_count: slotIndex lets first-action guards (e.g. PARALYSIS) preview
       // correctly — penalty shows for slot 0 only, not all slots.
-      entry.handlers['SPEED_CALC'](dummy, { action_count: slotIndex }, tag);
+      speedMod += entry.handlers['SPEED_CALC'](null, { action_count: slotIndex }, tag) ?? 0;
     }
   }
-  return dummy.calc_speed;
+  return speedMod;
 }
