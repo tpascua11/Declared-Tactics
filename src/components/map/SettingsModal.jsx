@@ -1,9 +1,10 @@
-import { useMusicVolume, useUiVolume } from '../../hooks/useMusic';
+import { useMusicVolume, useUiVolume, useSfxVolume } from '../../hooks/useMusic';
 import { playSelectSfx } from '../../battle/animationRegistry';
 
 export default function SettingsModal({ onClose }) {
   const [musicVolume, setMusicVolume] = useMusicVolume();
   const [uiVolume, setUiVolume] = useUiVolume();
+  const [sfxVolume, setSfxVolume] = useSfxVolume();
 
   return (
     <div
@@ -58,6 +59,22 @@ export default function SettingsModal({ onClose }) {
             type="range" min="0" max="1" step="0.05"
             value={uiVolume}
             onChange={e => setUiVolume(parseFloat(e.target.value))}
+            style={{ width: '100%', accentColor: '#4da6ff', cursor: 'pointer' }}
+          />
+        </div>
+
+        {/* SFX Volume */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 11, letterSpacing: 2, color: '#8aaabb' }}>SFX VOLUME</span>
+            <span style={{ fontSize: 11, color: '#4da6ff', minWidth: 32, textAlign: 'right' }}>
+              {Math.round(sfxVolume * 100)}
+            </span>
+          </div>
+          <input
+            type="range" min="0" max="1" step="0.05"
+            value={sfxVolume}
+            onChange={e => setSfxVolume(parseFloat(e.target.value))}
             style={{ width: '100%', accentColor: '#4da6ff', cursor: 'pointer' }}
           />
         </div>

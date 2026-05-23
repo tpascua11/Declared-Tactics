@@ -9,7 +9,7 @@
 //    3. Set `animation: 'your_key'` on the card
 // ============================================================
 
-import { getUiVolume } from '../hooks/useMusic';
+import { getUiVolume, getSfxVolume } from '../hooks/useMusic';
 
 // Resolves a sound file from the SOUND EFFECTS folder by name.
 // Webpack bundles the entire folder so any file dropped in is instantly available —
@@ -46,6 +46,10 @@ export function playSfxBuffer(src, volume = 0.6) {
 
 export function playUiSfx(src, volume = 0.6) {
   playSfxBuffer(src, Math.min(1, volume * getUiVolume()));
+}
+
+export function playBattleSfx(src, volume = 0.6) {
+  playSfxBuffer(src, Math.min(1, volume * getSfxVolume()));
 }
 
 export const playSelectSfx = () => playUiSfx(sfx('SELECT_2.wav'), 0.25);

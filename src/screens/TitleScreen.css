@@ -156,10 +156,11 @@
 
 .title-main {
   font-family: 'Courier New', monospace;
-  font-size: clamp(32px, 6vw, 58px);
+  font-size: clamp(36px, 6.8vw, 66px);
   font-weight: bold;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+  text-align: center;
   line-height: 1.1;
   color: #f5d76e;
   text-shadow: 0 0 20px #c8a135;
@@ -211,15 +212,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 20px;
   animation: fadeUp var(--duration-entrance) ease 0.4s both;
 }
 
 .menu-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
+  background: rgba(10, 8, 20, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
   cursor: pointer;
   font-family: 'Courier New', monospace;
   font-size: clamp(14px, 2.5vw, 20px);
@@ -227,22 +227,29 @@
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: #ffffff;
-  padding: 10px 64px;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  padding: 5px 88px;
   position: relative;
   overflow: hidden;
   outline: none;
   transition: all 0.15s;
+  will-change: transform, box-shadow;
+  --shine-color: rgba(255, 255, 255, 0.35);
 }
-
 
 .menu-btn:hover {
   background: rgba(255, 255, 255, 0.12);
-  border-bottom-color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(232, 197, 109, 0.6);
   color: #ffffff;
-  letter-spacing: 0.4em;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 0 18px rgba(232, 197, 109, 0.25), 0 0 40px rgba(232, 197, 109, 0.1);
 }
 
-.menu-btn:active { transform: scale(0.97); }
+.menu-btn:active { transform: scale(0.98); }
+
+.menu-btn.shine-btn::after { animation-duration: 4.5s; }
+
 
 /* Corner Ornaments */
 .corner {

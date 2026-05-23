@@ -3,6 +3,9 @@ import './TitleScreen.css';
 import '../components/shared/shine-btn.css';
 import SettingsModal from '../components/map/SettingsModal';
 import { playSelectSfx } from '../battle/animationRegistry';
+import pkg from '../../package.json';
+import { GAME_TITLE, GAME_WORLD } from '../config';
+const { version } = pkg;
 
 // ── Particle configs (computed once at module load) ──────────────
 const COLORS = [
@@ -151,8 +154,8 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
       {/* Main content */}
       <div className="screen">
         <div className="title-block">
-          <div className="title-main">Declared Tactics</div>
-          <div className="title-world">Avormore</div>
+          <div className="title-main">{GAME_TITLE}</div>
+          <div className="title-world">{GAME_WORLD}</div>
           <div className="title-divider">
             <div className="divider-line" />
             <div className="divider-diamond" />
@@ -202,7 +205,7 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
 
       {/* Footer */}
       <div className="title-footer">
-        <span>v0.1.0</span>
+        <span>v{version}</span>
         <span>© 2026</span>
       </div>
 

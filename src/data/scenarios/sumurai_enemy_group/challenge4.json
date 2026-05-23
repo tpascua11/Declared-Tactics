@@ -1,7 +1,7 @@
 {
   "id": "challenge4",
   "name": "Challenge 4",
-  "battle_background": "sumurai_battlefield_7",
+  "battle_background": "sumurai_battlefield_16",
   "stages": [
     {
       "enemies": ["turtle_sumurai", "dragon_sumurai", "bear_sumurai"]

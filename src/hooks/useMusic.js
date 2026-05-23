@@ -32,6 +32,7 @@ export function useMusicVolume() {
 const UI_STORAGE_KEY = 'daq_ui_volume';
 const UI_DEFAULT_VOLUME = 1.0;
 
+
 function getStoredUiVolume() {
   return parseFloat(localStorage.getItem(UI_STORAGE_KEY) ?? UI_DEFAULT_VOLUME);
 }
@@ -58,6 +59,38 @@ export function useUiVolume() {
   }, []);
 
   return [volume, setGlobalUiVolume];
+}
+
+// ── SFX volume (battle sound effects) ────────────────────────────────────────
+const SFX_STORAGE_KEY = 'daq_sfx_volume';
+const SFX_DEFAULT_VOLUME = 0.7;
+
+function getStoredSfxVolume() {
+  return parseFloat(localStorage.getItem(SFX_STORAGE_KEY) ?? SFX_DEFAULT_VOLUME);
+}
+
+let _sfxVolume = getStoredSfxVolume();
+const _sfxListeners = new Set();
+
+export function getSfxVolume() {
+  return _sfxVolume;
+}
+
+function setGlobalSfxVolume(v) {
+  _sfxVolume = Math.max(0, Math.min(1.0, v));
+  localStorage.setItem(SFX_STORAGE_KEY, String(_sfxVolume));
+  _sfxListeners.forEach(fn => fn(_sfxVolume));
+}
+
+export function useSfxVolume() {
+  const [volume, setVolume] = useState(getStoredSfxVolume);
+
+  useEffect(() => {
+    _sfxListeners.add(setVolume);
+    return () => _sfxListeners.delete(setVolume);
+  }, []);
+
+  return [volume, setGlobalSfxVolume];
 }
 
 // Plays a single music track. Cleans up on unmount or when deps change.

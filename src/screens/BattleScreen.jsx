@@ -10,7 +10,7 @@ import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/Music/index';
 import { useMusic } from '../hooks/useMusic';
-import { ANIMATIONS, playSfxBuffer, sfx } from '../battle/animationRegistry';
+import { ANIMATIONS, playBattleSfx, sfx } from '../battle/animationRegistry';
 import '../battle/animations.css';
 import '../battle/aura_animations.css';
 import CardRiseTransition from '../components/shared/CardRiseTransition';
@@ -125,7 +125,7 @@ export default function BattleScreen() {
   }, [gs.phase, gs.stepCount]);
 
   function playSfx(src, volume = 0.6) {
-    playSfxBuffer(src, volume);
+    playBattleSfx(src, volume);
   }
 
   // Unified animation handler — reads pendingAnimation array from reducer,
