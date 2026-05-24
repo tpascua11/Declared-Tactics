@@ -4,7 +4,7 @@
 //  Only visible during BATTLE phase
 // ============================================================
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import '../../battle/handlers';
 
@@ -167,6 +167,20 @@ export default function BattleQueue({ characters, phase, announcement }) {
   }
   if (phase !== 'BATTLE') initialLengthsRef.current = null;
 
+  const [revealed, setRevealed] = useState(0);
+  useEffect(() => {
+    if (!announcement) { setRevealed(0); return; }
+    setRevealed(0);
+    const fullLen = (announcement.charName ?? '').length + (announcement.middle ?? '').length + (announcement.targetName ?? '').length;
+    let count = 0;
+    const interval = setInterval(() => {
+      count += 1;
+      setRevealed(count);
+      if (count >= fullLen) clearInterval(interval);
+    }, 11);
+    return () => clearInterval(interval);
+  }, [announcement?.key]);
+
   const containerStyle = {
     position:   'relative',
     height:     'calc(10rem + 20px)',
@@ -204,16 +218,27 @@ export default function BattleQueue({ characters, phase, announcement }) {
     <div style={containerStyle}>
 
       {/* Action Announcement */}
-      {announcement && (
-        <div
-          key={announcement.key}
-          className="battle-announcement"
-          style={{ color: '#ffffff', bottom: '0.5rem' }}
-        >
-          <span style={{ color: announcement.nameColor }}>{announcement.charName}</span>
-          {announcement.body}
-        </div>
-      )}
+      {announcement && (() => {
+        const name   = announcement.charName  ?? '';
+        const middle = announcement.middle    ?? '';
+        const target = announcement.targetName ?? '';
+        const n = name.length;
+        const m = middle.length;
+        const shownName   = name.slice(0, Math.min(revealed, n));
+        const shownMiddle = revealed > n ? middle.slice(0, Math.min(revealed - n, m)) : '';
+        const shownTarget = revealed > n + m ? target.slice(0, revealed - n - m) : '';
+        return (
+          <div
+            key={announcement.key}
+            className="battle-announcement"
+            style={{ color: '#ffffff', bottom: '0.5rem' }}
+          >
+            <span style={{ color: announcement.nameColor }}>{shownName}</span>
+            {shownMiddle}
+            {shownTarget && <span style={{ color: announcement.targetColor }}>{shownTarget}</span>}
+          </div>
+        );
+      })()}
 
       {/* Edge fade masks */}
       <div style={{

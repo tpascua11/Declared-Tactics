@@ -24,7 +24,7 @@
   transform: translateX(-50%);
   white-space: nowrap;
   pointer-events: none;
-  font-family: monospace;
+  font-family: 'Share Tech Mono', monospace;
   font-size: 0.72rem;
   font-weight: bold;
   letter-spacing: 0.18em;
