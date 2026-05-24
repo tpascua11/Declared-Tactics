@@ -322,7 +322,7 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, playerTypeColor
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%", position: "relative", zIndex: 1 }}>
               {isPlayerHere && (
                 <div className={tokenPortrait ? '' : 'map-token-glow'} style={{
-                  width: 100, height: 140,
+                  width: 96, height: 96,
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {tokenPortrait
@@ -332,24 +332,27 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, playerTypeColor
                 </div>
               )}
               <button
-                className="map-enter-btn-cell shine-btn"
+                className="map-enter-btn-cell"
                 onClick={e => { e.stopPropagation(); onEnter(level.id); }}
                 style={{
                   position: "relative",
+                  overflow: "hidden",
                   padding: "5px 14px",
-                  border: "1.5px solid #e94560",
+                  border: "2px solid #b8860b",
                   borderRadius: 5,
                   fontSize: 9,
                   letterSpacing: 2,
                   cursor: "pointer",
-                  background: "#e94560",
+                  background: "#b91c1c",
                   color: "#ffffff",
                   fontWeight: "bold",
                   whiteSpace: "nowrap",
-                  "--glow": "rgba(233,69,96,0.35)",
+                  fontFamily: "'Courier New', monospace",
+                  boxShadow: "0 0 10px rgba(184,134,11,0.5), inset 0 0 8px rgba(184,134,11,0.15)",
                   transition: "all 0.15s",
                 }}
               >
+                <span className="execute-shine" />
                 ENTER
               </button>
             </div>

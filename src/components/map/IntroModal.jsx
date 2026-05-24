@@ -15,7 +15,7 @@ export default function IntroModal({ level, levelType, mapIconSrc, onBattle, onC
       i++;
       setTypedDesc(desc.slice(0, i));
       if (i >= desc.length) clearInterval(id);
-    }, 18);
+    }, 12);
     return () => clearInterval(id);
   }, [level.desc]);
 
@@ -105,32 +105,24 @@ export default function IntroModal({ level, levelType, mapIconSrc, onBattle, onC
 
         {/* Battle button */}
         <button
-          className="shine-btn"
           onClick={() => { playSelectSfx(); onBattle(); }}
           style={{
-            marginTop: 4, padding: "11px 48px", alignSelf: "center",
-            border: `1.5px solid ${typeColor}66`,
+            marginTop: 4, padding: "7px 44px", alignSelf: "center",
+            border: "2px solid #b8860b",
             borderRadius: 6,
-            background: `${typeColor}14`,
-            color: typeColor,
-            fontSize: 11, letterSpacing: 4,
+            background: "#b91c1c",
+            color: "#ffffff",
+            fontSize: 15, letterSpacing: 4,
             cursor: "pointer",
             fontFamily: "'Courier New', monospace",
             fontWeight: "bold",
+            position: "relative",
+            overflow: "hidden",
+            boxShadow: "0 0 10px rgba(184,134,11,0.5), inset 0 0 8px rgba(184,134,11,0.15)",
             transition: "all 0.15s",
-            "--shine-color": `${typeColor}77`,
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = `${typeColor}28`;
-            e.currentTarget.style.borderColor = `${typeColor}aa`;
-            e.currentTarget.style.boxShadow = `0 0 18px ${typeColor}44`;
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = `${typeColor}14`;
-            e.currentTarget.style.borderColor = `${typeColor}66`;
-            e.currentTarget.style.boxShadow = "none";
           }}
         >
+          <span className="execute-shine" />
           BATTLE
         </button>
       </div>
