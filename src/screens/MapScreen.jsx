@@ -321,15 +321,12 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, playerTypeColor
           {!isCleared && (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%", position: "relative", zIndex: 1 }}>
               {isPlayerHere && (
-                <div className="map-token-glow" style={{
-                  width: 50, height: 70,
-                  border: "2px solid #4da6ff", borderRadius: 6,
-                  background: "linear-gradient(180deg,#0a1525,#061018)",
+                <div className={tokenPortrait ? '' : 'map-token-glow'} style={{
+                  width: 100, height: 140,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  overflow: "hidden",
                 }}>
                   {tokenPortrait
-                    ? <img src={tokenPortrait} alt={tokenName} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }} />
+                    ? <img src={tokenPortrait} alt={tokenName} style={{ width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }} />
                     : <span style={{ fontSize: 24 }}>👤</span>
                   }
                 </div>
@@ -340,16 +337,16 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, playerTypeColor
                 style={{
                   position: "relative",
                   padding: "5px 14px",
-                  border: "1.5px solid #ffffff",
+                  border: "1.5px solid #e94560",
                   borderRadius: 5,
                   fontSize: 9,
                   letterSpacing: 2,
                   cursor: "pointer",
-                  background: "#ffffff",
-                  color: "#000000",
+                  background: "#e94560",
+                  color: "#ffffff",
                   fontWeight: "bold",
                   whiteSpace: "nowrap",
-                  "--glow": "rgba(255,255,255,0.35)",
+                  "--glow": "rgba(233,69,96,0.35)",
                   transition: "all 0.15s",
                 }}
               >
@@ -562,7 +559,7 @@ export default function MapScreen() {
   }), [gridDims]);
 
   const tokenName    = playerData ? (playerData.class_id?.toUpperCase() ?? "PLAYER") : "PLAYER";
-  const tokenPortrait = playerData?.class_id ? (CLASS_REGISTRY[playerData.class_id]?.portrait ?? null) : null;
+  const tokenPortrait = playerData?.class_id ? (CLASS_REGISTRY[playerData.class_id]?.map_token ?? CLASS_REGISTRY[playerData.class_id]?.portrait ?? null) : null;
 
   // ── Render ────────────────────────────────────────────────
   return (

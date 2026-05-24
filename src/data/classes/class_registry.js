@@ -22,6 +22,7 @@ function resolveClass(classDef) {
     ...classDef,
     portrait: ASSETS[classDef.portrait] ?? null,
     victory_portrait: ASSETS[classDef.victory_portrait] ?? null,
+    map_token: ASSETS[classDef.map_token] ?? null,
     cards: classDef.cards
       .map(card => ({ ...card, image: ASSETS[card.image] ?? null }))
       .sort((a, b) => {

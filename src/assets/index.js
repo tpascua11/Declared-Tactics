@@ -6,6 +6,9 @@
 
 // Sound effects are loaded dynamically in animationRegistry.js via require().
 
+// --- Player Map Icons ---
+export { default as MAP_TOKEN_SUMURAI } from './Player_Map_Icons/SUMURAI.png';
+
 // --- Portraits ---
 export { default as COOL_FOX } from './COOL_FOX.png';
 export { default as PORTRAIT_SUMURAI } from './Player_Portraits/SUMURAI_2.png';

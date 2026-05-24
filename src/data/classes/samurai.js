@@ -15,6 +15,7 @@ export const SAMURAI = {
   icon: '⚔️',
   portrait: 'PORTRAIT_SUMURAI',
   victory_portrait: 'PORTRAIT_SUMURAI_VICTORY',
+  map_token: 'MAP_TOKEN_SUMURAI',
   base_health: 750,
   base_speed: 100,
   total_action_slots: 3,
