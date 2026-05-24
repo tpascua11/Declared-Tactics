@@ -138,10 +138,13 @@ export default function BattleScreen() {
       const nameColor = center._char?.faction === 'player' ? '#4da6ff' : '#e94560';
       const charName = center._char?.name;
       const targetColor = target?.faction === 'player' ? '#4da6ff' : '#e94560';
-      const middle = noTarget ? `  uses  ${center.name}` : `  ${center.name}  on  `;
+      const middle = noTarget ? `  ↩  ${center.name}` : `  →  ${center.name}  →  `;
       const targetName = noTarget ? '' : (target?.name ?? '');
       const stepKey = gs.stepCount;
-      setAnnouncement({ charName, nameColor, middle, targetName, targetColor, key: stepKey });
+      setAnnouncement({ charName, nameColor, middle, targetName, targetColor, key: stepKey, exiting: false });
+      setTimeout(() => {
+        setAnnouncement(prev => prev?.key === stepKey ? { ...prev, exiting: true } : prev);
+      }, holdMs);
       setTimeout(() => {
         setAnnouncement(prev => prev?.key === stepKey ? null : prev);
       }, holdMs + fadeMs);
