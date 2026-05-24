@@ -16,7 +16,7 @@ import '../battle/aura_animations.css';
 import CardRiseTransition from '../components/shared/CardRiseTransition';
 import EnemyZone from '../components/battle/EnemyZone';
 import BattleLog from '../components/battle/BattleLog';
-import BattleQueue from '../components/battle/BattleQueue';
+import BattleQueue, { simulateExecutionOrder } from '../components/battle/BattleQueue';
 import TagPool from '../components/battle/TagPool';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import ActionQueue from '../components/battle/ActionQueue';
@@ -32,6 +32,7 @@ export default function BattleScreen() {
   const [floatingNumbers, setFloatingNumbers] = useState([]);
   const [resultVisible, setResultVisible] = useState(false);
   const [typedTip, setTypedTip] = useState('');
+  const [announcement, setAnnouncement] = useState(null);
   const floatIdRef = useRef(0);
   const floatTimersRef = useRef([]);
   const animClearTimersRef = useRef([]);
@@ -122,6 +123,30 @@ export default function BattleScreen() {
       dispatch({ type: 'BATTLE_STEP' });
     }, delay);
     return () => clearTimeout(battleTimerRef.current);
+  }, [gs.phase, gs.stepCount]);
+
+  useEffect(() => {
+    if (gs.phase !== 'BATTLE') { setAnnouncement(null); return; }
+    const holdMs = 900;
+    const fadeMs = 300;
+    const t = setTimeout(() => {
+      const allActions = simulateExecutionOrder(gs.characters, null);
+      if (allActions.length === 0) return;
+      const center = allActions[0];
+      const target = gs.characters.find(c => c.id === center.target_id);
+      const noTarget = (center.tags?.target ?? []).length === 0;
+      const nameColor = center._char?.faction === 'player' ? '#4da6ff' : '#e94560';
+      const charName = center._char?.name;
+      const body = noTarget
+        ? `  uses  ${center.name}`
+        : `  ${center.name}  on  ${target?.name}`;
+      const stepKey = gs.stepCount;
+      setAnnouncement({ charName, nameColor, body, key: stepKey });
+      setTimeout(() => {
+        setAnnouncement(prev => prev?.key === stepKey ? null : prev);
+      }, holdMs + fadeMs);
+    }, 80);
+    return () => clearTimeout(t);
   }, [gs.phase, gs.stepCount]);
 
   function playSfx(src, volume = 0.6) {
@@ -354,6 +379,7 @@ export default function BattleScreen() {
         <BattleQueue
           characters={gs.characters}
           phase={gs.phase}
+          announcement={announcement}
         />
 
         {/* BOTTOM — Player Zone */}

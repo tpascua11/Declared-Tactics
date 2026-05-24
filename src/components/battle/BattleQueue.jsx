@@ -27,7 +27,7 @@ function applySpeedCalc(baseSpeed, tagPool, char) {
 
 // initialLengths: { [char.id]: original queue length at battle start }
 // Used to compute absolute queue indices so keys stay stable as cards are consumed.
-function simulateExecutionOrder(characters, initialLengths) {
+export function simulateExecutionOrder(characters, initialLengths) {
   const queues = {};
   const tagPools = {};
   const speedPenalties = {};
@@ -156,7 +156,7 @@ function ActionCard({ action, isCenter }) {
 
 // ── main component ────────────────────────────────────────────
 
-export default function BattleQueue({ characters, phase }) {
+export default function BattleQueue({ characters, phase, announcement }) {
   // Capture queue lengths the moment battle starts so keys stay stable as cards execute.
   const initialLengthsRef = useRef(null);
   if (phase === 'BATTLE' && !initialLengthsRef.current) {
@@ -169,7 +169,7 @@ export default function BattleQueue({ characters, phase }) {
 
   const containerStyle = {
     position:   'relative',
-    height:     '10rem',
+    height:     'calc(10rem + 20px)',
     background: 'rgba(0,0,0,0.35)',
     borderTop:    '1px solid rgba(255,255,255,0.08)',
     borderBottom: '1px solid rgba(255,255,255,0.08)',
@@ -202,6 +202,18 @@ export default function BattleQueue({ characters, phase }) {
 
   return (
     <div style={containerStyle}>
+
+      {/* Action Announcement */}
+      {announcement && (
+        <div
+          key={announcement.key}
+          className="battle-announcement"
+          style={{ color: '#ffffff', bottom: '0.5rem' }}
+        >
+          <span style={{ color: announcement.nameColor }}>{announcement.charName}</span>
+          {announcement.body}
+        </div>
+      )}
 
       {/* Edge fade masks */}
       <div style={{
@@ -244,7 +256,7 @@ export default function BattleQueue({ characters, phase }) {
             style={{
               position:        'absolute',
               left:            `calc(50% + ${xOffset - CARD_W / 2}px)`,
-              top:             '50%',
+              top:             '42%',
               transform:       `translateY(-50%) scale(${scale})`,
               transformOrigin: 'center center',
               transition:      'left 0.45s cubic-bezier(0.4,0,0.2,1), transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease',

@@ -13,6 +13,27 @@
   to   { opacity: 1; }
 }
 
+/* ── Battle Action Announcement ── */
+@keyframes announceFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);   }
+}
+.battle-announcement {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: monospace;
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px currentColor;
+  animation: announceFadeIn 80ms ease-out forwards;
+  z-index: 50;
+}
+
 /* ── VICTORY overlay pulse ── */
 @keyframes victoryPulse {
   0%, 100% { opacity: 1; text-shadow: 0 0 30px #f5d76e, 0 0 60px #c8a135, 2px 2px 0 #3a2800; }
