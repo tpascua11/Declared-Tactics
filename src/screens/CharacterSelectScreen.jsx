@@ -272,7 +272,7 @@ export default function CharacterSelectScreen() {
 
       {/* Footer */}
       <footer className="cs-footer">
-        <span>Trinity Action</span>
+        <span>Declared Tactics</span>
         <span>Avormore</span>
       </footer>
     </div>
