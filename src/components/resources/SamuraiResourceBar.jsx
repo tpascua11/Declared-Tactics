@@ -22,6 +22,7 @@ const PIP_GAP = 3;
 const PIP_STRIDE = PIP_W + PIP_GAP;
 const PARTICLES_PER_PIP = 7;
 const FLOAT_DURATION = 900;
+const GAIN_FLOAT_DURATION = 700;
 
 function buildParticles(fromIdx, toIdx) {
   const out = [];
@@ -41,6 +42,29 @@ function buildParticles(fromIdx, toIdx) {
         size: 2 + Math.random() * 2.5,
         color: Math.random() < 0.55 ? 'white' : '#f97316',
         delay: Math.random() * 220,
+      });
+    }
+  }
+  return out;
+}
+
+function buildGainParticles(fromIdx, toIdx) {
+  const out = [];
+  for (let i = fromIdx; i < toIdx; i++) {
+    const cx = i * PIP_STRIDE + PIP_W / 2;
+    const cy = PIP_W / 2;
+    for (let j = 0; j < PARTICLES_PER_PIP; j++) {
+      const angle = (j / PARTICLES_PER_PIP) * Math.PI * 2 + Math.random() * 0.6;
+      const radius = 22 + Math.random() * 18;
+      out.push({
+        id: `gain-${Date.now()}-${i}-${j}-${Math.random()}`,
+        cx,
+        cy,
+        tx: Math.cos(angle) * radius,
+        ty: Math.sin(angle) * radius,
+        size: 2 + Math.random() * 2.5,
+        color: 'white',
+        delay: Math.random() * 180,
       });
     }
   }
@@ -86,6 +110,7 @@ export default function SamuraiResourceBar({ resources, planned = {}, plannedGai
   const freeFilled = Math.max(0, current - plannedAmount);
 
   const [particles, setParticles] = useState([]);
+  const [gainParticles, setGainParticles] = useState([]);
   const prevCurrentRef = useRef(current);
 
   useEffect(() => {
@@ -96,6 +121,11 @@ export default function SamuraiResourceBar({ resources, planned = {}, plannedGai
       setParticles(p => [...p, ...born]);
       const ids = new Set(born.map(p => p.id));
       setTimeout(() => setParticles(p => p.filter(pt => !ids.has(pt.id))), FLOAT_DURATION + 300);
+    } else if (current > prev) {
+      const born = buildGainParticles(prev, current);
+      setGainParticles(p => [...p, ...born]);
+      const ids = new Set(born.map(p => p.id));
+      setTimeout(() => setGainParticles(p => p.filter(pt => !ids.has(pt.id))), GAIN_FLOAT_DURATION + 300);
     }
   }, [current]);
 
@@ -117,6 +147,11 @@ export default function SamuraiResourceBar({ resources, planned = {}, plannedGai
           0%   { transform: translate(0, 0) scale(1); opacity: 1; }
           20%  { opacity: 0.9; }
           100% { transform: translate(var(--tx), var(--ty)) scale(0.2); opacity: 0; }
+        }
+        @keyframes spiritGainFloat {
+          0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+          80%  { opacity: 0.7; }
+          100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
         }
       `}</style>
       <div className="relative flex items-center justify-center">
@@ -150,6 +185,27 @@ export default function SamuraiResourceBar({ resources, planned = {}, plannedGai
                 '--tx': `${p.tx}px`,
                 '--ty': `${p.ty}px`,
                 animation: `spiritFloat ${FLOAT_DURATION}ms ease-in ${p.delay}ms forwards`,
+                pointerEvents: 'none',
+                zIndex: 10,
+              }}
+            />
+          ))}
+
+          {gainParticles.map(p => (
+            <div
+              key={p.id}
+              style={{
+                position: 'absolute',
+                left: p.cx - p.size / 2,
+                top: p.cy - p.size / 2,
+                width: p.size,
+                height: p.size,
+                borderRadius: '50%',
+                background: p.color,
+                boxShadow: `0 0 6px 1px ${p.color}`,
+                '--tx': `${p.tx}px`,
+                '--ty': `${p.ty}px`,
+                animation: `spiritGainFloat ${GAIN_FLOAT_DURATION}ms ease-out ${p.delay}ms forwards`,
                 pointerEvents: 'none',
                 zIndex: 10,
               }}
