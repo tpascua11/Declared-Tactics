@@ -39,21 +39,28 @@ export function projectedSpeedPenalty(queue, slotIndex) {
 
 // Returns the projected speed influence for a card at slotIndex —
 // combines current pool SPEED_CALC tags with self tags from earlier queued cards.
-// NOTE: Does not simulate the IMBUE decrement, so action-based boosts (e.g. SPEED_BOOST)
-// show as active for ALL cards after the source, not just the next N. If you have 5 cards
-// after a 3-stack Shinsoku, slots 4 and 5 still show +60 in the preview even though the
-// buff would be consumed. Acceptable simplification for queue preview — revisit if a card
-// needs accurate multi-action boost display.
+// Simulates IMBUE consumption per slot so action-mode boosts (e.g. SPEED_BOOST from
+// Shinsoku) are correctly shown only until the first non-SPEED_ACTION card consumes them.
 export function projectedSpeedInfluence(tagPool, queue, slotIndex) {
   let tags = (tagPool ?? []).map(t => ({ ...t }));
 
   for (let i = 0; i < slotIndex; i++) {
     const slot = queue[i];
     if (!slot) continue;
+
+    // Simulate IMBUE: consume tags that this slot's action would spend
+    const fakePayload = { properties: [...(slot.properties ?? [])] };
+    tags = tags.filter(tag => {
+      const entry = battle_registry[tag.tag_name];
+      if (!entry?.phases?.includes('IMBUE')) return true;
+      const result = entry.handlers['IMBUE'](fakePayload, null, tag);
+      return !result.consumed;
+    });
+
+    // Apply self tags from this slot (IMBUE runs before SELF TAGS at runtime)
     for (const tag of slot.tags?.self ?? []) {
       const entry = battle_registry[tag.tag_name];
       if (!entry?.phases?.includes('SPEED_CALC')) continue;
-      // Use onApply so stacking tags (e.g. SPEED_BOOST) merge correctly
       if (entry.onApply) {
         entry.onApply(tags, { ...tag, tier: 'condition' });
       } else {

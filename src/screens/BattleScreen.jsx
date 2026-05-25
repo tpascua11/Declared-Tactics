@@ -439,6 +439,7 @@ export default function BattleScreen() {
                 fizzlingCard={gs.pendingAnimation?.find(a => a.type === 'fizzle') ? { name: gs.pendingAnimation.find(a => a.type === 'fizzle').cardName } : null}
                 tagPool={player.active_tag_pool}
                 baseSpeed={player.base_speed}
+                actionCount={player.action_count ?? 0}
                 allowRetry={!!gs.scenario?.allow_retry}
                 onRetry={retry}
               />

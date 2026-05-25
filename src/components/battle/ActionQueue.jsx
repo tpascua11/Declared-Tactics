@@ -4,7 +4,7 @@
 
 import { projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 
-export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, tagPool, baseSpeed, allowRetry, onRetry }) {
+export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, tagPool, baseSpeed, actionCount = 0, allowRetry, onRetry }) {
   const filledCount = queue.filter(Boolean).length;
   const canExecute = !isBattling && filledCount > 0 && filledCount >= totalSlots;
 
@@ -129,8 +129,8 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
                   <span className="text-[11px] font-bold font-mono"
                     style={{ color: slot ? slot.color : '#4b5563' }}>
                     {slot
-                      ? `SPD ${(baseSpeed + (slot.speed_mod ?? 0)) - projectedSpeedPenalty(queue, i) + projectedSpeedInfluence(tagPool, queue, i)}`
-                      : (projectedSpeedPenalty(queue, i) > 0 ? `−${projectedSpeedPenalty(queue, i)} SPD` : '—')
+                      ? `SPD ${(baseSpeed + (slot.speed_mod ?? 0)) - (projectedSpeedPenalty(queue, i) + actionCount * 20) + projectedSpeedInfluence(tagPool, queue, i)}`
+                      : (projectedSpeedPenalty(queue, i) + actionCount * 20 > 0 ? `−${projectedSpeedPenalty(queue, i) + actionCount * 20} SPD` : '—')
                     }
                   </span>
                 </div>
