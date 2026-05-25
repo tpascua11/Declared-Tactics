@@ -47,5 +47,5 @@
 @keyframes showerFall {
   0%   { opacity: 0;   transform: translateY(0)     rotate(var(--shower-start-rot, 0deg)); }
   12%  { opacity: 1; }
-  100% { opacity: 0.6; transform: translateY(115vh) rotate(var(--shower-end-rot,   0deg)); }
+  100% { opacity: 0.6; transform: translateY(150vh) rotate(var(--shower-end-rot,   0deg)); }
 }
