@@ -6,6 +6,7 @@ import { useEffect, useMemo } from 'react';
 import { usePlayer } from '../context/PlayerContext';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
 import { COMPLETION_MUSIC, MUSIC_REGISTRY } from '../assets/Music/index';
+import { getMusicVolume } from '../hooks/useMusic';
 import './GameFinishScreen.css';
 
 const COLORS = [
@@ -74,7 +75,7 @@ export default function GameFinishScreen() {
     const src = MUSIC_REGISTRY[trackId];
     if (!src) return;
     const audio = new Audio(src);
-    audio.volume = 0.35;
+    audio.volume = Math.min(1, 0.35 * getMusicVolume());
     audio.loop = true;
     audio.play().catch(() => {});
     return () => { audio.pause(); audio.currentTime = 0; };

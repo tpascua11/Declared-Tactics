@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import './CardShowerTransition.css';
 import rainSfx from '../../assets/Sound_Effects/RAIN.wav';
+import { getSfxVolume } from '../../hooks/useMusic';
 
 const _rainAudio = new Audio(rainSfx);
-_rainAudio.volume = 0.1;
 
 const COLORS = [
   [212, 168,  75],
@@ -41,6 +41,7 @@ export default function CardShowerTransition() {
   const cards = useMemo(buildCards, []);
 
   useEffect(() => {
+    _rainAudio.volume = Math.min(1, 0.1 * getSfxVolume());
     _rainAudio.currentTime = 0;
     _rainAudio.play().catch(() => {});
   }, []);

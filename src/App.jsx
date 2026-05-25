@@ -13,7 +13,7 @@ import MapScreen from './screens/MapScreen';
 import GameFinishScreen from './screens/GameFinishScreen';
 import CardShowerTransition from './components/shared/CardShowerTransition';
 import { introMusic } from './assets/Music/index';
-import { useMusicVolume } from './hooks/useMusic';
+import { useMusicVolume, getMusicVolume } from './hooks/useMusic';
 import * as ASSETS from './assets';
 
 const INTRO_PHASES = new Set(['TITLE', 'CHARACTER_SELECT']);
@@ -28,7 +28,7 @@ function getIntroAudio() {
   if (!window._introAudio) {
     window._introAudio = new Audio(introMusic);
     window._introAudio.loop = true;
-    window._introAudio.volume = 0.2;
+    window._introAudio.volume = Math.min(1, 0.2 * getMusicVolume());
   }
   return window._introAudio;
 }

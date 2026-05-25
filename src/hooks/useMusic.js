@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 
 const STORAGE_KEY = 'daq_music_volume';
-const DEFAULT_VOLUME = 0.75;
+const DEFAULT_VOLUME = 0.5;
 
 function getStoredVolume() {
   return parseFloat(localStorage.getItem(STORAGE_KEY) ?? DEFAULT_VOLUME);
+}
+
+export function getMusicVolume() {
+  return getStoredVolume();
 }
 
 // Module-level so all active useMusic instances update together when volume changes
@@ -30,7 +34,7 @@ export function useMusicVolume() {
 
 // ── UI volume (menu/button sounds) ───────────────────────────────────────────
 const UI_STORAGE_KEY = 'daq_ui_volume';
-const UI_DEFAULT_VOLUME = 1.0;
+const UI_DEFAULT_VOLUME = 0.5;
 
 
 function getStoredUiVolume() {
@@ -63,7 +67,7 @@ export function useUiVolume() {
 
 // ── SFX volume (battle sound effects) ────────────────────────────────────────
 const SFX_STORAGE_KEY = 'daq_sfx_volume';
-const SFX_DEFAULT_VOLUME = 0.7;
+const SFX_DEFAULT_VOLUME = 0.5;
 
 function getStoredSfxVolume() {
   return parseFloat(localStorage.getItem(SFX_STORAGE_KEY) ?? SFX_DEFAULT_VOLUME);
