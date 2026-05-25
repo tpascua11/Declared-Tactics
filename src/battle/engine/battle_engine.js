@@ -103,7 +103,7 @@ export function InteractionCheck(actionA, actionB) {
     return {
       resultA: 'NULLIFY',
       resultB: 'NULLIFY',
-      log: { msg: `⚡ CLASH! "${actionA.name}" vs "${actionB.name}" — both cancelled!`, type: 'clash' },
+      log: { msg: `[${String(actionA.calc_speed).padStart(3, ' ')}v${String(actionB.calc_speed).padStart(3, ' ')}] ⚡ CLASH! "${actionA.name}" vs "${actionB.name}" — both cancelled!`, type: 'clash' },
     };
   }
 
@@ -113,7 +113,7 @@ export function InteractionCheck(actionA, actionB) {
     return {
       resultA: 'EXECUTE',
       resultB: 'SKIP',
-      log: { msg: `⚡ INTERRUPT! "${actionA.name}" suppresses "${actionB.name}"`, type: 'clash' },
+      log: { msg: `[${String(actionA.calc_speed).padStart(3, ' ')}v${String(actionB.calc_speed).padStart(3, ' ')}] ⚡ INTERRUPT! "${actionA.name}" suppresses "${actionB.name}"`, type: 'clash' },
     };
   }
 
@@ -237,7 +237,7 @@ function runPhasePreAction(tag_pool, action, owner) {
   for (const [resourceType, amount] of Object.entries(action.cost ?? {})) {
     const res = owner.resources?.[resourceType];
     if (!res || res.current < amount) {
-      logs.push({ msg: `💨 "${action.name}" fizzled — not enough ${resourceType}`, type: 'fizzle' });
+      logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] 💨 "${action.name}" fizzled — not enough ${resourceType}`, type: 'fizzle' });
       return { cancelled: true, logs, tag_pool: remaining };
     }
   }
@@ -346,7 +346,7 @@ export function ExecuteAction(action, interaction_result, state) {
   let newState = structuredClone(state);
 
   if (interaction_result === 'NULLIFY') {
-    logs.push({ msg: `💨 "${action.name}" was nullified`, type: 'clash' });
+    logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] 💨 "${action.name}" was nullified`, type: 'clash' });
     return { newState, logs };
   }
 
@@ -372,7 +372,7 @@ export function ExecuteAction(action, interaction_result, state) {
     ? target
     : newState.characters.find(c => c.faction === target.faction && c.id !== action.owner_id && c.health > 0) ?? null;
   const retargeted = resolvedTarget && resolvedTarget.id !== target.id;
-  if (retargeted) logs.push({ msg: `🔀 ${action.name} retargeted to ${resolvedTarget.name}`, type: 'info' });
+  if (retargeted) logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] 🔀 ${action.name} retargeted to ${resolvedTarget.name}`, type: 'info' });
 
   // ── RESOLVE TAG INTERACTIONS ──
   // Check if this action has tag_interactions that match any traits on the
@@ -410,7 +410,7 @@ export function ExecuteAction(action, interaction_result, state) {
           tag.power = Math.floor(tag.power * (1 + interaction.bonus_multiplier));
         }
       }
-      logs.push({ msg: `⚡ ${action.name} exploits ${resolvedTarget.name}'s stance! +${Math.round(interaction.bonus_multiplier * 100)}% damage`, type: 'dmg' });
+      logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] ⚡ ${action.name} exploits ${resolvedTarget.name}'s stance! +${Math.round(interaction.bonus_multiplier * 100)}% damage`, type: 'dmg' });
     }
   }
 
@@ -492,7 +492,7 @@ export function ExecuteAction(action, interaction_result, state) {
         defTarget.temp_hp = (defTarget.temp_hp ?? 0) - absorbed;
         defTarget.health = Math.max(0, defTarget.health - (dmg.power - absorbed));
         dmg_this_target += dmg.power;
-        logs.push({ msg: `⚔️ ${owner.name} uses ${action.name} → ${defTarget.name} takes ${dmg.power} ${dmg.element} dmg`, type: 'dmg' });
+        logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] ⚔️ ${owner.name} uses ${action.name} → ${defTarget.name} takes ${dmg.power} ${dmg.element} dmg`, type: 'dmg' });
       }
       total_damage += dmg_this_target;
       aoeHits.push({ targetId: defTarget.id, damage: dmg_this_target });
@@ -502,7 +502,7 @@ export function ExecuteAction(action, interaction_result, state) {
         const entry = battle_registry[tag.tag_name];
         if (!entry?.phases?.includes('DELIVERY')) {
           defTarget.active_tag_pool = addTagToPool(defTarget.active_tag_pool, tag);
-          logs.push({ msg: `🔻 ${defTarget.name} gains ${tag.tag_name}`, type: 'debuff' });
+          logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] 🔻 ${defTarget.name} gains ${tag.tag_name}`, type: 'debuff' });
         }
       }
 
@@ -511,7 +511,7 @@ export function ExecuteAction(action, interaction_result, state) {
       defTarget.active_tag_pool = runPhaseOnReceive(defTarget.active_tag_pool, defPayload, defTarget, hit_result_this);
     }
   } else {
-    logs.push({ msg: `💨 ${owner.name} uses ${action.name} — no targets remaining`, type: 'info' });
+    logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] 💨 ${owner.name} uses ${action.name} — no targets remaining`, type: 'info' });
   }
 
   // AOE complete-miss — every target evaded, fire ON_MISS on the attacker
@@ -528,12 +528,12 @@ export function ExecuteAction(action, interaction_result, state) {
       const result = entry.handlers['DELIVERY'](payload, owner, tag);
       payload = result.payload || payload;
       if (tag.tag_name === 'HEAL') {
-        logs.push({ msg: `💙 ${owner.name} gains ${tag.power} temp HP`, type: 'heal' });
+        logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] 💙 ${owner.name} gains ${tag.power} temp HP`, type: 'heal' });
       }
     } else {
       // Pass action as context so registry entries can stamp action-time data (e.g. calc_speed)
       owner.active_tag_pool = addTagToPool(owner.active_tag_pool, tag, action);
-      logs.push({ msg: `✨ ${owner.name} gains ${tag.tag_name}`, type: 'buff' });
+      logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] ✨ ${owner.name} gains ${tag.tag_name}`, type: 'buff' });
     }
   }
 
