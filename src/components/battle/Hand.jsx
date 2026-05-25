@@ -65,6 +65,8 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
   }
 
 
+  const restartFaded = isDefeated && !allowRetry;
+
   return (
     <div className="h-[180px] flex-shrink-0 flex flex-col border-t border-white/10 mb-2"
       style={{ background: 'rgba(0,0,0,0.25)' }}>
@@ -73,25 +75,20 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
       <div className="flex-shrink-0 flex border-b border-white/10" style={{ height: '2.5rem', position: 'relative', zIndex: isDefeated ? 9003 : 0 }}>
 
         {/* LEFT — restart battle (hold to activate) */}
-        {(() => {
-          const faded = isDefeated && !allowRetry;
-          return (
-            <div
-              className={`w-[25%] flex items-center justify-center border-r border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10 hover:border-white/30${isDefeated && !faded ? ' restart-marching-ants' : ''}`}
-              style={{ cursor: 'pointer' }}
-              onMouseDown={handleHoldStart}
-              onMouseUp={handleHoldEnd}
-              onMouseLeave={handleHoldEnd}
-              onTouchStart={handleHoldStart}
-              onTouchEnd={handleHoldEnd}
-            >
-              <span className="text-[11px] font-mono tracking-widest relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : faded ? '#ffffff22' : '#ffffff', textShadow: isDefeated && !faded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>HOLD TO RESTART BATTLE</span>
-              {holdProgress > 0 && (
-                <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
-              )}
-            </div>
-          );
-        })()}
+        <div
+          className={`w-[25%] flex items-center justify-center border-r border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10 hover:border-white/30${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
+          style={{ cursor: 'pointer' }}
+          onMouseDown={handleHoldStart}
+          onMouseUp={handleHoldEnd}
+          onMouseLeave={handleHoldEnd}
+          onTouchStart={handleHoldStart}
+          onTouchEnd={handleHoldEnd}
+        >
+          <span className="text-[11px] font-mono tracking-widest relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : '#ffffff', textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>HOLD TO RESTART BATTLE</span>
+          {holdProgress > 0 && (
+            <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
+          )}
+        </div>
 
         {/* MIDDLE — resource bar */}
         <div className="flex-1 flex items-center justify-center px-6">

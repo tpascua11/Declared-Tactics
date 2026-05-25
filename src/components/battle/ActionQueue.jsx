@@ -5,6 +5,24 @@
 import { useRef, useState } from 'react';
 import { projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 
+const DEFEAT_BTN_BASE = { width: '20rem', position: 'relative', zIndex: 9003, color: '#fff' };
+const STYLE_KEEP_FIGHTING = { ...DEFEAT_BTN_BASE, background: 'linear-gradient(to right, #e94560, #b83b5e)', border: '2px solid #b8860b', boxShadow: '0 0 14px rgba(233,69,96,0.5), 0 0 10px rgba(184,134,11,0.4)' };
+const STYLE_RESTART       = { ...DEFEAT_BTN_BASE, background: 'linear-gradient(to right, #c0392b, #8e1c1c)', border: '2px solid #7a1a1a', boxShadow: '0 0 14px rgba(192,57,43,0.5), 0 0 8px rgba(142,28,28,0.4)' };
+const STYLE_RETURN_TO_MAP = { position: 'relative', zIndex: 9003, background: 'linear-gradient(to right, #e2e8f0, #ffffff)', color: '#0f0f1a', border: '2px solid #b8860b', boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25), 0 0 10px rgba(184,134,11,0.4)', cursor: 'pointer' };
+
+function DefeatPrimaryButton({ onClick, style, children }) {
+  return (
+    <button
+      className="py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
+      style={style}
+      onClick={onClick}
+    >
+      <span className="execute-shine" />
+      {children}
+    </button>
+  );
+}
+
 export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, tagPool, baseSpeed, actionCount = 0, allowRetry, onRetry, onRestartBattle }) {
   const filledCount = queue.filter(Boolean).length;
   const canExecute = !isBattling && filledCount > 0 && filledCount >= totalSlots;
@@ -190,76 +208,25 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
         </button>
       )}
 
-      {/* Result — tip centered in slot-area space, button at natural position */}
+      {/* Result buttons */}
       {isResult && (
-        <>
-          {/* Slot-area placeholder — same height as the hidden slot row, centers the tip */}
-          <div style={{ width: 'max-content' }}>
+        <div style={{ width: 'max-content' }}>
           {result !== 'WIN' ? (
-            <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
-              {/* Keep on Fighting or Restart Battle */}
-              {showRetry ? (
-                <button
-                  className="py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
-                  style={{
-                    width: '20rem',
-                    position: 'relative',
-                    zIndex: 9003,
-                    background: 'linear-gradient(to right, #e94560, #b83b5e)',
-                    color: '#fff',
-                    border: '2px solid #b8860b',
-                    boxShadow: '0 0 14px rgba(233,69,96,0.5), 0 0 10px rgba(184,134,11,0.4)',
-                  }}
-                  onClick={onRetry}
-                >
-                  <span className="execute-shine" />
-                  Keep on Fighting!
-                </button>
-              ) : (
-                <button
-                  className="py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
-                  style={{
-                    width: '20rem',
-                    position: 'relative',
-                    zIndex: 9003,
-                    background: 'linear-gradient(to right, #c0392b, #8e1c1c)',
-                    color: '#fff',
-                    border: '2px solid #7a1a1a',
-                    boxShadow: '0 0 14px rgba(192,57,43,0.5), 0 0 8px rgba(142,28,28,0.4)',
-                  }}
-                  onClick={onRestartBattle}
-                >
-                  <span className="execute-shine" />
-                  Restart Battle
-                </button>
-              )}
-              {/* Return to Map — always shown in lose state */}
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <DefeatPrimaryButton onClick={showRetry ? onRetry : onRestartBattle} style={showRetry ? STYLE_KEEP_FIGHTING : STYLE_RESTART}>
+                {showRetry ? 'Keep on Fighting!' : 'Restart Battle'}
+              </DefeatPrimaryButton>
               <div className="group relative" style={{ width: '9rem' }}>
                 <button
                   className="w-full py-2 rounded-lg font-display tracking-widest text-sm relative overflow-hidden select-none"
-                  style={{
-                    position: 'relative',
-                    zIndex: 9003,
-                    background: 'linear-gradient(to right, #e2e8f0, #ffffff)',
-                    color: '#0f0f1a',
-                    border: '2px solid #b8860b',
-                    boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25), 0 0 10px rgba(184,134,11,0.4)',
-                    cursor: 'pointer',
-                  }}
+                  style={STYLE_RETURN_TO_MAP}
                   onMouseDown={handleHoldStart}
                   onMouseUp={handleHoldEnd}
                   onMouseLeave={handleHoldEnd}
                   onTouchStart={handleHoldStart}
                   onTouchEnd={handleHoldEnd}
                 >
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'rgba(184,134,11,0.25)',
-                    width: `${holdProgress}%`,
-                    transition: holdProgress === 0 ? 'width 0.15s ease' : 'none',
-                    pointerEvents: 'none',
-                  }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(184,134,11,0.25)', width: `${holdProgress}%`, transition: holdProgress === 0 ? 'width 0.15s ease' : 'none', pointerEvents: 'none' }} />
                   <span className="execute-shine" />
                   <span style={{ position: 'relative', zIndex: 1 }}>Return to Map</span>
                 </button>
@@ -272,22 +239,14 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
           ) : (
             <button
               className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
-              style={{
-                background: '#4da6ff',
-                color: '#fff',
-                border: '2px solid #b8860b',
-                boxShadow: '0 0 14px rgba(77,166,255,0.4), 0 0 10px rgba(184,134,11,0.4)',
-                position: 'relative',
-                zIndex: 9003,
-              }}
+              style={{ position: 'relative', zIndex: 9003, background: '#4da6ff', color: '#fff', border: '2px solid #b8860b', boxShadow: '0 0 14px rgba(77,166,255,0.4), 0 0 10px rgba(184,134,11,0.4)' }}
               onClick={onExecute}
             >
               <span className="execute-shine" />
               CONTINUE
             </button>
           )}
-          </div>
-        </>
+        </div>
       )}
     </div>
   );
