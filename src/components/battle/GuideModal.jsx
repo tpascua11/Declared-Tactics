@@ -5,6 +5,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import '../shared/shine-btn.css';
+import '../../battle/aura_animations.css';
 import { playSelectSfx } from '../../battle/animationRegistry';
 import {
   FOX_SUMMURAI_STILL_WIND,
@@ -12,9 +13,13 @@ import {
   FOX_SUMMURAI_STREAM_SLASH,
   FOX_SUMMURAI_HEAVY_STRIKE,
   FOX_QUICK_STEPS,
+  FOX_SUMMURAI_FLAME_STRIKE,
   ENM_SAM_HEAVY_STRIKE_1,
   ENEMY_FERRET_SUMURAI,
+  ENEMY_RABBIT_SUMURAI_3,
 } from '../../assets/index.js';
+import EnemyResourceBar from './EnemyResourceBar';
+import SamuraiResourceBar from '../resources/SamuraiResourceBar';
 
 const EXAMPLE_CARDS = [
   { name: 'Still Wind',   image: FOX_SUMMURAI_STILL_WIND,   color: '#e879f9', speed: 100, penalty: 0  },
@@ -299,6 +304,128 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
         )}
 
         {page === 3 && (
+          <div className="flex flex-col items-center gap-6">
+            {/* Otter Sumurai — medium card matching BattleScreen format */}
+            <div className="relative flex-shrink-0" style={{ width: '10rem', height: '15rem' }}>
+              <div className="absolute inset-0 rounded-lg border-2 overflow-hidden"
+                style={{
+                  borderColor: '#000000',
+                  boxShadow: '0 0 20px rgba(255,255,255,0.15)',
+                }}>
+              <img src={ENEMY_RABBIT_SUMURAI_3} alt="Rabbit Sumurai" className="absolute inset-0 w-full h-full object-cover" />
+              {/* flame_ember aura gradient — inside overflow-hidden */}
+              <div className="absolute inset-0 aura-flame pointer-events-none"
+                style={{ '--aura-color': '#f97316', '--aura-secondary': '#fbbf24', opacity: 0.28 }} />
+              <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-4"
+                style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)' }}>
+                <div className="text-xs font-display text-white tracking-widest text-center mb-1 relative">
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 font-mono text-[9px] text-white flex gap-px leading-none">
+                    <span>▮</span><span>▮</span>
+                  </span>
+                  RABBIT SUMURAI
+                </div>
+                <div className="w-full relative">
+                  <div className="w-full h-3 bg-gray-600/50 rounded-full overflow-hidden relative">
+                    <div className="absolute h-full" style={{ width: '100%', background: 'linear-gradient(90deg,#e94560,#ff6b6b)' }} />
+                  </div>
+                  <span className="absolute inset-0 flex items-center justify-center text-[11px] text-white font-mono leading-none pointer-events-none"
+                    style={{ textShadow: '0 0 4px rgba(0,0,0,0.9)' }}>
+                    270 / 270
+                  </span>
+                </div>
+                <EnemyResourceBar
+                  enemy={{
+                    resource_bar_type: 'sumurai',
+                    card_size: 'medium',
+                    resources: { BATTLE_SPIRIT: { current: 3, max: 10 } },
+                  }}
+                />
+              </div>
+              </div>
+
+              {/* flame_ember aura particles — outside overflow-hidden so they escape the card */}
+              <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.28 }}>
+                {Array.from({ length: 8 }).map((_, i) => {
+                  const pct = i / 7;
+                  const x = pct * 130 - 15;
+                  const driftX = x < 10 ? '7px' : x > 105 ? '-7px' : (i % 2 === 0 ? '3px' : '-2px');
+                  return (
+                    <span
+                      key={i}
+                      className="aura-ember-particle"
+                      style={{
+                        '--p-color': '#f97316',
+                        '--p-delay': `${pct * 1.8}s`,
+                        '--p-dur': `${1.8 + (i % 4) * 0.4}s`,
+                        '--x': `${x}%`,
+                        '--bottom': `${(i % 6) * 5}%`,
+                        '--drift-x': driftX,
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="space-y-4 text-base text-gray-300 leading-relaxed text-center">
+              <p>
+                The <span className="text-white font-bold">squares</span> next to the enemy name show how many <span className="text-white font-bold">actions</span> they queue each turn.
+              </p>
+              <p>
+                The <span className="text-white font-bold">suns</span> below the health bar are the enemy's <span className="text-white font-bold">Battle Spirit</span>. Enemies in this campaign fight with their own selection of Sumurai moves.
+              </p>
+              <p>
+                Once they accumulate enough <span className="text-white font-bold">Battle Spirit</span>, they will spend it to unleash <span className="text-white font-bold">powerful slashes</span>.
+              </p>
+              <p>
+                An <span className="text-white font-bold">aura</span> glowing around an enemy is your warning — act fast or prepare your defense.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {page === 4 && (
+          <>
+            {/* Battle Spirit bar */}
+            <div className="flex flex-col items-center gap-5 mb-6">
+              <div style={{ transform: 'scale(1.25)', transformOrigin: 'center top', marginBottom: '0.5rem' }}>
+                <SamuraiResourceBar resources={{ BATTLE_SPIRIT: { current: 3, max: 10 } }} />
+              </div>
+              <div className="w-full border-t border-white/10" />
+              <p className="text-base text-gray-300 leading-relaxed text-center">
+                At the end of each turn, you gain <span className="text-white font-bold">1 Battle Spirit</span>. It builds up passively — no matter what actions you take.
+              </p>
+            </div>
+
+            {/* Two cards */}
+            <div className="flex gap-8 border-t border-white/10 pt-5">
+              {/* Flame Strike */}
+              <div className="flex flex-col items-center gap-3 flex-1">
+                <ExampleCard name="Flame Strike" image={FOX_SUMMURAI_FLAME_STRIKE} color="#ef4444" speed={100} />
+                <div className="space-y-2 text-sm text-gray-300 leading-relaxed text-center">
+                  <p>
+                    <span className="text-white font-bold">Flame Strike</span> costs <span className="text-white font-bold">3 Battle Spirit</span> to cast. Once you have enough, it unleashes <span className="text-white font-bold">333 fire damage</span> and applies <span className="text-white font-bold">Burn</span>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="w-px bg-white/10 self-stretch" />
+
+              {/* Still Wind */}
+              <div className="flex flex-col items-center gap-3 flex-1">
+                <ExampleCard name="Still Wind" image={FOX_SUMMURAI_STILL_WIND} color="#e879f9" speed={100} />
+                <div className="space-y-2 text-sm text-gray-300 leading-relaxed text-center">
+                  <p>
+                    <span className="text-white font-bold">Still Wind</span> grants <span className="text-white font-bold">1 Battle Spirit</span> and activates a stance that earns more spirit per action. If the stance is already active, it <span className="text-white font-bold">heals you</span> instead. Taking damage will <span className="text-white font-bold">remove the stance early</span>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {page === 5 && (
           <>
             {/* Dodge intro */}
             <p className="text-gray-500 text-sm mb-3">This is an example of how dodge works</p>
@@ -368,14 +495,14 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
               color: '#f5d76e',
               textShadow: '0 0 20px #c8a135, 0 0 50px rgba(200,161,53,0.3)',
             }}>
-              {{ 1: 'Actions', 2: 'Targeting', 3: 'Dodge' }[page]}
+              {{ 1: 'Actions', 2: 'Targeting', 3: 'Enemy', 4: 'Battle Spirit', 5: 'Dodge' }[page]}
             </span>
-            <span className="absolute left-full ml-2 text-sm font-mono text-gray-300 whitespace-nowrap">{page}/3</span>
+            <span className="absolute left-full ml-2 text-sm font-mono text-gray-300 whitespace-nowrap">{page}/5</span>
           </span>
           <button
             className="shine-btn text-xs font-mono tracking-widest text-white border border-white/20 rounded px-4 py-2 hover:bg-white/5 transition-colors disabled:opacity-30 disabled:pointer-events-none"
             onClick={() => { playSelectSfx(); setPage(p => p + 1); }}
-            disabled={page === 3}
+            disabled={page === 5}
           >
             NEXT →
           </button>

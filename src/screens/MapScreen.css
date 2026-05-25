@@ -19,7 +19,6 @@
 
 .map-enter-btn-cell {
   overflow: hidden;
-  animation: btnReady 1.6s ease-in-out infinite;
   --shine-color: rgba(77, 166, 255, 0.5);
 }
 

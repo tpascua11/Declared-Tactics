@@ -337,10 +337,10 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, playerTypeColor
                 style={{
                   position: "relative",
                   overflow: "hidden",
-                  padding: "5px 14px",
+                  padding: "5px 22px",
                   border: "2px solid #b8860b",
                   borderRadius: 5,
-                  fontSize: 9,
+                  fontSize: 11,
                   letterSpacing: 2,
                   cursor: "pointer",
                   background: "#b91c1c",
