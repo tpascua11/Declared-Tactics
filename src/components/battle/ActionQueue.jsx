@@ -2,11 +2,37 @@
 //  ActionQueue — Card-shaped slots to the right of Vrax
 // ============================================================
 
+import { useRef, useState } from 'react';
 import { projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 
-export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, tagPool, baseSpeed, actionCount = 0, allowRetry, onRetry }) {
+export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlot, onRetargetBoxClick, onClearSlot, onExecute, isBattling, isResult, result, fizzlingCard, tagPool, baseSpeed, actionCount = 0, allowRetry, onRetry, onRestartBattle }) {
   const filledCount = queue.filter(Boolean).length;
   const canExecute = !isBattling && filledCount > 0 && filledCount >= totalSlots;
+
+  const [holdProgress, setHoldProgress] = useState(0);
+  const holdIntervalRef = useRef(null);
+
+  function handleHoldStart() {
+    if (holdIntervalRef.current) return;
+    holdIntervalRef.current = setInterval(() => {
+      setHoldProgress(prev => {
+        const next = prev + 2;
+        if (next >= 100) {
+          clearInterval(holdIntervalRef.current);
+          holdIntervalRef.current = null;
+          onExecute();
+          return 0;
+        }
+        return next;
+      });
+    }, 30);
+  }
+
+  function handleHoldEnd() {
+    clearInterval(holdIntervalRef.current);
+    holdIntervalRef.current = null;
+    setHoldProgress(0);
+  }
 
   const showRetry = isResult && result !== 'WIN' && allowRetry;
 
@@ -168,38 +194,91 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
       {isResult && (
         <>
           {/* Slot-area placeholder — same height as the hidden slot row, centers the tip */}
-          <div style={{ width: '16.5rem' }}>
-          {showRetry ? (
-            <button
-              className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
-              style={{
-                position: 'relative',
-                zIndex: 9003,
-                background: 'linear-gradient(to right, #e94560, #b83b5e)',
-                color: '#fff',
-                border: '2px solid #b8860b',
-                boxShadow: '0 0 14px rgba(233,69,96,0.5), 0 0 10px rgba(184,134,11,0.4)',
-              }}
-              onClick={onRetry}
-            >
-              <span className="execute-shine" />
-              Keep on Fighting!
-            </button>
+          <div style={{ width: 'max-content' }}>
+          {result !== 'WIN' ? (
+            <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
+              {/* Keep on Fighting or Restart Battle */}
+              {showRetry ? (
+                <button
+                  className="py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
+                  style={{
+                    width: '20rem',
+                    position: 'relative',
+                    zIndex: 9003,
+                    background: 'linear-gradient(to right, #e94560, #b83b5e)',
+                    color: '#fff',
+                    border: '2px solid #b8860b',
+                    boxShadow: '0 0 14px rgba(233,69,96,0.5), 0 0 10px rgba(184,134,11,0.4)',
+                  }}
+                  onClick={onRetry}
+                >
+                  <span className="execute-shine" />
+                  Keep on Fighting!
+                </button>
+              ) : (
+                <button
+                  className="py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
+                  style={{
+                    width: '20rem',
+                    position: 'relative',
+                    zIndex: 9003,
+                    background: 'linear-gradient(to right, #c0392b, #8e1c1c)',
+                    color: '#fff',
+                    border: '2px solid #7a1a1a',
+                    boxShadow: '0 0 14px rgba(192,57,43,0.5), 0 0 8px rgba(142,28,28,0.4)',
+                  }}
+                  onClick={onRestartBattle}
+                >
+                  <span className="execute-shine" />
+                  Restart Battle
+                </button>
+              )}
+              {/* Return to Map — always shown in lose state */}
+              <div className="group relative" style={{ width: '9rem' }}>
+                <button
+                  className="w-full py-2 rounded-lg font-display tracking-widest text-sm relative overflow-hidden select-none"
+                  style={{
+                    position: 'relative',
+                    zIndex: 9003,
+                    background: 'linear-gradient(to right, #e2e8f0, #ffffff)',
+                    color: '#0f0f1a',
+                    border: '2px solid #b8860b',
+                    boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25), 0 0 10px rgba(184,134,11,0.4)',
+                    cursor: 'pointer',
+                  }}
+                  onMouseDown={handleHoldStart}
+                  onMouseUp={handleHoldEnd}
+                  onMouseLeave={handleHoldEnd}
+                  onTouchStart={handleHoldStart}
+                  onTouchEnd={handleHoldEnd}
+                >
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'rgba(184,134,11,0.25)',
+                    width: `${holdProgress}%`,
+                    transition: holdProgress === 0 ? 'width 0.15s ease' : 'none',
+                    pointerEvents: 'none',
+                  }} />
+                  <span className="execute-shine" />
+                  <span style={{ position: 'relative', zIndex: 1 }}>Return to Map</span>
+                </button>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 font-display tracking-widest whitespace-nowrap"
+                  style={{ background: 'rgba(10,10,20,0.88)', color: '#d4a843', border: '1px solid #6b4c2a', fontSize: '0.8rem', zIndex: 9010 }}>
+                  Hold to confirm
+                </div>
+              </div>
+            </div>
           ) : (
             <button
               className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
-              style={result !== 'WIN' ? {
-                position: 'relative',
-                zIndex: 9003,
-                background: 'linear-gradient(to right, #e2e8f0, #ffffff)',
-                color: '#0f0f1a',
-                border: '2px solid #b8860b',
-                boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25), 0 0 10px rgba(184,134,11,0.4)',
-              } : {
+              style={{
                 background: '#4da6ff',
                 color: '#fff',
                 border: '2px solid #b8860b',
                 boxShadow: '0 0 14px rgba(77,166,255,0.4), 0 0 10px rgba(184,134,11,0.4)',
+                position: 'relative',
+                zIndex: 9003,
               }}
               onClick={onExecute}
             >

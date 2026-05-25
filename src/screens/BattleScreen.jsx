@@ -442,6 +442,7 @@ export default function BattleScreen() {
                 actionCount={player.action_count ?? 0}
                 allowRetry={!!gs.scenario?.allow_retry}
                 onRetry={retry}
+                onRestartBattle={handleRestartBattle}
               />
             </div>
 
@@ -460,6 +461,7 @@ export default function BattleScreen() {
             tagPool={player.active_tag_pool}
             onRestartBattle={handleRestartBattle}
             isDefeated={gs.phase === 'RESULT' && gs.result !== 'WIN'}
+            allowRetry={!!gs.scenario?.allow_retry}
           />
 
         </div>
