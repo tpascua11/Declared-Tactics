@@ -6,19 +6,23 @@ import { useRef, useState } from 'react';
 import { effectiveResourceAtExecution, projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import { DEBUG_HAND_COST } from '../../debug';
+import { playSelectSfx } from '../../battle/animationRegistry';
 import GuideModal from './GuideModal';
 import AdvancedGuideModal from './AdvancedGuideModal';
+import SettingsModal from '../map/SettingsModal';
 
 export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, tagPool, onRestartBattle, isDefeated, allowRetry }) {
   const [holdProgress, setHoldProgress] = useState(0);
   const [guideOpen, setGuideOpen] = useState(false);
   const [advancedGuideOpen, setAdvancedGuideOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const holdIntervalRef = useRef(null);
 
   function handleHoldStart(e) {
     if (!onRestartBattle) return;
     e.preventDefault();
     if (holdIntervalRef.current) return;
+    playSelectSfx();
     let elapsed = 0;
     holdIntervalRef.current = setInterval(() => {
       elapsed += 20;
@@ -74,20 +78,29 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
       {/* Button row — 3 sections */}
       <div className="flex-shrink-0 flex border-b border-white/10" style={{ height: '2.5rem', position: 'relative', zIndex: isDefeated ? 9003 : 0 }}>
 
-        {/* LEFT — restart battle (hold to activate) */}
-        <div
-          className={`w-[25%] flex items-center justify-center border-r border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10 hover:border-white/30${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
-          style={{ cursor: 'pointer' }}
-          onMouseDown={handleHoldStart}
-          onMouseUp={handleHoldEnd}
-          onMouseLeave={handleHoldEnd}
-          onTouchStart={handleHoldStart}
-          onTouchEnd={handleHoldEnd}
-        >
-          <span className="text-[11px] font-mono tracking-widest relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : '#ffffff', textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>HOLD TO RESTART BATTLE</span>
-          {holdProgress > 0 && (
-            <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
-          )}
+        {/* LEFT — settings + restart battle (split inside fixed 25% so resource bar doesn't shift) */}
+        <div className="w-[25%] flex border-r border-white/10">
+          <div
+            className="w-[38%] flex items-center justify-center border-r border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10"
+            style={{ cursor: 'pointer' }}
+            onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
+          >
+            <span className="text-[10px] font-mono tracking-wider relative z-10" style={{ color: '#ffffff' }}>SETTINGS</span>
+          </div>
+          <div
+            className={`flex-1 flex items-center justify-center transition-colors relative overflow-hidden select-none hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
+            style={{ cursor: 'pointer' }}
+            onMouseDown={handleHoldStart}
+            onMouseUp={handleHoldEnd}
+            onMouseLeave={handleHoldEnd}
+            onTouchStart={handleHoldStart}
+            onTouchEnd={handleHoldEnd}
+          >
+            <span className="text-[10px] font-mono tracking-wider relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : '#ffffff', textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>HOLD TO RESTART BATTLE</span>
+            {holdProgress > 0 && (
+              <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
+            )}
+          </div>
         </div>
 
         {/* MIDDLE — resource bar */}
@@ -100,13 +113,14 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
 
         {/* RIGHT — how to play */}
         <div
-          className="w-[25%] flex items-center justify-center border-l border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10 hover:border-white/30"
+          className="w-[25%] flex items-center justify-center border-l border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10"
           style={{ cursor: 'pointer' }}
-          onClick={() => setGuideOpen(true)}
+          onClick={() => { playSelectSfx(); setGuideOpen(true); }}
         >
           <span className="text-[11px] font-mono tracking-widest relative z-10" style={{ color: '#ffffff' }}>HOW TO PLAY</span>
         </div>
 
+        {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
         {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} onOpenAdvanced={() => { setGuideOpen(false); setAdvancedGuideOpen(true); }} nudgeUp={180} />}
         {advancedGuideOpen && <AdvancedGuideModal onClose={() => setAdvancedGuideOpen(false)} nudgeUp={180} />}
 
