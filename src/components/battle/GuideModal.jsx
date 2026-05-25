@@ -2,6 +2,7 @@
 //  GuideModal — How To Play overlay (template)
 // ============================================================
 
+import { useState } from 'react';
 import '../shared/shine-btn.css';
 import { playSelectSfx } from '../../battle/animationRegistry';
 import {
@@ -9,6 +10,8 @@ import {
   FOX_SUMMURAI_BATTOJUTSU,
   FOX_SUMMURAI_STREAM_SLASH,
   FOX_SUMMURAI_HEAVY_STRIKE,
+  FOX_QUICK_STEPS,
+  ENM_SAM_HEAVY_STRIKE_1,
 } from '../../assets/index.js';
 
 const EXAMPLE_CARDS = [
@@ -64,77 +67,146 @@ function ExampleCard({ name, image, color, speed, penalty }) {
       {/* Speed label below card */}
       <span className="text-base font-bold font-mono text-white">SPD {speed}</span>
 
-      {/* Speed penalty label */}
-      <span className="flex flex-col items-center text-[11px] font-mono text-center leading-tight" style={{ color: '#9ca3af', marginTop: '8px' }}>
-        <span>{penalty} Speed Penalty</span>
-        <span style={{ visibility: penalty > 0 ? 'visible' : 'hidden' }}>(−{penalty * 20} Speed)</span>
-      </span>
+      {/* Speed penalty label — only shown on page 1 */}
+      {penalty !== undefined && (
+        <span className="flex flex-col items-center text-[11px] font-mono text-center leading-tight" style={{ color: '#9ca3af', marginTop: '8px' }}>
+          <span>{penalty} Speed Penalty</span>
+          <span style={{ visibility: penalty > 0 ? 'visible' : 'hidden' }}>(−{penalty * 20} Speed)</span>
+        </span>
+      )}
     </div>
   );
 }
 
-export default function GuideModal({ onClose, onOpenAdvanced, nudgeUp = 0 }) {
+export default function GuideModal({ onClose, nudgeUp = 0 }) {
+  const [page, setPage] = useState(1);
+
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70" style={{ paddingBottom: nudgeUp }} onClick={onClose}>
       <div
-        className="relative w-[80%] max-w-2xl bg-gray-900 border border-white/20 rounded-lg p-8 text-white font-mono"
+        className="relative w-[80%] max-w-2xl bg-gray-900 border border-white/20 rounded-lg p-8 text-white font-mono flex flex-col"
+        style={{ height: '54rem' }}
         onClick={e => e.stopPropagation()}
       >
-        <h2 className="text-sm tracking-widest uppercase text-gray-400 mb-6">How To Play</h2>
+        <h2 className="text-sm tracking-widest uppercase text-gray-400 mb-6 flex-shrink-0">How To Play</h2>
 
-        {/* 3-card queue example */}
-        <div className="flex items-center justify-center gap-3 mb-6">
-          {EXAMPLE_CARDS.map((card, i) => (
-            <div key={card.name} className="flex items-center gap-3">
-              <ExampleCard {...card} />
-              {i < EXAMPLE_CARDS.length - 1 && (
-                <span className="text-gray-600 text-2xl font-mono">→</span>
-              )}
+        <div className="flex-1 overflow-y-auto min-h-0">
+        {page === 1 && (
+          <>
+            {/* 3-card queue example */}
+            <div className="flex items-center justify-center gap-3 mb-6">
+              {EXAMPLE_CARDS.map((card, i) => (
+                <div key={card.name} className="flex items-center gap-3">
+                  <ExampleCard {...card} />
+                  {i < EXAMPLE_CARDS.length - 1 && (
+                    <span className="text-gray-600 text-2xl font-mono">→</span>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Guide text */}
-        <div className="space-y-4 text-base text-gray-300 leading-relaxed border-t border-white/10 pt-5">
-          <p>
-            Each turn, pick <span className="text-white font-bold">3 actions</span> to fill your queue. They always fire in the <span className="text-white font-bold">order you queued them</span>.
-          </p>
-          <p>
-            Each action applies a <span className="text-white font-bold">−20 Speed Penalty</span> to the next queued action. That's why your actions drop from 100 → 80 → 60.
-          </p>
-          <p>
-            Most enemies have a base speed of <span className="text-white font-bold">SPD 100</span> and suffer the same <span className="text-white font-bold">−20 Speed Penalty</span>. Enemies queue <span className="text-white font-bold">1 or 2 actions</span> per turn. Bosses queue <span className="text-white font-bold">3</span>.
-          </p>
-        </div>
+            {/* Guide text */}
+            <div className="space-y-4 text-base text-gray-300 leading-relaxed border-t border-white/10 pt-5">
+              <p>
+                Each turn, pick <span className="text-white font-bold">3 actions</span> to fill your queue. They always fire in the <span className="text-white font-bold">order you queued them</span>.
+              </p>
+              <p>
+                Each action applies a <span className="text-white font-bold">−20 Speed Penalty</span> to the next queued action. That's why your actions drop from 100 → 80 → 60.
+              </p>
+              <p>
+                Most enemies have a base speed of <span className="text-white font-bold">SPD 100</span> and suffer the same <span className="text-white font-bold">−20 Speed Penalty</span>. Enemies queue <span className="text-white font-bold">1 or 2 actions</span> per turn. Bosses queue <span className="text-white font-bold">3</span>.
+              </p>
+            </div>
 
-        {/* Speed mod example */}
-        <div className="flex items-center gap-6 border-t border-white/10 pt-5 mt-4">
-          <div className="flex-shrink-0">
-            <ExampleCard name="Heavy Slices" image={FOX_SUMMURAI_HEAVY_STRIKE} color="#f97316" speed={70} />
-          </div>
-          <div className="space-y-3 text-base text-gray-300 leading-relaxed">
-            <p>
-              Some actions have a <span className="text-white font-bold">Speed Modifier</span>. Heavy Slices has <span className="text-white font-bold">−10 SPD</span>, so it fires 10 slower than your base speed for that slot.
-            </p>
-            <p>
-              If it's your 2nd action (base SPD 80), the modifier brings it to <span className="text-white font-bold">SPD 70</span>.
-            </p>
-            <p className="text-gray-500 text-sm">
-              Note: the modifier only affects that action's speed — it does <span className="text-white">not</span> stack into future speed penalties.
-            </p>
-          </div>
-        </div>
-
-        {onOpenAdvanced && (
-          <div className="flex justify-end mt-6 border-t border-white/10 pt-4">
-            <button
-              className="shine-btn text-xs font-mono tracking-widest text-white border border-white/20 rounded px-4 py-2 hover:bg-white/5 transition-colors"
-              onClick={() => { playSelectSfx(); onOpenAdvanced(); }}
-            >
-              ADVANCED GUIDE
-            </button>
-          </div>
+            {/* Speed mod example */}
+            <div className="flex items-center gap-6 border-t border-white/10 pt-5 mt-4">
+              <div className="flex-shrink-0">
+                <ExampleCard name="Heavy Slices" image={FOX_SUMMURAI_HEAVY_STRIKE} color="#f97316" speed={70} />
+              </div>
+              <div className="space-y-3 text-base text-gray-300 leading-relaxed">
+                <p>
+                  Some actions have a <span className="text-white font-bold">Speed Modifier</span>. Heavy Slices has <span className="text-white font-bold">−10 SPD</span>, so it fires 10 slower than your base speed for that slot.
+                </p>
+                <p>
+                  If it's your 2nd action (base SPD 80), the modifier brings it to <span className="text-white font-bold">SPD 70</span>.
+                </p>
+                <p className="text-gray-500 text-sm">
+                  Note: the modifier only affects that action's speed — it does <span className="text-white">not</span> stack into future speed penalties.
+                </p>
+              </div>
+            </div>
+          </>
         )}
+
+        {page === 2 && (
+          <>
+            {/* Dodge intro */}
+            <p className="text-gray-500 text-sm mb-3">This is an example of how dodge works</p>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-10 flex-shrink-0">
+                <ExampleCard name="Heavy Slice" image={ENM_SAM_HEAVY_STRIKE_1} color="#ef4444" speed={70} />
+                <ExampleCard name="Heavy Slice" image={ENM_SAM_HEAVY_STRIKE_1} color="#ef4444" speed={90} />
+                <ExampleCard name="Quick Steps" image={FOX_QUICK_STEPS} color="#a5f3fc" speed={100} />
+              </div>
+              <div className="space-y-3 text-base text-gray-300 leading-relaxed">
+                <p>
+                  <span className="text-white font-bold">Quick Steps</span> is an essential card for the Sumurai in battle.
+                </p>
+                <p>
+                  It allows you to <span className="text-white font-bold">dodge attacks</span> within a <span className="text-white font-bold">−10 speed range</span> window.
+                </p>
+              </div>
+            </div>
+
+            {/* Dodge range breakdown */}
+            <div className="flex items-center gap-6 mt-6 border-t border-white/10 pt-5">
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <ExampleCard name="Heavy Slice" image={ENM_SAM_HEAVY_STRIKE_1} color="#ef4444" speed={90} />
+                <span className="text-gray-600 text-2xl font-mono">→</span>
+                <ExampleCard name="Quick Steps" image={FOX_QUICK_STEPS} color="#a5f3fc" speed={100} />
+              </div>
+              <div className="space-y-3 text-base text-gray-300 leading-relaxed">
+                <p>
+                  Since <span className="text-white font-bold">Quick Steps</span> is at <span className="text-white font-bold">SPD 100</span>, any attack within a <span className="text-white font-bold">−10 speed range</span> (SPD 90–100) will be <span className="text-white font-bold">dodged</span>.
+                </p>
+              </div>
+            </div>
+
+            {/* Out of dodge range */}
+            <div className="flex items-center gap-6 mt-6 border-t border-white/10 pt-5">
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <ExampleCard name="Heavy Slice" image={ENM_SAM_HEAVY_STRIKE_1} color="#ef4444" speed={70} />
+                <span className="text-gray-600 text-2xl font-mono">→</span>
+                <ExampleCard name="Quick Steps" image={FOX_QUICK_STEPS} color="#a5f3fc" speed={100} />
+              </div>
+              <div className="space-y-3 text-base text-gray-300 leading-relaxed">
+                <p>
+                  At <span className="text-white font-bold">SPD 70</span>, Heavy Slice falls <span className="text-white font-bold">outside</span> the −10 range. Quick Steps <span className="text-white font-bold">will not dodge</span> this attack.
+                </p>
+              </div>
+            </div>
+          </>
+        )}
+        </div>
+
+        {/* Navigation footer */}
+        <div className="flex items-center justify-between mt-6 border-t border-white/10 pt-4">
+          <button
+            className="shine-btn text-xs font-mono tracking-widest text-white border border-white/20 rounded px-4 py-2 hover:bg-white/5 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+            onClick={() => { playSelectSfx(); setPage(p => p - 1); }}
+            disabled={page === 1}
+          >
+            ← BACK
+          </button>
+          <span className="text-gray-600 text-xs font-mono">{page} / 2</span>
+          <button
+            className="shine-btn text-xs font-mono tracking-widest text-white border border-white/20 rounded px-4 py-2 hover:bg-white/5 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+            onClick={() => { playSelectSfx(); setPage(p => p + 1); }}
+            disabled={page === 2}
+          >
+            NEXT →
+          </button>
+        </div>
 
         <button
           className="absolute top-3 right-4 text-gray-500 hover:text-white text-lg leading-none"
