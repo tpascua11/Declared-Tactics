@@ -22,47 +22,57 @@ export default function BattleLog({ logs, turn }) {
   }, [logs]);
 
   return (
-    <div
-      style={{
-        position:   'absolute',
-        left:       0,
-        top:        0,
-        bottom:     0,
-        width:      '600px',
-        background: 'rgba(9,9,15,0.72)',
-        border:     '1px solid rgba(255,255,255,0.07)',
-        borderRadius: '3px',
-        display:    'flex',
-        flexDirection: 'column',
-        zIndex:     5,
-        willChange: 'transform',
-      }}
-    >
-      {/* Header */}
+    <>
+      <style>{`
+        .battle-log-scroll::-webkit-scrollbar { width: 4px; }
+        .battle-log-scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: 2px; transition: background 0.2s; }
+        .battle-log-scroll::-webkit-scrollbar-track { background: transparent; }
+        .battle-log-scroll:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+        .battle-log-scroll { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+        .battle-log-scroll:hover { scrollbar-color: rgba(255,255,255,0.2) transparent; }
+      `}</style>
       <div
-        className="flex-shrink-0 px-3 py-[5px] border-b border-white/[0.06]"
-        style={{ background: '#131320' }}
+        style={{
+          position:     'absolute',
+          left:         0,
+          top:          0,
+          bottom:       0,
+          width:        '600px',
+          background:   'rgba(9,9,15,0.72)',
+          border:       '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '3px',
+          display:      'flex',
+          flexDirection:'column',
+          zIndex:       5,
+          willChange:   'transform',
+        }}
       >
-        <span className="text-[9px] font-mono tracking-widest text-gray-500">
-          BATTLE LOG — T{turn}
-        </span>
-      </div>
+        {/* Header */}
+        <div
+          className="flex-shrink-0 px-3 py-[5px] border-b border-white/[0.06]"
+          style={{ background: '#131320' }}
+        >
+          <span className="text-[9px] font-mono tracking-widest text-gray-500">
+            BATTLE LOG — T{turn}
+          </span>
+        </div>
 
-      {/* Entries */}
-      <div
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto flex flex-col gap-[3px]"
-        style={{ padding: '6px 10px' }}
-      >
-        {logs.map((l, i) => (
-          <div
-            key={i}
-            className={`text-[17px] font-mono leading-tight ${LOG_COLORS[l.type] ?? LOG_COLORS.normal}`}
-          >
-            {l.msg}
-          </div>
-        ))}
+        {/* Entries */}
+        <div
+          ref={scrollRef}
+          className="battle-log-scroll flex-1 overflow-y-auto flex flex-col gap-[3px]"
+          style={{ padding: '6px 10px' }}
+        >
+          {logs.map((l, i) => (
+            <div
+              key={i}
+              className={`text-[17px] font-mono leading-tight ${LOG_COLORS[l.type] ?? LOG_COLORS.normal}`}
+            >
+              {l.msg}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
