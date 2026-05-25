@@ -322,7 +322,7 @@ const LevelCell = ({ level, levelState, levelType, isPlayerHere, playerTypeColor
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%", position: "relative", zIndex: 1 }}>
               {isPlayerHere && (
                 <div className={tokenPortrait ? '' : 'map-token-glow'} style={{
-                  width: 96, height: 96,
+                  width: 128, height: 128,
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {tokenPortrait
