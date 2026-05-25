@@ -48,36 +48,26 @@ function IconTag({ icon, color, stacks, name, duration, tooltip, sz }) {
         }}
       >
         <img src={icon} alt={name} className="w-full h-full object-contain" style={{ borderRadius: '2px' }} />
-        {stacks > 1 && (
-          <span
-            className="absolute bottom-0 right-0 text-white font-mono leading-none"
-            style={{ fontSize: sz.stackFont, textShadow: '0 0 3px #000, 0 0 3px #000', padding: '1px 2px' }}
-          >
-            {stacks}
-          </span>
-        )}
-        {stacks <= 1 && duration && (
-          <span
-            className="absolute bottom-0 right-0 font-mono leading-none"
-            style={{ fontSize: sz.stackFont, color: '#ffffff', textShadow: '0 0 3px #000, 0 0 3px #000', padding: '1px 2px' }}
-          >
-            {duration}
-          </span>
-        )}
+        <span
+          className="absolute bottom-0 right-0 text-white font-mono leading-none"
+          style={{ fontSize: sz.stackFont, textShadow: '0 0 3px #000, 0 0 3px #000', padding: '1px 2px' }}
+        >
+          {stacks > 1 ? stacks : (duration ?? stacks)}
+        </span>
       </div>
 
       {tooltip && (
         <div
-          className="pointer-events-none absolute bottom-[calc(100%+6px)] left-0
-            w-60 rounded-lg border border-gray-600 shadow-xl z-[100]
+          className="pointer-events-none absolute bottom-[calc(100%+8px)] left-0
+            w-64 rounded-lg border border-gray-600 shadow-xl z-[100]
             opacity-0 group-hover:opacity-100 transition-opacity duration-150"
           style={{ background: '#1a1a2e' }}
         >
-          <div className="h-1 rounded-t-lg" style={{ background: color }} />
-          <div className="px-3 py-2.5 flex flex-col gap-1.5">
-            <div className="text-[13px] font-bold font-body" style={{ color }}>{name}</div>
-            <div className="text-[12px] text-gray-300 font-mono leading-tight">{tooltip}</div>
-            {duration && <div className="text-[11px] text-[#ffd700] font-mono">{duration} turns remaining</div>}
+          <div className="h-1.5 rounded-t-lg" style={{ background: color }} />
+          <div className="px-4 py-3 flex flex-col gap-2">
+            <div className="text-base font-bold font-body" style={{ color }}>{name}</div>
+            <div className="text-sm text-gray-300 leading-snug">{tooltip}</div>
+            {duration && <div className="text-xs text-[#ffd700] font-mono">{duration} turns remaining</div>}
           </div>
         </div>
       )}
@@ -126,16 +116,16 @@ function BarTag({ icon, color, stacks, name, duration, tooltip, sz }) {
 
       {tooltip && (
         <div
-          className="pointer-events-none absolute bottom-[calc(100%+6px)] left-0
-            w-60 rounded-lg border border-gray-600 shadow-xl z-[100]
+          className="pointer-events-none absolute bottom-[calc(100%+8px)] left-0
+            w-64 rounded-lg border border-gray-600 shadow-xl z-[100]
             opacity-0 group-hover:opacity-100 transition-opacity duration-150"
           style={{ background: '#1a1a2e' }}
         >
-          <div className="h-1 rounded-t-lg" style={{ background: color }} />
-          <div className="px-3 py-2.5 flex flex-col gap-1.5">
-            <div className="text-[13px] font-bold font-body" style={{ color }}>{name}</div>
-            <div className="text-[12px] text-gray-300 font-mono leading-tight">{tooltip}</div>
-            {duration && <div className="text-[11px] text-[#ffd700] font-mono">{duration} turns remaining</div>}
+          <div className="h-1.5 rounded-t-lg" style={{ background: color }} />
+          <div className="px-4 py-3 flex flex-col gap-2">
+            <div className="text-base font-bold font-body" style={{ color }}>{name}</div>
+            <div className="text-sm text-gray-300 leading-snug">{tooltip}</div>
+            {duration && <div className="text-xs text-[#ffd700] font-mono">{duration} turns remaining</div>}
           </div>
         </div>
       )}
