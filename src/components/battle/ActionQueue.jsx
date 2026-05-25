@@ -239,7 +239,7 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
           ) : (
             <button
               className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
-              style={{ position: 'relative', zIndex: 9003, background: '#4da6ff', color: '#fff', border: '2px solid #b8860b', boxShadow: '0 0 14px rgba(77,166,255,0.4), 0 0 10px rgba(184,134,11,0.4)' }}
+              style={{ width: '20rem', position: 'relative', zIndex: 9003, background: '#4da6ff', color: '#fff', border: '2px solid #b8860b', boxShadow: '0 0 14px rgba(77,166,255,0.4), 0 0 10px rgba(184,134,11,0.4)' }}
               onClick={onExecute}
             >
               <span className="execute-shine" />

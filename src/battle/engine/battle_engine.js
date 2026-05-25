@@ -527,8 +527,8 @@ export function ExecuteAction(action, interaction_result, state) {
     if (entry?.phases?.includes('DELIVERY')) {
       const result = entry.handlers['DELIVERY'](payload, owner, tag);
       payload = result.payload || payload;
-      if (tag.tag_name === 'HEAL') {
-        logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] 💙 ${owner.name} gains ${tag.power} temp HP`, type: 'heal' });
+      for (const log of (result.logs ?? [])) {
+        logs.push({ ...log, msg: `[${String(action.calc_speed).padStart(3, ' ')}] ${log.msg}` });
       }
     } else {
       // Pass action as context so registry entries can stamp action-time data (e.g. calc_speed)

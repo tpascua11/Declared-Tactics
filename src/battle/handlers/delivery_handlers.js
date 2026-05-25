@@ -15,7 +15,21 @@ export function HealHandler(payload, character, tag) {
   const missing = character.max_health - character.health;
   const tempCap = Math.max(0, missing - (character.temp_hp ?? 0));
   character.temp_hp = (character.temp_hp ?? 0) + Math.min(tag.power, tempCap);
-  return { payload, consumed: true };
+  return {
+    payload,
+    consumed: true,
+    logs: [{ msg: `💙 ${character.name} gains ${tag.power} temp HP`, type: 'heal' }],
+  };
+}
+
+// NOTE: Watch for Speed Up + Cleanse interaction — if enemy speed seems to change unexpectedly, check here.
+export function CleanseHandler(payload, character) {
+  const removed = character.active_tag_pool.filter(t => t.status_type === 'debuff').length;
+  character.active_tag_pool = character.active_tag_pool.filter(t => t.status_type !== 'debuff');
+  const logs = removed > 0
+    ? [{ msg: `✨ ${character.name}'s debuffs are cleared`, type: 'buff' }]
+    : [];
+  return { payload, consumed: true, logs };
 }
 
 export function GainResourceHandler(payload, character, tag) {
@@ -33,6 +47,12 @@ registerTag('DAMAGE', {
 registerTag('HEAL', {
   phases: ['DELIVERY'],
   handlers: { DELIVERY: HealHandler },
+});
+
+registerTag('CLEANSE', {
+  phases: ['DELIVERY'],
+  status_type: 'buff',
+  handlers: { DELIVERY: CleanseHandler },
 });
 
 registerTag('GAIN_RESOURCE', {

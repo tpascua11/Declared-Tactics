@@ -40,7 +40,7 @@
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [{ "tag_name": "HEAL", "power": 750 }],
+        "self": [{ "tag_name": "CLEANSE" }, { "tag_name": "HEAL", "power": 750 }],
         "target": []
       }
     }

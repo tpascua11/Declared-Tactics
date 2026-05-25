@@ -60,13 +60,14 @@ export const SAMURAI_CARDS = [
     icon: '💖',
     image: 'FOX_SUMMURAI_MEND',
     color: '#4caf50',
-    desc: 'Restore 250 HP and regen 33 HP/turn for 3 turns. Costs 3 Battle Spirit.',
+    desc: 'Clears all debuffs. Restore 200 HP and regen 33 HP/turn for 3 turns. Costs 3 Battle Spirit.',
     animation: 'green_marching_ants',
     animation_intensity: 1.0,
     tags: {
       self: [
-        { tag_name: 'HEAL', power: 250 },
-        { tag_name: 'REGEN', power: 33, duration: 3, reset: 'TICK_TURN' },
+        { tag_name: 'CLEANSE' },
+        { tag_name: 'HEAL', power: 200 },
+        { tag_name: 'REGEN', power: 25, duration: 3, reset: 'TICK_TURN' },
       ],
       target: [],
     },

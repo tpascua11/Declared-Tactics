@@ -48,12 +48,22 @@ function IconTag({ icon, color, stacks, name, duration, tooltip, sz }) {
         }}
       >
         <img src={icon} alt={name} className="w-full h-full object-contain" style={{ borderRadius: '2px' }} />
-        <span
-          className="absolute bottom-0 right-0 text-white font-mono leading-none"
-          style={{ fontSize: sz.stackFont, textShadow: '0 0 3px #000, 0 0 3px #000', padding: '1px 2px' }}
-        >
-          {stacks}
-        </span>
+        {stacks > 1 && (
+          <span
+            className="absolute bottom-0 right-0 text-white font-mono leading-none"
+            style={{ fontSize: sz.stackFont, textShadow: '0 0 3px #000, 0 0 3px #000', padding: '1px 2px' }}
+          >
+            {stacks}
+          </span>
+        )}
+        {stacks <= 1 && duration && (
+          <span
+            className="absolute bottom-0 right-0 font-mono leading-none"
+            style={{ fontSize: sz.stackFont, color: '#ffffff', textShadow: '0 0 3px #000, 0 0 3px #000', padding: '1px 2px' }}
+          >
+            {duration}
+          </span>
+        )}
       </div>
 
       {tooltip && (

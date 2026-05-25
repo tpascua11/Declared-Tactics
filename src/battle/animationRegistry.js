@@ -213,7 +213,7 @@ export const ANIMATIONS = {
     cssClass: 'animate-green-marching-ants',
     duration: 1000,
     sfx: [
-      { src: sfx('REGEN_3.wav'), delay: 0,   volume: 0.47 },
+      { src: sfx('REGEN_3.wav'), delay: 0,   volume: 0.31 },
     ], 
     floatingNumber: null,
   },
