@@ -1,4 +1,5 @@
 import './CharacterSelectScreen.css';
+import { GAME_TITLE, GAME_WORLD } from '../config';
 import '../components/shared/shine-btn.css';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
@@ -272,8 +273,8 @@ export default function CharacterSelectScreen() {
 
       {/* Footer */}
       <footer className="cs-footer">
-        <span>Declared Tactics</span>
-        <span>Avormore</span>
+        <span>{GAME_TITLE}</span>
+        <span>{GAME_WORLD}</span>
       </footer>
     </div>
   );

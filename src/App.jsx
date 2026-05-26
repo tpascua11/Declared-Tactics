@@ -3,6 +3,7 @@
 // ============================================================
 
 import { useEffect, useState, useRef } from 'react';
+import { GAME_TITLE } from './config';
 import { GameProvider, useGame } from './context/GameContext';
 import { PlayerProvider, usePlayer } from './context/PlayerContext';
 import GameCanvas from './components/shared/GameCanvas';
@@ -20,6 +21,8 @@ const INTRO_PHASES = new Set(['TITLE', 'CHARACTER_SELECT']);
 const TRANSITION_PHASES = new Set(['TITLE', 'CHARACTER_SELECT', 'MAP', 'GAME_FINISH']);
 const SHOWER_MIDPOINT = 1500;
 const SHOWER_DONE     = 3000;
+
+document.title = GAME_TITLE;
 
 // On HMR, module re-evaluation hits this and kills any stale instance.
 if (window._introAudio) { window._introAudio.pause(); window._introAudio = null; }
