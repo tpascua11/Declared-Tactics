@@ -8,6 +8,7 @@ import FighterResourceBar from '../../components/resources/FighterResourceBar';
 export const FIGHTER = {
   id: 'fighter',
   name: 'Fighter',
+  default_name: 'UNKNOWN',
   icon: '⚔️',
   portrait: 'PORTRAIT_FIGHTER',
   base_health: 350,

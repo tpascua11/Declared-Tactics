@@ -1,5 +1,5 @@
 // ============================================================
-//  ActionQueue — Card-shaped slots to the right of Vrax
+//  ActionQueue — Card-shaped slots to the right of Varx
 // ============================================================
 
 import { useRef, useState } from 'react';

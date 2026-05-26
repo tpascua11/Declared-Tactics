@@ -75,8 +75,8 @@ export function derivePlayerSnapshot(playerData) {
     : resolvedCards;
 
   return {
-    id: 'vrax',
-    name: 'VRAX',
+    id: 'varx',
+    name: playerData.name ?? classDef.default_name,
     portrait:           classDef.portrait ?? null,
     victory_portrait:   classDef.victory_portrait ?? null,
     icon:               classDef.icon,
@@ -110,6 +110,7 @@ function playerReducer(state, action) {
       if (!classDef) return state;
       return {
         class_id:        action.classId,
+        name:            classDef.default_name,
         current_hp:      classDef.base_health,
         unlocked_cards:  [],
         stat_boosts:     [],

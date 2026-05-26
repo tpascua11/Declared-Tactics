@@ -46,7 +46,7 @@ export function buildEnemyQueue(enemy, opponent) {
     ...act,
     owner_id: enemy.id,
     owner_name: enemy.name,
-    target_id: 'vrax',
+    target_id: opponent.id,
     payload_type: act.payload_type || 'PHYSICAL',
     priority_flag: null,
   }));
@@ -66,7 +66,7 @@ export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
   // Derive full runtime player from stored minimal data, or fall back to SAMURAI for debug
   const player = playerData
     ? derivePlayerSnapshot(playerData)
-    : buildPlayer(CLASS_REGISTRY.samurai, { id: 'vrax', name: 'VRAX' });
+    : buildPlayer(CLASS_REGISTRY.samurai, { id: 'varx', name: 'VARX_BUG' });
 
   const characters = [player, ...builtEnemies];
   primeDisplayAura(characters);

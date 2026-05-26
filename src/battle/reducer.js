@@ -127,7 +127,7 @@ export function battleReducer(state, action) {
       const target = lastTarget ?? chars.find(c => c.faction === 'enemy' && c.health > 0);
       player.queue[slotIndex] = {
         ...card,
-        owner_id: 'vrax',
+        owner_id: 'varx',
         owner_name: player.name,
         target_id: target.id,
         payload_type: card.tag_type.includes('MAGIC') ? 'MAGIC' : 'PHYSICAL',
@@ -169,7 +169,7 @@ export function battleReducer(state, action) {
       const playerAfterStart = startChars.find(c => c.faction === 'player');
       const allEnemiesDeadAfterStart = startChars.filter(c => c.faction === 'enemy').every(e => e.health <= 0);
       if (playerAfterStart.health <= 0) {
-        return { ...state, characters: startChars, phase: 'RESULT', result: 'LOSS', logs: [...turnStartLogs, { msg: '💀 VRAX HAS FALLEN.', type: 'dmg' }] };
+        return { ...state, characters: startChars, phase: 'RESULT', result: 'LOSS', logs: [...turnStartLogs, { msg: `💀 ${playerAfterStart.name} HAS FALLEN.`, type: 'dmg' }] };
       }
       if (allEnemiesDeadAfterStart) {
         return advanceStageOrWin({ ...state, characters: startChars }, turnStartLogs);
@@ -191,7 +191,7 @@ export function battleReducer(state, action) {
         const { newState: cleanedState, logs: cleanLogs } = TurnResultCleanup({ ...state });
         const player = cleanedState.characters.find(c => c.faction === 'player');
         if (player.health <= 0) {
-          return { ...cleanedState, phase: 'RESULT', result: 'LOSS', pendingAnimation: [], logs: [...state.logs, ...cleanLogs, { msg: '💀 VRAX HAS FALLEN.', type: 'dmg' }] };
+          return { ...cleanedState, phase: 'RESULT', result: 'LOSS', pendingAnimation: [], logs: [...state.logs, ...cleanLogs, { msg: `💀 ${player.name} HAS FALLEN.`, type: 'dmg' }] };
         }
 
         const turnEndLogs = [...state.logs, ...cleanLogs, { msg: `━━━ TURN ${state.turn} END ━━━`, type: 'info' }];

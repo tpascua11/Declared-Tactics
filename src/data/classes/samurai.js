@@ -12,6 +12,7 @@ import SamuraiResourceBar from '../../components/resources/SamuraiResourceBar';
 export const SAMURAI = {
   id: 'samurai',
   name: 'Samurai',
+  default_name: 'VARX',
   icon: '⚔️',
   portrait: 'PORTRAIT_SUMURAI',
   victory_portrait: 'PORTRAIT_SUMURAI_VICTORY',

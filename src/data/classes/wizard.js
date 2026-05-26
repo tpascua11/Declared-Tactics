@@ -11,6 +11,7 @@ const WIZARD_CARDS = FIGHTER_CARDS;
 export const WIZARD = {
   id: 'wizard',
   name: 'Wizard',
+  default_name: 'UNKNOWN',
   icon: '🧙',
   portrait: 'PORTRAIT_WIZARD',
   base_health: 250,
