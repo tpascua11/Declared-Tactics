@@ -101,7 +101,7 @@ export default function WinModal({ levelId, reward, unlockedCards, mapIconSrc, o
       i++;
       setTypedDesc(clearDesc.slice(0, i));
       if (i >= clearDesc.length) clearInterval(id);
-    }, 18);
+    }, 9);
     return () => clearInterval(id);
   }, [clearDesc]);
 

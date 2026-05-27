@@ -26,14 +26,14 @@ function buildCardConfig() {
     const color = COLORS[i % COLORS.length];
     bg.push({
       color,
-      colorAlpha: 0.18 + Math.random() * 0.10,
+      colorAlpha: 0.55 + Math.random() * 0.15,
       left: (i * 33 + Math.random() * 10) % 100,
       delay: -(3 + Math.random() * 6),
       fallDuration: 12 + Math.random() * 5,
       swayDuration: 3.5 + Math.random() * 2.0,
       startRot: (Math.random() - 0.5) * 28,
       endRot:   (Math.random() - 0.5) * 28,
-      maxOpacity: 0.28 + Math.random() * 0.12,
+      maxOpacity: 0.85 + Math.random() * 0.15,
       size: (w => [w, Math.round(w * 1.5)])(40 + Math.floor(Math.random() * 14)),
     });
   }
@@ -46,14 +46,14 @@ function buildCardConfig() {
     const delay = 4 + Math.pow(t, 0.75) * 116;
     bg.push({
       color,
-      colorAlpha: 0.14 + Math.random() * 0.20,
+      colorAlpha: 0.50 + Math.random() * 0.25,
       left: Math.random() * 100,
       delay,
       fallDuration: 9 + Math.random() * 6,
       swayDuration: 3.0 + Math.random() * 2.5,
       startRot: (Math.random() - 0.5) * 38,
       endRot:   (Math.random() - 0.5) * 38,
-      maxOpacity: 0.26 + Math.random() * 0.28,
+      maxOpacity: 0.80 + Math.random() * 0.20,
       size: (w => [w, Math.round(w * 1.5)])(36 + Math.floor(Math.random() * 20)),
     });
   }
@@ -203,11 +203,10 @@ export default function TitleScreen({ onNewGame, hasSave, onContinue }) {
 
       {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
 
-      {/* Footer */}
-      <div className="title-footer">
+      {/* <div className="title-footer">
         <span>v{version}</span>
         <span>© 2026</span>
-      </div>
+      </div> */}
 
     </div>
   );
