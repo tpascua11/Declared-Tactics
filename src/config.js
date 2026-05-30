@@ -1,2 +1,2 @@
-export const GAME_TITLE = 'Declared Tactics';
-export const GAME_WORLD = 'Avormore';
+export const GAME_TITLE = 'Actrinity';
+export const GAME_WORLD = '';

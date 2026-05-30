@@ -15,6 +15,7 @@
   "queue": [],
   "ai_type": "phase",
   "phase_resource": "BATTLE_SPIRIT",
+  "phase_return_threshold": 2,
   "current_phase": "build",
   "action_library": {
     "Still Winds": {

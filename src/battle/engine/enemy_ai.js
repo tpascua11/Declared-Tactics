@@ -195,7 +195,8 @@ export function selectActionSet(enemy, opponent) {
     const max = res?.max ?? 0;
 
     if (enemy.current_phase === 'spend') {
-      if (current <= 0) enemy.current_phase = 'build';
+      const returnThreshold = enemy.phase_return_threshold ?? 0;
+      if (current <= returnThreshold) enemy.current_phase = 'build';
     } else {
       if (current >= max) enemy.current_phase = 'spend';
     }
@@ -294,7 +295,8 @@ export function predictEnemyActionSet(enemy, opponent) {
     const max = res?.max ?? 0;
     let phase = enemy.current_phase ?? 'build';
     if (phase === 'spend') {
-      if (current <= 0) phase = 'build';
+      const returnThreshold = enemy.phase_return_threshold ?? 0;
+      if (current <= returnThreshold) phase = 'build';
     } else {
       if (current >= max) phase = 'spend';
     }
