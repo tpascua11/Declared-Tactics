@@ -62,6 +62,14 @@ export default function BattleScreen() {
     };
   }, []);
 
+  function getCharacterScreenPos(id) {
+    const el = document.querySelector(`[data-enemy-id="${id}"]`)
+             ?? document.querySelector(`[data-character-id="${id}"]`);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
   function handleRestartBattle() {
     setShowRestartTransition(true);
     restartTransitionTimerRef.current = setTimeout(() => {
@@ -165,6 +173,8 @@ export default function BattleScreen() {
 
     const timers = [];
     anims.forEach(anim => {
+      const pos = getCharacterScreenPos(anim.targetId);
+      if (pos) window.dispatchEvent(new CustomEvent('battle-particle', { detail: pos }));
       const config = ANIMATIONS[anim.type];
       if (!config) return;
 
