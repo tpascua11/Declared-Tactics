@@ -84,7 +84,7 @@ add one line to particleRegistry.js. Done.
 
 Build and verify one step at a time. Each phase is independently shippable.
 
-### Phase 1 — Canvas only (no effects yet)
+### Phase 1 — Canvas only (no effects yet) ✓
 - Install pixi.js and @pixi/particle-emitter
 - Create EffectsLayer component: transparent Pixi canvas, full screen, pointer-events none
 - Mount it in BattleScreen above EnemyZone, below nothing
