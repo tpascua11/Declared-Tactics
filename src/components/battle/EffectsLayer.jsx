@@ -2,34 +2,33 @@ import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
 
 export default function EffectsLayer() {
-  const canvasRef = useRef(null);
+  const containerRef = useRef(null);
   const appRef = useRef(null);
 
   useEffect(() => {
+    if (appRef.current) return;
+
     const app = new PIXI.Application({
-      view: canvasRef.current,
       backgroundAlpha: 0,
       resizeTo: window,
-      antialias: true,
       autoDensity: true,
     });
+
+    Object.assign(app.view.style, {
+      position: 'fixed',
+      inset: '0',
+      pointerEvents: 'none',
+      zIndex: '100',
+    });
+
+    containerRef.current.appendChild(app.view);
     appRef.current = app;
 
     return () => {
-      app.destroy(false);
+      app.destroy(true);
       appRef.current = null;
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        pointerEvents: 'none',
-        zIndex: 100,
-      }}
-    />
-  );
+  return <div ref={containerRef} />;
 }
