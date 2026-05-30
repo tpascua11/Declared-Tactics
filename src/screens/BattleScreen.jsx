@@ -21,6 +21,7 @@ import TagPool from '../components/battle/TagPool';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
+import EffectsLayer from '../components/battle/EffectsLayer';
 
 export default function BattleScreen() {
   const { gs, dispatch, onBattleEnd, retry, restartBattle } = useGame();
@@ -467,6 +468,8 @@ export default function BattleScreen() {
         </div>
 
       </div>
+
+      <EffectsLayer />
     </>
   );
 }
