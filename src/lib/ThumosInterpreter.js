@@ -32,6 +32,39 @@ export class ThumosInterpreter {
     this._emitters = [];
     this._container = null;
     this._tickerFn = null;
+    this._textureMap = {};
+    this._buildDefaultTextures();
+  }
+
+  // Generates built-in PIXI.Texture objects keyed by name.
+  // JSON configs reference these by name in textureSingle behavior.
+  // Bypasses Pixi's global texture cache to avoid string-lookup issues.
+  _buildDefaultTextures() {
+    const g = new PIXI.Graphics();
+    g.beginFill(0xffffff);
+    g.drawCircle(0, 0, 16);
+    g.endFill();
+    this._textureMap['circle'] = this._app.renderer.generateTexture(g);
+    g.destroy();
+  }
+
+  // Replaces texture string references in a behavior config with actual
+  // PIXI.Texture objects so @pixi/particle-emitter doesn't do a URL lookup.
+  _resolveConfig(config) {
+    const resolved = JSON.parse(JSON.stringify(config));
+    resolved.behaviors = resolved.behaviors.map(b => {
+      if (b.type === 'textureSingle' && typeof b.config.texture === 'string') {
+        const tex = this._textureMap[b.config.texture];
+        if (tex) b.config.texture = tex;
+      }
+      if (b.type === 'textureRandom' && Array.isArray(b.config.textures)) {
+        b.config.textures = b.config.textures.map(t =>
+          typeof t === 'string' ? (this._textureMap[t] ?? t) : t
+        );
+      }
+      return b;
+    });
+    return resolved;
   }
 
   // ── play ──────────────────────────────────────────────────
@@ -48,7 +81,8 @@ export class ThumosInterpreter {
     // Start each emitter at its scheduled start time.
     json.emitters.forEach(emitterDef => {
       const startTimer = setTimeout(() => {
-        const emitter = new Emitter(container, emitterDef.config);
+        const resolvedConfig = this._resolveConfig(emitterDef.config);
+        const emitter = new Emitter(container, resolvedConfig);
         emitter.emit = true;
         this._emitters.push(emitter);
 
