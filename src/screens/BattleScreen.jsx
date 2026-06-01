@@ -53,6 +53,7 @@ export default function BattleScreen() {
   useMusic(victoryTrack, { loop: false, baseVolume: 0.35, enabled: gs.phase === 'RESULT' });
 
 
+  // ── Cleanup ───────────────────────────────────────────────
   // Clean up any in-flight float/anim timers on unmount
   useEffect(() => {
     return () => {
@@ -62,6 +63,7 @@ export default function BattleScreen() {
     };
   }, []);
 
+  // ── Helpers ───────────────────────────────────────────────
   function getCharacterScreenPos(id) {
     const el = document.querySelector(`[data-enemy-id="${id}"]`)
              ?? document.querySelector(`[data-character-id="${id}"]`);
@@ -70,6 +72,7 @@ export default function BattleScreen() {
     return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   }
 
+  // ── Result Screen ─────────────────────────────────────────
   function handleRestartBattle() {
     setShowRestartTransition(true);
     restartTransitionTimerRef.current = setTimeout(() => {
@@ -97,6 +100,7 @@ export default function BattleScreen() {
     return () => clearInterval(interval);
   }, [gs.phase, gs.result, gs.sourceLevel?.defeat_tip]);
 
+  // ── Stage Transitions ─────────────────────────────────────
   // Stage-clear shine — fires when advancing to a new stage, completely outside the battle loop.
   useEffect(() => {
     if (!gs.currentStageIndex) return;
@@ -116,6 +120,7 @@ export default function BattleScreen() {
     return () => clearTimeout(t);
   }, [gs.retryKey]);
 
+  // ── Battle Loop ───────────────────────────────────────────
   // Drive battle loop with timed steps.
   // If pending animations define a battleDelay, use the longest one — otherwise fall back to duration.
   useEffect(() => {
@@ -134,6 +139,7 @@ export default function BattleScreen() {
     return () => clearTimeout(battleTimerRef.current);
   }, [gs.phase, gs.stepCount]);
 
+  // ── Action Announcement ───────────────────────────────────
   useEffect(() => {
     if (gs.phase !== 'BATTLE') { setAnnouncement(null); return; }
     const holdMs = 900;
@@ -161,6 +167,7 @@ export default function BattleScreen() {
     return () => clearTimeout(t);
   }, [gs.phase, gs.stepCount]);
 
+  // ── Animation Handler (CSS · SFX · Floating Numbers · Pixi) ─
   function playSfx(src, volume = 0.6) {
     playBattleSfx(src, volume);
   }
@@ -173,16 +180,20 @@ export default function BattleScreen() {
 
     const timers = [];
     anims.forEach(anim => {
-      const pos = getCharacterScreenPos(anim.targetId);
-      if (pos) window.dispatchEvent(new CustomEvent('battle-particle', { detail: pos }));
       const config = ANIMATIONS[anim.type];
       if (!config) return;
 
+      // 1. PIXI — notify EffectsLayer with target's screen position.
+      const pos = getCharacterScreenPos(anim.targetId);
+      if (pos) window.dispatchEvent(new CustomEvent('battle-particle', { detail: pos }));
+
+      // 2. CSS — apply animation class to the target character card.
       setActiveAnimations(prev => ({
         ...prev,
         [anim.targetId]: { cssClass: config.cssClass, intensity: anim.intensity ?? 1.0 },
       }));
 
+      // 3. SFX — play sound(s), supports multiple sounds with individual delays.
       if (config.sfx && !anim.skipSfx) {
         const sfxList = Array.isArray(config.sfx)
           ? config.sfx
@@ -192,6 +203,7 @@ export default function BattleScreen() {
         });
       }
 
+      // 4. FLOATING NUMBERS — show damage/heal value rising above the target.
       if (config.floatingNumber && anim.value > 0) {
         const floatList = Array.isArray(config.floatingNumber)
           ? config.floatingNumber
@@ -218,6 +230,7 @@ export default function BattleScreen() {
         });
       }
 
+      // 5. CSS CLEANUP — remove the animation class after it finishes.
       // Stored in a ref so effect cleanup on the next step doesn't cancel it —
       // the clear must always fire so dead enemies fade after their animation ends.
       animClearTimersRef.current.push(setTimeout(() => {
@@ -228,6 +241,7 @@ export default function BattleScreen() {
     return () => timers.forEach(clearTimeout);
   }, [gs.pendingAnimation, gs.stepCount]);
 
+  // ── Targeting Lines ───────────────────────────────────────
   useEffect(() => {
     if (gs.phase !== 'QUEUE_SETUP') { setLineCoords(null); return; }
     const lines = [];
