@@ -11,6 +11,11 @@
 //  {
 //    name: string,
 //    duration: number,          // total animation length in ms
+//    motion?: {                 // optional — moves the entire effect over time
+//      dx: number,              // x offset from spawn point
+//      dy: number,              // y offset from spawn point
+//      duration: number         // ms to travel from origin to (dx, dy)
+//    },
 //    emitters: [
 //      {
 //        id: string,
@@ -28,12 +33,10 @@ import * as PIXI from 'pixi.js';
 export class ThumosInterpreter {
   constructor(app) {
     this._app = app;
-    this._timers = [];
-    this._emitters = [];
-    this._container = null;
-    this._tickerFn = null;
     this._textureMap = {};
     this._buildDefaultTextures();
+    // Each entry: { container, emitters, timers, tickerFn }
+    this._activePlays = [];
   }
 
   // Generates built-in PIXI.Texture objects keyed by name.
@@ -41,10 +44,18 @@ export class ThumosInterpreter {
   // Bypasses Pixi's global texture cache to avoid string-lookup issues.
   _buildDefaultTextures() {
     const g = new PIXI.Graphics();
+
     g.beginFill(0xffffff);
     g.drawCircle(0, 0, 16);
     g.endFill();
     this._textureMap['circle'] = this._app.renderer.generateTexture(g);
+
+    g.clear();
+    g.beginFill(0xffffff);
+    g.drawRect(-12, -12, 24, 24);
+    g.endFill();
+    this._textureMap['square'] = this._app.renderer.generateTexture(g);
+
     g.destroy();
   }
 
@@ -68,15 +79,21 @@ export class ThumosInterpreter {
   }
 
   // ── play ──────────────────────────────────────────────────
-  // Sequences all emitters in the JSON at screen position (x, y).
+  // Starts a new independent play — does NOT cancel any currently
+  // running animations. Each call gets its own container and lifecycle.
+  // Optional json.motion: { dx, dy, duration } moves the container
+  // from (x, y) to (x+dx, y+dy) over `duration` ms — comet/projectile effects.
   play(json, x, y) {
-    this.stop();
+    const play = { container: null, emitters: [], timers: [], tickerFn: null };
 
     const container = new PIXI.Container();
     container.x = x;
     container.y = y;
     this._app.stage.addChild(container);
-    this._container = container;
+    play.container = container;
+    this._activePlays.push(play);
+
+    const cleanup = () => this._cleanupPlay(play);
 
     // Start each emitter at its scheduled start time.
     json.emitters.forEach(emitterDef => {
@@ -84,52 +101,66 @@ export class ThumosInterpreter {
         const resolvedConfig = this._resolveConfig(emitterDef.config);
         const emitter = new Emitter(container, resolvedConfig);
         emitter.emit = true;
-        this._emitters.push(emitter);
+        play.emitters.push(emitter);
 
-        // Stop emitting at end time (particles already alive finish naturally).
         const stopTimer = setTimeout(() => {
           emitter.emit = false;
         }, emitterDef.end - emitterDef.start);
 
-        this._timers.push(stopTimer);
+        play.timers.push(stopTimer);
       }, emitterDef.start);
 
-      this._timers.push(startTimer);
+      play.timers.push(startTimer);
     });
 
-    // Tick all active emitters every frame.
-    let last = performance.now();
-    this._tickerFn = () => {
+    // Tick this play's emitters every frame, and handle motion.
+    const motionStart = performance.now();
+    const motion = json.motion ?? null;
+    let last = motionStart;
+    play.tickerFn = () => {
       const now = performance.now();
-      const elapsed = (now - last) * 0.001; // seconds
+      const elapsed = (now - last) * 0.001;
       last = now;
-      this._emitters.forEach(e => e.update(elapsed));
-    };
-    this._app.ticker.add(this._tickerFn);
+      play.emitters.forEach(e => e.update(elapsed));
 
-    // Auto-cleanup after total duration.
-    const doneTimer = setTimeout(() => this.stop(), json.duration);
-    this._timers.push(doneTimer);
+      if (motion && play.container) {
+        const t = Math.min((now - motionStart) / motion.duration, 1);
+        play.container.x = x + motion.dx * t;
+        play.container.y = y + motion.dy * t;
+      }
+    };
+    this._app.ticker.add(play.tickerFn);
+
+    // Auto-cleanup this play after total duration.
+    play.timers.push(setTimeout(cleanup, json.duration));
   }
 
   // ── stop ──────────────────────────────────────────────────
-  // Cancels all timers, destroys all emitters, removes container.
+  // Stops ALL active plays immediately.
   stop() {
-    this._timers.forEach(clearTimeout);
-    this._timers = [];
+    [...this._activePlays].forEach(play => this._cleanupPlay(play));
+  }
 
-    if (this._tickerFn) {
-      this._app.ticker.remove(this._tickerFn);
-      this._tickerFn = null;
+  // ── _cleanupPlay ──────────────────────────────────────────
+  // Cleans up a single play instance and removes it from the active list.
+  _cleanupPlay(play) {
+    play.timers.forEach(clearTimeout);
+    play.timers = [];
+
+    if (play.tickerFn) {
+      this._app.ticker.remove(play.tickerFn);
+      play.tickerFn = null;
     }
 
-    this._emitters.forEach(e => e.destroy());
-    this._emitters = [];
+    play.emitters.forEach(e => e.destroy());
+    play.emitters = [];
 
-    if (this._container) {
-      this._app.stage.removeChild(this._container);
-      this._container.destroy({ children: true });
-      this._container = null;
+    if (play.container) {
+      this._app.stage.removeChild(play.container);
+      play.container.destroy({ children: true });
+      play.container = null;
     }
+
+    this._activePlays = this._activePlays.filter(p => p !== play);
   }
 }

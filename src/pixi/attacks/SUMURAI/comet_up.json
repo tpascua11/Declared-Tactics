@@ -4,6 +4,74 @@
   "motion": { "dx": 0, "dy": -220, "duration": 500 },
   "emitters": [
     {
+      "id": "comet_head",
+      "start": 0,
+      "end": 500,
+      "config": {
+        "lifetime": { "min": 0.08, "max": 0.15 },
+        "frequency": 0.001,
+        "maxParticles": 60,
+        "addAtBack": false,
+        "pos": { "x": 0, "y": 0 },
+        "behaviors": [
+          {
+            "type": "alpha",
+            "config": {
+              "alpha": {
+                "list": [
+                  { "value": 1,   "time": 0 },
+                  { "value": 0,   "time": 1 }
+                ]
+              }
+            }
+          },
+          {
+            "type": "scale",
+            "config": {
+              "scale": {
+                "list": [
+                  { "value": 1.2, "time": 0 },
+                  { "value": 0.3, "time": 1 }
+                ]
+              },
+              "minMult": 0.7
+            }
+          },
+          {
+            "type": "color",
+            "config": {
+              "color": {
+                "list": [
+                  { "value": "ffffff", "time": 0 },
+                  { "value": "ffee88", "time": 0.3 },
+                  { "value": "ff8800", "time": 1 }
+                ]
+              }
+            }
+          },
+          {
+            "type": "moveSpeedStatic",
+            "config": { "min": 5, "max": 25 }
+          },
+          {
+            "type": "rotationStatic",
+            "config": { "min": 0, "max": 360 }
+          },
+          {
+            "type": "spawnShape",
+            "config": {
+              "type": "torus",
+              "data": { "x": 0, "y": 0, "radius": 10, "innerRadius": 0, "affectRotation": false }
+            }
+          },
+          {
+            "type": "textureSingle",
+            "config": { "texture": "circle" }
+          }
+        ]
+      }
+    },
+    {
       "id": "fire_trail",
       "start": 0,
       "end": 500,
@@ -74,7 +142,7 @@
           },
           {
             "type": "textureSingle",
-            "config": { "texture": "square" }
+            "config": { "texture": "circle" }
           }
         ]
       }
@@ -151,7 +219,7 @@
           },
           {
             "type": "textureSingle",
-            "config": { "texture": "square" }
+            "config": { "texture": "circle" }
           }
         ]
       }
