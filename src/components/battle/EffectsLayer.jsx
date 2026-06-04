@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
 import { ThumosInterpreter } from '../../vfx/ThumosInterpreter';
+import PIXI_DATA from '../../vfx/pixi_data';
 
 // ── Reference: manual spawnBurst (pre-ThumosInterpreter) ──────
 function spawnBurst(app, x, y) {
@@ -65,7 +66,8 @@ export default function EffectsLayer() {
       interpreterRef.current = new ThumosInterpreter(app);
 
       onPlay = (e) => {
-        const { x, y, json } = e.detail;
+        const { x, y, animType } = e.detail;
+        const json = PIXI_DATA[animType];
         if (json) interpreterRef.current.play(json, x, y);
         else spawnBurst(app, x, y);
       };
