@@ -22,7 +22,8 @@ import PlayerPortrait from '../components/battle/PlayerPortrait';
 import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
 import EffectsLayer from '../components/battle/EffectsLayer';
-import flameStrikeJson from '../pixi/attacks/SUMURAI/flame_strike.json';
+// TODO: replace with a PARTICLE_CONFIGS[anim.type] lookup — hardcoded JSON imports won't scale
+import heavySlicesJson from '../pixi/attacks/SUMURAI/heavy_slices.json';
 
 export default function BattleScreen() {
   const { gs, dispatch, onBattleEnd, retry, restartBattle } = useGame();
@@ -187,7 +188,7 @@ export default function BattleScreen() {
       // 1. PIXI — notify EffectsLayer with target's screen position and animation JSON.
       // TODO: replace hardcoded flameStrikeJson with a PARTICLE_CONFIGS[anim.type] lookup.
       const pos = getCharacterScreenPos(anim.targetId);
-      if (pos) window.dispatchEvent(new CustomEvent('play-thumos-animation', { detail: { ...pos, json: flameStrikeJson } }));
+      if (pos) window.dispatchEvent(new CustomEvent('play-thumos-animation', { detail: { ...pos, json: heavySlicesJson } }));
 
       // 2. CSS — apply animation class to the target character card.
       setActiveAnimations(prev => ({

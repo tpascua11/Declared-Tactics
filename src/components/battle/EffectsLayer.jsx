@@ -10,9 +10,7 @@ function spawnBurst(app, x, y) {
   for (let i = 0; i < COUNT; i++) {
     const g = new PIXI.Graphics();
     const size = 2.5 + Math.random() * 5;
-    g.beginFill(COLORS[Math.floor(Math.random() * COLORS.length)]);
-    g.drawCircle(0, 0, size);
-    g.endFill();
+    g.circle(0, 0, size).fill(COLORS[Math.floor(Math.random() * COLORS.length)]);
     g.x = x; g.y = y;
     const angle = Math.random() * Math.PI * 2;
     const speed = 100 + Math.random() * 280;
@@ -42,38 +40,47 @@ export default function EffectsLayer() {
   useEffect(() => {
     if (appRef.current) return;
 
-    const app = new PIXI.Application({
+    let cancelled = false;
+    let onPlay;
+    const app = new PIXI.Application();
+
+    app.init({
       backgroundAlpha: 0,
       resizeTo: window,
       autoDensity: true,
+    }).then(() => {
+      if (cancelled) { app.destroy(true); return; }
+
+      Object.assign(app.canvas.style, {
+        position: 'fixed',
+        inset: '0',
+        pointerEvents: 'none',
+        zIndex: '100',
+      });
+
+      // Appended to document.body so position:fixed is relative to the viewport,
+      // not the CSS-transformed GameCanvas ancestor.
+      document.body.appendChild(app.canvas);
+      appRef.current = app;
+      interpreterRef.current = new ThumosInterpreter(app);
+
+      onPlay = (e) => {
+        const { x, y, json } = e.detail;
+        if (json) interpreterRef.current.play(json, x, y);
+        else spawnBurst(app, x, y);
+      };
+      window.addEventListener('play-thumos-animation', onPlay);
     });
-
-    Object.assign(app.view.style, {
-      position: 'fixed',
-      inset: '0',
-      pointerEvents: 'none',
-      zIndex: '100',
-    });
-
-    // Appended to document.body so position:fixed is relative to the viewport,
-    // not the CSS-transformed GameCanvas ancestor.
-    document.body.appendChild(app.view);
-    appRef.current = app;
-    interpreterRef.current = new ThumosInterpreter(app);
-
-    const onPlay = (e) => {
-      const { x, y, json } = e.detail;
-      if (json) interpreterRef.current.play(json, x, y);
-      else spawnBurst(app, x, y);
-    };
-    window.addEventListener('play-thumos-animation', onPlay);
 
     return () => {
-      window.removeEventListener('play-thumos-animation', onPlay);
+      cancelled = true;
+      if (onPlay) window.removeEventListener('play-thumos-animation', onPlay);
       interpreterRef.current?.stop();
-      document.body.removeChild(app.view);
-      app.destroy(true);
-      appRef.current = null;
+      if (appRef.current) {
+        try { if (app.canvas?.parentNode) document.body.removeChild(app.canvas); } catch (_) {}
+        app.destroy(true);
+        appRef.current = null;
+      }
     };
   }, []);
 
