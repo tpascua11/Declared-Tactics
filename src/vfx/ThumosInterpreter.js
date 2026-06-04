@@ -94,10 +94,11 @@ export class ThumosInterpreter {
       container.addChild(head);
     }
 
-    const interval = 1 / (rate * 10);
-    let emitTimer  = 0;
-    let elapsed    = 0;
-    let last       = performance.now();
+    const interval    = 1 / (rate * 10);
+    let emitTimer     = 0;
+    let emitElapsed   = 0;
+    let elapsed       = 0;
+    let last          = performance.now();
 
     const spawnParticle = (sx, sy) => {
       const sz      = lerp(json.sizeMin ?? 3, json.sizeMax ?? 11, Math.random());
@@ -139,7 +140,9 @@ export class ThumosInterpreter {
       if (elapsed < emitSec) {
         emitTimer += dt;
         while (emitTimer >= interval) {
-          spawnParticle(sx, sy);
+          emitElapsed += interval;
+          const { sx: psx, sy: psy } = getSpawnPos(emitElapsed);
+          spawnParticle(psx, psy);
           emitTimer -= interval;
         }
       }

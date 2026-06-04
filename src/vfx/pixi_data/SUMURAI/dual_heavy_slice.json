@@ -2,10 +2,10 @@
   {
     "speed": 120,
     "emitAngle": "auto",
-    "rate": 25,
+    "rate": 35,
     "sizeMin": 1,
     "sizeMax": 11,
-    "lifetime": 0.6,
+    "lifetime": 0.8,
     "spreadX": 20,
     "spreadY": 80,
     "gravity": 30,
@@ -16,16 +16,17 @@
       "#ffe066",
       "#ff6a00"
     ],
+    "showHead": false,
     "motion": {
       "fromX": -120,
       "fromY": -120,
       "dx": 240,
       "dy": 240,
-      "duration": 300
+      "duration": 160
     }
   },
   {
-    "delay": 200,
+    "delay": 120,
     "offsetX": 35,
     "offsetY": 35,
     "speed": 350,
@@ -33,12 +34,12 @@
     "rate": 35,
     "sizeMin": 3,
     "sizeMax": 12,
-    "lifetime": 0.4,
+    "lifetime": 0.7,
     "spread": 260,
     "gravity": 100,
     "additive": true,
     "rotation": true,
-    "emitDuration": 160,
+    "emitDuration": 100,
     "colorStops": [
       "#ffffff",
       "#ffe066",
@@ -46,13 +47,13 @@
     ]
   },
   {
-    "delay": 200,
+    "delay": 120,
     "speed": 120,
     "emitAngle": "auto",
-    "rate": 25,
+    "rate": 60,
     "sizeMin": 1,
     "sizeMax": 11,
-    "lifetime": 0.6,
+    "lifetime": 0.8,
     "spreadX": 20,
     "spreadY": 80,
     "gravity": 30,
@@ -63,29 +64,30 @@
       "#ffe066",
       "#ff6a00"
     ],
+    "showHead": false,
     "motion": {
       "fromX": 120,
       "fromY": -120,
       "dx": -240,
       "dy": 240,
-      "duration": 300
+      "duration": 160
     }
   },
   {
-    "delay": 400,
+    "delay": 240,
     "offsetX": -35,
     "offsetY": 35,
     "speed": 350,
     "angle": 315,
-    "rate": 35,
+    "rate": 60,
     "sizeMin": 3,
     "sizeMax": 12,
-    "lifetime": 0.4,
+    "lifetime": 0.7,
     "spread": 260,
     "gravity": 100,
     "additive": true,
     "rotation": true,
-    "emitDuration": 160,
+    "emitDuration": 100,
     "colorStops": [
       "#ffffff",
       "#ffe066",
