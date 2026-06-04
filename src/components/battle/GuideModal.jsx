@@ -5,8 +5,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import '../shared/shine-btn.css';
-import '../../battle/aura_animations.css';
-import { playSelectSfx } from '../../battle/animationRegistry';
+import '../../vfx/aura_animations.css';
+import { playSelectSfx } from '../../vfx/animationRegistry';
 import {
   FOX_SUMMURAI_STILL_WIND,
   FOX_SUMMURAI_BATTOJUTSU,

@@ -12,6 +12,7 @@ import CharacterSelectScreen from './screens/CharacterSelectScreen';
 import BattleScreen from './screens/BattleScreen';
 import MapScreen from './screens/MapScreen';
 import GameFinishScreen from './screens/GameFinishScreen';
+import VfxEditorScreen from './screens/VfxEditorScreen';
 import CardShowerTransition from './components/shared/CardShowerTransition';
 import { introMusic } from './assets/Music/index';
 import { useMusicVolume, getMusicVolume } from './hooks/useMusic';
@@ -128,6 +129,9 @@ function PhaseRouter() {
     case 'BATTLE':
     case 'RESULT':
       screen = <BattleScreen />;
+      break;
+    case 'VFX_EDITOR':
+      screen = <VfxEditorScreen />;
       break;
     default:
       screen = null;

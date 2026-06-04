@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import MAP_DATA from '../../data/maps/PATH_OF_THE_SUMURAI.json';
 import '../shared/shine-btn.css';
-import { playSelectSfx } from '../../battle/animationRegistry';
+import { playSelectSfx } from '../../vfx/animationRegistry';
 
 const CARD_W = 88;
 const CARD_H = 132;

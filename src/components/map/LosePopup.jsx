@@ -1,4 +1,4 @@
-import { playSelectSfx } from '../../battle/animationRegistry';
+import { playSelectSfx } from '../../vfx/animationRegistry';
 
 export default function LosePopup({ tip, onClose }) {
   return (

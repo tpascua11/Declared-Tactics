@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { ThumosInterpreter } from '../../lib/ThumosInterpreter';
+import { ThumosInterpreter } from '../../vfx/ThumosInterpreter';
 
 // ── Reference: manual spawnBurst (pre-ThumosInterpreter) ──────
 function spawnBurst(app, x, y) {

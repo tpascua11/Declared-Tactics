@@ -1,5 +1,5 @@
 import { useMusicVolume, useUiVolume, useSfxVolume } from '../../hooks/useMusic';
-import { playSelectSfx } from '../../battle/animationRegistry';
+import { playSelectSfx } from '../../vfx/animationRegistry';
 
 export default function SettingsModal({ onClose }) {
   const [musicVolume, setMusicVolume] = useMusicVolume();

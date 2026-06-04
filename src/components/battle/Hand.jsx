@@ -6,7 +6,7 @@ import { useRef, useState } from 'react';
 import { effectiveResourceAtExecution, projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import { DEBUG_HAND_COST } from '../../debug';
-import { playSelectSfx } from '../../battle/animationRegistry';
+import { playSelectSfx } from '../../vfx/animationRegistry';
 import GuideModal from './GuideModal';
 import AdvancedGuideModal from './AdvancedGuideModal';
 import SettingsModal from '../map/SettingsModal';

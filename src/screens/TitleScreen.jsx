@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './TitleScreen.css';
 import '../components/shared/shine-btn.css';
 import SettingsModal from '../components/map/SettingsModal';
-import { playSelectSfx } from '../battle/animationRegistry';
+import { playSelectSfx } from '../vfx/animationRegistry';
 import pkg from '../../package.json';
 import { GAME_TITLE, GAME_WORLD } from '../config';
 const { version } = pkg;

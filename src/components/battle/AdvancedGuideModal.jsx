@@ -3,7 +3,7 @@
 // ============================================================
 
 import { FOX_QUICK_STEPS, ENM_SAM_HEAVY_STRIKE_1 } from '../../assets/index.js';
-import { playSelectSfx } from '../../battle/animationRegistry';
+import { playSelectSfx } from '../../vfx/animationRegistry';
 
 function ExampleCard({ name, image, color, speed }) {
   return (

@@ -4,7 +4,7 @@ import '../components/shared/shine-btn.css';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
-import { playUiSfx, sfx, playSelectSfx } from '../battle/animationRegistry';
+import { playUiSfx, sfx, playSelectSfx } from '../vfx/animationRegistry';
 import {
   CLASS_ICON_SAMURAI, CLASS_ICON_WARRIOR, CLASS_ICON_FIGHTER, CLASS_ICON_MONK,
   CLASS_ICON_ROGUE, CLASS_ICON_TEMPLAR, CLASS_ICON_PALADIN, CLASS_ICON_WIZARD,

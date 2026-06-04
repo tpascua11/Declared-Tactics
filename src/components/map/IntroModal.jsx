@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../shared/shine-btn.css';
-import { playSelectSfx } from '../../battle/animationRegistry';
+import { playSelectSfx } from '../../vfx/animationRegistry';
 
 export default function IntroModal({ level, levelType, mapIconSrc, onBattle, onClose }) {
   const typeColor = levelType?.color ?? '#4da6ff';

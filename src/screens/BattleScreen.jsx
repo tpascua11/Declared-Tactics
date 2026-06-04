@@ -10,9 +10,9 @@ import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/Music/index';
 import { useMusic } from '../hooks/useMusic';
-import { ANIMATIONS, playBattleSfx, sfx } from '../battle/animationRegistry';
-import '../battle/animations.css';
-import '../battle/aura_animations.css';
+import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
+import '../vfx/animations.css';
+import '../vfx/aura_animations.css';
 import CardRiseTransition from '../components/shared/CardRiseTransition';
 import EnemyZone from '../components/battle/EnemyZone';
 import BattleLog from '../components/battle/BattleLog';
@@ -23,7 +23,7 @@ import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
 import EffectsLayer from '../components/battle/EffectsLayer';
 // TODO: replace with a PARTICLE_CONFIGS[anim.type] lookup — hardcoded JSON imports won't scale
-import heavySlicesJson from '../pixi/attacks/SUMURAI/heavy_slices.json';
+import heavySlicesJson from '../vfx/pixi_data/SUMURAI/heavy_slices.json';
 
 export default function BattleScreen() {
   const { gs, dispatch, onBattleEnd, retry, restartBattle } = useGame();

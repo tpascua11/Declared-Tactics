@@ -21,7 +21,7 @@ import {
   MAP_ICON_SUNSET, MAP_ICON_SUNSET_2, MAP_ICON_TREE_AT_SNOW, MAP_ICON_WATER,
 } from '../assets';
 import { DEBUG_MAP } from '../debug';
-import { playSelectSfx } from '../battle/animationRegistry';
+import { playSelectSfx } from '../vfx/animationRegistry';
 import './MapScreen.css';
 import '../components/shared/shine-btn.css';
 import menuMapTheme from '../assets/Music/MENU_MAP_THEME.mp3';
