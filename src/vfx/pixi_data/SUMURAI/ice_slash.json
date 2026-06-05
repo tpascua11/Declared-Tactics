@@ -40,7 +40,7 @@
     "gravity": -4,
     "additive": false,
     "rotation": true,
-    "shape": "star",
+    "shape": "snowflake",
     "colorStops": [
       "#ffffff",
       "#ddf4ff",
