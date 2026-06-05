@@ -202,7 +202,7 @@ export const ANIMATIONS = {
   },
   storm_strike: {
     cssClass: 'animate-storm_strike',
-    duration: 1000,
+    duration: 750,
     sfx: [
       { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
       { src: sfx('THUNDER.wav'),     delay: 300, volume: 1.0 },
@@ -228,6 +228,22 @@ export const ANIMATIONS = {
     duration: 700,
     sfx: null,
     floatingNumber: null,
+  },
+  kuzu_ryusen: {
+    cssClass: 'animate-kuzu_ryusen',
+    duration: 1400,
+    sfx: [
+      { src: sfx('SLICE_1.wav'),      delay: 0,    volume: 0.5  },
+      { src: sfx('SLICE_1.wav'),      delay: 154,  volume: 0.5  },
+      { src: sfx('SLICE_1.wav'),      delay: 308,  volume: 0.55 },
+      { src: sfx('SLICE_1.wav'),      delay: 462,  volume: 0.55 },
+      { src: sfx('SLICE_1.wav'),      delay: 616,  volume: 0.6  },
+      { src: sfx('SLICE_1.wav'),      delay: 770,  volume: 0.6  },
+      { src: sfx('SLICE_1.wav'),      delay: 924,  volume: 0.65 },
+      { src: sfx('SLICE_1.wav'),      delay: 1078, volume: 0.65 },
+      { src: sfx('HARD_SWING_1.wav'), delay: 1190, volume: 0.8  },
+    ],
+    floatingNumber: { color: '#ff4444' },
   },
   // ── Coming soon ──────────────────────────────────────────
   // slam:   { cssClass: 'animate-slam',   duration: 500, sfx: null },
