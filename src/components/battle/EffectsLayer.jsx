@@ -57,6 +57,7 @@ export default function EffectsLayer() {
         inset: '0',
         pointerEvents: 'none',
         zIndex: '100',
+        background: 'transparent',
       });
 
       // Appended to document.body so position:fixed is relative to the viewport,
@@ -79,7 +80,10 @@ export default function EffectsLayer() {
       if (onPlay) window.removeEventListener('play-thumos-animation', onPlay);
       interpreterRef.current?.stop();
       if (appRef.current) {
-        try { if (app.canvas?.parentNode) document.body.removeChild(app.canvas); } catch (_) {}
+        try {
+          if (app.canvas) app.canvas.style.display = 'none';
+          if (app.canvas?.parentNode) document.body.removeChild(app.canvas);
+        } catch (_) {}
         app.destroy(true);
         appRef.current = null;
       }

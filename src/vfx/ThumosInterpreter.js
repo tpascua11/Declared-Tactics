@@ -75,6 +75,7 @@ export class ThumosInterpreter {
       square: (g, sz, c) => g.rect(-sz/2, -sz/2, sz, sz).fill(c),
       circle: (g, sz, c) => g.circle(0, 0, sz/2).fill(c),
       spark:  (g, sz, c) => g.rect(-sz, -sz*0.15, sz*2, sz*0.3).fill(c),
+      star:   (g, sz, c) => { g.rect(-sz, -sz*0.18, sz*2, sz*0.36).fill(c); g.rect(-sz*0.18, -sz, sz*0.36, sz*2).fill(c); },
     };
     const drawParticle = drawFns[shape] ?? drawFns.square;
 

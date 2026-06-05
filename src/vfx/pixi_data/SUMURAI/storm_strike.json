@@ -1,0 +1,95 @@
+[
+  {
+    "name": "lightning charge",
+    "offsetY": -120,
+    "speed": 60,
+    "angle": 270,
+    "rate": 5,
+    "sizeMin": 10,
+    "sizeMax": 15,
+    "lifetime": 0.45,
+    "spread": 100,
+    "gravity": -15,
+    "additive": true,
+    "shape": "star",
+    "emitDuration": 80,
+    "colorStops": [
+      "#ffffff",
+      "#eeffaa",
+      "#88ffff"
+    ]
+  },
+  {
+    "name": "lightning slash",
+    "delay": 180,
+    "speed": 140,
+    "emitAngle": "auto",
+    "rate": 55,
+    "sizeMin": 5,
+    "sizeMax": 18,
+    "lifetime": 0.45,
+    "spreadX": 50,
+    "spreadY": 50,
+    "gravity": 0,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#ccffff",
+      "#44aaff"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": 0,
+      "fromY": -150,
+      "dx": 0,
+      "dy": 300,
+      "duration": 100
+    }
+  },
+  {
+    "name": "ground burst",
+    "delay": 320,
+    "offsetY": 120,
+    "speed": 340,
+    "angle": 270,
+    "rate": 45,
+    "sizeMin": 3,
+    "sizeMax": 13,
+    "lifetime": 1.1,
+    "spreadX": 300,
+    "spreadY": 60,
+    "gravity": 80,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "emitDuration": 450,
+    "colorStops": [
+      "#ffffff",
+      "#ccffff",
+      "#4488ff",
+      "#2244cc"
+    ]
+  },
+  {
+    "name": "electric linger",
+    "delay": 320,
+    "offsetY": 80,
+    "speed": 55,
+    "angle": 270,
+    "rate": 14,
+    "sizeMin": 2,
+    "sizeMax": 7,
+    "lifetime": 0.9,
+    "spread": 220,
+    "gravity": -12,
+    "additive": true,
+    "shape": "spark",
+    "emitDuration": 320,
+    "colorStops": [
+      "#ffffff",
+      "#88ddff",
+      "#4466ff"
+    ]
+  }
+]

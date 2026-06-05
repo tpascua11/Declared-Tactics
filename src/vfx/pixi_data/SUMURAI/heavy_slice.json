@@ -34,7 +34,7 @@
     "rate": 35,
     "sizeMin": 3,
     "sizeMax": 12,
-    "lifetime": 0.7,
+    "lifetime": 0.5,
     "spread": 260,
     "gravity": 100,
     "additive": true,

@@ -182,7 +182,7 @@ export const ANIMATIONS = {
   },
   ice_slash: {
     cssClass: 'animate-ice_shake',
-    duration: 500,
+    duration: 1000,
     sfx: [
       { src: sfx('STREAM_SLASH.wav'), delay: 25,   volume: 0.3 },
       { src: sfx('ICE'), delay: 100,   volume: 0.7 },
@@ -192,8 +192,8 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#7dd3fc' },
   },
   flame_strike: {
-    cssClass: 'animate-burn',
-    duration: 750,
+    cssClass: 'animate-flame_strike',
+    duration: 1200,
     sfx: [
       { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
       { src: sfx('FLAMES'), delay: 300, volume: 0.8 },
@@ -201,8 +201,8 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#f97316' },
   },
   storm_strike: {
-    cssClass: 'animate-burn',
-    duration: 750,
+    cssClass: 'animate-storm_strike',
+    duration: 1000,
     sfx: [
       { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
       { src: sfx('THUNDER.wav'),     delay: 300, volume: 1.0 },
