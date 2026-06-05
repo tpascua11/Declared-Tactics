@@ -66,8 +66,8 @@ export default function EffectsLayer() {
       interpreterRef.current = new ThumosInterpreter(app);
 
       onPlay = (e) => {
-        const { x, y, animType } = e.detail;
-        const json = PIXI_DATA[animType];
+        const { x, y, animType, json: inlineJson } = e.detail;
+        const json = inlineJson ?? PIXI_DATA[animType];
         if (json) interpreterRef.current.play(json, x, y);
         else spawnBurst(app, x, y);
       };
