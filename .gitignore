@@ -28,3 +28,4 @@ Thumbs.db
 *.njsproj
 *.sln
 .claude/worktrees/jovial-leakey/
+build.zip

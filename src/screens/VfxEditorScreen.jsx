@@ -41,7 +41,7 @@ export default function VfxEditorScreen() {
   // Sync textarea when selected animation changes
   useEffect(() => {
     const data = PIXI_DATA[selected];
-    setJsonText(data ? JSON.stringify(data, null, 2) : '// no pixi data for this animation');
+    setJsonText(JSON.stringify(data ?? [], null, 2));
     setJsonError(null);
   }, [selected]);
 
@@ -61,7 +61,7 @@ export default function VfxEditorScreen() {
       setJsonError(null);
     } catch (err) {
       setJsonError(err.message);
-      return;
+      parsedJson = null;
     }
 
     if (config) {
@@ -76,13 +76,15 @@ export default function VfxEditorScreen() {
       }
     }
 
-    const el = document.querySelector('[data-character-id="editor_player"]');
-    if (el) {
-      const r = el.getBoundingClientRect();
-      const pos = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-      window.dispatchEvent(new CustomEvent('play-thumos-animation', {
-        detail: { ...pos, animType: selected, json: parsedJson },
-      }));
+    if (parsedJson !== null) {
+      const el = document.querySelector('[data-character-id="editor_player"]');
+      if (el) {
+        const r = el.getBoundingClientRect();
+        const pos = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        window.dispatchEvent(new CustomEvent('play-thumos-animation', {
+          detail: { ...pos, animType: selected, json: parsedJson },
+        }));
+      }
     }
 
     clearTimerRef.current = setTimeout(() => {

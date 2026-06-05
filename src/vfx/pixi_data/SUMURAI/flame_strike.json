@@ -1,5 +1,6 @@
 [
   {
+    "name": "spark slash trail",
     "speed": 80,
     "emitAngle": "auto",
     "rate": 25,
@@ -26,6 +27,7 @@
     }
   },
   {
+    "name": "flame slash",
     "delay": 280,
     "speed": 60,
     "emitAngle": "auto",
@@ -54,6 +56,7 @@
     }
   },
   {
+    "name": "deep fire bloom",
     "delay": 280,
     "speed": 40,
     "emitAngle": "auto",
@@ -82,6 +85,7 @@
     }
   },
   {
+    "name": "impact burst",
     "delay": 720,
     "offsetX": 90,
     "offsetY": 90,
