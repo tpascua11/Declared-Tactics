@@ -1,0 +1,97 @@
+[
+  {
+    "speed": 100,
+    "emitAngle": "auto",
+    "rate": 45,
+    "sizeMin": 6,
+    "sizeMax": 20,
+    "lifetime": 0.6,
+    "spreadX": 15,
+    "spreadY": 50,
+    "gravity": 10,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#aaddff",
+      "#44aaff"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -150,
+      "fromY": 0,
+      "dx": 300,
+      "dy": 0,
+      "duration": 140
+    }
+  },
+  {
+    "delay": 60,
+    "speed": 30,
+    "emitAngle": "auto",
+    "rate": 22,
+    "sizeMin": 8,
+    "sizeMax": 20,
+    "lifetime": 1.4,
+    "spreadX": 20,
+    "spreadY": 40,
+    "gravity": 8,
+    "additive": false,
+    "rotation": true,
+    "shape": "circle",
+    "colorStops": [
+      "#cceeff",
+      "#aaddff",
+      "#ffffff"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -150,
+      "fromY": 0,
+      "dx": 300,
+      "dy": 0,
+      "duration": 140
+    }
+  },
+  {
+    "delay": 70,
+    "speed": 220,
+    "angle": 180,
+    "rate": 40,
+    "sizeMin": 4,
+    "sizeMax": 14,
+    "lifetime": 0.9,
+    "spreadX": 200,
+    "spreadY": 30,
+    "gravity": 90,
+    "additive": true,
+    "shape": "circle",
+    "emitDuration": 120,
+    "colorStops": [
+      "#ffffff",
+      "#88ccff",
+      "#0099cc"
+    ]
+  },
+  {
+    "delay": 70,
+    "speed": 40,
+    "angle": 180,
+    "rate": 20,
+    "sizeMin": 8,
+    "sizeMax": 22,
+    "lifetime": 0.5,
+    "spreadX": 300,
+    "spreadY": 80,
+    "gravity": 15,
+    "additive": false,
+    "rotation": true,
+    "shape": "circle",
+    "emitDuration": 300,
+    "colorStops": [
+      "#cceeff",
+      "#aaddff",
+      "#ffffff"
+    ]
+  }
+]
