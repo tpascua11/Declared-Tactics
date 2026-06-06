@@ -129,7 +129,7 @@
       "speed_mod": 0,
       "payload_type": "MAGIC",
       "tag_type": ["PHYSICAL", "SLASH", "STORM"],
-      "animation": "flame_strike",
+      "animation": "storm_strike",
       "animation_intensity": 1.2,
       "properties": [],
       "tags": {
