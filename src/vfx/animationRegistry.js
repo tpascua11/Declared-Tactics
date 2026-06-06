@@ -200,6 +200,52 @@ export const ANIMATIONS = {
     ],
     floatingNumber: { color: '#f97316' },
   },
+  tri_ice_slash: {
+    cssClass: 'animate-tri_ice_slash',
+    duration: 2000,
+    sfx: [
+      { src: sfx('STREAM_SLASH.wav'), delay: 0,    volume: 0.3 },
+      { src: sfx('ICE'),              delay: 100,  volume: 0.7 },
+      { src: sfx('ICE'),              delay: 200,  volume: 0.5 },
+      { src: sfx('STREAM_SLASH.wav'), delay: 400,  volume: 0.3 },
+      { src: sfx('ICE'),              delay: 490,  volume: 0.7 },
+      { src: sfx('ICE'),              delay: 580,  volume: 0.5 },
+      { src: sfx('STREAM_SLASH.wav'), delay: 780,  volume: 0.35 },
+      { src: sfx('ICE'),              delay: 860,  volume: 0.8 },
+      { src: sfx('ICE'),              delay: 960,  volume: 0.65 },
+      { src: sfx('ICE'),              delay: 1060, volume: 0.5 },
+    ],
+    floatingNumber: [
+      { color: '#7dd3fc', delay: 0,   split: 0.34 },
+      { color: '#7dd3fc', delay: 400, split: 0.33 },
+      { color: '#7dd3fc', delay: 780, split: 0.33 },
+    ],
+  },
+  cross_flame_strike: {
+    cssClass: 'animate-cross_flame_strike',
+    duration: 1600,
+    sfx: [
+      { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
+      { src: sfx('SWORD_SWING.wav'), delay: 25,  volume: 0.6 },
+      { src: sfx('FLAMES'),          delay: 280, volume: 0.8 },
+      { src: sfx('FLAMES'),          delay: 320, volume: 0.7 },
+    ],
+    floatingNumber: { color: '#f97316' },
+  },
+  dual_flame_strike: {
+    cssClass: 'animate-dual_flame_strike',
+    duration: 2000,
+    sfx: [
+      { src: sfx('SWORD_SWING.wav'), delay: 0,    volume: 0.7 },
+      { src: sfx('FLAMES'),          delay: 300,  volume: 0.8 },
+      { src: sfx('SWORD_SWING.wav'), delay: 700,  volume: 0.7 },
+      { src: sfx('FLAMES'),          delay: 1000, volume: 0.9 },
+    ],
+    floatingNumber: [
+      { color: '#f97316', delay: 0,   split: 0.5 },
+      { color: '#f97316', delay: 700, split: 0.5 },
+    ],
+  },
   storm_strike: {
     cssClass: 'animate-storm_strike',
     duration: 750,
@@ -228,6 +274,44 @@ export const ANIMATIONS = {
     duration: 700,
     sfx: null,
     floatingNumber: null,
+  },
+  gatotsu_shock: {
+    cssClass: 'animate-gatotsu_shock',
+    duration: 1400,
+    sfx: [
+      { src: sfx('HARD_SWING_1.wav'), delay: 0,   volume: 0.9 },
+      { src: sfx('THUNDER.wav'),      delay: 420,  volume: 0.5 },
+      { src: sfx('THUNDER.wav'),      delay: 730,  volume: 0.8 },
+    ],
+    floatingNumber: { color: '#818cf8' },
+  },
+  gatotsu_call_lightning: {
+    cssClass: 'animate-gatotsu_call_lightning',
+    duration: 1400,
+    sfx: [
+      { src: sfx('HARD_SWING_1.wav'), delay: 0,   volume: 0.9 },
+      { src: sfx('SWORD_SWING.wav'),  delay: 450,  volume: 0.7 },
+      { src: sfx('THUNDER.wav'),      delay: 700,  volume: 0.4 },
+      { src: sfx('THUNDER.wav'),      delay: 780,  volume: 1.0 },
+    ],
+    duration: 1800,
+    floatingNumber: { color: '#fde047' },
+  },
+  gatotsu_2: {
+    cssClass: 'animate-gatotsu_2',
+    duration: 750,
+    sfx: [
+      { src: sfx('HARD_SWING_1.wav'), delay: 0,  volume: 0.9 },
+    ],
+    floatingNumber: { color: '#e2e8f0' },
+  },
+  gatotsu: {
+    cssClass: 'animate-gatotsu',
+    duration: 550,
+    sfx: [
+      { src: sfx('HARD_SWING_1.wav'), delay: 0, volume: 0.8 },
+    ],
+    floatingNumber: { color: '#e2e8f0' },
   },
   kuzu_ryusen: {
     cssClass: 'animate-kuzu_ryusen',

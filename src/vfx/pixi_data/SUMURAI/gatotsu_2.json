@@ -1,0 +1,52 @@
+[
+  {
+    "name": "contact burst — directional upward fan",
+    "angle": 270,
+    "speed": 280,
+    "rate": 25,
+    "sizeMin": 5,
+    "sizeMax": 18,
+    "lifetime": 0.35,
+    "spreadX": 110,
+    "spreadY": 80,
+    "gravity": 45,
+    "additive": true,
+    "shape": "spark",
+    "emitDuration": 70,
+    "offsetY": 45,
+    "colorStops": ["#ffffff", "#dde8ff", "#aabbdd"]
+  },
+  {
+    "name": "impact star burst",
+    "speed": 0,
+    "rate": 16,
+    "sizeMin": 3,
+    "sizeMax": 8,
+    "lifetime": 1.0,
+    "spread": 260,
+    "gravity": 30,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "emitDuration": 70,
+    "offsetY": 45,
+    "colorStops": ["#ffffff", "#dde8ff", "#8899cc"]
+  },
+  {
+    "name": "thrust speed streaks — vertical",
+    "angle": 270,
+    "speed": 240,
+    "rate": 30,
+    "sizeMin": 2,
+    "sizeMax": 9,
+    "lifetime": 0.15,
+    "spreadX": 8,
+    "spreadY": 80,
+    "gravity": 0,
+    "additive": true,
+    "shape": "spark",
+    "emitDuration": 60,
+    "offsetY": 50,
+    "colorStops": ["#ffffff", "#cce0ff"]
+  }
+]
