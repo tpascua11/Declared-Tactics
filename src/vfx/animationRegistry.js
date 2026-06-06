@@ -248,7 +248,7 @@ export const ANIMATIONS = {
   },
   storm_strike: {
     cssClass: 'animate-storm_strike',
-    duration: 750,
+    duration: 1100,
     sfx: [
       { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
       { src: sfx('THUNDER.wav'),     delay: 300, volume: 1.0 },
