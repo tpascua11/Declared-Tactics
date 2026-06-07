@@ -1,7 +1,7 @@
 [
   {
     "name": "lightning charge",
-    "offsetY": -120,
+    "offsetY": -180,
     "speed": 60,
     "angle": 270,
     "rate": 5,
@@ -41,7 +41,7 @@
     "showHead": false,
     "motion": {
       "fromX": 0,
-      "fromY": -150,
+      "fromY": -210,
       "dx": 0,
       "dy": 300,
       "duration": 100
@@ -50,7 +50,7 @@
   {
     "name": "ground burst",
     "delay": 320,
-    "offsetY": 120,
+    "offsetY": 60,
     "speed": 340,
     "angle": 270,
     "rate": 20,
@@ -74,7 +74,7 @@
   {
     "name": "electric linger",
     "delay": 320,
-    "offsetY": 80,
+    "offsetY": 20,
     "speed": 55,
     "angle": 270,
     "rate": 14,
