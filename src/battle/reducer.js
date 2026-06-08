@@ -297,7 +297,7 @@ export function battleReducer(state, action) {
           if (aoeHits?.length > 0) {
             // AOE: one shake per hit enemy; SFX plays only on the first to avoid stacking
             aoeHits.forEach(({ targetId, damage }, i) => {
-              pendingAnimation.push({ type: animationHint, targetId, intensity: animationIntensity, value: damage, skipSfx: i > 0 });
+              pendingAnimation.push({ type: animationHint, targetId, ownerId: actionA.owner_id, intensity: animationIntensity, value: damage, skipSfx: i > 0 });
             });
             // Sidestep for any AOE targets that evaded; SFX plays only on the first
             aoeDodges?.forEach(({ targetId }, i) => {
@@ -305,7 +305,7 @@ export function battleReducer(state, action) {
             });
           } else {
             // Single-target: animate on target
-            pendingAnimation.push({ type: animationHint, targetId: actualTargetId, intensity: animationIntensity, value: damageDealt });
+            pendingAnimation.push({ type: animationHint, targetId: actualTargetId, ownerId: actionA.owner_id, intensity: animationIntensity, value: damageDealt });
           }
           // Animate on self if card defines animation_self
           if (animationSelf) {

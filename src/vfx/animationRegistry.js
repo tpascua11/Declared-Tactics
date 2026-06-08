@@ -55,6 +55,7 @@ export function playBattleSfx(src, volume = 0.6) {
 export const playSelectSfx = () => playUiSfx(sfx('SELECT_2.wav'), 0.25);
 
 export const ANIMATIONS = {
+  // cssClass — applied to the target. ownerCssClass — applied to the attacker simultaneously (optional).
   shake: {
     cssClass: 'animate-shake',
     duration: 350,
@@ -248,6 +249,7 @@ export const ANIMATIONS = {
   },
   storm_strike: {
     cssClass: 'animate-storm_strike',
+    ownerCssClass: 'animate-storm_strike_user',
     duration: 1100,
     sfx: [
       { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },

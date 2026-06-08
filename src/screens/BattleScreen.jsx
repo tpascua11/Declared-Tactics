@@ -182,16 +182,18 @@ export default function BattleScreen() {
     anims.forEach(anim => {
       const config = ANIMATIONS[anim.type];
       if (!config) return;
+      const ownerCssClass = anim.ownerId ? config.ownerCssClass : null;
 
       // 1. PIXI — notify EffectsLayer with target's screen position and animation JSON.
       // TODO: replace hardcoded flameStrikeJson with a PARTICLE_CONFIGS[anim.type] lookup.
       const pos = getCharacterScreenPos(anim.targetId);
       if (pos) window.dispatchEvent(new CustomEvent('play-thumos-animation', { detail: { ...pos, animType: anim.type } }));
 
-      // 2. CSS — apply animation class to the target character card.
+      // 2. CSS — apply animation class to target and owner if a _user counterpart exists.
       setActiveAnimations(prev => ({
         ...prev,
         [anim.targetId]: { cssClass: config.cssClass, intensity: anim.intensity ?? 1.0 },
+        ...(ownerCssClass && { [anim.ownerId]: { cssClass: ownerCssClass, intensity: anim.intensity ?? 1.0 } }),
       }));
 
       // 3. SFX — play sound(s), supports multiple sounds with individual delays.
@@ -235,7 +237,7 @@ export default function BattleScreen() {
       // Stored in a ref so effect cleanup on the next step doesn't cancel it —
       // the clear must always fire so dead enemies fade after their animation ends.
       animClearTimersRef.current.push(setTimeout(() => {
-        setActiveAnimations(prev => ({ ...prev, [anim.targetId]: null }));
+        setActiveAnimations(prev => ({ ...prev, [anim.targetId]: null, ...(ownerCssClass && { [anim.ownerId]: null }) }));
       }, config.duration));
     });
 
