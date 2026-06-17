@@ -55,9 +55,9 @@ export function playBattleSfx(src, volume = 0.6) {
 export const playSelectSfx = () => playUiSfx(sfx('SELECT_2.wav'), 0.25);
 
 export const ANIMATIONS = {
-  // cssClass — applied to the target. ownerCssClass — applied to the attacker simultaneously (optional).
+  // targetCssClass — applied to the target. ownerCssClass — applied to the attacker simultaneously (optional).
   shake: {
-    cssClass: 'animate-shake',
+    targetCssClass:'animate-shake',
     duration: 350,
     sfx: sfx('ATTACK_1.wav'),
     volume: 0.6,
@@ -66,14 +66,14 @@ export const ANIMATIONS = {
     // particles: null, // future: { preset: 'ice_burst' }
   },
   heavy_slice: {
-    cssClass: 'animate-heavy_shake',
+    targetCssClass:'animate-heavy_shake',
     duration: 500,
     sfx: sfx('SLICE_1.wav'),
     volume: 0.7,
     floatingNumber: { color: '#ff4444' },
   },
   stream_slash: {
-    cssClass: 'animate-heavy_shake',
+    targetCssClass:'animate-heavy_shake',
     duration: 500,
     sfx: [
       { src: sfx('STREAM_SLASH.wav'), delay: 125,   volume: 0.5 },
@@ -83,7 +83,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#449bff' },
   },
   dual_heavy_slice: {
-    cssClass: 'animate-heavy_shake',
+    targetCssClass:'animate-heavy_shake',
     duration: 500,
     sfx: [
       { src: sfx('HARD_SWING_1.wav'), delay: 0,   volume: 0.7 },
@@ -95,54 +95,54 @@ export const ANIMATIONS = {
     ],
   },
   shake_magic: {
-    cssClass: 'animate-shake',
+    targetCssClass:'animate-shake',
     duration: 350,
     sfx: sfx('LASER_1.wav'),
     volume: 0.6,
     floatingNumber: { color: '#a78bfa' },
   },
   fizzle: {
-    cssClass: 'animate-fizzle',
+    targetCssClass:'animate-fizzle',
     duration: 600,
     sfx: null,
     floatingNumber: null,
   },
   wiggle: {
-    cssClass: 'animate-wiggle',
+    targetCssClass:'animate-wiggle',
     duration: 550,
     sfx: null,
     floatingNumber: null,
   },
   sidestep: {
-    cssClass: 'animate-sidestep',
+    targetCssClass:'animate-sidestep',
     duration: 550,
     sfx: sfx('DODGE_1.wav'),
     volume: 0.6,
     floatingNumber: null,
   },
   run_circle: {
-    cssClass: 'animate-run_circle',
+    targetCssClass:'animate-run_circle',
     duration: 500,
     //battleDelay: 2000,
     sfx: sfx('BUFF_1.wav'),
     floatingNumber: null,
   },
   speed_dash: {
-    cssClass: 'animate-speed_dash',
+    targetCssClass:'animate-speed_dash',
     duration: 750,
     sfx: sfx('SPEED_2.wav'),
     volume: 0.7,
     floatingNumber: null,
   },
   speed_dash_player: {
-    cssClass: 'animate-speed_dash_player',
+    targetCssClass:'animate-speed_dash_player',
     duration: 750,
     sfx: sfx('SPEED_2.wav'),
     volume: 0.7,
     floatingNumber: null,
   },
   heal: {
-    cssClass: 'animate-heal',
+    targetCssClass:'animate-heal',
     duration: 700,  
     sfx: [
       { src: sfx('REGEN_2.wav'), delay: 0,   volume: 0.7 },
@@ -150,7 +150,7 @@ export const ANIMATIONS = {
     floatingNumber: null,
   },
   buff: {
-    cssClass: 'animate-buff',
+    targetCssClass:'animate-buff',
     duration: 650,
     sfx: [
       { src: sfx('BUFF_2.wav'), delay: 0,   volume: 0.7 },
@@ -158,7 +158,7 @@ export const ANIMATIONS = {
     floatingNumber: null,
   },
   sumurai_sheath: {
-    cssClass: 'animate-buff',
+    targetCssClass:'animate-buff',
     duration: 650,
     sfx: [
       { src: sfx('SHEATH.wav'), delay: 0,   volume: 0.7 },
@@ -166,7 +166,7 @@ export const ANIMATIONS = {
     floatingNumber: null,
   },
   harai: {
-    cssClass: 'animate-harai',
+    targetCssClass:'animate-harai',
     duration: 500,
     sfx: [
       { src: sfx('CLING_1.wav'), delay: 0, volume: 0.4 },
@@ -175,14 +175,14 @@ export const ANIMATIONS = {
     floatingNumber: null,
   },
   burn: {
-    cssClass: 'animate-burn',
+    targetCssClass:'animate-burn',
     duration: 750,
     sfx: sfx('LASER_1.wav'),
     volume: 0.8,
     floatingNumber: { color: '#f97316' },
   },
   ice_slash: {
-    cssClass: 'animate-ice_shake',
+    targetCssClass:'animate-ice_shake',
     duration: 1000,
     sfx: [
       { src: sfx('STREAM_SLASH.wav'), delay: 25,   volume: 0.3 },
@@ -193,7 +193,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#7dd3fc' },
   },
   flame_strike: {
-    cssClass: 'animate-flame_strike',
+    targetCssClass:'animate-flame_strike',
     duration: 1200,
     sfx: [
       { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
@@ -202,7 +202,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#f97316' },
   },
   tri_ice_slash: {
-    cssClass: 'animate-tri_ice_slash',
+    targetCssClass:'animate-tri_ice_slash',
     duration: 2000,
     sfx: [
       { src: sfx('STREAM_SLASH.wav'), delay: 0,    volume: 0.3 },
@@ -223,7 +223,7 @@ export const ANIMATIONS = {
     ],
   },
   cross_flame_strike: {
-    cssClass: 'animate-cross_flame_strike',
+    targetCssClass:'animate-cross_flame_strike',
     duration: 1600,
     sfx: [
       { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
@@ -234,7 +234,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#f97316' },
   },
   dual_flame_strike: {
-    cssClass: 'animate-dual_flame_strike',
+    targetCssClass:'animate-dual_flame_strike',
     duration: 2000,
     sfx: [
       { src: sfx('SWORD_SWING.wav'), delay: 0,    volume: 0.7 },
@@ -248,7 +248,7 @@ export const ANIMATIONS = {
     ],
   },
   storm_strike: {
-    cssClass: 'animate-storm_strike',
+    targetCssClass:'animate-storm_strike',
     ownerCssClass: 'animate-storm_strike_user',
     duration: 1100,
     sfx: [
@@ -258,7 +258,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#818cf8' },
   },
   green_marching_ants: {
-    cssClass: 'animate-green-marching-ants',
+    targetCssClass:'animate-green-marching-ants',
     duration: 1000,
     sfx: [
       { src: sfx('REGEN_3.wav'), delay: 0,   volume: 0.31 },
@@ -266,19 +266,19 @@ export const ANIMATIONS = {
     floatingNumber: null,
   },
   enemy_exit: {
-    cssClass: 'animate-enemy_exit',
+    targetCssClass:'animate-enemy_exit',
     duration: 500,
     sfx: null,
     floatingNumber: null,
   },
   enemy_enter: {
-    cssClass: 'animate-enemy_enter',
+    targetCssClass:'animate-enemy_enter',
     duration: 700,
     sfx: null,
     floatingNumber: null,
   },
   gatotsu_shock: {
-    cssClass: 'animate-gatotsu_shock',
+    targetCssClass:'animate-gatotsu_shock',
     duration: 1400,
     sfx: [
       { src: sfx('HARD_SWING_1.wav'), delay: 0,   volume: 0.9 },
@@ -288,7 +288,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#818cf8' },
   },
   gatotsu_call_lightning: {
-    cssClass: 'animate-gatotsu_call_lightning',
+    targetCssClass:'animate-gatotsu_call_lightning',
     duration: 1400,
     sfx: [
       { src: sfx('HARD_SWING_1.wav'), delay: 0,   volume: 0.9 },
@@ -300,7 +300,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#fde047' },
   },
   gatotsu_2: {
-    cssClass: 'animate-gatotsu_2',
+    targetCssClass:'animate-gatotsu_2',
     duration: 750,
     sfx: [
       { src: sfx('HARD_SWING_1.wav'), delay: 0,  volume: 0.9 },
@@ -308,7 +308,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#e2e8f0' },
   },
   gatotsu: {
-    cssClass: 'animate-gatotsu',
+    targetCssClass:'animate-gatotsu',
     duration: 550,
     sfx: [
       { src: sfx('HARD_SWING_1.wav'), delay: 0, volume: 0.8 },
@@ -316,7 +316,7 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#e2e8f0' },
   },
   kuzu_ryusen: {
-    cssClass: 'animate-kuzu_ryusen',
+    targetCssClass:'animate-kuzu_ryusen',
     duration: 1400,
     sfx: [
       { src: sfx('SLICE_1.wav'),      delay: 0,    volume: 0.5  },

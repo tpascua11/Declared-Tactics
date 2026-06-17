@@ -192,7 +192,7 @@ export default function BattleScreen() {
       // 2. CSS — apply animation class to target and owner if a _user counterpart exists.
       setActiveAnimations(prev => ({
         ...prev,
-        [anim.targetId]: { cssClass: config.cssClass, intensity: anim.intensity ?? 1.0 },
+        [anim.targetId]: { cssClass: config.targetCssClass, intensity: anim.intensity ?? 1.0 },
         ...(ownerCssClass && { [anim.ownerId]: { cssClass: ownerCssClass, intensity: anim.intensity ?? 1.0 } }),
       }));
 

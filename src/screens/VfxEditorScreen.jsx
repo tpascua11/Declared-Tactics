@@ -65,7 +65,7 @@ export default function VfxEditorScreen() {
     }
 
     if (config) {
-      setActiveAnimations({ [MOCK_PLAYER.id]: { cssClass: config.cssClass, intensity: 1.0 } });
+      setActiveAnimations({ [MOCK_PLAYER.id]: { cssClass: config.targetCssClass, intensity: 1.0 } });
       if (config.sfx) {
         const sfxList = Array.isArray(config.sfx)
           ? config.sfx
