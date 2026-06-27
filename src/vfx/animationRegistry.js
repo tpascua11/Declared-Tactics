@@ -193,7 +193,7 @@ export const ANIMATIONS = {
   },
   ice_slash: {
     targetCssClass:'animate-ice_slash_hit',
-    duration: 1600,
+    duration: 1100,
     sfx: [
       { src: sfx('STREAM_SLASH.wav'), delay: 25,  volume: 0.3 },
       { src: sfx('ICE'),              delay: 100, volume: 0.7 },
