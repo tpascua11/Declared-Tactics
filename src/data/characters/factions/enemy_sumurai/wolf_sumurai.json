@@ -53,7 +53,7 @@
       "speed_mod": 0,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL", "SLASH"],
-      "animation": "stream_slash",
+      "animation": "ice_slash",
       "animation_intensity": 0.8,
       "properties": [],
       "tags": {

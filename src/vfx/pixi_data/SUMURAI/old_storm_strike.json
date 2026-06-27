@@ -40,67 +40,56 @@
     ],
     "showHead": false,
     "motion": {
-      "fromX": -150,
-      "fromY": 0,
-      "dx": 300,
-      "dy": 0,
+      "fromX": 0,
+      "fromY": -210,
+      "dx": 0,
+      "dy": 300,
       "duration": 100
     }
   },
   {
     "name": "ground burst",
     "delay": 320,
-    "speed": 300,
-    "emitAngle": "auto",
-    "rate": 80,
+    "offsetY": 60,
+    "speed": 340,
+    "angle": 270,
+    "rate": 20,
     "sizeMin": 3,
     "sizeMax": 13,
-    "lifetime": 0.55,
-    "spreadX": 80,
-    "spreadY": 160,
+    "lifetime": 0.8,
+    "spreadX": 300,
+    "spreadY": 60,
     "gravity": 80,
     "additive": true,
     "rotation": true,
     "shape": "star",
+    "emitDuration": 450,
     "colorStops": [
       "#ffffff",
       "#ccffff",
       "#4488ff",
       "#2244cc"
-    ],
-    "motion": {
-      "fromX": -120,
-      "fromY": 0,
-      "dx": 240,
-      "dy": 0,
-      "duration": 200
-    }
+    ]
   },
   {
     "name": "electric linger",
     "delay": 320,
-    "speed": 80,
-    "emitAngle": "auto",
-    "rate": 55,
+    "offsetY": 20,
+    "speed": 55,
+    "angle": 270,
+    "rate": 14,
     "sizeMin": 2,
     "sizeMax": 7,
-    "lifetime": 0.6,
-    "spreadX": 60,
-    "spreadY": 120,
+    "lifetime": 0.9,
+    "spread": 220,
     "gravity": -12,
     "additive": true,
     "shape": "spark",
+    "emitDuration": 320,
     "colorStops": [
       "#ffffff",
       "#88ddff",
       "#4466ff"
-    ],
-    "motion": {
-      "fromX": -120,
-      "fromY": 0,
-      "dx": 240,
-      "dy": 0,
-      "duration": 200
-    }
+    ]
   }
 ]

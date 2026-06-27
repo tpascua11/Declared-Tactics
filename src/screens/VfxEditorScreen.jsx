@@ -22,7 +22,9 @@ const MOCK_PLAYER = {
   active_tag_pool: [],
 };
 
-const TARGET_SIZES = ['player', 'small', 'medium', 'large'];
+const ENEMY_ID = 'editor_enemy';
+
+const TARGET_SIZES = ['small', 'medium', 'large'];
 const ENEMY_CARD_CLASS = {
   small:  'w-32 h-48',
   medium: 'w-40 h-60',
@@ -33,7 +35,7 @@ export default function VfxEditorScreen() {
   const [activeAnimations, setActiveAnimations] = useState({});
   const [floatingNumbers]                       = useState([]);
   const [selected, setSelected]                 = useState(ANIM_KEYS[0]);
-  const [targetSize, setTargetSize]             = useState('player');
+  const [targetSize, setTargetSize]             = useState('medium');
   const [jsonText, setJsonText]                 = useState('');
   const [jsonError, setJsonError]               = useState(null);
   const clearTimerRef = useRef(null);
@@ -65,7 +67,10 @@ export default function VfxEditorScreen() {
     }
 
     if (config) {
-      setActiveAnimations({ [MOCK_PLAYER.id]: { cssClass: config.targetCssClass, intensity: 1.0 } });
+      setActiveAnimations({
+        [ENEMY_ID]: { cssClass: config.targetCssClass, intensity: 1.0 },
+        ...(config.ownerCssClass && { [MOCK_PLAYER.id]: { cssClass: config.ownerCssClass, intensity: 1.0 } }),
+      });
       if (config.sfx) {
         const sfxList = Array.isArray(config.sfx)
           ? config.sfx
@@ -77,12 +82,19 @@ export default function VfxEditorScreen() {
     }
 
     if (parsedJson !== null) {
-      const el = document.querySelector('[data-character-id="editor_player"]');
-      if (el) {
-        const r = el.getBoundingClientRect();
-        const pos = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      const inlineJson = parsedJson?.length > 0 ? parsedJson : undefined;
+      const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
+      const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
+      if (enemyEl) {
+        const er = enemyEl.getBoundingClientRect();
+        const target = { x: er.left + er.width / 2, y: er.top + er.height / 2 };
+        let owner = null;
+        if (playerEl) {
+          const pr = playerEl.getBoundingClientRect();
+          owner = { x: pr.left + pr.width / 2, y: pr.top + pr.height / 2 };
+        }
         window.dispatchEvent(new CustomEvent('play-thumos-animation', {
-          detail: { ...pos, animType: selected, json: parsedJson },
+          detail: { animType: selected, target, owner, x: target.x, y: target.y, ...(inlineJson && { json: inlineJson }) },
         }));
       }
     }
@@ -92,7 +104,7 @@ export default function VfxEditorScreen() {
     }, config?.duration ?? 1000);
   }
 
-  const anim = activeAnimations[MOCK_PLAYER.id];
+  const enemyAnim = activeAnimations[ENEMY_ID];
 
   return (
     <div className="w-full h-full flex flex-col bg-[#0f0f1a] text-white">
@@ -122,21 +134,17 @@ export default function VfxEditorScreen() {
           )}
         </div>
 
-        {/* Right: preview */}
-        <div className="flex-1 flex items-center justify-center">
-          {targetSize === 'player' ? (
-            <PlayerPortrait
-              player={MOCK_PLAYER}
-              activeAnimations={activeAnimations}
-              floatingNumbers={floatingNumbers}
-            />
-          ) : (
+        {/* Right: preview — enemy on top, player portrait on bottom */}
+        <div className="flex-1 flex flex-col min-h-0">
+
+          {/* Top: enemy target */}
+          <div className="flex-1 flex items-center justify-center">
             <div className="relative">
               <div
-                data-character-id="editor_player"
-                className={`${ENEMY_CARD_CLASS[targetSize]} relative rounded-lg border-2 overflow-hidden ${anim?.cssClass ?? ''}`}
+                data-character-id={ENEMY_ID}
+                className={`${ENEMY_CARD_CLASS[targetSize]} relative rounded-lg border-2 overflow-hidden ${enemyAnim?.cssClass ?? ''}`}
                 style={{
-                  '--anim-intensity': anim?.intensity ?? 1,
+                  '--anim-intensity': enemyAnim?.intensity ?? 1,
                   borderColor: '#333355',
                   boxShadow: '0 0 20px rgba(255,255,255,0.1)',
                 }}
@@ -144,7 +152,17 @@ export default function VfxEditorScreen() {
                 <img src={ENEMY_WOLF_SUMURAI} alt="wolf sumurai" className="absolute inset-0 w-full h-full object-cover" />
               </div>
             </div>
-          )}
+          </div>
+
+          {/* Bottom: player portrait */}
+          <div className="flex-shrink-0 flex items-end justify-center pb-6">
+            <PlayerPortrait
+              player={MOCK_PLAYER}
+              activeAnimations={activeAnimations}
+              floatingNumbers={floatingNumbers}
+            />
+          </div>
+
         </div>
 
       </div>
@@ -152,7 +170,7 @@ export default function VfxEditorScreen() {
       {/* Controls */}
       <div className="flex-shrink-0 flex flex-col items-center gap-3 px-6 py-5 border-t border-white/10">
 
-        {/* Size toggle */}
+        {/* Enemy size toggle */}
         <div className="flex gap-1">
           {TARGET_SIZES.map(size => (
             <button

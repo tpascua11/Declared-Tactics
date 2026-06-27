@@ -82,6 +82,16 @@ export const ANIMATIONS = {
     volume: 0.7,
     floatingNumber: { color: '#449bff' },
   },
+  stream_slash_2: {
+    targetCssClass:'animate-heavy_shake',
+    duration: 500,
+    sfx: [
+      { src: sfx('STREAM_SLASH.wav'), delay: 125,   volume: 0.5 },
+      { src: sfx('HARD_SWING_1.wav'), delay: 0, volume: 0.5 },
+    ],
+    volume: 0.7,
+    floatingNumber: { color: '#449bff' },
+  },
   dual_heavy_slice: {
     targetCssClass:'animate-heavy_shake',
     duration: 500,
@@ -182,6 +192,19 @@ export const ANIMATIONS = {
     floatingNumber: { color: '#f97316' },
   },
   ice_slash: {
+    targetCssClass:'animate-ice_slash_hit',
+    duration: 1600,
+    sfx: [
+      { src: sfx('STREAM_SLASH.wav'), delay: 25,  volume: 0.3 },
+      { src: sfx('ICE'),              delay: 100, volume: 0.7 },
+      { src: sfx('ICE'),              delay: 200, volume: 0.5 },
+      { src: sfx('STREAM_SLASH.wav'), delay: 405, volume: 0.3 },
+      { src: sfx('ICE'),              delay: 480, volume: 0.7 },
+      { src: sfx('ICE'),              delay: 580, volume: 0.5 },
+    ],
+    floatingNumber: { color: '#7dd3fc' },
+  },
+  old_ice_slash: {
     targetCssClass:'animate-ice_shake',
     duration: 1000,
     sfx: [
@@ -247,7 +270,50 @@ export const ANIMATIONS = {
       { color: '#f97316', delay: 700, split: 0.5 },
     ],
   },
+  stream_slash_disappear: {
+    targetCssClass: 'animate-stream_slash_disappear_target',
+    ownerCssClass: 'animate-stream_slash_disappear',
+    duration: 1800,
+    sfx: [
+      { src: sfx('DODGE_1.wav'),      delay: 0,    volume: 0.7 },
+      { src: sfx('DODGE_1.wav'),      delay: 180,  volume: 0.5 },
+      { src: sfx('HARD_SWING_1.wav'), delay: 900,  volume: 0.5 },
+      { src: sfx('STREAM_SLASH.wav'), delay: 1025, volume: 0.5 },
+    ],
+    floatingNumber: { color: '#449bff' },
+  },
+  shinsoku_disappear: {
+    ownerCssClass: 'animate-shinsoku_disappear',
+    duration: 900,
+    sfx: [
+      { src: sfx('DODGE_1.wav'), delay: 0,   volume: 0.7 },
+      { src: sfx('DODGE_1.wav'), delay: 180, volume: 0.5 },
+    ],
+    floatingNumber: null,
+  },
+  cool_storm_strike: {
+    ownerCssClass: 'animate-cool_storm_strike_user',
+    duration: 1600,
+    sfx: [
+      { src: sfx('HARD_SWING_1.wav'), delay: 0,   volume: 0.4 },
+      { src: sfx('HARD_SWING_1.wav'), delay: 25,  volume: 0.35 },
+      { src: sfx('SWORD_SWING.wav'),  delay: 240, volume: 0.7 },
+      { src: sfx('THUNDER.wav'),      delay: 720, volume: 1.0 },
+    ],
+    floatingNumber: { color: '#818cf8' },
+  },
   storm_strike: {
+    targetCssClass:'animate-storm_strike',
+    ownerCssClass: 'animate-storm_strike_user',
+    duration: 1100,
+    sfx: [
+      { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
+      { src: sfx('SLICE_1.wav'),     delay: 200, volume: 0.6 },
+      { src: sfx('THUNDER.wav'),     delay: 300, volume: 1.0 },
+    ],
+    floatingNumber: { color: '#818cf8' },
+  },
+  old_storm_strike: {
     targetCssClass:'animate-storm_strike',
     ownerCssClass: 'animate-storm_strike_user',
     duration: 1100,

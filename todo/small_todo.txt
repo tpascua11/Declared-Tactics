@@ -1,0 +1,8 @@
+SMALL TODOS
+===========
+
+[ ] battle_engine.js — split single-target and AOE into separate execution paths
+    Currently ON_INCOMING runs before the deliveryTargets loop for single-target,
+    then there's an `if (isAoe)` guard inside the loop to skip it for single-target.
+    Cleaner to have two distinct paths so the loop has no branching on payload type.
+    File: src/battle/engine/battle_engine.js ~ line 460-522

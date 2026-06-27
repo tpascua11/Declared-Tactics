@@ -29,16 +29,18 @@ export class ThumosInterpreter {
   }
 
   // Accepts a single config object or an array of config objects.
-  // Each config in an array can have a `delay` field (ms) to fire after the others.
-  play(json, x, y) {
+  // target and owner are { x, y } positions. Emitters default to target;
+  // set "position": "owner" on an emitter to spawn at the attacker instead.
+  play(json, target, owner) {
     const configs = Array.isArray(json) ? json : [json];
     for (const config of configs) {
+      const pos = (config.position === 'owner' && owner) ? owner : target;
       const delay = config.delay ?? 0;
       if (delay > 0) {
-        const t = setTimeout(() => this._playLayer(config, x, y), delay);
+        const t = setTimeout(() => this._playLayer(config, pos.x, pos.y), delay);
         this._delayTimers.push(t);
       } else {
-        this._playLayer(config, x, y);
+        this._playLayer(config, pos.x, pos.y);
       }
     }
   }

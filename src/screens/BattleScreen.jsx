@@ -184,10 +184,12 @@ export default function BattleScreen() {
       if (!config) return;
       const ownerCssClass = anim.ownerId ? config.ownerCssClass : null;
 
-      // 1. PIXI — notify EffectsLayer with target's screen position and animation JSON.
-      // TODO: replace hardcoded flameStrikeJson with a PARTICLE_CONFIGS[anim.type] lookup.
-      const pos = getCharacterScreenPos(anim.targetId);
-      if (pos) window.dispatchEvent(new CustomEvent('play-thumos-animation', { detail: { ...pos, animType: anim.type } }));
+      // 1. PIXI — single dispatch with both target and owner positions.
+      const targetPos = getCharacterScreenPos(anim.targetId);
+      const ownerPos  = anim.ownerId ? getCharacterScreenPos(anim.ownerId) : null;
+      if (targetPos) window.dispatchEvent(new CustomEvent('play-thumos-animation', {
+        detail: { animType: anim.type, target: targetPos, owner: ownerPos, x: targetPos.x, y: targetPos.y },
+      }));
 
       // 2. CSS — apply animation class to target and owner if a _user counterpart exists.
       setActiveAnimations(prev => ({
