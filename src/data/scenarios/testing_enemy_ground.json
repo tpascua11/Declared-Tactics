@@ -1,14 +1,20 @@
 {
   "id": "testing_enemy_ground",
   "name": "Testing Enemy Ground",
-  "battle_background": "sumurai_battlefield_7",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["light_fox_sumurai"]
+      "enemies": ["boar_sumurai", "ferret_sumurai"]
+    },
+    {
+      "enemies": ["ferret_sumurai", "ferret_sumurai", "ferret_sumurai", "ferret_sumurai", "ferret_sumurai"]
+    },
+    {
+      "enemies": ["wolf_sumurai", "tiger_sumurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_2",
-  "music_volume": 0.20,
+  "music": "WAY_OF_THE_SUMURAI_BATTLE_5",
+  "music_volume": 0.25,
   "allow_retry": true,
   "rewards": {}
 }

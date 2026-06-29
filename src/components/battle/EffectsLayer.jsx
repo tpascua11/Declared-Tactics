@@ -58,11 +58,13 @@ export default function EffectsLayer() {
         pointerEvents: 'none',
         zIndex: '100',
         background: 'transparent',
+        opacity: '0',
       });
 
       // Appended to document.body so position:fixed is relative to the viewport,
       // not the CSS-transformed GameCanvas ancestor.
       document.body.appendChild(app.canvas);
+      requestAnimationFrame(() => { if (!cancelled) app.canvas.style.opacity = '1'; });
       appRef.current = app;
       interpreterRef.current = new ThumosInterpreter(app);
 

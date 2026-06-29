@@ -14,6 +14,7 @@ import MapScreen from './screens/MapScreen';
 import GameFinishScreen from './screens/GameFinishScreen';
 import VfxEditorScreen from './screens/VfxEditorScreen';
 import CardShowerTransition from './components/shared/CardShowerTransition';
+import EffectsLayer from './components/battle/EffectsLayer';
 import { introMusic } from './assets/Music/index';
 import { useMusicVolume, getMusicVolume } from './hooks/useMusic';
 import * as ASSETS from './assets';
@@ -153,6 +154,7 @@ export default function App() {
           <PhaseRouter />
         </GameProvider>
       </PlayerProvider>
+      <EffectsLayer />
     </GameCanvas>
   );
 }

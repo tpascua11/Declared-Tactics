@@ -57,7 +57,7 @@
       "tags": {
         "self": [],
         "target": [
-          { "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 150 },
+          { "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 140 },
           { "tag_name": "ELECTRIFIED", "stacks": 4 }
         ]
       }
@@ -90,7 +90,7 @@
       "tags": {
         "self": [],
         "target": [
-          { "tag_name": "DAMAGE", "type": "FROST", "power": 300 },
+          { "tag_name": "DAMAGE", "type": "FROST", "power": 250 },
           { "tag_name": "FREEZE", "stacks": 3 }
         ]
       }
