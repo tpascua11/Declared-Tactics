@@ -1,0 +1,13 @@
+{
+  "duration": 1200,
+  "sfx": [
+    { "src": "SWORD_SWING.wav", "start": 0, "volume": 0.7 },
+    { "src": "FLAMES", "start": 300, "volume": 0.8 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "flame_impact", "start": 216, "duration": 984 }
+    ]
+  },
+  "floatingNumber": { "color": "#f97316" }
+}

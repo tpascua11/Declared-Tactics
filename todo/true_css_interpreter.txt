@@ -1,0 +1,206 @@
+TRUE CSS INTERPRETER
+====================
+
+LESSON LEARNED
+--------------
+The old system was always one @keyframes block per animation applied as a CSS class.
+There was never a "play shake here, play flash here" system — it was all one tightly
+choreographed CSS animation. Trying to compose separate presets into one feel failed
+because transform + filter need to be in sync per keyframe.
+
+THE NEW IDEA
+------------
+CSSInterpreter is a TIMELINE SCHEDULER — not a compositor.
+
+It reads a JSON timeline and fires named CSS animations at the right moment.
+The CSS still owns the look (keyframes). The timeline owns the WHEN.
+
+JSON shape:
+  [
+    { "preset": "flame-strike", "start": 0,   "duration": 1200 },
+    { "preset": "shake",        "start": 400, "duration": 350  }
+  ]
+
+- "preset" — named keyframe animation to play
+- "start"  — ms from when play() is called (replaces "delay" concept)
+- "duration" — how long this preset runs
+
+CSSInterpreter.play(timeline, targetEl, ownerEl)
+  → schedules each entry with setTimeout(start)
+  → calls element.animate(preset.keyframes, { duration }) at the right time
+
+BENEFITS
+--------
+- Presets start at 0 naturally — no delay baked into the preset itself
+- Complex animations (flame-strike) are one preset, play as one unit
+- Simple animations (shake, fizzle) can be dropped anywhere on the timeline
+- Clean separation: CSS files own the look, JSON owns the timing
+- Easier to author — you think in "what plays when" not "what composes into what"
+
+CSS PRESET RULES
+----------------
+- Each preset is a complete, self-contained @keyframes-style animation
+- No delay inside the preset — the timeline handles when it fires
+- No duration inside the preset — duration comes from the timeline entry
+- Transform + filter must be in the same preset if they need to be in sync
+
+FILE STRUCTURE (proposed)
+-------------------------
+src/vfx/
+  css_presets.js          — named presets (keyframes + easing, no timing)
+  CSSInterpreter.js       — timeline scheduler
+  css_data/
+    sumurai/
+      flame_strike.json   — timeline for flame_strike animation
+    shared/
+      shake.json
+      fizzle.json
+
+STATUS
+------
+[ ] Redesign CSSInterpreter to use "start" instead of "delay"
+[ ] Update JSON files to use timeline shape
+[ ] Wire into BattleScreen (Phase 5 — carry over from css_interpreter_plan.txt)
+[ ] Migrate remaining animations one by one
+
+
+====================================================================================
+NEW PLAN — START FROM 0 (next session)
+====================================================================================
+
+WHAT WE LEARNED
+---------------
+- The old CSS class system was always one @keyframes block per animation — one unit.
+  There was never a multi-part CSS system. We tried to build composability that wasn't
+  needed and that caused the whole "shake + flash can't sync" problem.
+- css_data/ as a separate folder parallel to pixi_data/ added complexity with no gain.
+- CSSInterpreter as a class added complexity. SFX works fine with just forEach+setTimeout.
+- "delay" is the wrong word — "start" is correct since it's a timeline position.
+- Per-keyframe easing must be explicit in Web Animations API to match CSS @keyframes behavior.
+- rotate(0deg) must be explicit on all keyframes or interpolation breaks.
+
+THE REAL INSIGHT
+----------------
+SFX already IS a timeline. It's just an array of { src, start, volume } fired with
+forEach + setTimeout. No class, no interpreter. CSS should work the same way.
+
+The registry entry IS the timeline. Everything about an animation lives there.
+No separate css_data/ folder needed.
+
+NEW ARCHITECTURE
+----------------
+1. animation_data/<name>.json — one file per animation, owns everything except PIXI:
+
+   {
+     "duration": 1200,
+     "sfx": [
+       { "src": "SWORD_SWING.wav", "start": 0,   "volume": 0.7 },
+       { "src": "FLAMES",          "start": 300, "volume": 0.8 }
+     ],
+     "css": {
+       "target": [{ "preset": "flame-strike", "start": 0, "duration": 1200 }],
+       "owner":  [{ "preset": "some-owner-anim", "start": 0, "duration": 800 }]
+     },
+     "floatingNumber": { "color": "#f97316" }
+   }
+
+   - css.target — plays on the enemy/target card
+   - css.owner  — plays on the player/attacker card (replaces ownerCssClass)
+
+   - "start" not "delay" — position on the timeline
+   - sfx and css are parallel timeline arrays, same pattern
+   - PIXI stays separate in pixi_data/ — too complex to merge
+
+2. css_presets.js — stays as-is, named presets (keyframes + easing, no timing).
+   Preset rules:
+   - No start/duration inside the preset — timing comes from the JSON timeline entry
+   - Transform + filter in the same preset if they must stay in sync
+   - Per-keyframe easing must be explicit (not just outer easing) to match CSS behavior
+   - All keyframes need explicit rotate(0deg) etc. — no implicit values
+
+3. No CSSInterpreter class — just a play function (or inline, like SFX):
+   cssTimeline.forEach(({ preset, start, duration }) => {
+     setTimeout(() => el.animate(CSS_PRESETS[preset].keyframes, { duration, easing: 'linear', fill: 'none' }), start);
+   });
+
+4. animationRegistry.js becomes a loader — reads animation_data/*.json via require.context,
+   same pattern as pixi_data.js. No more hardcoded JS objects per animation.
+
+FILE STRUCTURE (new)
+--------------------
+src/vfx/
+  css_presets.js              — named presets (keyframes + easing only)
+  animationRegistry.js        — loader, reads animation_data/ via require.context
+  pixi_data.js                — unchanged, loads pixi_data/ JSON
+  animation_data/
+    sumurai/
+      flame_strike.json       — duration, sfx, css, floatingNumber
+      cross_flame_strike.json
+      ...
+    shared/
+      ...
+
+PHASES
+------
+
+GOTCHAS — READ BEFORE CODING
+-----------------------------
+
+1. CSS CLASS CONFLICT
+   Two CSS classes that both set the `animation` property cancel each other out —
+   only one wins (CSS cascade). This is why we use Web Animations API (element.animate())
+   instead of class toggling. Multiple element.animate() calls run concurrently on the
+   same element without stopping each other.
+
+2. PER-KEYFRAME EASING
+   In CSS @keyframes, animation-timing-function applies per segment between frames.
+   In Web Animations API, the outer `easing` option applies to the whole animation —
+   NOT per segment. To match CSS behavior, easing must be set on each individual
+   keyframe object, and the outer options easing should be 'linear'.
+
+3. EXPLICIT TRANSFORM VALUES
+   All keyframes must have explicit values for every property used in the animation.
+   e.g. if any keyframe uses rotate(), ALL keyframes must include rotate(0deg).
+   Missing values cause the browser to interpolate unexpectedly.
+
+4. DURATION SOURCE
+   Duration comes from the timeline entry in the JSON — never from inside the preset.
+   The preset only owns keyframes and easing. Timing is always the timeline's job.
+
+PHASES
+------
+
+PHASE 1 — Prove the shape
+  - Design animation_data/sumurai/flame_strike.json with duration, sfx, css, floatingNumber
+  - Wire it up manually in VFX editor only
+  - Confirm CSS timeline and SFX both fire correctly from the same JSON
+  - No migration yet — just proof of concept
+  - OLD targetCssClass path stays untouched
+  [ ] Done when: flame_strike plays correctly in VFX editor from the new JSON
+
+PHASE 2 — Replace the registry loader
+  - Swap animationRegistry.js hardcoded JS objects for require.context loader
+  - Reads animation_data/ JSON files automatically (same pattern as pixi_data.js)
+  - All existing animations still work — just loaded differently
+  - OLD targetCssClass fallback stays in the play code
+  [ ] Done when: all existing animations still play exactly as before
+
+PHASE 3 — Migrate animations
+  - Move all animations from hardcoded registry into animation_data/ JSON one by one
+  - Add css_presets.js entries as needed per animation
+  - Each migrated animation drops targetCssClass, uses css timeline instead
+  - Old animations not yet migrated continue using targetCssClass fallback
+  [ ] Done when: all animations have an animation_data/ JSON file
+
+PHASE 4 — Wire CSS into BattleScreen
+  - Same place SFX is fired, add CSS timeline forEach + setTimeout
+  - No CSSInterpreter class — just inline like SFX
+  - css timeline: cssEntries.forEach(({ preset, start, duration }) =>
+      setTimeout(() => el.animate(CSS_PRESETS[preset].keyframes, { duration, easing: 'linear', fill: 'none' }), start))
+  [ ] Done when: CSS animations fire correctly in real battle
+
+PHASE 5 — Cleanup
+  - Delete css_data/, CSSInterpreter.js, css_interpreter_plan.txt
+  - Remove targetCssClass fallback from all play code
+  - Remove targetCssClass from any remaining registry entries
+  [ ] Done when: no trace of the old CSS class system remains

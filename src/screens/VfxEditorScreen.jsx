@@ -4,12 +4,17 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { PORTRAIT_SUMURAI, ENEMY_WOLF_SUMURAI } from '../assets';
-import { ANIMATIONS, playBattleSfx } from '../vfx/animationRegistry';
+import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
 import PIXI_DATA from '../vfx/pixi_data';
+import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
+import flameStrikeTimeline from '../vfx/animation_data/sumurai/flame_strike.json';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import EffectsLayer from '../components/battle/EffectsLayer';
 
 const ANIM_KEYS = Object.keys(ANIMATIONS);
+
+// Proof-of-concept scope (Phase 1) — only flame_strike has a timeline JSON so far.
+const NEW_TIMELINE_DATA = { flame_strike: flameStrikeTimeline };
 
 const MOCK_PLAYER = {
   id: 'editor_player',
@@ -102,6 +107,30 @@ export default function VfxEditorScreen() {
     clearTimerRef.current = setTimeout(() => {
       setActiveAnimations({});
     }, config?.duration ?? 1000);
+  }
+
+  // Phase 1 proof — plays an animation_data/*.json timeline directly via
+  // element.animate(), independent of the old activeAnimations/CSS-class path above.
+  function handlePlayTimeline() {
+    const timeline = NEW_TIMELINE_DATA[selected];
+    if (!timeline) return;
+
+    const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
+    const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
+
+    (timeline.css?.target ?? []).forEach(({ preset, start = 0, duration }) => {
+      const p = CSS_PRESETS[preset];
+      if (!p || !enemyEl) return;
+      setTimeout(() => playPreset(enemyEl, p, { duration }), start);
+    });
+    (timeline.css?.owner ?? []).forEach(({ preset, start = 0, duration }) => {
+      const p = CSS_PRESETS[preset];
+      if (!p || !playerEl) return;
+      setTimeout(() => playPreset(playerEl, p, { duration }), start);
+    });
+    (timeline.sfx ?? []).forEach(({ src, start = 0, volume }) => {
+      setTimeout(() => playBattleSfx(sfx(src), volume), start);
+    });
   }
 
   const enemyAnim = activeAnimations[ENEMY_ID];
@@ -204,6 +233,14 @@ export default function VfxEditorScreen() {
             className="px-6 py-2 bg-[#4da6ff] hover:bg-[#6ab8ff] text-[#0f0f1a] font-bold text-sm rounded tracking-widest transition-colors"
           >
             PLAY
+          </button>
+
+          <button
+            onClick={handlePlayTimeline}
+            disabled={!NEW_TIMELINE_DATA[selected]}
+            className="px-6 py-2 bg-[#ff9f4d] hover:bg-[#ffb56a] disabled:bg-[#333355] disabled:text-white/30 disabled:cursor-not-allowed text-[#0f0f1a] font-bold text-sm rounded tracking-widest transition-colors"
+          >
+            PLAY (NEW JSON)
           </button>
         </div>
 
