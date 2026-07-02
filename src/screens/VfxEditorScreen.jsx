@@ -2,7 +2,7 @@
 //  VfxEditorScreen — VFX authoring / preview tool
 // ============================================================
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { PORTRAIT_SUMURAI, ENEMY_WOLF_SUMURAI } from '../assets';
 import { ANIMATIONS, playBattleSfx } from '../vfx/animationRegistry';
 import PIXI_DATA from '../vfx/pixi_data';
@@ -33,13 +33,11 @@ const ENEMY_CARD_CLASS = {
 };
 
 export default function VfxEditorScreen() {
-  const [activeAnimations, setActiveAnimations] = useState({});
-  const [floatingNumbers]                       = useState([]);
-  const [selected, setSelected]                 = useState(ANIM_KEYS[0]);
-  const [targetSize, setTargetSize]             = useState('medium');
-  const [jsonText, setJsonText]                 = useState('');
-  const [jsonError, setJsonError]               = useState(null);
-  const clearTimerRef = useRef(null);
+  const [floatingNumbers]           = useState([]);
+  const [selected, setSelected]     = useState(ANIM_KEYS[0]);
+  const [targetSize, setTargetSize] = useState('medium');
+  const [jsonText, setJsonText]     = useState('');
+  const [jsonError, setJsonError]   = useState(null);
 
   // Sync textarea when selected animation changes
   useEffect(() => {
@@ -55,7 +53,6 @@ export default function VfxEditorScreen() {
 
   function handlePlay() {
     const config = ANIMATIONS[selected];
-    clearTimeout(clearTimerRef.current);
 
     // Parse local JSON — use it for Pixi, leave the file untouched
     let parsedJson = null;
@@ -67,11 +64,11 @@ export default function VfxEditorScreen() {
       parsedJson = null;
     }
 
+    // Mirrors BattleScreen.jsx exactly — new-shape animations (config.css)
+    // fire directly via the Web Animations API. Animations not yet migrated
+    // simply play no CSS here either, so the editor never shows a look that
+    // BattleScreen itself can't reproduce.
     if (config) {
-      // New-shape animations (config.css) fire directly via the Web Animations
-      // API, same as BattleScreen — no cssClass toggling. Animations not yet
-      // migrated still preview their old cssClass here as a reference while
-      // authoring the replacement, even though BattleScreen no longer applies it.
       if (config.css) {
         const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
         const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
@@ -84,11 +81,6 @@ export default function VfxEditorScreen() {
           const p = CSS_PRESETS[preset];
           if (!p || !playerEl) return;
           setTimeout(() => playPreset(playerEl, p, { duration, iterations }), start);
-        });
-      } else {
-        setActiveAnimations({
-          [ENEMY_ID]: { cssClass: config.targetCssClass, intensity: 1.0 },
-          ...(config.ownerCssClass && { [MOCK_PLAYER.id]: { cssClass: config.ownerCssClass, intensity: 1.0 } }),
         });
       }
       if (config.sfx) {
@@ -118,13 +110,7 @@ export default function VfxEditorScreen() {
         }));
       }
     }
-
-    clearTimerRef.current = setTimeout(() => {
-      setActiveAnimations({});
-    }, config?.duration ?? 1000);
   }
-
-  const enemyAnim = activeAnimations[ENEMY_ID];
 
   return (
     <div className="w-full h-full flex flex-col bg-[#0f0f1a] text-white">
@@ -162,9 +148,8 @@ export default function VfxEditorScreen() {
             <div className="relative">
               <div
                 data-character-id={ENEMY_ID}
-                className={`${ENEMY_CARD_CLASS[targetSize]} relative rounded-lg border-2 overflow-hidden ${enemyAnim?.cssClass ?? ''}`}
+                className={`${ENEMY_CARD_CLASS[targetSize]} relative rounded-lg border-2 overflow-hidden`}
                 style={{
-                  '--anim-intensity': enemyAnim?.intensity ?? 1,
                   borderColor: '#333355',
                   boxShadow: '0 0 20px rgba(255,255,255,0.1)',
                 }}
@@ -178,7 +163,6 @@ export default function VfxEditorScreen() {
           <div className="flex-shrink-0 flex items-end justify-center pb-6">
             <PlayerPortrait
               player={MOCK_PLAYER}
-              activeAnimations={activeAnimations}
               floatingNumbers={floatingNumbers}
             />
           </div>

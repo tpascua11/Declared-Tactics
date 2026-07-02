@@ -55,9 +55,12 @@ export function playBattleSfx(src, volume = 0.6) {
 export const playSelectSfx = () => playUiSfx(sfx('SELECT_2.wav'), 0.25);
 
 // Old CSS-class-based animations, defined inline. Entries also present in
-// animation_data/*.json (heavy_slice, dual_heavy_slice, sumurai_sheath as of
-// now) are shadowed/overridden below and can be deleted from here once
-// every animation using them has migrated — see ANIMATIONS merge below.
+// animation_data/*.json are shadowed/overridden below and get deleted from
+// here once every animation using them has migrated — see ANIMATIONS merge
+// below. What remains here is either genuinely unused (orphaned — kept only
+// because nothing has decided to delete it outright) or still shares a CSS
+// class with something that IS staying (e.g. old_storm_strike/
+// cool_storm_strike still reuse storm_strike's keyframes).
 const LEGACY_ANIMATIONS = {
   // targetCssClass — applied to the target. ownerCssClass — applied to the attacker simultaneously (optional).
   shake: {
@@ -69,23 +72,6 @@ const LEGACY_ANIMATIONS = {
     // sprite: null,    // future: { sheet, frames, fps }
     // particles: null, // future: { preset: 'ice_burst' }
   },
-  heavy_slice: {
-    targetCssClass:'animate-heavy_shake',
-    duration: 500,
-    sfx: sfx('SLICE_1.wav'),
-    volume: 0.7,
-    floatingNumber: { color: '#ff4444' },
-  },
-  stream_slash: {
-    targetCssClass:'animate-heavy_shake',
-    duration: 500,
-    sfx: [
-      { src: sfx('STREAM_SLASH.wav'), delay: 125,   volume: 0.5 },
-      { src: sfx('HARD_SWING_1.wav'), delay: 0, volume: 0.5 },
-    ],
-    volume: 0.7,
-    floatingNumber: { color: '#449bff' },
-  },
   stream_slash_2: {
     targetCssClass:'animate-heavy_shake',
     duration: 500,
@@ -96,18 +82,6 @@ const LEGACY_ANIMATIONS = {
     volume: 0.7,
     floatingNumber: { color: '#449bff' },
   },
-  dual_heavy_slice: {
-    targetCssClass:'animate-heavy_shake',
-    duration: 500,
-    sfx: [
-      { src: sfx('HARD_SWING_1.wav'), delay: 0,   volume: 0.7 },
-      { src: sfx('HARD_SWING_1.wav'), delay: 180, volume: 0.5 },
-    ],
-    floatingNumber: [
-      { color: '#ff4444', delay: 0,   split: 0.5 },
-      { color: '#ff4444', delay: 280, split: 0.5 },
-    ],
-  },
   shake_magic: {
     targetCssClass:'animate-shake',
     duration: 350,
@@ -115,77 +89,10 @@ const LEGACY_ANIMATIONS = {
     volume: 0.6,
     floatingNumber: { color: '#a78bfa' },
   },
-  fizzle: {
-    targetCssClass:'animate-fizzle',
-    duration: 600,
-    sfx: null,
-    floatingNumber: null,
-  },
   wiggle: {
     targetCssClass:'animate-wiggle',
     duration: 550,
     sfx: null,
-    floatingNumber: null,
-  },
-  sidestep: {
-    targetCssClass:'animate-sidestep',
-    duration: 550,
-    sfx: sfx('DODGE_1.wav'),
-    volume: 0.6,
-    floatingNumber: null,
-  },
-  run_circle: {
-    targetCssClass:'animate-run_circle',
-    duration: 500,
-    //battleDelay: 2000,
-    sfx: sfx('BUFF_1.wav'),
-    floatingNumber: null,
-  },
-  speed_dash: {
-    targetCssClass:'animate-speed_dash',
-    duration: 750,
-    sfx: sfx('SPEED_2.wav'),
-    volume: 0.7,
-    floatingNumber: null,
-  },
-  speed_dash_player: {
-    targetCssClass:'animate-speed_dash_player',
-    duration: 750,
-    sfx: sfx('SPEED_2.wav'),
-    volume: 0.7,
-    floatingNumber: null,
-  },
-  heal: {
-    targetCssClass:'animate-heal',
-    duration: 700,  
-    sfx: [
-      { src: sfx('REGEN_2.wav'), delay: 0,   volume: 0.7 },
-    ], 
-    floatingNumber: null,
-  },
-  buff: {
-    targetCssClass:'animate-buff',
-    duration: 650,
-    sfx: [
-      { src: sfx('BUFF_2.wav'), delay: 0,   volume: 0.7 },
-    ], 
-    floatingNumber: null,
-  },
-  sumurai_sheath: {
-    targetCssClass:'animate-buff',
-    duration: 650,
-    sfx: [
-      { src: sfx('SHEATH.wav'), delay: 0,   volume: 0.7 },
-    ],
-    floatingNumber: null,
-  },
-  harai: {
-    targetCssClass:'animate-harai',
-    duration: 500,
-    sfx: [
-      { src: sfx('CLING_1.wav'), delay: 0, volume: 0.4 },
-      { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.4 },
-    ],
     floatingNumber: null,
   },
   burn: {
@@ -194,19 +101,6 @@ const LEGACY_ANIMATIONS = {
     sfx: sfx('LASER_1.wav'),
     volume: 0.8,
     floatingNumber: { color: '#f97316' },
-  },
-  ice_slash: {
-    targetCssClass:'animate-ice_slash_hit',
-    duration: 1100,
-    sfx: [
-      { src: sfx('STREAM_SLASH.wav'), delay: 25,  volume: 0.3 },
-      { src: sfx('ICE'),              delay: 100, volume: 0.7 },
-      { src: sfx('ICE'),              delay: 200, volume: 0.5 },
-      { src: sfx('STREAM_SLASH.wav'), delay: 405, volume: 0.3 },
-      { src: sfx('ICE'),              delay: 480, volume: 0.7 },
-      { src: sfx('ICE'),              delay: 580, volume: 0.5 },
-    ],
-    floatingNumber: { color: '#7dd3fc' },
   },
   old_ice_slash: {
     targetCssClass:'animate-ice_shake',
@@ -219,82 +113,6 @@ const LEGACY_ANIMATIONS = {
     ],
     floatingNumber: { color: '#7dd3fc' },
   },
-  flame_strike: {
-    targetCssClass:'animate-flame_strike',
-    duration: 1200,
-    sfx: [
-      { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
-      { src: sfx('FLAMES'), delay: 300, volume: 0.8 },
-    ],
-    floatingNumber: { color: '#f97316' },
-  },
-  tri_ice_slash: {
-    targetCssClass:'animate-tri_ice_slash',
-    duration: 2000,
-    sfx: [
-      { src: sfx('STREAM_SLASH.wav'), delay: 0,    volume: 0.3 },
-      { src: sfx('ICE'),              delay: 100,  volume: 0.7 },
-      { src: sfx('ICE'),              delay: 200,  volume: 0.5 },
-      { src: sfx('STREAM_SLASH.wav'), delay: 400,  volume: 0.3 },
-      { src: sfx('ICE'),              delay: 490,  volume: 0.7 },
-      { src: sfx('ICE'),              delay: 580,  volume: 0.5 },
-      { src: sfx('STREAM_SLASH.wav'), delay: 780,  volume: 0.35 },
-      { src: sfx('ICE'),              delay: 860,  volume: 0.8 },
-      { src: sfx('ICE'),              delay: 960,  volume: 0.65 },
-      { src: sfx('ICE'),              delay: 1060, volume: 0.5 },
-    ],
-    floatingNumber: [
-      { color: '#7dd3fc', delay: 0,   split: 0.34 },
-      { color: '#7dd3fc', delay: 400, split: 0.33 },
-      { color: '#7dd3fc', delay: 780, split: 0.33 },
-    ],
-  },
-  cross_flame_strike: {
-    targetCssClass:'animate-cross_flame_strike',
-    duration: 1600,
-    sfx: [
-      { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
-      { src: sfx('SWORD_SWING.wav'), delay: 25,  volume: 0.6 },
-      { src: sfx('FLAMES'),          delay: 280, volume: 0.8 },
-      { src: sfx('FLAMES'),          delay: 320, volume: 0.7 },
-    ],
-    floatingNumber: { color: '#f97316' },
-  },
-  dual_flame_strike: {
-    targetCssClass:'animate-dual_flame_strike',
-    duration: 2000,
-    sfx: [
-      { src: sfx('SWORD_SWING.wav'), delay: 0,    volume: 0.7 },
-      { src: sfx('FLAMES'),          delay: 300,  volume: 0.8 },
-      { src: sfx('SWORD_SWING.wav'), delay: 700,  volume: 0.7 },
-      { src: sfx('FLAMES'),          delay: 1000, volume: 0.9 },
-    ],
-    floatingNumber: [
-      { color: '#f97316', delay: 0,   split: 0.5 },
-      { color: '#f97316', delay: 700, split: 0.5 },
-    ],
-  },
-  stream_slash_disappear: {
-    targetCssClass: 'animate-stream_slash_disappear_target',
-    ownerCssClass: 'animate-stream_slash_disappear',
-    duration: 1800,
-    sfx: [
-      { src: sfx('DODGE_1.wav'),      delay: 0,    volume: 0.7 },
-      { src: sfx('DODGE_1.wav'),      delay: 180,  volume: 0.5 },
-      { src: sfx('HARD_SWING_1.wav'), delay: 900,  volume: 0.5 },
-      { src: sfx('STREAM_SLASH.wav'), delay: 1025, volume: 0.5 },
-    ],
-    floatingNumber: { color: '#449bff' },
-  },
-  shinsoku_disappear: {
-    ownerCssClass: 'animate-shinsoku_disappear',
-    duration: 900,
-    sfx: [
-      { src: sfx('DODGE_1.wav'), delay: 0,   volume: 0.7 },
-      { src: sfx('DODGE_1.wav'), delay: 180, volume: 0.5 },
-    ],
-    floatingNumber: null,
-  },
   cool_storm_strike: {
     ownerCssClass: 'animate-cool_storm_strike_user',
     duration: 1600,
@@ -303,17 +121,6 @@ const LEGACY_ANIMATIONS = {
       { src: sfx('HARD_SWING_1.wav'), delay: 25,  volume: 0.35 },
       { src: sfx('SWORD_SWING.wav'),  delay: 240, volume: 0.7 },
       { src: sfx('THUNDER.wav'),      delay: 720, volume: 1.0 },
-    ],
-    floatingNumber: { color: '#818cf8' },
-  },
-  storm_strike: {
-    targetCssClass:'animate-storm_strike',
-    ownerCssClass: 'animate-storm_strike_user',
-    duration: 1100,
-    sfx: [
-      { src: sfx('SWORD_SWING.wav'), delay: 0,   volume: 0.7 },
-      { src: sfx('SLICE_1.wav'),     delay: 200, volume: 0.6 },
-      { src: sfx('THUNDER.wav'),     delay: 300, volume: 1.0 },
     ],
     floatingNumber: { color: '#818cf8' },
   },
@@ -327,35 +134,11 @@ const LEGACY_ANIMATIONS = {
     ],
     floatingNumber: { color: '#818cf8' },
   },
-  green_marching_ants: {
-    targetCssClass:'animate-green-marching-ants',
-    duration: 1000,
-    sfx: [
-      { src: sfx('REGEN_3.wav'), delay: 0,   volume: 0.31 },
-    ], 
-    floatingNumber: null,
-  },
   enemy_exit: {
     targetCssClass:'animate-enemy_exit',
     duration: 500,
     sfx: null,
     floatingNumber: null,
-  },
-  enemy_enter: {
-    targetCssClass:'animate-enemy_enter',
-    duration: 700,
-    sfx: null,
-    floatingNumber: null,
-  },
-  gatotsu_shock: {
-    targetCssClass:'animate-gatotsu_shock',
-    duration: 1400,
-    sfx: [
-      { src: sfx('HARD_SWING_1.wav'), delay: 0,   volume: 0.9 },
-      { src: sfx('THUNDER.wav'),      delay: 420,  volume: 0.5 },
-      { src: sfx('THUNDER.wav'),      delay: 730,  volume: 0.8 },
-    ],
-    floatingNumber: { color: '#818cf8' },
   },
   gatotsu_call_lightning: {
     targetCssClass:'animate-gatotsu_call_lightning',
@@ -368,38 +151,6 @@ const LEGACY_ANIMATIONS = {
     ],
     duration: 1800,
     floatingNumber: { color: '#fde047' },
-  },
-  gatotsu_2: {
-    targetCssClass:'animate-gatotsu_2',
-    duration: 750,
-    sfx: [
-      { src: sfx('HARD_SWING_1.wav'), delay: 0,  volume: 0.9 },
-    ],
-    floatingNumber: { color: '#e2e8f0' },
-  },
-  gatotsu: {
-    targetCssClass:'animate-gatotsu',
-    duration: 550,
-    sfx: [
-      { src: sfx('HARD_SWING_1.wav'), delay: 0, volume: 0.8 },
-    ],
-    floatingNumber: { color: '#e2e8f0' },
-  },
-  kuzu_ryusen: {
-    targetCssClass:'animate-kuzu_ryusen',
-    duration: 1400,
-    sfx: [
-      { src: sfx('SLICE_1.wav'),      delay: 0,    volume: 0.5  },
-      { src: sfx('SLICE_1.wav'),      delay: 154,  volume: 0.5  },
-      { src: sfx('SLICE_1.wav'),      delay: 308,  volume: 0.55 },
-      { src: sfx('SLICE_1.wav'),      delay: 462,  volume: 0.55 },
-      { src: sfx('SLICE_1.wav'),      delay: 616,  volume: 0.6  },
-      { src: sfx('SLICE_1.wav'),      delay: 770,  volume: 0.6  },
-      { src: sfx('SLICE_1.wav'),      delay: 924,  volume: 0.65 },
-      { src: sfx('SLICE_1.wav'),      delay: 1078, volume: 0.65 },
-      { src: sfx('HARD_SWING_1.wav'), delay: 1190, volume: 0.8  },
-    ],
-    floatingNumber: { color: '#ff4444' },
   },
   // ── Coming soon ──────────────────────────────────────────
   // slam:   { cssClass: 'animate-slam',   duration: 500, sfx: null },

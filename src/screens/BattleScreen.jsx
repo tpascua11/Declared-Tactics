@@ -186,8 +186,6 @@ export default function BattleScreen() {
     anims.forEach(anim => {
       const config = ANIMATIONS[anim.type];
       if (!config) return;
-      // OLD WAY — only needed by the commented-out class-toggle code below.
-      // const ownerCssClass = anim.ownerId ? config.ownerCssClass : null;
 
       // 1. PIXI — single dispatch with both target and owner positions.
       const targetPos = getCharacterScreenPos(anim.targetId);
@@ -197,15 +195,9 @@ export default function BattleScreen() {
       }));
 
       // 2. CSS — new-shape animations only (animation_data/*.json + css_presets.js),
-      // fired directly via the Web Animations API. Old targetCssClass/ownerCssClass
-      // class-toggling is retired — animations not yet migrated to `config.css`
-      // simply play no CSS (sfx/floatingNumber/PIXI are unaffected either way).
-      // OLD WAY (commented out, remove once every animation has migrated):
-      // setActiveAnimations(prev => ({
-      //   ...prev,
-      //   [anim.targetId]: { cssClass: config.targetCssClass, intensity: anim.intensity ?? 1.0 },
-      //   ...(ownerCssClass && { [anim.ownerId]: { cssClass: ownerCssClass, intensity: anim.intensity ?? 1.0 } }),
-      // }));
+      // fired directly via the Web Animations API. Animations not yet migrated
+      // to `config.css` simply play no CSS (sfx/floatingNumber/PIXI are
+      // unaffected either way).
       if (config.css) {
         const targetEl = getCharacterEl(anim.targetId);
         const ownerEl  = anim.ownerId ? getCharacterEl(anim.ownerId) : null;
@@ -268,13 +260,6 @@ export default function BattleScreen() {
         });
       }
 
-      // 5. CSS CLEANUP — only needed for the old class-toggle path (removed
-      // above). New-shape animations revert automatically per-instance via
-      // WAAPI's `fill: 'none'` in playPreset(), no manual cleanup required.
-      // OLD WAY (commented out, remove once every animation has migrated):
-      // animClearTimersRef.current.push(setTimeout(() => {
-      //   setActiveAnimations(prev => ({ ...prev, [anim.targetId]: null, ...(ownerCssClass && { [anim.ownerId]: null }) }));
-      // }, config.duration));
     });
 
     return () => timers.forEach(clearTimeout);
