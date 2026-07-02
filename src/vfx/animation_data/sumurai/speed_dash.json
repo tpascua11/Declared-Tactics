@@ -1,0 +1,15 @@
+{
+  "name": "speed_dash",
+  "duration": 750,
+  "sfx": [
+    { "src": "SPEED_2.wav", "start": 0, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "speed_dash_lunge_up",   "start": 0, "duration": 750 },
+      { "preset": "speed_dash_stripes_up", "start": 0, "duration": 40, "iterations": 18.75 },
+      { "preset": "speed_dash_fade",       "start": 0, "duration": 750 }
+    ]
+  },
+  "floatingNumber": null
+}

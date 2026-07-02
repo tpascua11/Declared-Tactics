@@ -293,6 +293,54 @@ export const CSS_PRESETS = {
       { offset: 1,    opacity: 0 },
     ],
   },
+
+  // Heal glow — green-tinted brightness/scale bloom. Same shape as
+  // buff_glow (filter+scale), different hue-rotate curve.
+  heal_glow: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    filter: 'brightness(1) saturate(1) hue-rotate(0deg)',      transform: 'scale(1)' },
+      { offset: 0.20, filter: 'brightness(1.8) saturate(2) hue-rotate(100deg)',  transform: 'scale(1.03)' },
+      { offset: 0.50, filter: 'brightness(1.5) saturate(1.8) hue-rotate(110deg)', transform: 'scale(1.02)' },
+      { offset: 0.80, filter: 'brightness(1.2) saturate(1.3) hue-rotate(90deg)', transform: 'scale(1.01)' },
+      { offset: 1,    filter: 'brightness(1) saturate(1) hue-rotate(0deg)',      transform: 'scale(1)' },
+    ],
+  },
+
+  // Enemy-side speed dash — same shape as speed_dash_lunge but mirrored
+  // (card dashes upward instead of down).
+  speed_dash_lunge_up: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    filter: 'brightness(1) saturate(1)',     transform: 'scaleX(1) scaleY(1) translateY(0px)' },
+      { offset: 0.20, filter: 'brightness(2.2) saturate(1.4)', transform: 'scaleX(0.96) scaleY(1.02) translateY(-32px)' },
+      { offset: 0.58, filter: 'brightness(1.5) saturate(1.2)', transform: 'scaleX(0.97) scaleY(1.01) translateY(-20px)' },
+      { offset: 1,    filter: 'brightness(1) saturate(1)',     transform: 'scaleX(1) scaleY(1) translateY(0px)' },
+    ],
+  },
+
+  // Enemy-side speed dash marching stripes on ::after — mirrored direction
+  // (march_up instead of march_down). Pairs with speed_dash_fade above.
+  speed_dash_stripes_up: {
+    easing: 'linear',
+    pseudoElement: '::after',
+    keyframes: [
+      {
+        offset: 0,
+        backgroundImage: 'repeating-linear-gradient(180deg, rgba(180, 230, 255, 0.95) 0, rgba(180, 230, 255, 0.95) 16px, transparent 16px, transparent 22px), repeating-linear-gradient(180deg, rgba(180, 230, 255, 0.95) 0, rgba(180, 230, 255, 0.95) 16px, transparent 16px, transparent 22px)',
+        backgroundSize: '6px 22px, 6px 22px',
+        backgroundRepeat: 'repeat-y, repeat-y',
+        backgroundPosition: '0% 0, 100% 0',
+      },
+      {
+        offset: 1,
+        backgroundImage: 'repeating-linear-gradient(180deg, rgba(180, 230, 255, 0.95) 0, rgba(180, 230, 255, 0.95) 16px, transparent 16px, transparent 22px), repeating-linear-gradient(180deg, rgba(180, 230, 255, 0.95) 0, rgba(180, 230, 255, 0.95) 16px, transparent 16px, transparent 22px)',
+        backgroundSize: '6px 22px, 6px 22px',
+        backgroundRepeat: 'repeat-y, repeat-y',
+        backgroundPosition: '0% -22px, 100% -22px',
+      },
+    ],
+  },
 };
 
 // Plays a preset on `el` via the Web Animations API.

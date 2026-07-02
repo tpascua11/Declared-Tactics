@@ -1,0 +1,13 @@
+{
+  "name": "heal",
+  "duration": 700,
+  "sfx": [
+    { "src": "REGEN_2.wav", "start": 0, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "heal_glow", "start": 0, "duration": 700 }
+    ]
+  },
+  "floatingNumber": null
+}
