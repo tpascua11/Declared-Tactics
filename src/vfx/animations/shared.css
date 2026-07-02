@@ -4,6 +4,26 @@
    used across all character classes.
    ============================================================ */
 
+/* ── VFX pseudo-element base ──────────────────────────────────
+   `content: ''` is what makes a ::before/::after box exist at all —
+   without a matching CSS rule declaring it, there's nothing for
+   playPreset()'s pseudoElement option to animate, no matter what
+   WAAPI keyframes it's given. This makes both boxes permanently
+   available (invisible at rest) on every card, so any preset can
+   drive them with opacity/transform/background — no per-animation
+   class needed to bring them into existence. */
+[data-enemy-id]::before, [data-enemy-id]::after,
+[data-character-id]::before, [data-character-id]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+  opacity: 0;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }

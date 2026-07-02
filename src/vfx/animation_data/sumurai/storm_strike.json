@@ -1,0 +1,19 @@
+{
+  "name": "storm_strike",
+  "duration": 1100,
+  "sfx": [
+    { "src": "SWORD_SWING.wav", "start": 0,   "volume": 0.7 },
+    { "src": "SLICE_1.wav",     "start": 200, "volume": 0.6 },
+    { "src": "THUNDER.wav",     "start": 300, "volume": 1.0 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "storm_impact", "start": 0, "duration": 1100 }
+    ],
+    "owner": [
+      { "preset": "storm_lunge", "start": 0, "duration": 1100 },
+      { "preset": "storm_shine", "start": 0, "duration": 500 }
+    ]
+  },
+  "floatingNumber": { "color": "#818cf8" }
+}

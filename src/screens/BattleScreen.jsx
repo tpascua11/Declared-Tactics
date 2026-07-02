@@ -209,15 +209,15 @@ export default function BattleScreen() {
       if (config.css) {
         const targetEl = getCharacterEl(anim.targetId);
         const ownerEl  = anim.ownerId ? getCharacterEl(anim.ownerId) : null;
-        (config.css.target ?? []).forEach(({ preset, start = 0, duration }) => {
+        (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !targetEl) return;
-          setTimeout(() => playPreset(targetEl, p, { duration }), start);
+          setTimeout(() => playPreset(targetEl, p, { duration, iterations }), start);
         });
-        (config.css.owner ?? []).forEach(({ preset, start = 0, duration }) => {
+        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !ownerEl) return;
-          setTimeout(() => playPreset(ownerEl, p, { duration }), start);
+          setTimeout(() => playPreset(ownerEl, p, { duration, iterations }), start);
         });
 
         // activeAnimations also gates EnemyZone's death-fade (isDead && !anim) —

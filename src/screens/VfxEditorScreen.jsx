@@ -75,15 +75,15 @@ export default function VfxEditorScreen() {
       if (config.css) {
         const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
         const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
-        (config.css.target ?? []).forEach(({ preset, start = 0, duration }) => {
+        (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !enemyEl) return;
-          setTimeout(() => playPreset(enemyEl, p, { duration }), start);
+          setTimeout(() => playPreset(enemyEl, p, { duration, iterations }), start);
         });
-        (config.css.owner ?? []).forEach(({ preset, start = 0, duration }) => {
+        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !playerEl) return;
-          setTimeout(() => playPreset(playerEl, p, { duration }), start);
+          setTimeout(() => playPreset(playerEl, p, { duration, iterations }), start);
         });
       } else {
         setActiveAnimations({

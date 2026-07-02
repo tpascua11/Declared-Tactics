@@ -1,0 +1,15 @@
+{
+  "name": "harai",
+  "duration": 500,
+  "sfx": [
+    { "src": "CLING_1.wav",      "start": 0, "volume": 0.4 },
+    { "src": "SWORD_SWING.wav",  "start": 0, "volume": 0.4 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "harai_flash", "start": 0, "duration": 900 },
+      { "preset": "harai_shine", "start": 0, "duration": 900 }
+    ]
+  },
+  "floatingNumber": null
+}

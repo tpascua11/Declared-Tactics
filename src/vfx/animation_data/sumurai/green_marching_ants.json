@@ -1,0 +1,14 @@
+{
+  "name": "green_marching_ants",
+  "duration": 1000,
+  "sfx": [
+    { "src": "REGEN_3.wav", "start": 0, "volume": 0.31 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "green_flash", "start": 0, "duration": 350, "iterations": 2.86 },
+      { "preset": "march_ants",  "start": 0, "duration": 100, "iterations": 10 }
+    ]
+  },
+  "floatingNumber": null
+}
