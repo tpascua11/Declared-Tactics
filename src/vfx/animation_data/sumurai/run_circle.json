@@ -1,0 +1,13 @@
+{
+  "name": "run_circle",
+  "duration": 500,
+  "sfx": [
+    { "src": "BUFF_1.wav", "start": 0 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "run_circle", "start": 0, "duration": 500 }
+    ]
+  },
+  "floatingNumber": null
+}

@@ -54,7 +54,11 @@ export function playBattleSfx(src, volume = 0.6) {
 
 export const playSelectSfx = () => playUiSfx(sfx('SELECT_2.wav'), 0.25);
 
-export const ANIMATIONS = {
+// Old CSS-class-based animations, defined inline. Entries also present in
+// animation_data/*.json (heavy_slice, dual_heavy_slice, sumurai_sheath as of
+// now) are shadowed/overridden below and can be deleted from here once
+// every animation using them has migrated — see ANIMATIONS merge below.
+const LEGACY_ANIMATIONS = {
   // targetCssClass — applied to the target. ownerCssClass — applied to the attacker simultaneously (optional).
   shake: {
     targetCssClass:'animate-shake',
@@ -400,6 +404,28 @@ export const ANIMATIONS = {
   // ── Coming soon ──────────────────────────────────────────
   // slam:   { cssClass: 'animate-slam',   duration: 500, sfx: null },
 };
+
+// New-shape animations — one self-contained JSON per animation (duration,
+// sfx, css.target/css.owner timelines referencing css_presets.js by name).
+// Same require.context loader pattern as pixi_data.js. The only adjustment
+// made here is resolving each sfx `src` from a bare filename to a real
+// asset URL — JSON can't call require() itself, so this has to happen
+// somewhere. Field names (`start` vs legacy `delay`) are left as authored;
+// BattleScreen's SFX loop is the one place that reads either name.
+const animationDataCtx = require.context('./animation_data', true, /\.json$/);
+const JSON_ANIMATIONS = {};
+animationDataCtx.keys().forEach(key => {
+  const name = key.replace(/^.*\//, '').replace(/\.json$/, '');
+  const raw = animationDataCtx(key);
+  JSON_ANIMATIONS[name] = {
+    ...raw,
+    sfx: (raw.sfx ?? []).map(entry => ({ ...entry, src: sfx(entry.src) })),
+  };
+});
+
+// JSON-sourced entries override legacy ones by name — migrated animations
+// win, everything else still plays via the old CSS-class path for now.
+export const ANIMATIONS = { ...LEGACY_ANIMATIONS, ...JSON_ANIMATIONS };
 
 // Preload every sfx referenced in the registry at module load time.
 Object.values(ANIMATIONS).forEach(({ sfx: s }) => {

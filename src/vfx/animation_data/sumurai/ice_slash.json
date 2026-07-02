@@ -1,0 +1,18 @@
+{
+  "name": "ice_slash",
+  "duration": 1100,
+  "sfx": [
+    { "src": "STREAM_SLASH.wav", "start": 25,  "volume": 0.3 },
+    { "src": "ICE",              "start": 100, "volume": 0.7 },
+    { "src": "ICE",              "start": 200, "volume": 0.5 },
+    { "src": "STREAM_SLASH.wav", "start": 405, "volume": 0.3 },
+    { "src": "ICE",              "start": 480, "volume": 0.7 },
+    { "src": "ICE",              "start": 580, "volume": 0.5 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "ice_impact", "start": 0, "duration": 1600 }
+    ]
+  },
+  "floatingNumber": { "color": "#7dd3fc" }
+}

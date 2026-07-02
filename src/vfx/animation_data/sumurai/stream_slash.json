@@ -1,0 +1,14 @@
+{
+  "name": "stream_slash",
+  "duration": 500,
+  "sfx": [
+    { "src": "HARD_SWING_1.wav", "start": 0,   "volume": 0.5 },
+    { "src": "STREAM_SLASH.wav", "start": 125, "volume": 0.5 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "heavy_shake", "start": 0, "duration": 500 }
+    ]
+  },
+  "floatingNumber": { "color": "#449bff" }
+}

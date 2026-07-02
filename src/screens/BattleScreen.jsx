@@ -11,6 +11,7 @@ import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/Music/index';
 import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
+import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
 import '../vfx/animations.css';
 import '../vfx/aura_animations.css';
 import CardRiseTransition from '../components/shared/CardRiseTransition';
@@ -63,9 +64,13 @@ export default function BattleScreen() {
   }, []);
 
   // ── Helpers ───────────────────────────────────────────────
+  function getCharacterEl(id) {
+    return document.querySelector(`[data-enemy-id="${id}"]`)
+        ?? document.querySelector(`[data-character-id="${id}"]`);
+  }
+
   function getCharacterScreenPos(id) {
-    const el = document.querySelector(`[data-enemy-id="${id}"]`)
-             ?? document.querySelector(`[data-character-id="${id}"]`);
+    const el = getCharacterEl(id);
     if (!el) return null;
     const r = el.getBoundingClientRect();
     return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
@@ -181,7 +186,8 @@ export default function BattleScreen() {
     anims.forEach(anim => {
       const config = ANIMATIONS[anim.type];
       if (!config) return;
-      const ownerCssClass = anim.ownerId ? config.ownerCssClass : null;
+      // OLD WAY — only needed by the commented-out class-toggle code below.
+      // const ownerCssClass = anim.ownerId ? config.ownerCssClass : null;
 
       // 1. PIXI — single dispatch with both target and owner positions.
       const targetPos = getCharacterScreenPos(anim.targetId);
@@ -190,20 +196,48 @@ export default function BattleScreen() {
         detail: { animType: anim.type, target: targetPos, owner: ownerPos, x: targetPos.x, y: targetPos.y },
       }));
 
-      // 2. CSS — apply animation class to target and owner if a _user counterpart exists.
-      setActiveAnimations(prev => ({
-        ...prev,
-        [anim.targetId]: { cssClass: config.targetCssClass, intensity: anim.intensity ?? 1.0 },
-        ...(ownerCssClass && { [anim.ownerId]: { cssClass: ownerCssClass, intensity: anim.intensity ?? 1.0 } }),
-      }));
+      // 2. CSS — new-shape animations only (animation_data/*.json + css_presets.js),
+      // fired directly via the Web Animations API. Old targetCssClass/ownerCssClass
+      // class-toggling is retired — animations not yet migrated to `config.css`
+      // simply play no CSS (sfx/floatingNumber/PIXI are unaffected either way).
+      // OLD WAY (commented out, remove once every animation has migrated):
+      // setActiveAnimations(prev => ({
+      //   ...prev,
+      //   [anim.targetId]: { cssClass: config.targetCssClass, intensity: anim.intensity ?? 1.0 },
+      //   ...(ownerCssClass && { [anim.ownerId]: { cssClass: ownerCssClass, intensity: anim.intensity ?? 1.0 } }),
+      // }));
+      if (config.css) {
+        const targetEl = getCharacterEl(anim.targetId);
+        const ownerEl  = anim.ownerId ? getCharacterEl(anim.ownerId) : null;
+        (config.css.target ?? []).forEach(({ preset, start = 0, duration }) => {
+          const p = CSS_PRESETS[preset];
+          if (!p || !targetEl) return;
+          setTimeout(() => playPreset(targetEl, p, { duration }), start);
+        });
+        (config.css.owner ?? []).forEach(({ preset, start = 0, duration }) => {
+          const p = CSS_PRESETS[preset];
+          if (!p || !ownerEl) return;
+          setTimeout(() => playPreset(ownerEl, p, { duration }), start);
+        });
 
-      // 3. SFX — play sound(s), supports multiple sounds with individual delays.
+        // activeAnimations also gates EnemyZone's death-fade (isDead && !anim) —
+        // mark the target "busy" for config.duration so a killed enemy doesn't
+        // fade out mid-animation, same wait the old cssClass path provided.
+        setActiveAnimations(prev => ({ ...prev, [anim.targetId]: { intensity: anim.intensity ?? 1.0 } }));
+        animClearTimersRef.current.push(setTimeout(() => {
+          setActiveAnimations(prev => ({ ...prev, [anim.targetId]: null }));
+        }, config.duration));
+      }
+
+      // 3. SFX — play sound(s), supports multiple sounds with individual timings.
+      // `start` is the new-shape field name; `delay` is what legacy registry
+      // entries still use — accept either.
       if (config.sfx && !anim.skipSfx) {
         const sfxList = Array.isArray(config.sfx)
           ? config.sfx
-          : [{ src: config.sfx, delay: 0, volume: config.volume ?? 0.6 }];
-        sfxList.forEach(({ src, delay = 0, volume }) => {
-          setTimeout(() => playSfx(src, volume ?? config.volume ?? 0.6), delay);
+          : [{ src: config.sfx, start: 0, volume: config.volume ?? 0.6 }];
+        sfxList.forEach(({ src, start, delay, volume }) => {
+          setTimeout(() => playSfx(src, volume ?? config.volume ?? 0.6), start ?? delay ?? 0);
         });
       }
 
@@ -234,12 +268,13 @@ export default function BattleScreen() {
         });
       }
 
-      // 5. CSS CLEANUP — remove the animation class after it finishes.
-      // Stored in a ref so effect cleanup on the next step doesn't cancel it —
-      // the clear must always fire so dead enemies fade after their animation ends.
-      animClearTimersRef.current.push(setTimeout(() => {
-        setActiveAnimations(prev => ({ ...prev, [anim.targetId]: null, ...(ownerCssClass && { [anim.ownerId]: null }) }));
-      }, config.duration));
+      // 5. CSS CLEANUP — only needed for the old class-toggle path (removed
+      // above). New-shape animations revert automatically per-instance via
+      // WAAPI's `fill: 'none'` in playPreset(), no manual cleanup required.
+      // OLD WAY (commented out, remove once every animation has migrated):
+      // animClearTimersRef.current.push(setTimeout(() => {
+      //   setActiveAnimations(prev => ({ ...prev, [anim.targetId]: null, ...(ownerCssClass && { [anim.ownerId]: null }) }));
+      // }, config.duration));
     });
 
     return () => timers.forEach(clearTimeout);

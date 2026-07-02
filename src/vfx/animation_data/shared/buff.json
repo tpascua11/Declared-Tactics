@@ -1,0 +1,13 @@
+{
+  "name": "buff",
+  "duration": 650,
+  "sfx": [
+    { "src": "BUFF_2.wav", "start": 0, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "buff_glow", "start": 0, "duration": 650 }
+    ]
+  },
+  "floatingNumber": null
+}

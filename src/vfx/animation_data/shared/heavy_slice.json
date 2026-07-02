@@ -1,0 +1,13 @@
+{
+  "name": "heavy_slice",
+  "duration": 500,
+  "sfx": [
+    { "src": "SLICE_1.wav", "start": 0, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "heavy_shake", "start": 0, "duration": 500 }
+    ]
+  },
+  "floatingNumber": { "color": "#ff4444" }
+}
