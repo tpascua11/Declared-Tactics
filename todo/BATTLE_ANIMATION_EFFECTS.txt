@@ -1,0 +1,70 @@
+BATTLE ANIMATION EFFECTS
+========================
+Status: PLANNING ONLY — not being implemented yet.
+
+CONTEXT
+-------
+EnemyZone.jsx currently has a hardcoded "nudge" that's completely separate
+from the animation_data/css_presets.js system built in the CSS timeline
+refactor (see true_css_interpreter.txt):
+
+  EnemyZone.jsx:117
+    style={{ transform: isActive ? 'translateY(35px)' : 'translateY(0)' }}
+
+  isActive comes from activeEnemyId, computed in reducer.js (BATTLE_STEP)
+  by looking ahead to the NEXT action — if an enemy owns or is targeted by
+  it, that enemy gets nudged 35px toward the player.
+
+Problems with this as-is:
+  - Inline transform, not a reusable preset — can't be authored/tuned like
+    everything else in css_presets.js
+  - Enemy-only — the player never gets an equivalent movement
+  - Fires for both owner AND target (should really just be an owner thing)
+  - Completely outside animation_data/*.json — invisible to the rest of
+    the VFX system, VfxEditorScreen can't preview it
+
+THE IDEA — DEFAULT css.owner ANIMATION ("Forward Movement")
+-------------------------------------------------------------
+A universal, automatic fallback for css.owner — NOT something authored
+per-attack. The explicit goal: don't want to hand-edit every existing (and
+future) attack's animation_data/*.json just to get a basic "steps toward
+the opponent" motion.
+
+Rule:
+  - If an animation's JSON does NOT define css.owner, apply a built-in
+    default preset automatically instead of nothing.
+  - Direction depends on faction, not per-animation config:
+      player owner -> moves up   (toward the enemy side)
+      enemy  owner -> moves down (toward the player side)
+  - css.target is UNAFFECTED — target hit-reactions stay exactly as they
+    are today (always explicitly authored per ability, this rule doesn't
+    touch that).
+  - Only kicks in when css.owner is absent. Any animation that DOES define
+    its own css.owner (e.g. storm_strike's lunge+shine, speed_dash_player)
+    keeps using that instead — this is purely a fallback, not an override.
+
+Why this belongs in the engine, not per-animation data:
+  - Every attack already has an owner (the character executing it) — this
+    is a property of ALL actions, not something worth re-declaring in
+    every single JSON file.
+  - Matches how css.target already sometimes has no equivalent (many
+    self-buffs/stances have no owner movement at all) — but attacks
+    specifically should probably never look "static" on the attacker's
+    side, hence a default instead of silence.
+
+OPEN QUESTIONS / NOT YET DECIDED
+---------------------------------
+  - Where does this default live? (a new "default_forward" preset in
+    css_presets.js, applied by BattleScreen/VfxEditorScreen when
+    config.css.owner is missing — same place config.css is already
+    checked)
+  - Does it replace the EnemyZone.jsx activeEnemyId nudge entirely, or do
+    they coexist for a while?
+  - Exact motion/distance/easing for the default (35px was arbitrary,
+    picked for the old hardcoded hack)
+  - More ideas exist beyond Forward Movement — not yet described, to be
+    added here when defined.
+
+STATUS
+------
+[ ] Not started — planning only, per user request (2026-07-02)

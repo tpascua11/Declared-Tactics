@@ -1,0 +1,51 @@
+BATTLE ANIMATION FAKE HEALTH
+=============================
+Status: PLANNING ONLY — not being implemented yet.
+
+THE IDEA
+--------
+Make the health bar drop in a dramatic, satisfying way instead of just
+snapping into a fixed 500ms tween the instant the game state updates.
+
+CURRENT STATE
+-------------
+EnemyZone.jsx renders the health bar's width bound directly to the real
+`enemy.health` value, eased via a plain CSS `transition-all duration-500`
+(EnemyZone.jsx:160/169). The REAL health number updates the instant the
+battle step resolves the action (game logic needs the true value right
+away — death checks, next-action calculations, etc. all depend on it).
+The visual bar just eases toward whatever the new number is over a fixed
+500ms, starting the moment state changes — completely independent of
+when the attack's impact frame / PIXI actually visually lands on screen.
+
+THE IDEA — A SEPARATE "FAKE" HEALTH BAR
+-------------------------------------------
+Real health stays exactly as-is — updates instantly, drives all game
+logic, never touches this. What changes is what gets RENDERED:
+
+Introduce a second, purely-visual "fake" health value that's what the bar
+actually displays. Instead of tweening the instant the real number
+changes, the fake bar's drop gets its own timing — synced to the
+timeline (start), so it visually drops when the hit actually connects
+on screen, not the instant the reducer does the math. Purely about drama/
+feel, not a gameplay mechanic.
+
+Same pattern floatingNumber already uses (config.floatingNumber can be an
+array, each entry with its own `delay`/`split`, staggering when each
+piece of damage gets SHOWN) — worth reusing that shape for the fake
+health bar instead of inventing a new one.
+
+OPEN QUESTIONS / NOT YET DECIDED
+---------------------------------
+  - Where does the fake value live — local state in EnemyZone/
+    PlayerPortrait, or something threaded through the animation timeline
+    like floatingNumber is?
+  - Multi-hit attacks (dual_heavy_slice, kuzu_ryusen, etc.) — does the
+    fake bar step down once per hit in sync with each impact, or just
+    once at the end?
+  - Any easing/motion beyond timing sync worth exploring for "dramatic"
+    (e.g. overshoot then settle, a brief flash on the bar itself)?
+
+STATUS
+------
+[ ] Not started — planning only, per user request (2026-07-02)

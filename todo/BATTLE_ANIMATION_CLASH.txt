@@ -1,0 +1,149 @@
+BATTLE ANIMATION CLASH
+=======================
+Status: PLANNING ONLY — not being implemented yet. Big one, expect this to
+take multiple sessions once started.
+
+THE IDEA
+--------
+Right now an attack's visuals (PIXI + which CSS impact frame plays) are
+100% determined by the ATTACKER's card, regardless of what state the
+TARGET is in. The idea: if the target has an active defensive
+stance/tag (deflecting, guarding, reduced-damage, etc.), that should be
+able to ALTER the incoming attack's effects — a different PIXI config
+and/or a different CSS impact frame than what would normally play, so a
+"deflected" hit actually LOOKS deflected instead of playing the exact
+same animation as a clean hit with just a smaller damage number.
+
+CURRENT STATE (confirmed by reading the code, 2026-07-02)
+------------------------------------------------------------
+Animation selection today (src/battle/reducer.js:282-315):
+  - fizzle    -> action cancelled before execution (insufficient resource)
+  - sidestep  -> action cancelled by ON_INCOMING (full dodge, see below)
+  - otherwise -> type: animationHint, where animationHint is just
+                 action.animation (the card's declared animation) or a
+                 generic shake/shake_magic fallback. Comes ENTIRELY from
+                 the attacker's card. Never looks at the target.
+
+The VFX pipeline (BattleScreen.jsx's pendingAnimation handler) never
+reads the target's active_tag_pool or any defensive state. It only knows:
+  - action type (PHYSICAL/MAGIC/SPELL/etc via tag_type)
+  - the card's declared animation
+  - whether it hit / dodged / was interrupted
+  - final damage amount (after reduction has already been applied)
+
+Existing defensive mechanics that currently have NO distinct visual
+treatment (found in src/battle/handlers/):
+  - HARAI (passive_handlers.js:101-136) — 75% damage reduction stance,
+    persists until owner's next action. Runs in the DAMAGE_REDUCE phase,
+    which happens INSIDE ExecuteAction, AFTER the animation has already
+    been queued by the reducer. Currently: exact same hit animation
+    plays, only the floating number is smaller.
+  - GOUKI (passive_handlers.js:94-99) — stacking 25%/stack reduction (up
+    to 3 stacks = 75%), consumes 1 stack per hit. Same DAMAGE_REDUCE
+    phase, same lack of visual distinction.
+  - STEEL_WILL (class_specific_handler.js:51-57) — flat 50% reduction.
+    Same story.
+
+The one defensive mechanic that DOES already get distinct treatment:
+  - QUICK_STEPS (incoming_handlers.js:11-48) — a dodge stance (not damage
+    reduction, full negation) that runs in the ON_INCOMING phase, BEFORE
+    damage is calculated. When it triggers, `dodged: true` is set and the
+    reducer fires a `sidestep` animation instead of the attack's normal
+    one. This is the existing precedent for "target state changes which
+    animation plays" — proves the pattern is possible, just not
+    generalized.
+
+CLASH / NULLIFY interactions (InteractionCheck, battle_engine.js:91-121)
+also currently have NO animation — when two CLASH-tagged actions cancel
+each other, it's just a log message, nothing plays.
+
+THE GAP
+-------
+Two separate problems, both need solving for this to work:
+  1. TIMING — DAMAGE_REDUCE (where HARAI/GOUKI/STEEL_WILL actually apply)
+     runs after the reducer has already decided pendingAnimation. The
+     reducer would need to know about the reduction (or the target's
+     defensive tags) BEFORE building the animation entry, not after.
+  2. DATA — even once the timing is fixed, the animation entry itself
+     (and animation_data/*.json) has no field for "target defensive
+     state" today. Something needs to carry that info from reducer ->
+     BattleScreen -> which preset/PIXI config actually gets chosen.
+
+THE MECHANISM (refined 2026-07-02)
+-------------------------------------
+Two-part idea, one trigger:
+
+TRIGGER — don't build new detection plumbing. battle_engine already
+computes and RETURNS a result for every interaction (InteractionCheck's
+NULLIFY, ExecuteAction's dodged/damage-reduction outcome, etc.) — that
+result is the existing signal for "what happened." The gap isn't that
+this info doesn't exist, it's that VFX-selection currently ignores it
+(see THE GAP above — it just needs to actually be read before/while
+building pendingAnimation instead of being discarded).
+
+CSS SIDE — on a clash/deflect result, throw away the attacker's normal
+css.target impact frame ENTIRELY. Play the DEFENDER's own deflect preset
+instead — tied to whatever stance/ability gave them the deflect (e.g.
+Harai has its own visual identity), so a Harai-deflected hit always
+looks like "Harai happened," regardless of which attack triggered it.
+Not layered on top of the attacker's preset — a full substitution.
+
+PIXI SIDE — don't author a separate "deflected version" of every attack's
+particle config. Instead, DISTORT the same config the attack would have
+used, at playback time: warp the emitter motion vectors (the dx/dy/angle
+that normally push particles straight from attacker to target) so they
+bend/redirect instead of landing clean. Same particles, same fire/ice/
+lightning identity, same rough timing — just visibly pushed off its
+normal path. This is what makes it feel like "the attack got physically
+altered" rather than "a different animation played" — and it scales to
+every existing and future attack for free, since nothing needs to
+hand-author a deflected variant per ability.
+
+Concretely: a `distort` flag/param passed into the PIXI play call
+(ThumosInterpreter.js) rather than a new config format — same idea as how
+playPreset() gained `pseudoElement`/`iterations` as small added options
+instead of a rewrite. Once that one flag exists, different TRANSFORM
+flavors can be tried on the same underlying motion data — no new assets,
+just different math applied to dx/dy/angle:
+  - redirect/bounce — the attacker->target vector reflects at an angle,
+    like the hit glanced off
+  - jitter/scatter — particles fan out chaotically instead of flowing
+    cleanly, like the impact broke apart on contact
+  - reverse/recoil — particles flow backward toward the attacker instead
+    of forward, like the attack got thrown back
+Different defensive tags could eventually get different distort flavors
+(HARAI = clean redirect, GOUKI = scatter, etc.) just by trying different
+transforms on the same data — same "one small reusable knob, big
+combinatorial payoff" shape css_presets.js turned out to have.
+
+CANDIDATE SCENARIOS WORTH THIS TREATMENT (not decided, just listed)
+---------------------------------------------------------------------
+  - HARAI / GOUKI / STEEL_WILL active on target -> defender's deflect
+    CSS preset + distorted PIXI flow, instead of the normal impact frame
+    with just a smaller damage number
+  - QUICK_STEPS dodge -> already has `sidestep`, but could go further
+    (e.g. different sidestep flavor depending on what was dodged)
+  - CLASH interaction -> currently silent; two actions colliding and
+    cancelling each other seems like an obvious candidate for this same
+    treatment, since right now it's the least visually represented
+    interaction in the whole system
+
+OPEN QUESTIONS / NOT YET DECIDED
+---------------------------------
+  - Does the reducer need restructuring so the battle_engine result is
+    known before pendingAnimation is built, or is there a lighter way to
+    pass it through after the fact?
+  - How exactly is "distort the emitter motion" parameterized — a
+    generic transform applied to any pixi config's dx/dy/angle at
+    playback time (in ThumosInterpreter.js), or something more specific
+    per distortion "flavor"?
+  - Per-defensive-tag deflect preset (HARAI looks different from
+    STEEL_WILL), or one generic "deflected" treatment reused across all
+    of them?
+  - Does this interact with the Forward Movement default idea
+    (BATTLE_ANIMATION_EFFECTS.txt) — e.g. does a deflected owner still
+    step forward, or does the deflect visual override that too?
+
+STATUS
+------
+[ ] Not started — planning only, per user request (2026-07-02)

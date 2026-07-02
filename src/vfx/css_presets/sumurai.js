@@ -1,30 +1,9 @@
 // ============================================================
-//  CSS Presets — reusable "impact frame" keyframe blocks.
-//
-//  A preset is just the meaningful hit portion of an effect (flash,
-//  flicker, fade) with no idle hold baked in — offsets always run
-//  0 to 1. Timeline entries in animation_data/*.json reference a
-//  preset by name and decide WHEN it fires (`start`) and how long
-//  it plays (`duration`), so the same preset can be reused across
-//  many abilities and combo'd freely without CSS class conflicts.
-//
-//  NOTE: this will move to JSON (require.context loader, same
-//  pattern as pixi_data.js) once the shape is proven. Kept as a
-//  plain JS file for now during the Phase 1 proof of concept.
-//
-//  GOTCHA — hit once already, don't reintroduce it: the Web Animations
-//  API's outer `options.easing` applies to the WHOLE animation as a
-//  single curve, unlike CSS @keyframes where the timing function re-
-//  applies to EVERY segment between keyframes. Setting easing only at
-//  the outer level makes multi-step impacts (like flame_impact) feel
-//  smoothed-out/weaker, because the sharp per-hop snap gets averaged
-//  into one long arc instead of getting its own accelerate/decelerate.
-//  Always play presets through playPreset() below — it bakes easing
-//  onto every individual keyframe and forces the outer option to
-//  'linear' so each hop gets its own speed curve, based on itself.
+//  Sumurai CSS Presets — Fox Sumurai class only.
+//  See css_presets/index.js for the "impact frame" concept + playPreset().
 // ============================================================
 
-export const CSS_PRESETS = {
+export const SUMURAI_PRESETS = {
   // Fire-based hit flash/flicker/fade — shared by flame_strike and
   // any future fire ability that wants the same impact.
   flame_impact: {
@@ -42,36 +21,6 @@ export const CSS_PRESETS = {
       { offset: 0.7561, transform: 'translate(-1px, -1px) rotate(0deg)',  filter: 'brightness(2) sepia(0.8) saturate(3.5) hue-rotate(-20deg)' },
       { offset: 0.9024, transform: 'translate(0, 0) rotate(0deg)',        filter: 'brightness(1.5) sepia(0.5) saturate(2) hue-rotate(-10deg)' },
       { offset: 1,      transform: 'translate(0, 0) rotate(0deg)',        filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
-    ],
-  },
-
-  // Generic weapon-hit shake, no filter — shared by heavy_slice, dual_heavy_slice,
-  // and any plain physical slash impact. No hold to strip; motion starts at offset 0.
-  heavy_shake: {
-    easing: 'ease-in-out',
-    keyframes: [
-      { offset: 0,    transform: 'translate(1px, 1px) rotate(0deg)' },
-      { offset: 0.12, transform: 'translate(-2px, -2px) rotate(-1deg)' },
-      { offset: 0.25, transform: 'translate(-3px, 0px) rotate(1deg)' },
-      { offset: 0.37, transform: 'translate(3px, 2px) rotate(0deg)' },
-      { offset: 0.50, transform: 'translate(1px, -1px) rotate(-1deg)' },
-      { offset: 0.62, transform: 'translate(-2px, -2px) rotate(-1deg)' },
-      { offset: 0.75, transform: 'translate(-3px, 0px) rotate(1deg)' },
-      { offset: 0.87, transform: 'translate(3px, 2px) rotate(0deg)' },
-      { offset: 1,    transform: 'translate(0px, 0px) rotate(0deg)' },
-    ],
-  },
-
-  // Stance/buff glow — brightness+saturation+hue bloom with a slight scale pop.
-  // Shared by sumurai_sheath (Battojutsu) and the generic buff animation.
-  buff_glow: {
-    easing: 'ease-out',
-    keyframes: [
-      { offset: 0,    filter: 'brightness(1) saturate(1) hue-rotate(0deg)',     transform: 'scale(1)' },
-      { offset: 0.25, filter: 'brightness(2) saturate(2.5) hue-rotate(40deg)',  transform: 'scale(1.04)' },
-      { offset: 0.55, filter: 'brightness(1.6) saturate(2) hue-rotate(45deg)',  transform: 'scale(1.02)' },
-      { offset: 0.85, filter: 'brightness(1.2) saturate(1.3) hue-rotate(20deg)', transform: 'scale(1.01)' },
-      { offset: 1,    filter: 'brightness(1) saturate(1) hue-rotate(0deg)',     transform: 'scale(1)' },
     ],
   },
 
@@ -342,45 +291,6 @@ export const CSS_PRESETS = {
     ],
   },
 
-  // Fizzle — cancelled action, a quick opacity/brightness flicker.
-  fizzle_flicker: {
-    easing: 'ease-in-out',
-    keyframes: [
-      { offset: 0,    opacity: 1,   filter: 'brightness(1)' },
-      { offset: 0.30, opacity: 0.6, filter: 'brightness(1.4) saturate(0.5)' },
-      { offset: 0.60, opacity: 0.3, filter: 'brightness(0.8) saturate(0)' },
-      { offset: 1,    opacity: 1,   filter: 'brightness(1)' },
-    ],
-  },
-
-  // Sidestep — evaded attack, a quick horizontal dodge-and-settle wobble.
-  sidestep_dodge: {
-    easing: 'ease-in-out',
-    keyframes: [
-      { offset: 0,    transform: 'translate(0px, 0px)',   opacity: 1 },
-      { offset: 0.12, transform: 'translate(-22px, 0px)', opacity: 0.25 },
-      { offset: 0.28, transform: 'translate(28px, 0px)',  opacity: 0.2 },
-      { offset: 0.44, transform: 'translate(-18px, 0px)', opacity: 0.3 },
-      { offset: 0.60, transform: 'translate(14px, 0px)',  opacity: 0.5 },
-      { offset: 0.76, transform: 'translate(-8px, 0px)',  opacity: 0.75 },
-      { offset: 0.88, transform: 'translate(4px, 0px)',   opacity: 0.9 },
-      { offset: 1,    transform: 'translate(0px, 0px)',   opacity: 1 },
-    ],
-  },
-
-  // Enemy enter — drop-in with an overshoot settle, engine-wide (any
-  // faction). Used when new enemies join the battlefield.
-  enemy_enter_drop: {
-    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-    keyframes: [
-      { offset: 0,    opacity: 0,    transform: 'translateY(-220px) scale(0.88)', filter: 'brightness(3) saturate(0)' },
-      { offset: 0.35, opacity: 0.85, transform: 'translateY(12px) scale(1.04)',   filter: 'brightness(1.8) saturate(0.5)' },
-      { offset: 0.58, opacity: 1,    transform: 'translateY(-5px) scale(0.98)',   filter: 'brightness(1.3) saturate(1)' },
-      { offset: 0.78, opacity: 1,    transform: 'translateY(3px) scale(1.01)',    filter: 'brightness(1.1) saturate(1)' },
-      { offset: 1,    opacity: 1,    transform: 'translateY(0) scale(1)',         filter: 'brightness(1) saturate(1)' },
-    ],
-  },
-
   // Tri ice slash — three vertical/horizontal ice hits, one continuous
   // preset (per the "treat multi-hit combos as one thing" decision).
   tri_ice_impact: {
@@ -581,35 +491,4 @@ export const CSS_PRESETS = {
   },
 };
 
-// Plays a preset on `el` via the Web Animations API.
-//
-// WAAPI's outer `options.easing` applies to the WHOLE animation as one
-// curve — it does NOT re-apply per segment like CSS @keyframes does. To
-// reproduce the CSS look, the preset's single `easing` value is baked onto
-// every keyframe here (the only place presets get played), and the outer
-// option always stays 'linear'. Callers never need to think about this.
-//
-// preset.pseudoElement — some effects (a shine sweep, a marching-ants
-// border) are drawn on a ::before/::after layer, not the element itself,
-// because they need a whole extra shape (a gradient sweep, a dashed
-// border) that transform/filter on the base element can't produce. When
-// set, this targets that pseudo-element instead of `el` directly.
-//
-// iterations — for presets whose source CSS looped `infinite` (e.g. a
-// marching-ants border) but were always cut short by a fixed duration in
-// practice. Defaults to 1 (play once).
-//
-// preset.fill — defaults to 'none' (snap back to normal the instant the
-// animation ends, no manual cleanup needed). A few presets are authored to
-// deliberately end in a non-resting state (e.g. shinsoku_disappear ends
-// fully invisible) and set fill:'forwards' to stay there until something
-// else changes it.
-export function playPreset(el, preset, { duration, iterations = 1 }) {
-  if (!el || !preset) return null;
-  const keyframes = preset.keyframes.map(k => ({ ...k, easing: preset.easing ?? 'linear' }));
-  const options = { duration, iterations, easing: 'linear', fill: preset.fill ?? 'none' };
-  if (preset.pseudoElement) options.pseudoElement = preset.pseudoElement;
-  return el.animate(keyframes, options);
-}
-
-export default CSS_PRESETS;
+export default SUMURAI_PRESETS;
