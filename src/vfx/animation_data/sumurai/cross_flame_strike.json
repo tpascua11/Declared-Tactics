@@ -1,0 +1,16 @@
+{
+  "name": "cross_flame_strike",
+  "duration": 1600,
+  "sfx": [
+    { "src": "SWORD_SWING.wav", "start": 0,   "volume": 0.7 },
+    { "src": "SWORD_SWING.wav", "start": 25,  "volume": 0.6 },
+    { "src": "FLAMES",          "start": 280, "volume": 0.8 },
+    { "src": "FLAMES",          "start": 320, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "cross_flame_impact", "start": 224, "duration": 1376 }
+    ]
+  },
+  "floatingNumber": { "color": "#f97316" }
+}

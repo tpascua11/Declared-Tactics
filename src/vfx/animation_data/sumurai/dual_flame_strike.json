@@ -1,0 +1,19 @@
+{
+  "name": "dual_flame_strike",
+  "duration": 2000,
+  "sfx": [
+    { "src": "SWORD_SWING.wav", "start": 0,    "volume": 0.7 },
+    { "src": "FLAMES",          "start": 300,  "volume": 0.8 },
+    { "src": "SWORD_SWING.wav", "start": 700,  "volume": 0.7 },
+    { "src": "FLAMES",          "start": 1000, "volume": 0.9 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "dual_flame_impact", "start": 240, "duration": 1760 }
+    ]
+  },
+  "floatingNumber": [
+    { "color": "#f97316", "delay": 0,   "split": 0.5 },
+    { "color": "#f97316", "delay": 700, "split": 0.5 }
+  ]
+}

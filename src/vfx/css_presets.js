@@ -341,6 +341,244 @@ export const CSS_PRESETS = {
       },
     ],
   },
+
+  // Fizzle — cancelled action, a quick opacity/brightness flicker.
+  fizzle_flicker: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    opacity: 1,   filter: 'brightness(1)' },
+      { offset: 0.30, opacity: 0.6, filter: 'brightness(1.4) saturate(0.5)' },
+      { offset: 0.60, opacity: 0.3, filter: 'brightness(0.8) saturate(0)' },
+      { offset: 1,    opacity: 1,   filter: 'brightness(1)' },
+    ],
+  },
+
+  // Sidestep — evaded attack, a quick horizontal dodge-and-settle wobble.
+  sidestep_dodge: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0px, 0px)',   opacity: 1 },
+      { offset: 0.12, transform: 'translate(-22px, 0px)', opacity: 0.25 },
+      { offset: 0.28, transform: 'translate(28px, 0px)',  opacity: 0.2 },
+      { offset: 0.44, transform: 'translate(-18px, 0px)', opacity: 0.3 },
+      { offset: 0.60, transform: 'translate(14px, 0px)',  opacity: 0.5 },
+      { offset: 0.76, transform: 'translate(-8px, 0px)',  opacity: 0.75 },
+      { offset: 0.88, transform: 'translate(4px, 0px)',   opacity: 0.9 },
+      { offset: 1,    transform: 'translate(0px, 0px)',   opacity: 1 },
+    ],
+  },
+
+  // Enemy enter — drop-in with an overshoot settle, engine-wide (any
+  // faction). Used when new enemies join the battlefield.
+  enemy_enter_drop: {
+    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+    keyframes: [
+      { offset: 0,    opacity: 0,    transform: 'translateY(-220px) scale(0.88)', filter: 'brightness(3) saturate(0)' },
+      { offset: 0.35, opacity: 0.85, transform: 'translateY(12px) scale(1.04)',   filter: 'brightness(1.8) saturate(0.5)' },
+      { offset: 0.58, opacity: 1,    transform: 'translateY(-5px) scale(0.98)',   filter: 'brightness(1.3) saturate(1)' },
+      { offset: 0.78, opacity: 1,    transform: 'translateY(3px) scale(1.01)',    filter: 'brightness(1.1) saturate(1)' },
+      { offset: 1,    opacity: 1,    transform: 'translateY(0) scale(1)',         filter: 'brightness(1) saturate(1)' },
+    ],
+  },
+
+  // Tri ice slash — three vertical/horizontal ice hits, one continuous
+  // preset (per the "treat multi-hit combos as one thing" decision).
+  tri_ice_impact: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(-2px, -2px) rotate(-1deg)',   filter: 'brightness(2.8) hue-rotate(185deg) saturate(4)' },
+      { offset: 0.07, transform: 'translate(2px, 1px) rotate(0.5deg)',    filter: 'brightness(1.8) hue-rotate(180deg) saturate(3)' },
+      { offset: 0.13, transform: 'translate(-1px, 1px) rotate(-0.5deg)',  filter: 'brightness(1.4) hue-rotate(170deg) saturate(2.5)' },
+      { offset: 0.18, transform: 'translate(0, 0) rotate(0deg)',          filter: 'brightness(1.2) hue-rotate(160deg) saturate(2)' },
+      { offset: 0.20, transform: 'translate(3px, -2px) rotate(1deg)',     filter: 'brightness(3) hue-rotate(185deg) saturate(4.5)' },
+      { offset: 0.26, transform: 'translate(-3px, 1px) rotate(-1deg)',    filter: 'brightness(1.9) hue-rotate(180deg) saturate(3.5)' },
+      { offset: 0.32, transform: 'translate(2px, -1px) rotate(0.5deg)',   filter: 'brightness(1.5) hue-rotate(170deg) saturate(2.5)' },
+      { offset: 0.37, transform: 'translate(0, 0) rotate(0deg)',          filter: 'brightness(1.3) hue-rotate(165deg) saturate(2.2)' },
+      { offset: 0.40, transform: 'translate(-4px, -2px) rotate(-1.5deg)', filter: 'brightness(3.5) hue-rotate(190deg) saturate(5.5)' },
+      { offset: 0.46, transform: 'translate(4px, 2px) rotate(1.5deg)',    filter: 'brightness(2.2) hue-rotate(185deg) saturate(4)' },
+      { offset: 0.52, transform: 'translate(-3px, -1px) rotate(-1deg)',   filter: 'brightness(2.8) hue-rotate(182deg) saturate(4.5)' },
+      { offset: 0.58, transform: 'translate(2px, 1px) rotate(0.5deg)',    filter: 'brightness(2) hue-rotate(178deg) saturate(3.5)' },
+      { offset: 0.65, transform: 'translate(-1px, 0px) rotate(0deg)',     filter: 'brightness(1.6) hue-rotate(170deg) saturate(2.8)' },
+      { offset: 0.74, transform: 'translate(0, 0) rotate(0deg)',          filter: 'brightness(1.4) hue-rotate(150deg) saturate(2.2)' },
+      { offset: 0.84, transform: 'translate(0, 0) rotate(0deg)',          filter: 'brightness(1.2) hue-rotate(100deg) saturate(1.6)' },
+      { offset: 0.93, transform: 'translate(0, 0) rotate(0deg)',          filter: 'brightness(1.1) hue-rotate(40deg) saturate(1.2)' },
+      { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',          filter: 'brightness(1) hue-rotate(0deg) saturate(1)' },
+    ],
+  },
+
+  // Cross flame strike — X-slash, both blades land at once. Hold (0-14%)
+  // stripped; the JSON timeline entry fires this at start:224 to compensate.
+  cross_flame_impact: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,      transform: 'translate(-4px, -3px) rotate(-2deg)',  filter: 'brightness(5.5) sepia(0.3) saturate(0) hue-rotate(0deg)' },
+      { offset: 0.0698, transform: 'translate(4px, 3px) rotate(2deg)',     filter: 'brightness(3) sepia(1) saturate(6) hue-rotate(-30deg)' },
+      { offset: 0.1395, transform: 'translate(-3px, -2px) rotate(-1deg)',  filter: 'brightness(4) sepia(1) saturate(7) hue-rotate(-32deg)' },
+      { offset: 0.2093, transform: 'translate(3px, 1px) rotate(1deg)',     filter: 'brightness(2.2) sepia(1) saturate(5) hue-rotate(-26deg)' },
+      { offset: 0.2791, transform: 'translate(-3px, 2px) rotate(-1deg)',   filter: 'brightness(3.5) sepia(1) saturate(6) hue-rotate(-30deg)' },
+      { offset: 0.3488, transform: 'translate(2px, -2px) rotate(1deg)',    filter: 'brightness(2) sepia(1) saturate(5) hue-rotate(-25deg)' },
+      { offset: 0.4186, transform: 'translate(-2px, 1px) rotate(-1deg)',   filter: 'brightness(3) sepia(1) saturate(5.5) hue-rotate(-28deg)' },
+      { offset: 0.4884, transform: 'translate(2px, 0px) rotate(0deg)',     filter: 'brightness(1.8) sepia(0.9) saturate(4.5) hue-rotate(-22deg)' },
+      { offset: 0.5581, transform: 'translate(-1px, -1px) rotate(-0.5deg)', filter: 'brightness(2.5) sepia(0.9) saturate(4) hue-rotate(-24deg)' },
+      { offset: 0.6279, transform: 'translate(1px, 1px) rotate(0deg)',     filter: 'brightness(1.7) sepia(0.8) saturate(3.5) hue-rotate(-20deg)' },
+      { offset: 0.7093, transform: 'translate(-1px, 0px) rotate(0deg)',    filter: 'brightness(2) sepia(0.7) saturate(3) hue-rotate(-18deg)' },
+      { offset: 0.7907, transform: 'translate(0, 0) rotate(0deg)',         filter: 'brightness(1.4) sepia(0.4) saturate(2) hue-rotate(-10deg)' },
+      { offset: 0.9186, transform: 'translate(0, 0) rotate(0deg)',         filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+      { offset: 1,      transform: 'translate(0, 0) rotate(0deg)',         filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+    ],
+  },
+
+  // Dual flame strike — two fire slashes (↘ then ↙), one continuous preset.
+  // Hold (0-12%) stripped; the JSON timeline entry fires this at start:240.
+  dual_flame_impact: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,      transform: 'translate(-4px, -3px) rotate(-2deg)', filter: 'brightness(4) sepia(1) saturate(6) hue-rotate(-30deg)' },
+      { offset: 0.0682, transform: 'translate(3px, 2px) rotate(1deg)',    filter: 'brightness(1.8) sepia(1) saturate(4) hue-rotate(-25deg)' },
+      { offset: 0.1364, transform: 'translate(-3px, -1px) rotate(-1deg)', filter: 'brightness(3) sepia(1) saturate(5) hue-rotate(-28deg)' },
+      { offset: 0.2045, transform: 'translate(1px, 0px) rotate(0deg)',    filter: 'brightness(1.8) sepia(0.9) saturate(3.5) hue-rotate(-20deg)' },
+      { offset: 0.2955, transform: 'translate(0, 0) rotate(0deg)',        filter: 'brightness(1.5) sepia(0.8) saturate(3) hue-rotate(-18deg)' },
+      { offset: 0.3864, transform: 'translate(4px, -3px) rotate(2deg)',   filter: 'brightness(4.5) sepia(1) saturate(7) hue-rotate(-35deg)' },
+      { offset: 0.4545, transform: 'translate(-3px, 2px) rotate(-1deg)',  filter: 'brightness(2) sepia(1) saturate(5) hue-rotate(-28deg)' },
+      { offset: 0.5227, transform: 'translate(3px, -1px) rotate(1deg)',   filter: 'brightness(3.2) sepia(1) saturate(6) hue-rotate(-30deg)' },
+      { offset: 0.5909, transform: 'translate(-2px, 1px) rotate(-1deg)',  filter: 'brightness(1.8) sepia(1) saturate(4.5) hue-rotate(-25deg)' },
+      { offset: 0.6591, transform: 'translate(2px, 0px) rotate(0deg)',    filter: 'brightness(2.5) sepia(0.9) saturate(4) hue-rotate(-22deg)' },
+      { offset: 0.7386, transform: 'translate(-1px, -1px) rotate(0deg)',  filter: 'brightness(2) sepia(0.8) saturate(3.5) hue-rotate(-20deg)' },
+      { offset: 0.8182, transform: 'translate(0, 0) rotate(0deg)',        filter: 'brightness(1.4) sepia(0.4) saturate(2) hue-rotate(-10deg)' },
+      { offset: 0.9318, transform: 'translate(0, 0) rotate(0deg)',        filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+      { offset: 1,      transform: 'translate(0, 0) rotate(0deg)',        filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+    ],
+  },
+
+  // Stream slash disappear — attacker vanish, invisible hold while the
+  // slash lands, reappear. Ends visible (opacity:1), fine with fill:'none'.
+  // The target side just reuses heavy_shake (fired at start:900 in the
+  // timeline JSON — no dedicated preset needed there).
+  stream_slash_vanish: {
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    keyframes: [
+      { offset: 0,    transform: 'translateX(0)',     opacity: 1,    filter: 'brightness(1)' },
+      { offset: 0.04, transform: 'translateX(-45px)', opacity: 0.9,  filter: 'brightness(1.8)' },
+      { offset: 0.09, transform: 'translateX(45px)',  opacity: 0.85, filter: 'brightness(1.6)' },
+      { offset: 0.14, transform: 'translateX(-60px)', opacity: 0.75, filter: 'brightness(2.2)' },
+      { offset: 0.19, transform: 'translateX(60px)',  opacity: 0.6,  filter: 'brightness(1.9)' },
+      { offset: 0.23, transform: 'translateX(-50px)', opacity: 0.45, filter: 'brightness(2.5)' },
+      { offset: 0.27, transform: 'translateX(0)',     opacity: 0.28, filter: 'brightness(3.5)' },
+      { offset: 0.33, transform: 'translateX(0)',     opacity: 0.1,  filter: 'brightness(5)' },
+      { offset: 0.50, transform: 'translateX(0)',     opacity: 0,    filter: 'brightness(1)' },
+      { offset: 0.78, transform: 'translateX(0)',     opacity: 0,    filter: 'brightness(1)' },
+      { offset: 0.88, transform: 'translateX(0)',     opacity: 0.6,  filter: 'brightness(2)' },
+      { offset: 1,    transform: 'translateX(0)',     opacity: 1,    filter: 'brightness(1)' },
+    ],
+  },
+
+  // Shinsoku disappear — speed vanish that stays gone. Ends at opacity:0
+  // and DELIBERATELY does not reset — fill:'forwards' so the character
+  // stays invisible until something else (their next action, enemy_enter,
+  // etc.) changes it. The one preset in this file that isn't fill:'none'.
+  shinsoku_vanish: {
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    fill: 'forwards',
+    keyframes: [
+      { offset: 0,    transform: 'translateX(0)',     opacity: 1,    filter: 'brightness(1)' },
+      { offset: 0.08, transform: 'translateX(-45px)', opacity: 0.9,  filter: 'brightness(1.8)' },
+      { offset: 0.18, transform: 'translateX(45px)',  opacity: 0.85, filter: 'brightness(1.6)' },
+      { offset: 0.27, transform: 'translateX(-60px)', opacity: 0.75, filter: 'brightness(2.2)' },
+      { offset: 0.37, transform: 'translateX(60px)',  opacity: 0.6,  filter: 'brightness(1.9)' },
+      { offset: 0.46, transform: 'translateX(-50px)', opacity: 0.45, filter: 'brightness(2.5)' },
+      { offset: 0.54, transform: 'translateX(0)',     opacity: 0.28, filter: 'brightness(3.5)' },
+      { offset: 0.65, transform: 'translateX(0)',     opacity: 0.1,  filter: 'brightness(5)' },
+      { offset: 1,    transform: 'translateX(0)',     opacity: 0,    filter: 'brightness(1)' },
+    ],
+  },
+
+  // Gatotsu — fang thrust. No wind-up; frame 0 is already the impact
+  // (target driven back), blade snaps out with a diminishing oscillation.
+  gatotsu_thrust: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(18px, -1px) rotate(0.5deg)',  filter: 'brightness(3) saturate(0)' },
+      { offset: 0.15, transform: 'translate(16px, 0px) rotate(0.3deg)',   filter: 'brightness(2) saturate(0.2)' },
+      { offset: 0.25, transform: 'translate(14px, 0px) rotate(0.2deg)',   filter: 'brightness(1.5) saturate(0.5)' },
+      { offset: 0.40, transform: 'translate(-5px, 0px) rotate(-0.5deg)',  filter: 'brightness(1.1) saturate(0.8)' },
+      { offset: 0.54, transform: 'translate(6px, 0px) rotate(0.3deg)',    filter: 'brightness(1) saturate(1)' },
+      { offset: 0.66, transform: 'translate(-3px, 0px) rotate(-0.2deg)',  filter: 'brightness(1) saturate(1)' },
+      { offset: 0.78, transform: 'translate(2px, 0px) rotate(0.1deg)',    filter: 'brightness(1) saturate(1)' },
+      { offset: 0.90, transform: 'translate(-1px, 0px) rotate(0deg)',     filter: 'brightness(1) saturate(1)' },
+      { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',          filter: 'brightness(1) saturate(1)' },
+    ],
+  },
+
+  // Gatotsu shock — thrust up, holds elevated, electricity builds, falls.
+  // No wind-up; frame 0 is already the impact.
+  gatotsu_shock_impact: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0px, -42px) rotate(-1deg)',    filter: 'brightness(3) saturate(0) hue-rotate(0deg)' },
+      { offset: 0.06, transform: 'translate(0px, -40px) rotate(-0.7deg)',  filter: 'brightness(1.6) saturate(0.6) hue-rotate(0deg)' },
+      { offset: 0.13, transform: 'translate(0px, -38px) rotate(-0.3deg)',  filter: 'brightness(1) saturate(1) hue-rotate(0deg)' },
+      { offset: 0.22, transform: 'translate(0px, -38px) rotate(-0.2deg)',  filter: 'brightness(1) saturate(1) hue-rotate(0deg)' },
+      { offset: 0.29, transform: 'translate(-1px, -38px) rotate(-0.3deg)', filter: 'brightness(2) saturate(0.4) hue-rotate(185deg)' },
+      { offset: 0.34, transform: 'translate(1px, -37px) rotate(0.2deg)',   filter: 'brightness(1.4) saturate(1.8) hue-rotate(200deg)' },
+      { offset: 0.40, transform: 'translate(-2px, -38px) rotate(-0.4deg)', filter: 'brightness(2.2) saturate(0.4) hue-rotate(185deg)' },
+      { offset: 0.45, transform: 'translate(1px, -36px) rotate(0.2deg)',   filter: 'brightness(1.4) saturate(2) hue-rotate(195deg)' },
+      { offset: 0.51, transform: 'translate(-1px, -37px) rotate(-0.2deg)', filter: 'brightness(2.5) saturate(0.3) hue-rotate(180deg)' },
+      { offset: 0.56, transform: 'translate(2px, -35px) rotate(0.3deg)',   filter: 'brightness(1.5) saturate(1.8) hue-rotate(200deg)' },
+      { offset: 0.63, transform: 'translate(0px, 10px) rotate(1deg)',      filter: 'brightness(1.2) saturate(1) hue-rotate(60deg)' },
+      { offset: 0.71, transform: 'translate(0px, -10px) rotate(-0.6deg)',  filter: 'brightness(1) saturate(1) hue-rotate(0deg)' },
+      { offset: 0.78, transform: 'translate(0px, 5px) rotate(0.4deg)',     filter: 'brightness(1) saturate(1) hue-rotate(0deg)' },
+      { offset: 0.85, transform: 'translate(0px, -4px) rotate(-0.3deg)',   filter: 'brightness(1) saturate(1) hue-rotate(0deg)' },
+      { offset: 0.91, transform: 'translate(0px, 2px) rotate(0.2deg)',     filter: 'brightness(1) saturate(1) hue-rotate(0deg)' },
+      { offset: 0.96, transform: 'translate(0px, -1px) rotate(0deg)',      filter: 'brightness(1) saturate(1) hue-rotate(0deg)' },
+      { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',           filter: 'brightness(1) saturate(1) hue-rotate(0deg)' },
+    ],
+  },
+
+  // Gatotsu 2 — deeper thrust, driven further up, bigger snap-back
+  // overshoot and slower-decaying oscillation than plain gatotsu.
+  gatotsu_2_thrust: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0px, -42px) rotate(-1deg)',   filter: 'brightness(4) saturate(0)' },
+      { offset: 0.12, transform: 'translate(0px, -38px) rotate(-0.7deg)', filter: 'brightness(2.5) saturate(0.1)' },
+      { offset: 0.24, transform: 'translate(0px, -34px) rotate(-0.5deg)', filter: 'brightness(1.8) saturate(0.4)' },
+      { offset: 0.34, transform: 'translate(0px, -28px) rotate(-0.3deg)', filter: 'brightness(1.3) saturate(0.7)' },
+      { offset: 0.46, transform: 'translate(0px, 10px) rotate(1deg)',     filter: 'brightness(1.1) saturate(0.9)' },
+      { offset: 0.57, transform: 'translate(0px, -12px) rotate(-0.6deg)', filter: 'brightness(1) saturate(1)' },
+      { offset: 0.66, transform: 'translate(0px, 6px) rotate(0.4deg)',    filter: 'brightness(1) saturate(1)' },
+      { offset: 0.75, transform: 'translate(0px, -5px) rotate(-0.3deg)',  filter: 'brightness(1) saturate(1)' },
+      { offset: 0.83, transform: 'translate(0px, 3px) rotate(0.2deg)',    filter: 'brightness(1) saturate(1)' },
+      { offset: 0.91, transform: 'translate(0px, -1px) rotate(-0.1deg)',  filter: 'brightness(1) saturate(1)' },
+      { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',          filter: 'brightness(1) saturate(1)' },
+    ],
+  },
+
+  // Kuzu Ryusen — nine-headed dragon flash, 9 rapid vital-point strikes
+  // ending in one bigger decisive blow. One continuous preset.
+  kuzu_ryusen_barrage: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(-3px, -2px) rotate(-1deg)',  filter: 'brightness(1.35) saturate(0.1)' },
+      { offset: 0.05, transform: 'translate(1px, 1px) rotate(0.5deg)',   filter: 'brightness(1.2) saturate(0.7)' },
+      { offset: 0.11, transform: 'translate(3px, -1px) rotate(1deg)',    filter: 'brightness(1.35) saturate(0.1)' },
+      { offset: 0.16, transform: 'translate(-1px, 2px) rotate(-0.5deg)', filter: 'brightness(1.2) saturate(0.7)' },
+      { offset: 0.22, transform: 'translate(-4px, 2px) rotate(-1.5deg)', filter: 'brightness(1.35) saturate(0.1)' },
+      { offset: 0.27, transform: 'translate(2px, -2px) rotate(0.5deg)',  filter: 'brightness(1.15) saturate(0.8)' },
+      { offset: 0.33, transform: 'translate(2px, -3px) rotate(1deg)',    filter: 'brightness(1.35) saturate(0.1)' },
+      { offset: 0.38, transform: 'translate(-2px, 1px) rotate(-0.5deg)', filter: 'brightness(1.15) saturate(0.8)' },
+      { offset: 0.44, transform: 'translate(-2px, -1px) rotate(-1deg)',  filter: 'brightness(1.35) saturate(0.1)' },
+      { offset: 0.49, transform: 'translate(1px, 2px) rotate(0.5deg)',   filter: 'brightness(1.15) saturate(0.8)' },
+      { offset: 0.55, transform: 'translate(4px, 1px) rotate(1.5deg)',   filter: 'brightness(1.35) saturate(0.1)' },
+      { offset: 0.60, transform: 'translate(-2px, -1px) rotate(-0.5deg)', filter: 'brightness(1.1) saturate(0.9)' },
+      { offset: 0.66, transform: 'translate(-3px, 3px) rotate(-1deg)',   filter: 'brightness(1.35) saturate(0.1)' },
+      { offset: 0.71, transform: 'translate(2px, -1px) rotate(0.5deg)',  filter: 'brightness(1.1) saturate(0.9)' },
+      { offset: 0.77, transform: 'translate(3px, -2px) rotate(1deg)',    filter: 'brightness(1.5) saturate(0.1)' },
+      { offset: 0.82, transform: 'translate(-1px, 1px) rotate(-0.3deg)', filter: 'brightness(1.05) saturate(1)' },
+      { offset: 0.85, transform: 'translate(-5px, -4px) rotate(-2deg)',  filter: 'brightness(3.2) saturate(0)' },
+      { offset: 0.93, transform: 'translate(2px, 3px) rotate(1deg)',     filter: 'brightness(1.5) saturate(0.4)' },
+      { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',         filter: 'brightness(1) saturate(1)' },
+    ],
+  },
 };
 
 // Plays a preset on `el` via the Web Animations API.
@@ -360,10 +598,16 @@ export const CSS_PRESETS = {
 // iterations — for presets whose source CSS looped `infinite` (e.g. a
 // marching-ants border) but were always cut short by a fixed duration in
 // practice. Defaults to 1 (play once).
+//
+// preset.fill — defaults to 'none' (snap back to normal the instant the
+// animation ends, no manual cleanup needed). A few presets are authored to
+// deliberately end in a non-resting state (e.g. shinsoku_disappear ends
+// fully invisible) and set fill:'forwards' to stay there until something
+// else changes it.
 export function playPreset(el, preset, { duration, iterations = 1 }) {
   if (!el || !preset) return null;
   const keyframes = preset.keyframes.map(k => ({ ...k, easing: preset.easing ?? 'linear' }));
-  const options = { duration, iterations, easing: 'linear', fill: 'none' };
+  const options = { duration, iterations, easing: 'linear', fill: preset.fill ?? 'none' };
   if (preset.pseudoElement) options.pseudoElement = preset.pseudoElement;
   return el.animate(keyframes, options);
 }

@@ -1,0 +1,11 @@
+{
+  "name": "enemy_enter",
+  "duration": 700,
+  "sfx": [],
+  "css": {
+    "target": [
+      { "preset": "enemy_enter_drop", "start": 0, "duration": 700 }
+    ]
+  },
+  "floatingNumber": null
+}

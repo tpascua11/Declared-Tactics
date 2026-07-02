@@ -1,0 +1,15 @@
+{
+  "name": "gatotsu_shock",
+  "duration": 1400,
+  "sfx": [
+    { "src": "HARD_SWING_1.wav", "start": 0,   "volume": 0.9 },
+    { "src": "THUNDER.wav",      "start": 420, "volume": 0.5 },
+    { "src": "THUNDER.wav",      "start": 730, "volume": 0.8 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "gatotsu_shock_impact", "start": 0, "duration": 1400 }
+    ]
+  },
+  "floatingNumber": { "color": "#818cf8" }
+}

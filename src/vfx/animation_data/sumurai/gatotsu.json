@@ -1,0 +1,13 @@
+{
+  "name": "gatotsu",
+  "duration": 550,
+  "sfx": [
+    { "src": "HARD_SWING_1.wav", "start": 0, "volume": 0.8 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "gatotsu_thrust", "start": 0, "duration": 550 }
+    ]
+  },
+  "floatingNumber": { "color": "#e2e8f0" }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "kuzu_ryusen",
+  "duration": 1400,
+  "sfx": [
+    { "src": "SLICE_1.wav",      "start": 0,    "volume": 0.5  },
+    { "src": "SLICE_1.wav",      "start": 154,  "volume": 0.5  },
+    { "src": "SLICE_1.wav",      "start": 308,  "volume": 0.55 },
+    { "src": "SLICE_1.wav",      "start": 462,  "volume": 0.55 },
+    { "src": "SLICE_1.wav",      "start": 616,  "volume": 0.6  },
+    { "src": "SLICE_1.wav",      "start": 770,  "volume": 0.6  },
+    { "src": "SLICE_1.wav",      "start": 924,  "volume": 0.65 },
+    { "src": "SLICE_1.wav",      "start": 1078, "volume": 0.65 },
+    { "src": "HARD_SWING_1.wav", "start": 1190, "volume": 0.8  }
+  ],
+  "css": {
+    "target": [
+      { "preset": "kuzu_ryusen_barrage", "start": 0, "duration": 1400 }
+    ]
+  },
+  "floatingNumber": { "color": "#ff4444" }
+}

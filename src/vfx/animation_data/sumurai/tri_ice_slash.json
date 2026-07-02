@@ -1,0 +1,26 @@
+{
+  "name": "tri_ice_slash",
+  "duration": 2000,
+  "sfx": [
+    { "src": "STREAM_SLASH.wav", "start": 0,    "volume": 0.3 },
+    { "src": "ICE",              "start": 100,  "volume": 0.7 },
+    { "src": "ICE",              "start": 200,  "volume": 0.5 },
+    { "src": "STREAM_SLASH.wav", "start": 400,  "volume": 0.3 },
+    { "src": "ICE",              "start": 490,  "volume": 0.7 },
+    { "src": "ICE",              "start": 580,  "volume": 0.5 },
+    { "src": "STREAM_SLASH.wav", "start": 780,  "volume": 0.35 },
+    { "src": "ICE",              "start": 860,  "volume": 0.8 },
+    { "src": "ICE",              "start": 960,  "volume": 0.65 },
+    { "src": "ICE",              "start": 1060, "volume": 0.5 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "tri_ice_impact", "start": 0, "duration": 2000 }
+    ]
+  },
+  "floatingNumber": [
+    { "color": "#7dd3fc", "delay": 0,   "split": 0.34 },
+    { "color": "#7dd3fc", "delay": 400, "split": 0.33 },
+    { "color": "#7dd3fc", "delay": 780, "split": 0.33 }
+  ]
+}

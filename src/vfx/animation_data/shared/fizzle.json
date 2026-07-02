@@ -1,0 +1,11 @@
+{
+  "name": "fizzle",
+  "duration": 600,
+  "sfx": [],
+  "css": {
+    "target": [
+      { "preset": "fizzle_flicker", "start": 0, "duration": 600 }
+    ]
+  },
+  "floatingNumber": null
+}

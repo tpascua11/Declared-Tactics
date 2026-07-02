@@ -1,0 +1,19 @@
+{
+  "name": "stream_slash_disappear",
+  "duration": 1800,
+  "sfx": [
+    { "src": "DODGE_1.wav",      "start": 0,    "volume": 0.7 },
+    { "src": "DODGE_1.wav",      "start": 180,  "volume": 0.5 },
+    { "src": "HARD_SWING_1.wav", "start": 900,  "volume": 0.5 },
+    { "src": "STREAM_SLASH.wav", "start": 1025, "volume": 0.5 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "heavy_shake", "start": 900, "duration": 500 }
+    ],
+    "owner": [
+      { "preset": "stream_slash_vanish", "start": 0, "duration": 1800 }
+    ]
+  },
+  "floatingNumber": { "color": "#449bff" }
+}
