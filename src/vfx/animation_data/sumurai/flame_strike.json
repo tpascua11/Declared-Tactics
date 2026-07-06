@@ -2,12 +2,12 @@
   "name": "flame_strike",
   "duration": 1200,
   "sfx": [
-    { "src": "SWORD_SWING.wav", "start": 0, "volume": 0.7 },
-    { "src": "FLAMES", "start": 300, "volume": 0.8 }
+    { "src": "SWORD_SWING.wav", "start": 0, "volume": 0.7, "phase": "windup" },
+    { "src": "FLAMES", "start": 300, "volume": 0.8, "phase": "impact" }
   ],
   "css": {
     "target": [
-      { "preset": "flame_impact", "start": 216, "duration": 984 }
+      { "preset": "flame_impact", "start": 216, "duration": 984, "phase": "impact" }
     ]
   },
   "floatingNumber": { "color": "#f97316" }

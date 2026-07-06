@@ -7,6 +7,7 @@ import { PORTRAIT_SUMURAI, ENEMY_WOLF_SUMURAI } from '../assets';
 import { ANIMATIONS, playBattleSfx } from '../vfx/animationRegistry';
 import PIXI_DATA from '../vfx/pixi_data';
 import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
+import fuseDeflect from '../vfx/fuseDeflect';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import EffectsLayer from '../components/battle/EffectsLayer';
 
@@ -38,6 +39,7 @@ export default function VfxEditorScreen() {
   const [targetSize, setTargetSize] = useState('medium');
   const [jsonText, setJsonText]     = useState('');
   const [jsonError, setJsonError]   = useState(null);
+  const [deflectOn, setDeflectOn]   = useState(false);
 
   // Sync textarea when selected animation changes
   useEffect(() => {
@@ -52,7 +54,13 @@ export default function VfxEditorScreen() {
   }
 
   function handlePlay() {
-    const config = ANIMATIONS[selected];
+    // DEFLECT toggle — fuse the deflect animation into the attack at play
+    // time: impact-phase entries are swapped for the deflect's ring/clang
+    // at each impact time. Same merge the battle will do when the DEFLECT
+    // flag is passed.
+    const config = deflectOn
+      ? fuseDeflect(ANIMATIONS[selected], ANIMATIONS['steel_guard_deflect'])
+      : ANIMATIONS[selected];
 
     // Parse local JSON — use it for Pixi, leave the file untouched
     let parsedJson = null;
@@ -150,8 +158,8 @@ export default function VfxEditorScreen() {
                 data-character-id={ENEMY_ID}
                 className={`${ENEMY_CARD_CLASS[targetSize]} relative rounded-lg border-2 overflow-hidden`}
                 style={{
-                  borderColor: '#333355',
-                  boxShadow: '0 0 20px rgba(255,255,255,0.1)',
+                  borderColor: '#000000',
+                  boxShadow: '0 0 20px rgba(255,255,255,0.15)',
                 }}
               >
                 <img src={ENEMY_WOLF_SUMURAI} alt="wolf sumurai" className="absolute inset-0 w-full h-full object-cover" />
@@ -202,6 +210,17 @@ export default function VfxEditorScreen() {
               <option key={key} value={key}>{key}</option>
             ))}
           </select>
+
+          <button
+            onClick={() => setDeflectOn(v => !v)}
+            className={`px-3 py-2 text-xs font-mono rounded tracking-widest transition-colors ${
+              deflectOn
+                ? 'bg-white text-[#0f0f1a] font-bold'
+                : 'bg-[#1a1a2e] border border-white/20 text-white/60 hover:text-white'
+            }`}
+          >
+            DEFLECT {deflectOn ? 'ON' : 'OFF'}
+          </button>
 
           <button
             onClick={handlePlay}

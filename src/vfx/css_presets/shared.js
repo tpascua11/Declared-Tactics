@@ -61,6 +61,118 @@ export const SHARED_PRESETS = {
     ],
   },
 
+  // Steel border — a thick solid white ring appears around the unit,
+  // holds, then fades. box-shadow with 0 blur and a wide spread paints a
+  // hard-edged band (not a soft glow), which is what makes it read as a
+  // "thick border" rather than a bloom. Plays on the base element itself,
+  // not a pseudo-element wash — nothing about the card's own content or
+  // real border-color is touched. box-shadow is used instead of animating
+  // border-color directly because every card sets its own resting
+  // border-color inline (varies per character); box-shadow starts/ends at
+  // 0 alpha, which is genuinely invisible regardless of the base border
+  // color, so there's no color "pop" a hard borderColor swap would have.
+  // NOT inset — the card's portrait <img> is absolute/inset-0 and paints
+  // on top of the card's own box decorations, so an inset shadow would be
+  // completely hidden underneath it. An outer shadow draws outside the
+  // card's edge instead, above the image, and isn't clipped by the card's
+  // own overflow-hidden (that only clips child content, not the box's own
+  // shadow).
+  steel_border: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    boxShadow: '0 0 0px 0px rgba(255,255,255,0)' },
+      { offset: 0.15, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95)' },
+      { offset: 0.80, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95)' },
+      { offset: 1,    boxShadow: '0 0 0px 0px rgba(255,255,255,0)' },
+    ],
+  },
+
+  // Steel guard shine — same solid steel_border ring, plus a second
+  // box-shadow layer that flares outward brighter mid-animation, like the
+  // border catching a glint of light, then settles back to the plain
+  // ring before fading. box-shadow can't do a traveling highlight (no
+  // gradients), so the "shine" is a brightness/bloom pulse on top of the
+  // steady ring rather than a moving streak — comma-separated box-shadow
+  // values let the two layers (ring + flare) animate independently in one
+  // preset.
+  steel_guard_shine: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),   0 0 0px 0px rgba(255,255,255,0)' },
+      { offset: 0.15, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 5px rgba(255,255,255,0)' },
+      { offset: 0.40, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 16px 6px rgba(255,255,255,0.9)' },
+      { offset: 0.60, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 4px 5px rgba(255,255,255,0.2)' },
+      { offset: 0.80, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 5px rgba(255,255,255,0)' },
+      { offset: 1,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),   0 0 0px 0px rgba(255,255,255,0)' },
+    ],
+  },
+
+  // Steel guard shine 2 — same solid steel_border ring, plus a second
+  // box-shadow layer that starts right at the edge and grows its spread
+  // outward while fading, like a ripple/shockwave expanding from the
+  // border. Follows the card's own rounded-rect shape (box-shadow spread
+  // traces the box, not a true circle) — reads as an expanding ring
+  // rather than the brightness "glint" flare steel_guard_shine uses.
+  steel_guard_shine_2: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),   0 0 0px 0px rgba(255,255,255,0)' },
+      { offset: 0.15, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 5px rgba(255,255,255,0.8)' },
+      { offset: 0.45, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 22px rgba(255,255,255,0.35)' },
+      { offset: 0.75, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 40px rgba(255,255,255,0)' },
+      { offset: 0.80, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 40px rgba(255,255,255,0)' },
+      { offset: 1,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),   0 0 0px 0px rgba(255,255,255,0)' },
+    ],
+  },
+
+  // Steel deflect ring — impact version of steel_border. The ring SNAPS on
+  // (full bright by 3%, with a brief overshoot: thicker spread + blur bloom
+  // for the first frames) instead of easing in, then settles to the plain
+  // 5px band, holds, fades. Second box-shadow layer is the "bounce-off"
+  // ripple: born at the edge on the same impact frame, expands and
+  // dissipates fast (gone by ~30%), tinted faintly steel-blue so it reads
+  // as metal rather than generic light. Same outer-shadow reasoning as
+  // steel_border (inset would hide under the portrait <img>).
+  steel_deflect_ring: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),    0 0 0px 0px rgba(210,230,255,0)' },
+      { offset: 0.03, boxShadow: '0 0 6px 8px rgba(255,255,255,1),    0 0 4px 6px rgba(210,230,255,0.9)' },
+      { offset: 0.12, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 2px 20px rgba(210,230,255,0.4)' },
+      { offset: 0.30, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 38px rgba(210,230,255,0)' },
+      { offset: 0.75, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 38px rgba(210,230,255,0)' },
+      { offset: 1,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),    0 0 0px 38px rgba(210,230,255,0)' },
+    ],
+  },
+
+  // Steel deflect recoil — single damped nudge, the card physically
+  // absorbing the blow. Deliberately NOT heavy_shake (that reads as "took
+  // damage"); one compress + tiny overshoot + settle. Runs as its own short
+  // timeline entry (~180ms) alongside steel_deflect_ring — transform vs
+  // boxShadow, so the two WAAPI animations don't fight.
+  steel_deflect_recoil: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'scale(1) translate(0px, 0px)' },
+      { offset: 0.18, transform: 'scale(0.96) translate(2px, 1px)' },
+      { offset: 0.55, transform: 'scale(1.01) translate(0px, 0px)' },
+      { offset: 1,    transform: 'scale(1) translate(0px, 0px)' },
+    ],
+  },
+
+  // Steel deflect flash — white ::before wash, the metallic "clang" glint
+  // on the card face at the impact frame. Starts already bright at offset 0
+  // (impact, no ease-in) and just decays — harai_flash shape, but white and
+  // front-loaded. Runs as its own short timeline entry (~140ms).
+  steel_deflect_flash: {
+    easing: 'ease-out',
+    pseudoElement: '::before',
+    keyframes: [
+      { offset: 0, opacity: 0.55, background: '#ffffff' },
+      { offset: 1, opacity: 0,    background: '#ffffff' },
+    ],
+  },
+
   // Enemy enter — drop-in with an overshoot settle, engine-wide (any
   // faction). Used when new enemies join the battlefield.
   enemy_enter_drop: {

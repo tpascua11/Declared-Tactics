@@ -1,0 +1,15 @@
+{
+  "name": "steel_guard_deflect",
+  "duration": 700,
+  "sfx": [
+    { "src": "CLING_4.wav", "start": 0, "volume": 0.4 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "steel_deflect_ring",   "start": 0, "duration": 700 },
+      { "preset": "steel_deflect_recoil", "start": 0, "duration": 180 },
+      { "preset": "steel_deflect_flash",  "start": 0, "duration": 140 }
+    ]
+  },
+  "floatingNumber": null
+}
