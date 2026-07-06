@@ -1,6 +1,7 @@
 {
   "name": "dual_flame_strike",
   "duration": 2000,
+  "impact_override": [240, 920],
   "sfx": [
     { "src": "SWORD_SWING.wav", "start": 0,    "volume": 0.7 },
     { "src": "FLAMES",          "start": 300,  "volume": 0.8 },

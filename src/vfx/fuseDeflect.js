@@ -20,10 +20,14 @@
 const cssPhase = e => e.phase ?? 'impact';
 const sfxPhase = s => s.phase ?? 'windup';
 
-// Impact times come from the attack's impact target-css entries; if an
-// attack has impact-tagged sfx but no impact css, fall back to the sfx
-// starts. An attack with neither returns unchanged — nothing to anchor
-// to (also what keeps legacy non-array-sfx registry entries safe).
+// Impact times: an explicit top-level `impact_override: [ms, ...]` on
+// the attack json wins — needed for multi-hit combos authored as ONE
+// continuous preset (dual_flame_strike etc.), where a single css entry
+// hides several hits and the times can't be derived. Otherwise derived
+// from the impact target-css entries' starts; if an attack has
+// impact-tagged sfx but no impact css, fall back to the sfx starts. An
+// attack with none of these returns unchanged — nothing to anchor to
+// (also what keeps legacy non-array-sfx registry entries safe).
 // The reaction json is authored at its own zero — this merge owns the
 // timing. Defaults fit DEFLECT: the attack's impact css still plays
 // (hit lands, guard answers) and the clang trails the visual hit by
@@ -41,9 +45,11 @@ export function fuseDeflect(
   const attackSfx = Array.isArray(attackConfig.sfx) ? attackConfig.sfx : [];
   const targetCss = attackConfig.css?.target ?? [];
 
-  let impactTimes = targetCss
-    .filter(e => cssPhase(e) === 'impact')
-    .map(e => e.start ?? 0);
+  let impactTimes = Array.isArray(attackConfig.impact_override) && attackConfig.impact_override.length > 0
+    ? attackConfig.impact_override
+    : targetCss
+        .filter(e => cssPhase(e) === 'impact')
+        .map(e => e.start ?? 0);
   if (impactTimes.length === 0) {
     impactTimes = attackSfx
       .filter(s => sfxPhase(s) === 'impact')
