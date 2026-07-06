@@ -26,6 +26,13 @@ const MOCK_PLAYER = {
 
 const ENEMY_ID = 'editor_enemy';
 
+// Reaction toggle → the animation fused into the attack on play, plus
+// per-reaction merge options (see fuseDeflect.js for the defaults).
+const REACTIONS = {
+  deflect: { anim: 'steel_guard_deflect', fuseOptions: {} },
+  avoid:   { anim: 'sidestep',            fuseOptions: { keepImpactCss: false, sfxDelay: 0 } },
+};
+
 const TARGET_SIZES = ['small', 'medium', 'large'];
 const ENEMY_CARD_CLASS = {
   small:  'w-32 h-48',
@@ -39,7 +46,8 @@ export default function VfxEditorScreen() {
   const [targetSize, setTargetSize] = useState('medium');
   const [jsonText, setJsonText]     = useState('');
   const [jsonError, setJsonError]   = useState(null);
-  const [deflectOn, setDeflectOn]   = useState(false);
+  // null | 'deflect' | 'avoid' — mutually exclusive reaction toggles
+  const [reaction, setReaction]     = useState(null);
 
   // Sync textarea when selected animation changes
   useEffect(() => {
@@ -54,12 +62,13 @@ export default function VfxEditorScreen() {
   }
 
   function handlePlay() {
-    // DEFLECT toggle — fuse the deflect animation into the attack at play
-    // time: impact-phase entries are swapped for the deflect's ring/clang
-    // at each impact time. Same merge the battle will do when the DEFLECT
-    // flag is passed.
-    const config = deflectOn
-      ? fuseDeflect(ANIMATIONS[selected], ANIMATIONS['steel_guard_deflect'])
+    // Reaction toggles — fuse the reaction animation into the attack at
+    // play time: its css/sfx get injected at each impact-phase entry's
+    // start. Same merge the battle will do when the DEFLECT/AVOID flag
+    // is passed.
+    const r = REACTIONS[reaction];
+    const config = r
+      ? fuseDeflect(ANIMATIONS[selected], ANIMATIONS[r.anim], r.fuseOptions)
       : ANIMATIONS[selected];
 
     // Parse local JSON — use it for Pixi, leave the file untouched
@@ -211,16 +220,19 @@ export default function VfxEditorScreen() {
             ))}
           </select>
 
-          <button
-            onClick={() => setDeflectOn(v => !v)}
-            className={`px-3 py-2 text-xs font-mono rounded tracking-widest transition-colors ${
-              deflectOn
-                ? 'bg-white text-[#0f0f1a] font-bold'
-                : 'bg-[#1a1a2e] border border-white/20 text-white/60 hover:text-white'
-            }`}
-          >
-            DEFLECT {deflectOn ? 'ON' : 'OFF'}
-          </button>
+          {Object.keys(REACTIONS).map(key => (
+            <button
+              key={key}
+              onClick={() => setReaction(r => r === key ? null : key)}
+              className={`px-3 py-2 text-xs font-mono rounded tracking-widest transition-colors ${
+                reaction === key
+                  ? 'bg-white text-[#0f0f1a] font-bold'
+                  : 'bg-[#1a1a2e] border border-white/20 text-white/60 hover:text-white'
+              }`}
+            >
+              {key.toUpperCase()} {reaction === key ? 'ON' : 'OFF'}
+            </button>
+          ))}
 
           <button
             onClick={handlePlay}

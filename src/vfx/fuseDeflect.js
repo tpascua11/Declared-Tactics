@@ -10,29 +10,43 @@
 //  the attack's own rhythm.
 // ============================================================
 
-// Impact times come from the attack's impact-tagged target-css
-// entries; if an attack has impact sfx but no impact css, fall back
-// to the sfx starts. An attack with no phase tags at all returns
-// unchanged — there's nothing to substitute against (also what
-// keeps legacy non-array-sfx registry entries safe).
-// The deflect json is authored at its own zero — this merge owns the
-// timing: injected deflect sfx land this many ms after each impact
-// point (the clang trailing the visual hit slightly), while the
-// deflect css stays exactly on the impact.
+// Phase defaults: css.target entries default to "impact" (css on the
+// target's card is almost by definition the hit landing), sfx default
+// to "windup" (swings/whooshes happen whether or not the hit lands).
+// So untagged attacks fuse correctly with no tagging at all — tags are
+// the opt-out: `phase: "windup"` on target css that isn't a hit
+// reaction, `phase: "impact"` on a sound that only exists because the
+// hit connected.
+const cssPhase = e => e.phase ?? 'impact';
+const sfxPhase = s => s.phase ?? 'windup';
+
+// Impact times come from the attack's impact target-css entries; if an
+// attack has impact-tagged sfx but no impact css, fall back to the sfx
+// starts. An attack with neither returns unchanged — nothing to anchor
+// to (also what keeps legacy non-array-sfx registry entries safe).
+// The reaction json is authored at its own zero — this merge owns the
+// timing. Defaults fit DEFLECT: the attack's impact css still plays
+// (hit lands, guard answers) and the clang trails the visual hit by
+// 75ms. AVOID overrides both: impact css dropped (the hit never lands
+// on a dodging target), dodge css + sound exactly on the impact time.
 const DEFLECT_SFX_DELAY = 75;
 
-export function fuseDeflect(attackConfig, deflectConfig) {
+export function fuseDeflect(
+  attackConfig,
+  deflectConfig,
+  { keepImpactCss = true, sfxDelay = DEFLECT_SFX_DELAY } = {},
+) {
   if (!attackConfig || !deflectConfig) return attackConfig;
 
   const attackSfx = Array.isArray(attackConfig.sfx) ? attackConfig.sfx : [];
   const targetCss = attackConfig.css?.target ?? [];
 
   let impactTimes = targetCss
-    .filter(e => e.phase === 'impact')
+    .filter(e => cssPhase(e) === 'impact')
     .map(e => e.start ?? 0);
   if (impactTimes.length === 0) {
     impactTimes = attackSfx
-      .filter(s => s.phase === 'impact')
+      .filter(s => sfxPhase(s) === 'impact')
       .map(s => s.start ?? 0);
   }
   if (impactTimes.length === 0) return attackConfig;
@@ -49,12 +63,12 @@ export function fuseDeflect(attackConfig, deflectConfig) {
     sfx: [
       ...attackSfx,
       ...impactTimes.flatMap(t =>
-        deflectSfx.map(s => ({ ...s, start: t + DEFLECT_SFX_DELAY + (s.start ?? 0) }))),
+        deflectSfx.map(s => ({ ...s, start: t + sfxDelay + (s.start ?? 0) }))),
     ],
     css: {
       ...attackConfig.css,
       target: [
-        ...targetCss,
+        ...(keepImpactCss ? targetCss : targetCss.filter(e => cssPhase(e) !== 'impact')),
         ...impactTimes.flatMap(t =>
           deflectCss.map(e => ({ ...e, start: t + (e.start ?? 0) }))),
       ],
