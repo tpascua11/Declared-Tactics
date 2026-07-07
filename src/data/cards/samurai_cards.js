@@ -243,19 +243,19 @@ export const SAMURAI_CARDS = [
   {
     id: 'uke',
     name: 'Uke',
-    speed_mod: 20,
+    speed_mod: 0,
     tag_type: ['PHYSICAL', 'STANCE'],
     cost: {},
     icon: '🛡️',
     image: 'FOX_DEFLECT',
     color: '#94a3b8',
     desc: 'Take a receiving stance. Blocks 50% of incoming damage until your next action or end of turn.',
-    animation: 'steel_guard',
+    animation: 'harai',
     animation_intensity: 1.0,
     tags: {
       self: [
         { tag_name: 'BLOCKING',
-          reduction: 0.5,
+          reduction: 0.95,
           reaction_anim: 'steel_guard_deflect',
           label: 'Uke',
           reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] },
@@ -266,9 +266,9 @@ export const SAMURAI_CARDS = [
   {
     id: 'mikiri',
     name: 'Mikiri',
-    speed_mod: 20,
+    speed_mod: 0,
     tag_type: ['PHYSICAL', 'STANCE'],
-    cost: {},
+    cost: { BATTLE_SPIRIT: 1 },
     icon: '💨',
     image: 'FOX_QUICK_STEPS',
     color: '#7dd3fc',
@@ -278,7 +278,7 @@ export const SAMURAI_CARDS = [
     tags: {
       self: [
         { tag_name: 'EVADING',
-          charges: 1,
+          charges: 10,
           reaction_anim: 'sidestep',
           label: 'Mikiri',
           reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] },
