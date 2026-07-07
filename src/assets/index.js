@@ -186,6 +186,7 @@ export { default as ENM_SAM_STORM_STRIKE }   from './Enemy_Ability_Icons/ENEMY_S
 export { default as ENEMY_EVADE }            from './Enemy_Ability_Icons/ENEMY_EVADE.png';
 export { default as ENEMY_STREAM_SLASH }     from './Enemy_Ability_Icons/ENEMY_STREAM_SLASH.png';
 export { default as ENEMY_RESOLVE }          from './Enemy_Ability_Icons/ENEMY_RESOLVE.png';
+export { default as ENEMY_DEFLECT }          from './Enemy_Ability_Icons/ENEMY_DEFLECT.png';
 
 // --- Fox Summurai Animation Frames ---
 export { default as FOX_SUMMURAI_BATTOJUTSU }    from './Fox_Summurai/FOX_BATTOJUTSU.png';
