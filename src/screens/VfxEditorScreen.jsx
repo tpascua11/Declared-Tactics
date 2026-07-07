@@ -26,11 +26,12 @@ const MOCK_PLAYER = {
 
 const ENEMY_ID = 'editor_enemy';
 
-// Reaction toggle → the animation fused into the attack on play, plus
-// per-reaction merge options (see fuseDeflect.js for the defaults).
+// Reaction toggle → default animation fused into the attack on play
+// (swappable per-reaction via the editor dropdowns), plus per-reaction
+// merge options (see fuseDeflect.js for the defaults).
 const REACTIONS = {
-  deflect: { anim: 'steel_guard_deflect', fuseOptions: {} },
-  avoid:   { anim: 'sidestep',            fuseOptions: { keepImpactCss: false, sfxDelay: 0 } },
+  deflect: { defaultAnim: 'steel_guard_deflect', fuseOptions: {} },
+  avoid:   { defaultAnim: 'sidestep',            fuseOptions: { keepImpactCss: false, sfxDelay: 0 } },
 };
 
 const TARGET_SIZES = ['small', 'medium', 'large'];
@@ -48,6 +49,10 @@ export default function VfxEditorScreen() {
   const [jsonError, setJsonError]   = useState(null);
   // null | 'deflect' | 'avoid' — mutually exclusive reaction toggles
   const [reaction, setReaction]     = useState(null);
+  // Which animation each reaction fuses in — editable per-reaction
+  const [reactionAnims, setReactionAnims] = useState(
+    Object.fromEntries(Object.entries(REACTIONS).map(([k, r]) => [k, r.defaultAnim]))
+  );
 
   // Sync textarea when selected animation changes
   useEffect(() => {
@@ -68,7 +73,7 @@ export default function VfxEditorScreen() {
     // is passed.
     const r = REACTIONS[reaction];
     const config = r
-      ? fuseDeflect(ANIMATIONS[selected], ANIMATIONS[r.anim], r.fuseOptions)
+      ? fuseDeflect(ANIMATIONS[selected], ANIMATIONS[reactionAnims[reaction]], r.fuseOptions)
       : ANIMATIONS[selected];
 
     // Parse local JSON — use it for Pixi, leave the file untouched
@@ -221,17 +226,29 @@ export default function VfxEditorScreen() {
           </select>
 
           {Object.keys(REACTIONS).map(key => (
-            <button
-              key={key}
-              onClick={() => setReaction(r => r === key ? null : key)}
-              className={`px-3 py-2 text-xs font-mono rounded tracking-widest transition-colors ${
-                reaction === key
-                  ? 'bg-white text-[#0f0f1a] font-bold'
-                  : 'bg-[#1a1a2e] border border-white/20 text-white/60 hover:text-white'
-              }`}
-            >
-              {key.toUpperCase()} {reaction === key ? 'ON' : 'OFF'}
-            </button>
+            <div key={key} className="flex items-center gap-1">
+              <button
+                onClick={() => setReaction(r => r === key ? null : key)}
+                className={`px-3 py-2 text-xs font-mono rounded tracking-widest transition-colors ${
+                  reaction === key
+                    ? 'bg-white text-[#0f0f1a] font-bold'
+                    : 'bg-[#1a1a2e] border border-white/20 text-white/60 hover:text-white'
+                }`}
+              >
+                {key.toUpperCase()} {reaction === key ? 'ON' : 'OFF'}
+              </button>
+              <select
+                value={reactionAnims[key]}
+                onChange={e => setReactionAnims(prev => ({ ...prev, [key]: e.target.value }))}
+                className={`bg-[#1a1a2e] border border-white/20 text-xs rounded px-1 py-2 font-mono focus:outline-none focus:border-[#4da6ff] max-w-36 ${
+                  reaction === key ? 'text-white' : 'text-white/40'
+                }`}
+              >
+                {ANIM_KEYS.map(k => (
+                  <option key={k} value={k}>{k}</option>
+                ))}
+              </select>
+            </div>
           ))}
 
           <button
