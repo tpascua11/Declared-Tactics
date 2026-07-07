@@ -242,7 +242,7 @@ export function battleReducer(state, action) {
 
       if (interactionLog) newLogs.push(interactionLog);
 
-      const { newState: afterExec, logs: execLogs, actualTargetId, aoeHits, aoeEvades, fizzled, evaded, evaderId, isSelfBuff, animationHint, animationSelf, animationIntensity, damageDealt } = ExecuteAction(actionA, resultA, newState);
+      const { newState: afterExec, logs: execLogs, actualTargetId, aoeHits, aoeEvades, fizzled, evaded, evaderId, evadeAnim, deflected, deflectAnim, isSelfBuff, animationHint, animationSelf, animationIntensity, damageDealt } = ExecuteAction(actionA, resultA, newState);
       newState = afterExec;
       newLogs.push(...execLogs);
 
@@ -282,12 +282,12 @@ export function battleReducer(state, action) {
       if (fizzled) {
         pendingAnimation.push({ type: 'fizzle', targetId: actionA.owner_id, intensity: 1.0, cardName: actionA.name });
       } else if (evaded) {
-        // Single-target evade
-        pendingAnimation.push({ type: 'sidestep', targetId: evaderId, intensity: 1.0 });
+        // Single-target evade — attack anim plays on the evader, dodge fused at impact
+        pendingAnimation.push({ type: animationHint, targetId: evaderId, ownerId: actionA.owner_id, intensity: 1.0, reactionKind: 'AVOID', reactionAnim: evadeAnim });
       } else if (aoeEvades?.length > 0 && aoeHits?.length === 0) {
-        // AOE complete miss — every target evaded; SFX plays only on the first
-        aoeEvades.forEach(({ targetId }, i) => {
-          pendingAnimation.push({ type: 'sidestep', targetId, intensity: 1.0, skipSfx: i > 0 });
+        // AOE complete miss — attack anim + fused dodge per evader; SFX plays only on the first
+        aoeEvades.forEach(({ targetId, evadeAnim: targetEvadeAnim }, i) => {
+          pendingAnimation.push({ type: animationHint, targetId, ownerId: actionA.owner_id, intensity: animationIntensity, skipSfx: i > 0, reactionKind: 'AVOID', reactionAnim: targetEvadeAnim });
         });
       } else {
         if (isSelfBuff) {
@@ -296,16 +296,21 @@ export function battleReducer(state, action) {
         } else if (anyoneWasHit) {
           if (aoeHits?.length > 0) {
             // AOE: one shake per hit enemy; SFX plays only on the first to avoid stacking
-            aoeHits.forEach(({ targetId, damage }, i) => {
-              pendingAnimation.push({ type: animationHint, targetId, ownerId: actionA.owner_id, intensity: animationIntensity, value: damage, skipSfx: i > 0 });
+            aoeHits.forEach(({ targetId, damage, deflected: targetDeflected, deflectAnim: targetDeflectAnim }, i) => {
+              const entry = { type: animationHint, targetId, ownerId: actionA.owner_id, intensity: animationIntensity, value: damage, skipSfx: i > 0 };
+              if (targetDeflected && targetDeflectAnim) { entry.reactionKind = 'DEFLECT'; entry.reactionAnim = targetDeflectAnim; }
+              pendingAnimation.push(entry);
             });
-            // Sidestep for any AOE targets that evaded; SFX plays only on the first
-            aoeEvades?.forEach(({ targetId }, i) => {
-              pendingAnimation.push({ type: 'sidestep', targetId, intensity: 1.0, skipSfx: i > 0 });
+            // Evaded AOE targets — attack anim + fused dodge; SFX skipped, the
+            // attack's sounds already played on the first hit entry
+            aoeEvades?.forEach(({ targetId, evadeAnim: targetEvadeAnim }) => {
+              pendingAnimation.push({ type: animationHint, targetId, ownerId: actionA.owner_id, intensity: animationIntensity, skipSfx: true, reactionKind: 'AVOID', reactionAnim: targetEvadeAnim });
             });
           } else {
             // Single-target: animate on target
-            pendingAnimation.push({ type: animationHint, targetId: actualTargetId, ownerId: actionA.owner_id, intensity: animationIntensity, value: damageDealt });
+            const entry = { type: animationHint, targetId: actualTargetId, ownerId: actionA.owner_id, intensity: animationIntensity, value: damageDealt };
+            if (deflected && deflectAnim) { entry.reactionKind = 'DEFLECT'; entry.reactionAnim = deflectAnim; }
+            pendingAnimation.push(entry);
           }
           // Animate on self if card defines animation_self
           if (animationSelf) {

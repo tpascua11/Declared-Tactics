@@ -473,7 +473,7 @@ export function ExecuteAction(action, interaction_result, state) {
 
   let total_damage = 0;
   const aoeHits = [];   // { targetId, damage, deflected, deflectAnim } — one entry per enemy hit, used for per-enemy animation
-  const aoeEvades = []; // { targetId, evadeAnim } — one entry per enemy that evaded, used for sidestep animation
+  const aoeEvades = []; // { targetId, evadeAnim } — one entry per enemy that evaded, used for the fused dodge animation
 
   if (deliveryTargets.length > 0) {
     for (const defTarget of deliveryTargets) {
