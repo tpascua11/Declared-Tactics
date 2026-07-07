@@ -12,6 +12,7 @@ import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/Music/ind
 import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
 import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
+import fuseDeflect from '../vfx/fuseDeflect';
 import '../vfx/animations.css';
 import '../vfx/aura_animations.css';
 import CardRiseTransition from '../components/shared/CardRiseTransition';
@@ -22,6 +23,27 @@ import TagPool from '../components/battle/TagPool';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
+
+// Per-reaction fuse options — same merges the VFX editor previews:
+// DEFLECT keeps the hit css and the clang trails impact (fuse defaults),
+// AVOID drops the hit css and lands the dodge exactly on the beat.
+const REACTION_FUSE_OPTIONS = {
+  DEFLECT: {},
+  AVOID:   { keepImpactCss: false, sfxDelay: 0 },
+};
+
+// Resolve a pendingAnimation entry to its final playable config: the raw
+// registry entry, or — when the reducer stamped a reaction onto it — the
+// attack config with the reaction animation fused in at its impact times.
+// Both the animation handler and the battle-pacing effect must resolve
+// through here so a fused tail also stretches the step delay.
+function resolveAnimConfig(anim) {
+  const config = ANIMATIONS[anim.type];
+  if (!config || !anim.reactionAnim) return config;
+  const reactionConfig = ANIMATIONS[anim.reactionAnim];
+  if (!reactionConfig) return config;
+  return fuseDeflect(config, reactionConfig, REACTION_FUSE_OPTIONS[anim.reactionKind] ?? {});
+}
 
 export default function BattleScreen() {
   const { gs, dispatch, onBattleEnd, retry, restartBattle } = useGame();
@@ -130,7 +152,7 @@ export default function BattleScreen() {
   useEffect(() => {
     if (gs.phase !== 'BATTLE') return;
     const maxDelay = (gs.pendingAnimation ?? []).reduce((max, anim) => {
-      const config = ANIMATIONS[anim.type];
+      const config = resolveAnimConfig(anim);
       if (!config) return max;
       return Math.max(max, config.battleDelay ?? config.duration ?? 0);
     }, 0);
@@ -184,7 +206,7 @@ export default function BattleScreen() {
 
     const timers = [];
     anims.forEach(anim => {
-      const config = ANIMATIONS[anim.type];
+      const config = resolveAnimConfig(anim);
       if (!config) return;
 
       // 1. PIXI — single dispatch with both target and owner positions.
