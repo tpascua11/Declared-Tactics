@@ -242,7 +242,7 @@ export function battleReducer(state, action) {
 
       if (interactionLog) newLogs.push(interactionLog);
 
-      const { newState: afterExec, logs: execLogs, actualTargetId, aoeHits, aoeDodges, fizzled, dodged, dodgerId, isSelfBuff, animationHint, animationSelf, animationIntensity, damageDealt } = ExecuteAction(actionA, resultA, newState);
+      const { newState: afterExec, logs: execLogs, actualTargetId, aoeHits, aoeEvades, fizzled, evaded, evaderId, isSelfBuff, animationHint, animationSelf, animationIntensity, damageDealt } = ExecuteAction(actionA, resultA, newState);
       newState = afterExec;
       newLogs.push(...execLogs);
 
@@ -281,12 +281,12 @@ export function battleReducer(state, action) {
       let pendingAnimation = [];
       if (fizzled) {
         pendingAnimation.push({ type: 'fizzle', targetId: actionA.owner_id, intensity: 1.0, cardName: actionA.name });
-      } else if (dodged) {
+      } else if (evaded) {
         // Single-target evade
-        pendingAnimation.push({ type: 'sidestep', targetId: dodgerId, intensity: 1.0 });
-      } else if (aoeDodges?.length > 0 && aoeHits?.length === 0) {
+        pendingAnimation.push({ type: 'sidestep', targetId: evaderId, intensity: 1.0 });
+      } else if (aoeEvades?.length > 0 && aoeHits?.length === 0) {
         // AOE complete miss — every target evaded; SFX plays only on the first
-        aoeDodges.forEach(({ targetId }, i) => {
+        aoeEvades.forEach(({ targetId }, i) => {
           pendingAnimation.push({ type: 'sidestep', targetId, intensity: 1.0, skipSfx: i > 0 });
         });
       } else {
@@ -300,7 +300,7 @@ export function battleReducer(state, action) {
               pendingAnimation.push({ type: animationHint, targetId, ownerId: actionA.owner_id, intensity: animationIntensity, value: damage, skipSfx: i > 0 });
             });
             // Sidestep for any AOE targets that evaded; SFX plays only on the first
-            aoeDodges?.forEach(({ targetId }, i) => {
+            aoeEvades?.forEach(({ targetId }, i) => {
               pendingAnimation.push({ type: 'sidestep', targetId, intensity: 1.0, skipSfx: i > 0 });
             });
           } else {

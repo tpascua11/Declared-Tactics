@@ -395,7 +395,7 @@ export function ExecuteAction(action, interaction_result, state) {
       const onMiss = runPhaseOnMiss(owner.active_tag_pool, action, owner);
       logs.push(...onMiss.logs);
       owner.active_tag_pool = onMiss.tag_pool;
-      return { newState, logs, dodged: true, dodgerId: resolvedTarget.id, attackerId: owner.id };
+      return { newState, logs, evaded: true, evaderId: resolvedTarget.id, attackerId: owner.id };
     }
   }
 
@@ -463,7 +463,7 @@ export function ExecuteAction(action, interaction_result, state) {
 
   let total_damage = 0;
   const aoeHits = [];   // { targetId, damage } — one entry per enemy hit, used for per-enemy animation
-  const aoeDodges = []; // { targetId } — one entry per enemy that evaded, used for sidestep animation
+  const aoeEvades = []; // { targetId } — one entry per enemy that evaded, used for sidestep animation
 
   if (deliveryTargets.length > 0) {
     for (const defTarget of deliveryTargets) {
@@ -473,7 +473,7 @@ export function ExecuteAction(action, interaction_result, state) {
         logs.push(...onIncoming.logs);
         defTarget.active_tag_pool = onIncoming.tag_pool;
         if (onIncoming.cancelled) {
-          aoeDodges.push({ targetId: defTarget.id });
+          aoeEvades.push({ targetId: defTarget.id });
           continue;
         }
       }
@@ -548,7 +548,7 @@ export function ExecuteAction(action, interaction_result, state) {
     logs,
     actualTargetId: isAoe ? (aoeHits[0]?.targetId ?? null) : (resolvedTarget?.id ?? null),
     aoeHits: isAoe ? aoeHits : null,
-    aoeDodges: isAoe ? aoeDodges : null,
+    aoeEvades: isAoe ? aoeEvades : null,
     isSelfBuff,
     animationHint: action.animation ?? (action.payload_type === 'MAGIC' ? 'shake_magic' : 'shake'),
     animationSelf: action.animation_self ?? null,
