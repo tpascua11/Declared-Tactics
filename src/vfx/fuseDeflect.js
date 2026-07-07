@@ -79,8 +79,6 @@ export function fuseDeflect(
           deflectCss.map(e => ({ ...e, start: t + (e.start ?? 0) }))),
       ],
     },
-    // Deflected — no damage number.
-    floatingNumber: null,
   };
 }
 
