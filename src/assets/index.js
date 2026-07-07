@@ -197,3 +197,4 @@ export { default as FOX_GUARD_STANCE }           from './Fox_Summurai/FOX_WATER_
 export { default as FOX_SUMMURAI_STREAM_SLASH }  from './Fox_Summurai/SUMURAI_STREAM_SLASH.png';
 export { default as FOX_STORM_STRIKE }           from './Fox_Summurai/FOX_STORM_STRIKE.png';
 export { default as FOX_SHINSOKU }               from './Fox_Summurai/FOX_SHINSOKU.png';
+export { default as FOX_DEFLECT }                from './Fox_Summurai/FOX_DEFLECT.png';
