@@ -4,6 +4,7 @@
 //  To add a new tag: create a handler file and add one line here.
 // ============================================================
 
+import './defense_handlers';
 import './delivery_handlers';
 import './imbue_handlers';
 import './incoming_handlers';

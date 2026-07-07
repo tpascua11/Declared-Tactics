@@ -185,6 +185,20 @@ export const ui_registry = {
     describe: () => '75% damage reduction · Expires on next action or end of turn',
   },
 
+  BLOCKING: {
+    icon: '🛡️',
+    color: '#94a3b8',
+    describe: (tag) => `${Math.round((tag.reduction ?? 0.75) * 100)}% damage reduction`,
+  },
+
+  EVADING: {
+    icon: '💨',
+    color: '#7dd3fc',
+    describe: (tag) => tag.charges != null
+      ? `Evades the next ${tag.charges} attack${tag.charges !== 1 ? 's' : ''}`
+      : 'Evades incoming attacks',
+  },
+
 };
 
 export const UI_DEFAULT = { icon: '🔮', color: '#4da6ff', describe: () => 'active' };
