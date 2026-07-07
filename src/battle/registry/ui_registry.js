@@ -8,6 +8,7 @@
 
 import { STATUS_NATURE_1, STATUS_FROST_1, STATUS_FIRE_1, STATUS_ELECTRIC_1, FOX_QUICK_STEPS, FOX_SUMMURAI_STILL_WIND, FOX_SUMMURAI_BATTOJUTSU, FOX_SUMMURAI_HEAVY_STRIKE,
          ENEMY_SPEED_UP, ENEMY_EVADE, STATUS_GOUKI_1, STATUS_HARAI_1, STATUS_STILL_WIND_1,
+         STATUS_BLOCKING, STATUS_EVADING,
  } from '../../assets';
 
 export const ui_registry = {
@@ -188,12 +189,14 @@ export const ui_registry = {
   BLOCKING: {
     icon: '🛡️',
     color: '#94a3b8',
+    statusIcon: STATUS_BLOCKING,
     describe: (tag) => `${Math.round((tag.reduction ?? 0.75) * 100)}% damage reduction`,
   },
 
   EVADING: {
     icon: '💨',
     color: '#7dd3fc',
+    statusIcon: STATUS_EVADING,
     describe: (tag) => tag.charges != null
       ? `Evades the next ${tag.charges} attack${tag.charges !== 1 ? 's' : ''}`
       : 'Evades incoming attacks',

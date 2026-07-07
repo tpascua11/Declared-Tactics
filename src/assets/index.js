@@ -106,6 +106,8 @@ export { default as STATUS_WATER_2 } from './Status/WATER_2.png';
 export { default as STATUS_GOUKI_1 } from './Status/GOUKI_1.png';
 export { default as STATUS_HARAI_1 } from './Status/HARAI_1.png';
 export { default as STATUS_STILL_WIND_1 } from './Status/STILL_WIND.png';
+export { default as STATUS_BLOCKING } from './Status/BLOCKING.png';
+export { default as STATUS_EVADING } from './Status/EVADING.png';
 
 // --- Class Icons ---
 export { default as CLASS_ICON_WARRIOR } from './Class_Icons/WARRIOR.png';
