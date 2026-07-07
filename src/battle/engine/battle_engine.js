@@ -194,18 +194,23 @@ function runPhasePostAttack(tag_pool, payload, character, hit_result) {
 function runPhaseDamageReduce(tag_pool, payload) {
   const remaining = [];
   const logs = [];
+  let reacted = false;
+  let reaction_anim = null;
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('DAMAGE_REDUCE')) {
       const result = entry.handlers['DAMAGE_REDUCE'](payload, tag);
       payload = result.payload;
       if (result.logs) logs.push(...result.logs);
+      // Reaction captured at fire time, while the fired tag is in hand —
+      // the handler flags `reacted`, the tag data names the animation.
+      if (result.reacted) { reacted = true; reaction_anim = tag.reaction_anim ?? reaction_anim; }
       if (!result.consumed) remaining.push(tag);
     } else {
       remaining.push(tag);
     }
   }
-  return { tag_pool: remaining, payload, logs };
+  return { tag_pool: remaining, payload, logs, reacted, reaction_anim };
 }
 
 function runPhasePreAction(tag_pool, action, owner) {
@@ -328,7 +333,9 @@ function runPhaseOnIncoming(tag_pool, incoming_action, defender, state, interact
       logs.push(...(result.logs ?? []));
       if (result.cancelled) {
         const keep = result.consumed ? [] : [tag];
-        return { cancelled: true, logs, tag_pool: [...remaining, ...keep, ...tag_pool.slice(i + 1)] };
+        // reaction_anim read here at fire time — a consumed tag (e.g. 1-charge
+        // EVADING) is gone from the pool after this return.
+        return { cancelled: true, logs, tag_pool: [...remaining, ...keep, ...tag_pool.slice(i + 1)], reaction_anim: tag.reaction_anim ?? null };
       }
       if (!result.consumed) remaining.push(tag);
     } else {
@@ -381,6 +388,7 @@ export function ExecuteAction(action, interaction_result, state) {
   const interactionResult = resolveTagInteractions(action, resolvedTarget);
   const isAoe = action.properties?.includes('AOE');
   const isSelfBuff = (action.tags?.target ?? []).length === 0 && (action.tags?.self ?? []).length > 0;
+  const animationHint = action.animation ?? (action.payload_type === 'MAGIC' ? 'shake_magic' : 'shake');
 
   // ON_INCOMING phase — defender-side gate (dodge, parry, reflect, etc.)
   // Runs on the resolved target before any payload is built or damage dealt.
@@ -395,7 +403,9 @@ export function ExecuteAction(action, interaction_result, state) {
       const onMiss = runPhaseOnMiss(owner.active_tag_pool, action, owner);
       logs.push(...onMiss.logs);
       owner.active_tag_pool = onMiss.tag_pool;
-      return { newState, logs, evaded: true, evaderId: resolvedTarget.id, attackerId: owner.id };
+      // Every evade fuses: authored reaction_anim if the tag has one, the
+      // generic 'evade' otherwise — same default idiom as animationHint.
+      return { newState, logs, evaded: true, evaderId: resolvedTarget.id, attackerId: owner.id, animationHint, evadeAnim: onIncoming.reaction_anim ?? 'evade' };
     }
   }
 
@@ -462,8 +472,8 @@ export function ExecuteAction(action, interaction_result, state) {
     : (resolvedTarget ? [resolvedTarget] : []);
 
   let total_damage = 0;
-  const aoeHits = [];   // { targetId, damage } — one entry per enemy hit, used for per-enemy animation
-  const aoeEvades = []; // { targetId } — one entry per enemy that evaded, used for sidestep animation
+  const aoeHits = [];   // { targetId, damage, deflected, deflectAnim } — one entry per enemy hit, used for per-enemy animation
+  const aoeEvades = []; // { targetId, evadeAnim } — one entry per enemy that evaded, used for sidestep animation
 
   if (deliveryTargets.length > 0) {
     for (const defTarget of deliveryTargets) {
@@ -473,7 +483,7 @@ export function ExecuteAction(action, interaction_result, state) {
         logs.push(...onIncoming.logs);
         defTarget.active_tag_pool = onIncoming.tag_pool;
         if (onIncoming.cancelled) {
-          aoeEvades.push({ targetId: defTarget.id });
+          aoeEvades.push({ targetId: defTarget.id, evadeAnim: onIncoming.reaction_anim ?? 'evade' });
           continue;
         }
       }
@@ -495,7 +505,7 @@ export function ExecuteAction(action, interaction_result, state) {
         logs.push({ msg: `[${String(action.calc_speed).padStart(3, ' ')}] ⚔️ ${owner.name} uses ${action.name} → ${defTarget.name} takes ${dmg.power} ${dmg.element} dmg`, type: 'dmg' });
       }
       total_damage += dmg_this_target;
-      aoeHits.push({ targetId: defTarget.id, damage: dmg_this_target });
+      aoeHits.push({ targetId: defTarget.id, damage: dmg_this_target, deflected: damageReduceResult.reacted, deflectAnim: damageReduceResult.reaction_anim });
 
       // APPLY STATUS TARGET TAGS
       for (const tag of (action.tags?.target || [])) {
@@ -543,6 +553,9 @@ export function ExecuteAction(action, interaction_result, state) {
   owner.active_tag_pool = runPhasePostAttack(owner.active_tag_pool, payload, owner, hit_result);
 
 
+  // Single-target reaction facts ride the lone delivery entry; AOE keeps them per-target.
+  const singleHit = !isAoe ? aoeHits[0] : null;
+
   return {
     newState,
     logs,
@@ -550,10 +563,12 @@ export function ExecuteAction(action, interaction_result, state) {
     aoeHits: isAoe ? aoeHits : null,
     aoeEvades: isAoe ? aoeEvades : null,
     isSelfBuff,
-    animationHint: action.animation ?? (action.payload_type === 'MAGIC' ? 'shake_magic' : 'shake'),
+    animationHint,
     animationSelf: action.animation_self ?? null,
     animationIntensity: action.animation_intensity ?? 1.0,
     damageDealt: total_damage,
+    deflected: singleHit?.deflected ?? false,
+    deflectAnim: singleHit?.deflectAnim ?? null,
   };
 }
 

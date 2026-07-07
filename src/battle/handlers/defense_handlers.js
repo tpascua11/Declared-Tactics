@@ -20,9 +20,10 @@
 //      reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] }
 //
 //  `reaction_anim` is not read here — it rides on the tag instance
-//  into active_tag_pool so the engine can bubble it up to the
-//  reaction animation fuse (see src/vfx/fuseDeflect.js) when that
-//  wiring lands. These handlers only own the mechanics.
+//  into active_tag_pool, and the phase runners capture it at fire time
+//  (EVADING via `cancelled`, BLOCKING via `reacted`) to bubble up to
+//  the reaction animation fuse (see src/vfx/fuseDeflect.js).
+//  These handlers only own the mechanics.
 // ============================================================
 
 import { registerTag } from '../registry/battle_registry';
@@ -49,6 +50,7 @@ function BlockingDamageReduceHandler(payload, tag) {
   return {
     payload: reducedPayload,
     consumed: false,
+    reacted: true,
     logs: [{ msg: `🛡️ ${tag.label ?? 'BLOCKING'} reduces incoming damage by ${Math.round(reduction * 100)}%`, type: 'buff' }],
   };
 }
