@@ -217,6 +217,18 @@ export default function BattleScreen() {
         detail: { animType: anim.type, target: targetPos, owner: ownerPos, x: targetPos.x, y: targetPos.y },
       }));
 
+      // 1b. PIXI channel — fused configs carry { name, start } entries (the
+      // reaction, once per impact beat). Target and owner are both the
+      // defender: a reaction plays entirely "at" the reactor, no travel.
+      // noFallback: unauthored names play nothing, not the debug burst.
+      if (config.pixi && targetPos) {
+        config.pixi.forEach(({ name, start }) => {
+          setTimeout(() => window.dispatchEvent(new CustomEvent('play-thumos-animation', {
+            detail: { animType: name, target: targetPos, owner: targetPos, x: targetPos.x, y: targetPos.y, noFallback: true },
+          })), start ?? 0);
+        });
+      }
+
       // 2. CSS — new-shape animations only (animation_data/*.json + css_presets.js),
       // fired directly via the Web Animations API. Animations not yet migrated
       // to `config.css` simply play no CSS (sfx/floatingNumber/PIXI are
