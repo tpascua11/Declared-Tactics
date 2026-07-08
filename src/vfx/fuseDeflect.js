@@ -38,11 +38,17 @@ const DEFLECT_SFX_DELAY = 75;
 export function fuseDeflect(
   attackConfig,
   deflectConfig,
-  { keepImpactCss = true, sfxDelay = DEFLECT_SFX_DELAY } = {},
+  { keepImpactCss = true, sfxDelay = DEFLECT_SFX_DELAY, attackVolumeScale = 1 } = {},
 ) {
   if (!attackConfig || !deflectConfig) return attackConfig;
 
-  const attackSfx = Array.isArray(attackConfig.sfx) ? attackConfig.sfx : [];
+  // attackVolumeScale < 1 softens the attack's own sounds (AVOID: the
+  // hit misses, so its audio steps back behind the dodge). The fuse only
+  // stamps the factor — playback resolves the actual volume.
+  let attackSfx = Array.isArray(attackConfig.sfx) ? attackConfig.sfx : [];
+  if (attackVolumeScale !== 1) {
+    attackSfx = attackSfx.map(s => ({ ...s, volumeScale: attackVolumeScale }));
+  }
   const targetCss = attackConfig.css?.target ?? [];
 
   let impactTimes = Array.isArray(attackConfig.impact_override) && attackConfig.impact_override.length > 0

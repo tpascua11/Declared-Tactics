@@ -26,10 +26,11 @@ import Hand from '../components/battle/Hand';
 
 // Per-reaction fuse options — same merges the VFX editor previews:
 // DEFLECT keeps the hit css and the clang trails impact (fuse defaults),
-// AVOID drops the hit css and lands the dodge exactly on the beat.
+// AVOID drops the hit css, lands the dodge exactly on the beat, and
+// softens the whiffed attack's own sfx to 80%.
 const REACTION_FUSE_OPTIONS = {
   DEFLECT: {},
-  AVOID:   { keepImpactCss: false, sfxDelay: 0 },
+  AVOID:   { keepImpactCss: false, sfxDelay: 0, attackVolumeScale: 0.8 },
 };
 
 // Resolve a pendingAnimation entry to its final playable config: the raw
@@ -250,8 +251,8 @@ export default function BattleScreen() {
         const sfxList = Array.isArray(config.sfx)
           ? config.sfx
           : [{ src: config.sfx, start: 0, volume: config.volume ?? 0.6 }];
-        sfxList.forEach(({ src, start, delay, volume }) => {
-          setTimeout(() => playSfx(src, volume ?? config.volume ?? 0.6), start ?? delay ?? 0);
+        sfxList.forEach(({ src, start, delay, volume, volumeScale }) => {
+          setTimeout(() => playSfx(src, (volume ?? config.volume ?? 0.6) * (volumeScale ?? 1)), start ?? delay ?? 0);
         });
       }
 
