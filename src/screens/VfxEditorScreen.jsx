@@ -113,6 +113,22 @@ export default function VfxEditorScreen() {
           setTimeout(() => playBattleSfx(src, volume ?? config.volume ?? 0.6), start ?? delay ?? 0);
         });
       }
+      if (config.pixi) {
+        // Pixi channel — same shape as css/sfx: dispatch each named entry
+        // at its start. Aimed at the defender (owner too: reactions play
+        // entirely "at" the reactor). noFallback: unauthored names play
+        // nothing, not the debug burst.
+        const enemyEl = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
+        if (enemyEl) {
+          const er = enemyEl.getBoundingClientRect();
+          const pos = { x: er.left + er.width / 2, y: er.top + er.height / 2 };
+          config.pixi.forEach(({ name, start }) => {
+            setTimeout(() => window.dispatchEvent(new CustomEvent('play-thumos-animation', {
+              detail: { animType: name, target: pos, owner: pos, x: pos.x, y: pos.y, noFallback: true },
+            })), start ?? 0);
+          });
+        }
+      }
     }
 
     if (parsedJson !== null) {
@@ -132,6 +148,7 @@ export default function VfxEditorScreen() {
         }));
       }
     }
+
   }
 
   return (

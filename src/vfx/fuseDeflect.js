@@ -68,6 +68,10 @@ export function fuseDeflect(
 
   return {
     ...attackConfig,
+    // Pixi is a channel like css/sfx: one entry per impact beat, carrying
+    // the reaction's name for playback to dispatch (opaque string — the
+    // fuse knows nothing about pixi itself).
+    pixi: impactTimes.map(t => ({ name: deflectConfig.name, start: t })),
     duration: Math.max(
       attackConfig.duration ?? 0,
       ...impactTimes.map(t => t + (deflectConfig.duration ?? 0)),

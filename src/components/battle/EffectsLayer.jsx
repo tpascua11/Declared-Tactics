@@ -69,11 +69,13 @@ export default function EffectsLayer() {
       interpreterRef.current = new ThumosInterpreter(app);
 
       onPlay = (e) => {
-        const { animType, json: inlineJson, target, owner, x, y } = e.detail;
+        const { animType, json: inlineJson, target, owner, x, y, noFallback } = e.detail;
         const resolvedTarget = target ?? { x, y };
         const json = inlineJson ?? PIXI_DATA[animType];
         if (json) interpreterRef.current.play(json, resolvedTarget, owner ?? null);
-        else spawnBurst(app, resolvedTarget.x, resolvedTarget.y);
+        // noFallback: reaction dispatches opt out of the debug burst —
+        // an unauthored reaction should play nothing, not an explosion.
+        else if (!noFallback) spawnBurst(app, resolvedTarget.x, resolvedTarget.y);
       };
       window.addEventListener('play-thumos-animation', onPlay);
     });
