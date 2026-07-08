@@ -47,16 +47,18 @@ export const SHARED_PRESETS = {
   },
 
   // Sidestep — evaded attack, a quick horizontal dodge-and-settle wobble.
+  // Darts front-loaded (done by ~0.46) so the ghost-to-solid fade gets the
+  // back ~54% of the run — a longer lingering recovery at the same total.
   sidestep_dodge: {
     easing: 'ease-in-out',
     keyframes: [
       { offset: 0,    transform: 'translate(0px, 0px)',   opacity: 1 },
-      { offset: 0.12, transform: 'translate(-22px, 0px)', opacity: 0.25 },
-      { offset: 0.28, transform: 'translate(28px, 0px)',  opacity: 0.2 },
-      { offset: 0.44, transform: 'translate(-18px, 0px)', opacity: 0.3 },
-      { offset: 0.60, transform: 'translate(14px, 0px)',  opacity: 0.5 },
-      { offset: 0.76, transform: 'translate(-8px, 0px)',  opacity: 0.75 },
-      { offset: 0.88, transform: 'translate(4px, 0px)',   opacity: 0.9 },
+      { offset: 0.10, transform: 'translate(-30px, 0px)', opacity: 0.25 },
+      { offset: 0.22, transform: 'translate(36px, 0px)',  opacity: 0.2 },
+      { offset: 0.34, transform: 'translate(-24px, 0px)', opacity: 0.3 },
+      { offset: 0.46, transform: 'translate(18px, 0px)',  opacity: 0.35 },
+      { offset: 0.66, transform: 'translate(-10px, 0px)', opacity: 0.55 },
+      { offset: 0.84, transform: 'translate(5px, 0px)',   opacity: 0.8 },
       { offset: 1,    transform: 'translate(0px, 0px)',   opacity: 1 },
     ],
   },

@@ -1,12 +1,12 @@
 {
   "name": "sidestep",
-  "duration": 550,
+  "duration": 625,
   "sfx": [
     { "src": "DODGE_1.wav", "start": 0, "volume": 0.6 }
   ],
   "css": {
     "target": [
-      { "preset": "sidestep_dodge", "start": 0, "duration": 550 }
+      { "preset": "sidestep_dodge", "start": 0, "duration": 625 }
     ]
   },
   "floatingNumber": null
