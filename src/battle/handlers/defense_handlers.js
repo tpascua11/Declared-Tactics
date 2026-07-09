@@ -17,6 +17,10 @@
 //      label: 'Vanish',
 //      charges: 1,                             // evades consumed before expiring (omit = unlimited,
 //                                              // lifetime controlled by reset alone)
+//      dodge_range: 10,                        // speed window: dodges only attacks with calc_speed in
+//                                              // [dodge_anchor - dodge_range, dodge_anchor], where the
+//                                              // anchor = the stance action's own calc_speed (stamped at
+//                                              // resolution). Omit = no window, dodge everything.
 //      reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] }
 //
 //  `reaction_anim` is not read here — it rides on the tag instance
@@ -72,6 +76,19 @@ function EvadingOnApply(pool, tag) {
 }
 
 function EvadingOnIncomingHandler(incoming_action, defender, tag) {
+  // Speed window — opt-in via `dodge_range` on the card's tag data.
+  // dodge_anchor is stamped at resolution (enrichFromAction) from the
+  // stance action's own calc_speed, so WHERE the window sits depends on
+  // when the stance was played; the card only decides how WIDE it is.
+  // No dodge_range authored = no window: dodge everything, lifetime
+  // governed by charges/reset alone (the pre-window behavior).
+  if (tag.dodge_range != null && tag.dodge_anchor != null) {
+    const speed = incoming_action.calc_speed;
+    if (speed < tag.dodge_anchor - tag.dodge_range || speed > tag.dodge_anchor) {
+      return { cancelled: false, consumed: false };
+    }
+  }
+
   let consumed = false;
   if (tag.charges != null) {
     tag.charges -= 1;
@@ -92,5 +109,7 @@ registerTag('EVADING', {
   phases: ['ON_INCOMING'],
   status_type: 'buff',
   onApply: EvadingOnApply,
+  // Remember how fast the stance action resolved — the window's anchor
+  enrichFromAction: (tag, action) => ({ ...tag, dodge_anchor: action.calc_speed }),
   handlers: { ON_INCOMING: EvadingOnIncomingHandler },
 });

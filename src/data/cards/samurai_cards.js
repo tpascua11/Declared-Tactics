@@ -272,13 +272,14 @@ export const SAMURAI_CARDS = [
     icon: '💨',
     image: 'FOX_QUICK_STEPS',
     color: '#7dd3fc',
-    desc: 'Read the enemy. Evade the next attack that targets you. Ends after your next action or end of turn.',
+    desc: 'Read the enemy. Evade attacks within -15 speed of this action. Ends after your next action or end of turn.',
     animation: 'run_circle',
     animation_intensity: 1.0,
     tags: {
       self: [
         { tag_name: 'EVADING',
           charges: 10,
+          dodge_range: 15,
           reaction_anim: 'sidestep',
           label: 'Mikiri',
           reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] },

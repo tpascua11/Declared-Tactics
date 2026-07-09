@@ -489,6 +489,20 @@ export const SUMURAI_PRESETS = {
       { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',         filter: 'brightness(1) saturate(1)' },
     ],
   },
+
+  // Still Wind — gentle rise-and-settle breathing pulse, pale cyan bloom to
+  // match the pixi wisps. Scales INWARD (contracts) rather than blooming
+  // outward — reads as the card drawing the wind in, not swelling. One
+  // breathing cycle (450ms); the timeline entry's `iterations` decides how
+  // many breaths play.
+  wind_lift: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,   transform: 'translateY(0px) scale(1)',      filter: 'brightness(1) saturate(1)' },
+      { offset: 0.5, transform: 'translateY(-6px) scale(0.97)',  filter: 'brightness(1.3) saturate(1.15)' },
+      { offset: 1,   transform: 'translateY(0px) scale(1)',      filter: 'brightness(1) saturate(1)' },
+    ],
+  },
 };
 
 export default SUMURAI_PRESETS;

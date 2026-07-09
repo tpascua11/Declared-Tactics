@@ -157,7 +157,7 @@ export default function BattleScreen() {
       if (!config) return max;
       return Math.max(max, config.battleDelay ?? config.duration ?? 0);
     }, 0);
-    const delay = Math.max(600, maxDelay + 150);
+    const delay = Math.max(600, maxDelay + 50);
     battleTimerRef.current = setTimeout(() => {
       floatTimersRef.current = [];
       animClearTimersRef.current = [];
