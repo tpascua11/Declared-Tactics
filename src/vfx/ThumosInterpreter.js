@@ -70,6 +70,8 @@ export class ThumosInterpreter {
     const rate     = json.rate      ?? 8;
     const lifetime = json.lifetime  ?? 0.8;
     const gravity  = json.gravity   ?? 40;
+    const waveAmp  = json.waveAmp   ?? 0;
+    const waveFreq = json.waveFreq  ?? 1;
     const additive = json.additive  ?? false;
     const rotation = json.rotation  ?? false;
     const shape    = json.shape     ?? 'square';
@@ -113,13 +115,18 @@ export class ThumosInterpreter {
       const initRot = shape === 'spark' ? Math.atan2(vy, vx) : (rotation ? Math.random() * Math.PI * 2 : 0);
 
       const g = new PIXI.Graphics();
-      g.x         = sx + (Math.random() - 0.5) * 6;
+      const baseX = sx + (Math.random() - 0.5) * 6;
+      g.x         = baseX;
       g.y         = sy + (Math.random() - 0.5) * 6;
       g.rotation  = initRot;
       g.blendMode = additive ? 'add' : 'normal';
       container.addChild(g);
 
-      particles.push({ g, vx, vy, life, age: 0, sz, rotSpd });
+      // wavePhase randomizes each particle's sway so a column of particles
+      // doesn't oscillate in lockstep — waveAmp/waveFreq default to 0/1 so
+      // this is a no-op (baseX === g.x) unless a config opts in.
+      const wavePhase = Math.random() * Math.PI * 2;
+      particles.push({ g, vx, vy, life, age: 0, sz, rotSpd, baseX, wavePhase });
     };
 
     const tickerFn = () => {
@@ -162,7 +169,8 @@ export class ThumosInterpreter {
           continue;
         }
         p.vy += gravity * dt;
-        p.g.x += p.vx * dt;
+        p.baseX += p.vx * dt;
+        p.g.x = p.baseX + Math.sin(p.age * waveFreq * Math.PI * 2 + p.wavePhase) * waveAmp;
         p.g.y += p.vy * dt;
         p.g.rotation += p.rotSpd * dt;
         p.g.alpha = lerp(1, 0, t);
