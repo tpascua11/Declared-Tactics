@@ -1,0 +1,28 @@
+{
+  "id": "the_rabble",
+  "name": "The Rabble",
+  "battle_background": "samurai_battlefield_14",
+  "stages": [
+    {
+      "enemies": [
+        "rabbit_samurai",
+        "boar_samurai",
+        "ferret_samurai",
+        "tiger_samurai",
+        "rabbit_samurai",
+        "ferret_samurai",
+        "boar_samurai",
+        "tiger_samurai",
+        "ferret_samurai",
+        "rabbit_samurai",
+        "boar_samurai",
+        "rabbit_samurai",
+        "boar_samurai",
+        "tiger_samurai",
+        "ferret_samurai"
+      ]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_3",
+  "rewards": {}
+}

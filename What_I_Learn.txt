@@ -81,7 +81,7 @@ The bug was invisible because in player gameplay Speed Up is only ever used
 once per turn — never twice in a row. The math always happened to be correct
 at that usage level.
 
-Dark Fox Sumurai was the trigger: his AI uses Speed Up twice in the same turn,
+Dark Fox Samurai was the trigger: his AI uses Speed Up twice in the same turn,
 which exposed the stale math. Stacks and amount got out of sync, producing
 inflated speed numbers (e.g. 207 in the tooltip) that had no logical basis.
 

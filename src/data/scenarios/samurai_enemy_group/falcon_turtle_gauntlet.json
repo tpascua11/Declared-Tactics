@@ -1,0 +1,18 @@
+{
+  "id": "falcon_turtle_gauntlet",
+  "name": "Falcon and Turtle Gauntlet",
+  "battle_background": "samurai_battlefield_15",
+  "stages": [
+    {
+      "enemies": ["rabbit_samurai", "falcon_samurai_2", "rabbit_samurai"]
+    },
+    {
+      "enemies": ["rabbit_samurai", "rabbit_samurai", "rabbit_samurai"]
+    },
+    {
+      "enemies": ["falcon_samurai_2", "turtle_samurai", "falcon_samurai_2"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_4",
+  "rewards": {}
+}

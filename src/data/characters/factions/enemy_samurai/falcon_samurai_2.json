@@ -1,0 +1,159 @@
+{
+  "id": "falcon_samurai_2",
+  "name": "FALCON SAMURAI II",
+  "portrait": "ENEMY_FALCON_SAMURAI",
+  "card_size": "large",
+  "health": 850,
+  "max_health": 850,
+  "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+  "resource_bar_type": "samurai",
+  "base_speed": 100,
+  "total_action_slots": 2,
+  "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+  "temp_hp": 0,
+  "faction": "enemy",
+  "queue": [],
+  "ai_type": "conditional",
+  "action_library": {
+    "Heavy Slice": {
+      "name": "Heavy Slice",
+      "icon": "ENM_SAM_HEAVY_STRIKE_1",
+      "speed_mod": -10,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "heavy_slice",
+      "animation_intensity": 2.0,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 75 }]
+      }
+    },
+    "Stream Slash": {
+      "name": "Stream Slash",
+      "icon": "ENEMY_STREAM_SLASH",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "stream_slash",
+      "animation_intensity": 0.7,
+      "properties": [],
+      "tag_interactions": [
+        { "traits": ["EVASION"], "bypass": true, "bonus_multiplier": 0.25 }
+      ],
+      "tags": {
+        "self": [],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 25 }]
+      }
+    },
+    "Battojutsu": {
+      "name": "Battojutsu",
+      "icon": "ENM_SAM_SHEATH",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "samurai_sheath",
+      "animation_intensity": 1.2,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "BATTOJUTSU", "multiplier": 1.00, "tier": "advanced" }],
+        "target": []
+      }
+    },
+    "Still Winds": {
+      "name": "Still Winds",
+      "icon": "ENM_SAM_BUFF_3",
+      "speed_mod": 0,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL", "STANCE"],
+      "animation": "buff",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [
+          { "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 },
+          { "tag_name": "STILL_WIND", "stacks": 3 }
+        ],
+        "self_if": [
+          {
+            "owner_has": "STILL_WIND",
+            "tags": [
+              { "tag_name": "HEAL", "power": 50 },
+              { "tag_name": "STILL_WIND", "stacks": 3 }
+            ]
+          }
+        ],
+        "target": []
+      }
+    },
+    "Shinsoku": {
+      "name": "Shinsoku",
+      "icon": "ENEMY_SPEED_UP",
+      "speed_mod": 20,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL"],
+      "animation": "speed_dash",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "SPEED_BOOST", "amount": 40 }],
+        "target": []
+      }
+    },
+    "Flame Strike": {
+      "name": "Flame Strike",
+      "icon": "ENM_SAM_FLAME_STRIKE",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": 0,
+      "payload_type": "MAGIC",
+      "tag_type": ["MAGIC", "FIRE"],
+      "animation": "flame_strike",
+      "animation_intensity": 0.8,
+      "properties": [],
+      "tags": {
+        "self": [],
+        "target": [
+          { "tag_name": "DAMAGE", "type": "FIRE", "power": 150 },
+          { "tag_name": "BURN", "power": 20, "duration": 2, "reset": "TICK_TURN" }
+        ]
+      }
+    },
+    "Quick Steps": {
+      "name": "Quick Steps",
+      "icon": "ENEMY_EVADE",
+      "speed_mod": 1,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "STANCE"],
+      "animation": "run_circle",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "QUICK_STEPS", "dodge_range": 12, "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
+        "target": []
+      }
+    }
+  },
+  "action_sets": [
+    {
+      "id": "spirit_burst",
+      "aura": "fire_warm",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+      "actions": ["Shinsoku", "Flame Strike"]
+    },
+    {
+      "id": "low_hp_evasive",
+      "condition": { "type": "HEALTH_PCT_LTE", "value": 0.5 },
+      "actions": ["Quick Steps", "Quick Steps"]
+    },
+    {
+      "id": "has_still_winds",
+      "condition": { "type": "SELF_HAS_TAG", "tag": "STILL_WIND" },
+      "actions": ["Quick Steps", "Quick Steps"]
+    },
+    {
+      "id": "default",
+      "aura": "flame_ember",
+      "actions": ["Quick Steps", "Still Winds"]
+    }
+  ]
+}

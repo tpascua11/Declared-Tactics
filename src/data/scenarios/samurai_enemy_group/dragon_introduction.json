@@ -1,0 +1,15 @@
+{
+  "id": "dragon_introduction",
+  "name": "Dragon Introduction",
+  "battle_background": "samurai_battlefield_11",
+  "stages": [
+    {
+      "enemies": ["dragon_samurai"]
+    },
+    {
+      "enemies": ["dragon_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_2",
+  "rewards": {}
+}

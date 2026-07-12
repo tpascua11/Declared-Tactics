@@ -8,12 +8,12 @@
    These are the animations fully migrated to animation_data/*.json
    as of the Phase 5 cleanup pass — their LEGACY_ANIMATIONS registry
    entries and .animate-* CSS rules were removed from the live files
-   (animationRegistry.js, sumurai.css, shared.css) since nothing
+   (animationRegistry.js, samurai.css, shared.css) since nothing
    references them anymore.
    ============================================================ */
 
 /* ──────────────────────────────────────────────────────────────
-   From src/vfx/animations/sumurai.css
+   From src/vfx/animations/samurai.css
    ────────────────────────────────────────────────────────────── */
 
 /* ── SHINSOKU DISAPPEAR (god-speed vanish — left/right blur then gone) ── */

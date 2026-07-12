@@ -1,12 +1,12 @@
 {
   "id": "bear_boss",
-  "name": "Bear Sumurai — Iron Gate",
+  "name": "Bear Samurai — Iron Gate",
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["bear_sumurai_boss"]
+      "enemies": ["bear_samurai_boss"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_1",
   "rewards": {}
 }

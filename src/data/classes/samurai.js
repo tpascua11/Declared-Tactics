@@ -6,7 +6,7 @@ import { SAMURAI_CARDS } from '../cards/samurai_cards';
 import SamuraiResourceBar from '../../components/resources/SamuraiResourceBar';
 
 // perk_list — future perks to consider for the Samurai class:
-//   - PATH_OF_THE_SUMURAI completion: +250 max HP (implemented via stat_boosts / UPGRADE_STAT)
+//   - PATH_OF_THE_SAMURAI completion: +250 max HP (implemented via stat_boosts / UPGRADE_STAT)
 //   - map levels will reward unique perks (e.g. passive abilities, stat upgrades) tied to that level's story/encounter
 
 export const SAMURAI = {
@@ -14,9 +14,9 @@ export const SAMURAI = {
   name: 'Samurai',
   default_name: 'VARX',
   icon: '⚔️',
-  portrait: 'PORTRAIT_SUMURAI',
-  victory_portrait: 'PORTRAIT_SUMURAI_VICTORY',
-  map_token: 'MAP_TOKEN_SUMURAI',
+  portrait: 'PORTRAIT_SAMURAI',
+  victory_portrait: 'PORTRAIT_SAMURAI_VICTORY',
+  map_token: 'MAP_TOKEN_SAMURAI',
   base_health: 750,
   base_speed: 100,
   total_action_slots: 3,

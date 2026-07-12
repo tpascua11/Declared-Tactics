@@ -1,0 +1,12 @@
+{
+  "id": "enemy_samurai_group",
+  "name": "Samurai Squad",
+  "battle_background": "MOUNTAIN_1_WIDE",
+  "stages": [
+    {
+      "enemies": ["ferret_samurai", "tiger_samurai", "wolf_samurai", "bear_samurai"]
+    }
+  ],
+  "music": "battle_theme",
+  "rewards": {}
+}

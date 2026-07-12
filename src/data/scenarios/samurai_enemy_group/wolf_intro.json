@@ -1,0 +1,16 @@
+{
+  "id": "wolf_intro",
+  "name": "Wolf Intro",
+  "battle_background": "samurai_battlefield_9",
+  "stages": [
+    {
+      "enemies": ["wolf_samurai"]
+    },
+    {
+      "enemies": ["wolf_samurai", "wolf_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_5",
+  "music_volume": 0.29,
+  "rewards": {}
+}

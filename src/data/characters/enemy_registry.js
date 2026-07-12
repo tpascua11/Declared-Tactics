@@ -9,10 +9,10 @@
 // ============================================================
 
 import WITCHES   from './factions/witches.json';
-import SUMURAI   from './factions/enemy_sumurai';
+import SAMURAI   from './factions/enemy_samurai';
 import * as ASSETS from '../../assets';
 
-const ENEMY_LIST = [...WITCHES, ...SUMURAI];
+const ENEMY_LIST = [...WITCHES, ...SAMURAI];
 
 function resolveActionIcons(actions) {
   if (!actions) return actions;

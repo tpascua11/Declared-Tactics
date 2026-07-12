@@ -1,0 +1,13 @@
+{
+  "name": "samurai_sheath",
+  "duration": 650,
+  "sfx": [
+    { "src": "SHEATH.wav", "start": 0, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "buff_glow", "start": 0, "duration": 650 }
+    ]
+  },
+  "floatingNumber": null
+}

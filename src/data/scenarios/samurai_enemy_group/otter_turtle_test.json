@@ -1,0 +1,12 @@
+{
+  "id": "otter_turtle_test",
+  "name": "Turtle Test",
+  "battle_background": "samurai_battlefield_13",
+  "stages": [
+    {
+      "enemies": ["otter_samurai", "turtle_samurai", "otter_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_1",
+  "rewards": {}
+}

@@ -1,0 +1,15 @@
+{
+  "id": "the_otter_test",
+  "name": "The Otter Test",
+  "battle_background": "samurai_battlefield_3",
+  "stages": [
+    {
+      "enemies": ["otter_samurai", "otter_samurai", "otter_samurai"]
+    },
+    {
+      "enemies": ["otter_samurai", "otter_samurai", "otter_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_4",
+  "rewards": {}
+}

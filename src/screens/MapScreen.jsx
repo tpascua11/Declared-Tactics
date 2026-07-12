@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useGame } from '../context/GameContext';
 import { usePlayer } from '../context/PlayerContext';
-import MAP_DATA from '../data/maps/PATH_OF_THE_SUMURAI.json';
+import MAP_DATA from '../data/maps/PATH_OF_THE_SAMURAI.json';
 import { SCENARIO_REGISTRY } from '../data/maps/scenario_registry';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
 import {

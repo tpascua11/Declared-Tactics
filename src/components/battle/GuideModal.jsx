@@ -8,29 +8,29 @@ import '../shared/shine-btn.css';
 import '../../vfx/aura_animations.css';
 import { playSelectSfx } from '../../vfx/animationRegistry';
 import {
-  FOX_SUMMURAI_STILL_WIND,
-  FOX_SUMMURAI_BATTOJUTSU,
-  FOX_SUMMURAI_STREAM_SLASH,
-  FOX_SUMMURAI_HEAVY_STRIKE,
+  FOX_SAMURAI_STILL_WIND,
+  FOX_SAMURAI_BATTOJUTSU,
+  FOX_SAMURAI_STREAM_SLASH,
+  FOX_SAMURAI_HEAVY_STRIKE,
   FOX_QUICK_STEPS,
-  FOX_SUMMURAI_FLAME_STRIKE,
+  FOX_SAMURAI_FLAME_STRIKE,
   ENM_SAM_HEAVY_STRIKE_1,
-  ENEMY_FERRET_SUMURAI,
-  ENEMY_RABBIT_SUMURAI_3,
+  ENEMY_FERRET_SAMURAI,
+  ENEMY_RABBIT_SAMURAI_3,
 } from '../../assets/index.js';
 import EnemyResourceBar from './EnemyResourceBar';
 import SamuraiResourceBar from '../resources/SamuraiResourceBar';
 
 const EXAMPLE_CARDS = [
-  { name: 'Still Wind',   image: FOX_SUMMURAI_STILL_WIND,   color: '#e879f9', speed: 100, penalty: 0  },
-  { name: 'Battojutsu',   image: FOX_SUMMURAI_BATTOJUTSU,   color: '#c084fc', speed: 80,  penalty: 1  },
-  { name: 'Stream Slash', image: FOX_SUMMURAI_STREAM_SLASH, color: '#38bdf8', speed: 60,  penalty: 2  },
+  { name: 'Still Wind',   image: FOX_SAMURAI_STILL_WIND,   color: '#e879f9', speed: 100, penalty: 0  },
+  { name: 'Battojutsu',   image: FOX_SAMURAI_BATTOJUTSU,   color: '#c084fc', speed: 80,  penalty: 1  },
+  { name: 'Stream Slash', image: FOX_SAMURAI_STREAM_SLASH, color: '#38bdf8', speed: 60,  penalty: 2  },
 ];
 
 const HEAVY_SLICES_CARDS = [
-  { name: 'Heavy Slices', image: FOX_SUMMURAI_HEAVY_STRIKE, color: '#f97316', speed: 90 },
-  { name: 'Heavy Slices', image: FOX_SUMMURAI_HEAVY_STRIKE, color: '#f97316', speed: 70 },
-  { name: 'Heavy Slices', image: FOX_SUMMURAI_HEAVY_STRIKE, color: '#f97316', speed: 50 },
+  { name: 'Heavy Slices', image: FOX_SAMURAI_HEAVY_STRIKE, color: '#f97316', speed: 90 },
+  { name: 'Heavy Slices', image: FOX_SAMURAI_HEAVY_STRIKE, color: '#f97316', speed: 70 },
+  { name: 'Heavy Slices', image: FOX_SAMURAI_HEAVY_STRIKE, color: '#f97316', speed: 50 },
 ];
 
 function ExampleCard({ name, image, color, speed, penalty }) {
@@ -163,7 +163,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
             {/* Speed mod example */}
             <div className="flex items-center gap-6 border-t border-white/10 pt-5 mt-4">
               <div className="flex-shrink-0">
-                <ExampleCard name="Heavy Slices" image={FOX_SUMMURAI_HEAVY_STRIKE} color="#f97316" speed={70} />
+                <ExampleCard name="Heavy Slices" image={FOX_SAMURAI_HEAVY_STRIKE} color="#f97316" speed={70} />
               </div>
               <div className="space-y-3 text-base text-gray-300 leading-relaxed">
                 <p>
@@ -218,7 +218,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
                         ? '0 0 28px rgba(255,255,255,0.8), 0 0 8px rgba(255,255,255,0.5)'
                         : '0 0 20px rgba(255,255,255,0.15)',
                     }}>
-                    <img src={ENEMY_FERRET_SUMURAI} alt={label} className="absolute inset-0 w-full h-full object-cover" />
+                    <img src={ENEMY_FERRET_SAMURAI} alt={label} className="absolute inset-0 w-full h-full object-cover" />
                     {/* Bottom overlay: name + HP bar */}
                     <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-4"
                       style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)' }}>
@@ -226,7 +226,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
                         <span className="absolute left-0 top-1/2 -translate-y-1/2 font-mono text-[9px] text-white flex gap-px leading-none">
                           <span>▮</span>
                         </span>
-                        FERRET SUMURAI
+                        FERRET SAMURAI
                       </div>
                       <div className="w-full relative">
                         <div className="w-full h-3 bg-gray-600/50 rounded-full overflow-hidden relative">
@@ -305,14 +305,14 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
 
         {page === 3 && (
           <div className="flex flex-col items-center gap-6">
-            {/* Otter Sumurai — medium card matching BattleScreen format */}
+            {/* Otter Samurai — medium card matching BattleScreen format */}
             <div className="relative flex-shrink-0" style={{ width: '10rem', height: '15rem' }}>
               <div className="absolute inset-0 rounded-lg border-2 overflow-hidden"
                 style={{
                   borderColor: '#000000',
                   boxShadow: '0 0 20px rgba(255,255,255,0.15)',
                 }}>
-              <img src={ENEMY_RABBIT_SUMURAI_3} alt="Rabbit Sumurai" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={ENEMY_RABBIT_SAMURAI_3} alt="Rabbit Samurai" className="absolute inset-0 w-full h-full object-cover" />
               {/* flame_ember aura gradient — inside overflow-hidden */}
               <div className="absolute inset-0 aura-flame pointer-events-none"
                 style={{ '--aura-color': '#f97316', '--aura-secondary': '#fbbf24', opacity: 0.28 }} />
@@ -322,7 +322,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
                   <span className="absolute left-0 top-1/2 -translate-y-1/2 font-mono text-[9px] text-white flex gap-px leading-none">
                     <span>▮</span><span>▮</span>
                   </span>
-                  RABBIT SUMURAI
+                  RABBIT SAMURAI
                 </div>
                 <div className="w-full relative">
                   <div className="w-full h-3 bg-gray-600/50 rounded-full overflow-hidden relative">
@@ -335,7 +335,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
                 </div>
                 <EnemyResourceBar
                   enemy={{
-                    resource_bar_type: 'sumurai',
+                    resource_bar_type: 'samurai',
                     card_size: 'medium',
                     resources: { BATTLE_SPIRIT: { current: 3, max: 10 } },
                   }}
@@ -373,7 +373,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
                 The <span className="text-white font-bold">squares</span> next to the enemy name show how many <span className="text-white font-bold">actions</span> they queue each turn.
               </p>
               <p>
-                The <span className="text-white font-bold">suns</span> below the health bar are the enemy's <span className="text-white font-bold">Battle Spirit</span>. Enemies in this campaign fight with their own selection of Sumurai moves.
+                The <span className="text-white font-bold">suns</span> below the health bar are the enemy's <span className="text-white font-bold">Battle Spirit</span>. Enemies in this campaign fight with their own selection of Samurai moves.
               </p>
               <p>
                 Once they accumulate enough <span className="text-white font-bold">Battle Spirit</span>, they will spend it to unleash <span className="text-white font-bold">powerful slashes</span>.
@@ -402,7 +402,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
             <div className="flex gap-8 border-t border-white/10 pt-5">
               {/* Flame Strike */}
               <div className="flex flex-col items-center gap-3 flex-1">
-                <ExampleCard name="Flame Strike" image={FOX_SUMMURAI_FLAME_STRIKE} color="#ef4444" speed={100} />
+                <ExampleCard name="Flame Strike" image={FOX_SAMURAI_FLAME_STRIKE} color="#ef4444" speed={100} />
                 <div className="space-y-2 text-sm text-gray-300 leading-relaxed text-center">
                   <p>
                     <span className="text-white font-bold">Flame Strike</span> costs <span className="text-white font-bold">3 Battle Spirit</span> to cast. Once you have enough, it unleashes <span className="text-white font-bold">333 fire damage</span> and applies <span className="text-white font-bold">Burn</span>.
@@ -414,7 +414,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
 
               {/* Still Wind */}
               <div className="flex flex-col items-center gap-3 flex-1">
-                <ExampleCard name="Still Wind" image={FOX_SUMMURAI_STILL_WIND} color="#e879f9" speed={100} />
+                <ExampleCard name="Still Wind" image={FOX_SAMURAI_STILL_WIND} color="#e879f9" speed={100} />
                 <div className="space-y-2 text-sm text-gray-300 leading-relaxed text-center">
                   <p>
                     <span className="text-white font-bold">Still Wind</span> grants <span className="text-white font-bold">1 Battle Spirit</span> and activates a stance that earns more spirit per action. If the stance is already active, it <span className="text-white font-bold">heals you</span> instead. Taking damage will <span className="text-white font-bold">remove the stance early</span>.
@@ -437,7 +437,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
               </div>
               <div className="space-y-3 text-base text-gray-300 leading-relaxed">
                 <p>
-                  <span className="text-white font-bold">Quick Steps</span> is an essential card for the Sumurai in battle.
+                  <span className="text-white font-bold">Quick Steps</span> is an essential card for the Samurai in battle.
                 </p>
                 <p>
                   It allows you to <span className="text-white font-bold">dodge attacks</span> within a <span className="text-white font-bold">−10 speed range</span> window.

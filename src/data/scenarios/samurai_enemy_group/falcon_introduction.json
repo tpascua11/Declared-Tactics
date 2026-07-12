@@ -1,0 +1,12 @@
+{
+  "id": "falcon_introduction",
+  "name": "Rabbits and Falcon",
+  "battle_background": "samurai_battlefield_14",
+  "stages": [
+    {
+      "enemies": ["rabbit_samurai", "falcon_samurai_2", "rabbit_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_1",
+  "rewards": {}
+}

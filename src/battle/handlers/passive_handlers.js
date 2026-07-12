@@ -34,7 +34,7 @@ registerTag('UNDER_THE_SUN', {
   handlers: { END_OF_TURN: UnderTheSunHandler },
 });
 
-// ── ONE_UNDER_THE_SUN — enemy sumurai passive ──
+// ── ONE_UNDER_THE_SUN — enemy samurai passive ──
 // Increments the flat `resource` field on the character by 1 each end of turn.
 
 function OneUnderTheSunHandler(context, tag) {

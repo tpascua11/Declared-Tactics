@@ -1,0 +1,18 @@
+{
+  "id": "rabbit_and_boar_level_2",
+  "name": "Boars And Rabbits",
+  "battle_background": "samurai_battlefield_10",
+  "stages": [
+    {
+      "enemies": ["boar_samurai", "rabbit_samurai", "boar_samurai"]
+    },
+    {
+      "enemies": ["rabbit_samurai", "boar_samurai", "rabbit_samurai"]
+    },
+    {
+      "enemies": ["boar_samurai", "boar_samurai", "rabbit_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_1",
+  "rewards": {}
+}

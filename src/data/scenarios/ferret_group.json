@@ -4,12 +4,12 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["ferret_sumurai_2", "ferret_sumurai_2"]
+      "enemies": ["ferret_samurai_2", "ferret_samurai_2"]
     },
     {
-      "enemies": ["ferret_sumurai", "ferret_sumurai", "ferret_sumurai"]
+      "enemies": ["ferret_samurai", "ferret_samurai", "ferret_samurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_1",
   "rewards": {}
 }

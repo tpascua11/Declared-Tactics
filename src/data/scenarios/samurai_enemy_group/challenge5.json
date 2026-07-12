@@ -1,0 +1,13 @@
+{
+  "id": "challenge5",
+  "name": "Challenge 5",
+  "battle_background": "samurai_battlefield_7",
+  "stages": [
+    {
+    "enemies": ["wolf_samurai", "falcon_samurai_2", "tiger_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_2",
+  "music_volume": 0.22,
+  "rewards": {}
+}

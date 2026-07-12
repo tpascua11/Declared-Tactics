@@ -10,7 +10,7 @@
 //
 //  Split by class, same idea as animation_data/<class>/ — SHARED_PRESETS
 //  for anything cross-class or engine-wide, one file per class beyond
-//  that (sumurai.js today, more as new classes get their own kit). Add a
+//  that (samurai.js today, more as new classes get their own kit). Add a
 //  new class's presets by adding a file here and merging it into
 //  CSS_PRESETS below — nothing else needs to change, lookups are by
 //  bare preset name regardless of which file it came from.
@@ -31,9 +31,9 @@
 // ============================================================
 
 import { SHARED_PRESETS } from './shared';
-import { SUMURAI_PRESETS } from './sumurai';
+import { SAMURAI_PRESETS } from './samurai';
 
-export const CSS_PRESETS = { ...SHARED_PRESETS, ...SUMURAI_PRESETS };
+export const CSS_PRESETS = { ...SHARED_PRESETS, ...SAMURAI_PRESETS };
 
 // Plays a preset on `el` via the Web Animations API.
 //

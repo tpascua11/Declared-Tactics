@@ -8,7 +8,7 @@ import { playUiSfx, sfx, playSelectSfx } from '../vfx/animationRegistry';
 import {
   CLASS_ICON_SAMURAI, CLASS_ICON_WARRIOR, CLASS_ICON_FIGHTER, CLASS_ICON_MONK,
   CLASS_ICON_ROGUE, CLASS_ICON_TEMPLAR, CLASS_ICON_PALADIN, CLASS_ICON_WIZARD,
-  PORTRAIT_SUMURAI, PORTRAIT_PALADIN, PORTRAIT_ROGUE,
+  PORTRAIT_SAMURAI, PORTRAIT_PALADIN, PORTRAIT_ROGUE,
   PORTRAIT_WARRIOR, PORTRAIT_FIGHTER, PORTRAIT_MONK,
   PORTRAIT_TEMPLAR, PORTRAIT_WIZARD,
 } from '../assets/index';
@@ -35,7 +35,7 @@ function useTypewriter(text, speed = 18, delay = 500) {
 // ── Character data ───────────────────────────────────────────────
 const CHARACTER_DATA = {
   samurai: {
-    name: 'Samurai', classTitle: 'Battle Spirit', icon: CLASS_ICON_SAMURAI, portrait: PORTRAIT_SUMURAI,
+    name: 'Samurai', classTitle: 'Battle Spirit', icon: CLASS_ICON_SAMURAI, portrait: PORTRAIT_SAMURAI,
     bgStart: '45, 20, 25', bgEnd: '30, 15, 20', accent: '200, 80, 80',
     description: 'No orders. No master. No memory of a life before the road. The Samurai walks anyway, drawn forward by something that has no name and asks for no reason. It burns in the chest whether the mind wants it to or not. Some warriors train for years to find that fire. This one just woke up with it, and kept moving.',
     tooltip: 'Battle Spirit — The longer the Samurai endures in battle, the more their Battle Spirit rises. Spend it to unleash devastating slashes that grow stronger with every blow survived.',

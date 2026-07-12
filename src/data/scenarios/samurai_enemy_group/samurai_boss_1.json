@@ -1,0 +1,24 @@
+{
+  "id": "samurai_boss",
+  "name": "Dark Light Fox",
+  "battle_background": "samurai_battlefield_8",
+  "stages": [
+    {
+      "enemies": ["dark_fox_samurai"]
+    },
+    {
+      "enemies": ["light_fox_samurai"]
+    },
+    {
+      "enemies": [
+        { "id": "dark_fox_samurai",  "health": 1500, "max_health": 1500 },
+        { "id": "light_fox_samurai", "health": 1500, "max_health": 1500 }
+      ],
+      "heal": 900
+    }
+
+  ],
+  "music": "SAMURAI_BOSS_1",
+  "allow_retry": true,
+  "rewards": {}
+}

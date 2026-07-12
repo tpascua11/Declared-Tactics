@@ -1,0 +1,16 @@
+{
+  "id": "challenge3",
+  "name": "Challenge 3",
+  "battle_background": "samurai_battlefield_3",
+  "stages": [
+    {
+      "enemies": ["otter_samurai", "tiger_samurai", "otter_samurai"]
+    },
+    {
+      "enemies": ["otter_samurai", "otter_samurai", "tiger_samurai", "otter_samurai", "otter_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_2",
+  "music_volume": 0.22,
+  "rewards": {}
+}

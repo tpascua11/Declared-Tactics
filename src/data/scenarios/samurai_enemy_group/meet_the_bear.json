@@ -1,0 +1,15 @@
+{
+  "id": "meet_the_bear",
+  "name": "Meet the Bear",
+  "battle_background": "samurai_battlefield_3",
+  "stages": [
+    {
+      "enemies": ["bear_samurai"]
+    },
+    {
+      "enemies": ["boar_samurai", "bear_samurai", "boar_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_4",
+  "rewards": {}
+}

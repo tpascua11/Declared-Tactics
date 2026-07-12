@@ -1,0 +1,13 @@
+{
+  "id": "challenge1",
+  "name": "Challenge 1",
+  "battle_background": "samurai_battlefield_14",
+  "stages": [
+    {
+      "enemies": ["wolf_samurai", "bear_samurai", "wolf_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_2",
+  "music_volume": 0.22,
+  "rewards": {}
+}

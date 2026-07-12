@@ -4,16 +4,16 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["boar_sumurai", "ferret_sumurai"]
+      "enemies": ["boar_samurai", "ferret_samurai"]
     },
     {
-      "enemies": ["ferret_sumurai", "ferret_sumurai", "ferret_sumurai", "ferret_sumurai", "ferret_sumurai"]
+      "enemies": ["ferret_samurai", "ferret_samurai", "ferret_samurai", "ferret_samurai", "ferret_samurai"]
     },
     {
-      "enemies": ["wolf_sumurai", "tiger_sumurai"]
+      "enemies": ["wolf_samurai", "tiger_samurai"]
     }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_5",
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_5",
   "music_volume": 0.25,
   "allow_retry": true,
   "rewards": {}

@@ -23,7 +23,7 @@ export const SHARED_PRESETS = {
   },
 
   // Stance/buff glow — brightness+saturation+hue bloom with a slight scale pop.
-  // Shared by sumurai_sheath (Battojutsu) and the generic buff animation.
+  // Shared by samurai_sheath (Battojutsu) and the generic buff animation.
   buff_glow: {
     easing: 'ease-out',
     keyframes: [

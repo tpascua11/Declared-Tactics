@@ -1,0 +1,15 @@
+{
+  "id": "intro_to_lightning",
+  "name": "intro to lightning",
+  "battle_background": "samurai_battlefield_4",
+  "stages": [
+    {
+      "enemies": ["tiger_samurai"]
+    },
+    {
+      "enemies": ["rabbit_samurai", "tiger_samurai", "rabbit_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_3",
+  "rewards": {}
+}

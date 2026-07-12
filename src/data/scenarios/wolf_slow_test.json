@@ -4,7 +4,7 @@
   "battle_background": "MOUNTAIN_1_WIDE",
   "stages": [
     {
-      "enemies": ["wolf_sumurai"]
+      "enemies": ["wolf_samurai"]
     }
   ],
   "music": "battle_theme",

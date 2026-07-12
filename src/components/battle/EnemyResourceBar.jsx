@@ -7,14 +7,14 @@
 //  pull whatever fields they need.
 //
 //  Types:
-//    'sumurai' → aztec sun pips (SamuraiEnemyResourceBar)
+//    'samurai' → aztec sun pips (SamuraiEnemyResourceBar)
 //    undefined / anything else → generic fill bar (if max_resource set)
 // ============================================================
 
 import SamuraiEnemyResourceBar from '../resources/enemy/SamuraiEnemyResourceBar';
 
 const BAR_REGISTRY = {
-  sumurai: SamuraiEnemyResourceBar,
+  samurai: SamuraiEnemyResourceBar,
 };
 
 function GenericEnemyResourceBar({ enemy, hpText }) {

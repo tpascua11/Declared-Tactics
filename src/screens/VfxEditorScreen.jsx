@@ -3,7 +3,7 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
-import { PORTRAIT_SUMURAI, ENEMY_WOLF_SUMURAI } from '../assets';
+import { PORTRAIT_SAMURAI, ENEMY_WOLF_SAMURAI } from '../assets';
 import { ANIMATIONS, playBattleSfx } from '../vfx/animationRegistry';
 import PIXI_DATA from '../vfx/pixi_data';
 import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
@@ -16,11 +16,11 @@ const ANIM_KEYS = Object.keys(ANIMATIONS);
 const MOCK_PLAYER = {
   id: 'editor_player',
   name: 'Vrax',
-  class_id: 'FOX_SUMMURAI',
+  class_id: 'FOX_SAMURAI',
   health: 80,
   max_health: 100,
   temp_hp: 0,
-  portrait: PORTRAIT_SUMURAI,
+  portrait: PORTRAIT_SAMURAI,
   active_tag_pool: [],
 };
 
@@ -193,7 +193,7 @@ export default function VfxEditorScreen() {
                   boxShadow: '0 0 20px rgba(255,255,255,0.15)',
                 }}
               >
-                <img src={ENEMY_WOLF_SUMURAI} alt="wolf sumurai" className="absolute inset-0 w-full h-full object-cover" />
+                <img src={ENEMY_WOLF_SAMURAI} alt="wolf samurai" className="absolute inset-0 w-full h-full object-cover" />
               </div>
             </div>
           </div>

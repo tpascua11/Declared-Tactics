@@ -39,13 +39,13 @@ Enemies are JSON objects in faction files. Actions are **embedded directly** in 
 
 ```json
 {
-  "id": "ferret_sumurai",
-  "name": "Ferret Sumurai",
+  "id": "ferret_samurai",
+  "name": "Ferret Samurai",
   "portrait": "PORTRAIT_FERRET",
   "icon": "🗡️",
   "base_health": 180,
   "base_speed": 80,
-  "faction": "samurai_sumurai",
+  "faction": "samurai_samurai",
   "resources": [],
   "permanent_tags": [],
   "combat_start_tags": [],
@@ -92,7 +92,7 @@ Uses `action_library` (named actions) + `action_sets` (priority list with condit
   "icon": "🐺",
   "base_health": 450,
   "base_speed": 95,
-  "faction": "samurai_sumurai",
+  "faction": "samurai_samurai",
   "resources": [
     { "type": "RAGE", "max": 100, "starting": 0 }
   ],
@@ -202,9 +202,9 @@ Scenarios live in `src/data/scenarios/*.json`. Auto-loaded — just create the f
   "name": "Ferret Squad",
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
-    { "enemies": ["ferret_sumurai", "ferret_sumurai", "ferret_sumurai"] }
+    { "enemies": ["ferret_samurai", "ferret_samurai", "ferret_samurai"] }
   ],
-  "music": "WAY_OF_THE_SUMURAI_BATTLE_1",
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_1",
   "rewards": {}
 }
 ```
@@ -220,8 +220,8 @@ Maps live in `src/data/maps/*.json`. The active map is imported in `MapScreen.js
 
 ```json
 {
-  "id": "path_of_the_sumurai",
-  "name": "PATH OF THE SUMURAI",
+  "id": "path_of_the_samurai",
+  "name": "PATH OF THE SAMURAI",
   "cols": 5,
   "rows": 1,
   "zones": [

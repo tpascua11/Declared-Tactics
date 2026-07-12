@@ -97,7 +97,7 @@ src/
 │   └── registry/
 ├── assets/
 │   ├── ENEMY/
-│   ├── FOX_SUMMURAI/
+│   ├── FOX_SAMURAI/
 │   ├── PLAYER_PORTRAITS/
 │   └── STATUS/
 └── data/

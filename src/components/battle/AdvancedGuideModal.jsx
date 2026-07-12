@@ -70,7 +70,7 @@ export default function AdvancedGuideModal({ onClose, nudgeUp = 0 }) {
           </div>
           <div className="space-y-3 text-base text-gray-300 leading-relaxed">
             <p>
-              <span className="text-white font-bold">Quick Steps</span> is an essential card for the Sumurai in battle.
+              <span className="text-white font-bold">Quick Steps</span> is an essential card for the Samurai in battle.
             </p>
             <p>
               It allows you to <span className="text-white font-bold">dodge attacks</span> within a <span className="text-white font-bold">−10 speed range</span> window.

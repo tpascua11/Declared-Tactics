@@ -1,0 +1,15 @@
+{
+  "id": "3_bears_and_a_falcon",
+  "name": "3 Bears and a Falcon",
+  "battle_background": "samurai_battlefield_11",
+  "stages": [
+    {
+      "enemies": ["bear_samurai", "falcon_samurai_2"]
+    },
+    {
+      "enemies": ["bear_samurai", "bear_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_4",
+  "rewards": {}
+}

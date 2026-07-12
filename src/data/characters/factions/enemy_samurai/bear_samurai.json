@@ -1,0 +1,69 @@
+{
+  "id": "bear_samurai",
+  "name": "BEAR SAMURAI",
+  "portrait": "ENEMY_BEAR_SAMURAI",
+  "card_size": "large",
+  "health": 1750,
+  "max_health": 1750,
+  "resources": { "BATTLE_SPIRIT": { "current": 0, "max": 10 } },
+  "resource_bar_type": "samurai",
+  "base_speed": 60,
+  "total_action_slots": 1,
+  "active_tag_pool": [{ "tag_name": "ONE_UNDER_THE_SUN" }],
+  "temp_hp": 0,
+  "faction": "enemy",
+  "queue": [],
+  "ai_type": "conditional",
+  "action_library": {
+    "Heavy Slice": {
+      "name": "Heavy Slice",
+      "icon": "ENM_SAM_HEAVY_STRIKE_1",
+      "speed_mod": -10,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["PHYSICAL", "SLASH"],
+      "animation": "heavy_slice",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "GAIN_RESOURCE", "resource_type": "BATTLE_SPIRIT", "power": 1 }],
+        "target": [{ "tag_name": "DAMAGE", "type": "PHYSICAL", "power": 120 }]
+      }
+    },
+    "Mend": {
+      "name": "Mend",
+      "icon": "ENM_SAM_BUFF_3",
+      "cost": { "BATTLE_SPIRIT": 3 },
+      "speed_mod": -5,
+      "payload_type": "PHYSICAL",
+      "tag_type": ["SPIRITUAL"],
+      "animation": "heal",
+      "animation_intensity": 1.0,
+      "properties": [],
+      "tags": {
+        "self": [{ "tag_name": "CLEANSE" }, { "tag_name": "HEAL", "power": 750 }],
+        "target": []
+      }
+    }
+  },
+  "action_sets": [
+    {
+      "id": "mend_low_hp",
+      "aura": "nature_surge",
+      "condition": { "all": [
+        { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+        { "type": "HEALTH_PCT_LTE", "value": 0.5 }
+      ]},
+      "actions": ["Mend"]
+    },
+    {
+      "id": "spirit_slash",
+      "aura": "nature_wisp",
+      "condition": { "type": "RESOURCE_GTE", "resource": "BATTLE_SPIRIT", "value": 3 },
+      "actions": ["Heavy Slice"]
+    },
+    {
+      "id": "default",
+      "actions": ["Heavy Slice"]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import MAP_DATA from '../../data/maps/PATH_OF_THE_SUMURAI.json';
+import MAP_DATA from '../../data/maps/PATH_OF_THE_SAMURAI.json';
 import '../shared/shine-btn.css';
 import { playSelectSfx } from '../../vfx/animationRegistry';
 

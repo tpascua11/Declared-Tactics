@@ -1,5 +1,5 @@
 // ============================================================
-//  SUMURAI ENEMY — Battle Spirit Bar (aztec sun pips)
+//  SAMURAI ENEMY — Battle Spirit Bar (aztec sun pips)
 //  Simplified mirror of SamuraiResourceBar — no plan/cost logic.
 //  Reads from enemy.resources.BATTLE_SPIRIT.
 //  Pip size scales to fit inside the enemy portrait card.

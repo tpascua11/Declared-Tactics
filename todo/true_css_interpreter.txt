@@ -50,7 +50,7 @@ src/vfx/
   css_presets.js          — named presets (keyframes + easing, no timing)
   CSSInterpreter.js       — timeline scheduler
   css_data/
-    sumurai/
+    samurai/
       flame_strike.json   — timeline for flame_strike animation
     shared/
       shake.json
@@ -133,7 +133,7 @@ src/vfx/
   animationRegistry.js        — loader, reads animation_data/ via require.context
   pixi_data.js                — unchanged, loads pixi_data/ JSON
   animation_data/
-    sumurai/
+    samurai/
       flame_strike.json       — duration, sfx, css, floatingNumber
       cross_flame_strike.json
       ...
@@ -171,7 +171,7 @@ PHASES
 ------
 
 PHASE 1 — Prove the shape
-  - Design animation_data/sumurai/flame_strike.json with duration, sfx, css, floatingNumber
+  - Design animation_data/samurai/flame_strike.json with duration, sfx, css, floatingNumber
   - Wire it up manually in VFX editor only
   - Confirm CSS timeline and SFX both fire correctly from the same JSON
   - No migration yet — just proof of concept

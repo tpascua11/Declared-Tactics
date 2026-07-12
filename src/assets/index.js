@@ -7,12 +7,12 @@
 // Sound effects are loaded dynamically in animationRegistry.js via require().
 
 // --- Player Map Icons ---
-export { default as MAP_TOKEN_SUMURAI } from './Player_Map_Icons/SUMURAI.png';
+export { default as MAP_TOKEN_SAMURAI } from './Player_Map_Icons/SAMURAI.png';
 
 // --- Portraits ---
 export { default as COOL_FOX } from './COOL_FOX.png';
-export { default as PORTRAIT_SUMURAI } from './Player_Portraits/SUMURAI_2.png';
-export { default as PORTRAIT_SUMURAI_VICTORY } from './Player_Portraits/SUMURAI_2_VICTORY.png';
+export { default as PORTRAIT_SAMURAI } from './Player_Portraits/SAMURAI_2.png';
+export { default as PORTRAIT_SAMURAI_VICTORY } from './Player_Portraits/SAMURAI_2_VICTORY.png';
 export { default as PORTRAIT_PALADIN } from './Player_Portraits/PALADIN_3.png';
 export { default as PORTRAIT_ROGUE } from './Player_Portraits/ROGUE_3.png';
 export { default as PORTRAIT_WARRIOR } from './Player_Portraits/WARRIOR_3.png';
@@ -35,19 +35,19 @@ import SCENARIO_MOUNTAIN_3_WIDE    from './Scenario/MOUNTAIN_3_WIDE.png';
 import SCENARIO_SECRET_DOOR_1_WIDE from './Scenario/SECRET_DOOR_1_WIDE.png';
 import SCENARIO_SECRET_DOOR_2_WIDE from './Scenario/SECRET_DOOR_2_WIDE.png';
 import SCENARIO_SNOW_BATTLE_FIELD_WIDE    from './Scenario/SNOW_BATTLE_FIELD_WIDE.png';
-import SUMURAI_BATTLEFIELD_2  from './Scenario/SUMURAI_BATTLEFIELD_2.png';
-import SUMURAI_BATTLEFIELD_3  from './Scenario/SUMURAI_BATTLEFIELD_3.png';
-import SUMURAI_BATTLEFIELD_4  from './Scenario/SUMURAI_BATTLEFIELD_4.png';
-import SUMURAI_BATTLEFIELD_6  from './Scenario/SUMURAI_BATTLEFIELD_6.png';
-import SUMURAI_BATTLEFIELD_7  from './Scenario/SUMURAI_BATTLEFIELD_7.png';
-import SUMURAI_BATTLEFIELD_8  from './Scenario/SUMURAI_BATTLEFIELD_8.png';
-import SUMURAI_BATTLEFIELD_9  from './Scenario/SUMURAI_BATTLEFIELD_9.png';
-import SUMURAI_BATTLEFIELD_10 from './Scenario/SUMURAI_BATTLEFIELD_10.png';
-import SUMURAI_BATTLEFIELD_11 from './Scenario/SUMURAI_BATTLEFIELD_11.png';
-import SUMURAI_BATTLEFIELD_13 from './Scenario/SUMURAI_BATTLEFIELD_13.png';
-import SUMURAI_BATTLEFIELD_14 from './Scenario/SUMURAI_BATTLEFIELD_14.png';
-import SUMURAI_BATTLEFIELD_15 from './Scenario/SUMURAI_BATTLEFIELD_15.png';
-import SUMURAI_BATTLEFIELD_16 from './Scenario/SUMURAI_BATTLEFIELD_16.png';
+import SAMURAI_BATTLEFIELD_2  from './Scenario/samurai_battlefield_2.png';
+import SAMURAI_BATTLEFIELD_3  from './Scenario/samurai_battlefield_3.png';
+import SAMURAI_BATTLEFIELD_4  from './Scenario/samurai_battlefield_4.png';
+import SAMURAI_BATTLEFIELD_6  from './Scenario/samurai_battlefield_6.png';
+import SAMURAI_BATTLEFIELD_7  from './Scenario/samurai_battlefield_7.png';
+import SAMURAI_BATTLEFIELD_8  from './Scenario/samurai_battlefield_8.png';
+import SAMURAI_BATTLEFIELD_9  from './Scenario/samurai_battlefield_9.png';
+import SAMURAI_BATTLEFIELD_10 from './Scenario/samurai_battlefield_10.png';
+import SAMURAI_BATTLEFIELD_11 from './Scenario/samurai_battlefield_11.png';
+import SAMURAI_BATTLEFIELD_13 from './Scenario/samurai_battlefield_13.png';
+import SAMURAI_BATTLEFIELD_14 from './Scenario/samurai_battlefield_14.png';
+import SAMURAI_BATTLEFIELD_15 from './Scenario/samurai_battlefield_15.png';
+import SAMURAI_BATTLEFIELD_16 from './Scenario/SAMURAI_BATTLEFIELD_16.png';
 
 export const SCENARIO_BACKGROUNDS = {
   CITADEL_1_ENEMY:          SCENARIO_CITADEL_1_ENEMY,
@@ -59,37 +59,37 @@ export const SCENARIO_BACKGROUNDS = {
   SECRET_DOOR_1_WIDE:       SCENARIO_SECRET_DOOR_1_WIDE,
   SECRET_DOOR_2_WIDE:       SCENARIO_SECRET_DOOR_2_WIDE,
   SNOW_BATTLE_FIELD_WIDE:   SCENARIO_SNOW_BATTLE_FIELD_WIDE,
-  sumurai_battlefield_2:    SUMURAI_BATTLEFIELD_2,
-  sumurai_battlefield_3:    SUMURAI_BATTLEFIELD_3,
-  sumurai_battlefield_4:    SUMURAI_BATTLEFIELD_4,
-  sumurai_battlefield_6:    SUMURAI_BATTLEFIELD_6,
-  sumurai_battlefield_7:    SUMURAI_BATTLEFIELD_7,
-  sumurai_battlefield_8:    SUMURAI_BATTLEFIELD_8,
-  sumurai_battlefield_9:    SUMURAI_BATTLEFIELD_9,
-  sumurai_battlefield_10:   SUMURAI_BATTLEFIELD_10,
-  sumurai_battlefield_11:   SUMURAI_BATTLEFIELD_11,
-  sumurai_battlefield_13:   SUMURAI_BATTLEFIELD_13,
-  sumurai_battlefield_14:   SUMURAI_BATTLEFIELD_14,
-  sumurai_battlefield_15:   SUMURAI_BATTLEFIELD_15,
-  sumurai_battlefield_16:   SUMURAI_BATTLEFIELD_16,
+  samurai_battlefield_2:    SAMURAI_BATTLEFIELD_2,
+  samurai_battlefield_3:    SAMURAI_BATTLEFIELD_3,
+  samurai_battlefield_4:    SAMURAI_BATTLEFIELD_4,
+  samurai_battlefield_6:    SAMURAI_BATTLEFIELD_6,
+  samurai_battlefield_7:    SAMURAI_BATTLEFIELD_7,
+  samurai_battlefield_8:    SAMURAI_BATTLEFIELD_8,
+  samurai_battlefield_9:    SAMURAI_BATTLEFIELD_9,
+  samurai_battlefield_10:   SAMURAI_BATTLEFIELD_10,
+  samurai_battlefield_11:   SAMURAI_BATTLEFIELD_11,
+  samurai_battlefield_13:   SAMURAI_BATTLEFIELD_13,
+  samurai_battlefield_14:   SAMURAI_BATTLEFIELD_14,
+  samurai_battlefield_15:   SAMURAI_BATTLEFIELD_15,
+  samurai_battlefield_16:   SAMURAI_BATTLEFIELD_16,
 };
 
 // --- Enemy Portraits ---
 export { default as ENEMY_APPRENTICE_WITCH } from './Enemy/APPRENTICE_WITCH.png';
 export { default as ENEMY_FLAME_WITCH } from './Enemy/FLAME_WITCH.png';
 export { default as ENEMY_FLAME_QUEEN } from './Enemy/FLAME_QUEEN.png';
-export { default as ENEMY_BEAR_SUMURAI } from './Enemy/BEAR_SUMURAI_3.png';
-export { default as ENEMY_FERRET_SUMURAI } from './Enemy/FERRET_SUMURAI.png';
-export { default as ENEMY_TIGER_SUMURAI } from './Enemy/TIGER_SUMURAI_3.png';
-export { default as ENEMY_WOLF_SUMURAI } from './Enemy/WOLF_SUMURAI_3.png';
-export { default as ENEMY_RABBIT_SUMURAI_3 } from './Enemy/RABBIT_SUMURAI_3.png';
-export { default as ENEMY_OTTER_SUMURAI } from './Enemy/WHITE_OTTER_SUMURAI.png';
-export { default as ENEMY_TURTLE_SUMURAI } from './Enemy/TURTLE_SUMURAI.png';
-export { default as ENEMY_FALCON_SUMURAI } from './Enemy/FALCON_SUMURAI.png';
-export { default as ENEMY_BOAR_SUMURAI } from './Enemy/BOAR_SUMURAI.png';
-export { default as ENEMY_DRAGON_SUMURAI } from './Enemy/DRAGON_SUMURAI_2.png';
-export { default as BOSS_DARK_FOX_SUMURAI } from './Enemy/DARK_FOX_SUMURAI.png';
-export { default as BOSS_LIGHT_FOX_SUMURAI } from './Enemy/LIGHT_FOX_SUMURAI.png';
+export { default as ENEMY_BEAR_SAMURAI } from './Enemy/BEAR_SAMURAI_3.png';
+export { default as ENEMY_FERRET_SAMURAI } from './Enemy/FERRET_SAMURAI.png';
+export { default as ENEMY_TIGER_SAMURAI } from './Enemy/TIGER_SAMURAI_3.png';
+export { default as ENEMY_WOLF_SAMURAI } from './Enemy/WOLF_SAMURAI_3.png';
+export { default as ENEMY_RABBIT_SAMURAI_3 } from './Enemy/RABBIT_SAMURAI_3.png';
+export { default as ENEMY_OTTER_SAMURAI } from './Enemy/WHITE_OTTER_SAMURAI.png';
+export { default as ENEMY_TURTLE_SAMURAI } from './Enemy/TURTLE_SAMURAI.png';
+export { default as ENEMY_FALCON_SAMURAI } from './Enemy/FALCON_SAMURAI.png';
+export { default as ENEMY_BOAR_SAMURAI } from './Enemy/BOAR_SAMURAI.png';
+export { default as ENEMY_DRAGON_SAMURAI } from './Enemy/DRAGON_SAMURAI_2.png';
+export { default as BOSS_DARK_FOX_SAMURAI } from './Enemy/Dark_Fox_Samurai.png';
+export { default as BOSS_LIGHT_FOX_SAMURAI } from './Enemy/Light_Fox_Samurai.png';
 
 // --- Status Icons ---
 export { default as STATUS_DEFAULT } from './Status/DEFAULT.png';
@@ -188,16 +188,16 @@ export { default as ENEMY_STREAM_SLASH }     from './Enemy_Ability_Icons/ENEMY_S
 export { default as ENEMY_RESOLVE }          from './Enemy_Ability_Icons/ENEMY_RESOLVE.png';
 export { default as ENEMY_DEFLECT }          from './Enemy_Ability_Icons/ENEMY_DEFLECT.png';
 
-// --- Fox Summurai Animation Frames ---
-export { default as FOX_SUMMURAI_BATTOJUTSU }    from './Fox_Summurai/FOX_BATTOJUTSU.png';
-export { default as FOX_SUMMURAI_HEAVY_STRIKE }  from './Fox_Summurai/FOX_HEAVY_STRIKE_2.png';
-export { default as FOX_SUMMURAI_MEND }          from './Fox_Summurai/FOX_MEND.png';
-export { default as FOX_SUMMURAI_STILL_WIND }    from './Fox_Summurai/FOX_STILL_WIND.png';
-export { default as FOX_SUMMURAI_FREEZE_SLASH }  from './Fox_Summurai/FOX_FREEZE_SLASH.png';
-export { default as FOX_SUMMURAI_FLAME_STRIKE }  from './Fox_Summurai/FOX_FLAME_STRIKE.png';
-export { default as FOX_QUICK_STEPS }            from './Fox_Summurai/FOX_QUICK_STEPS.png';
-export { default as FOX_GUARD_STANCE }           from './Fox_Summurai/FOX_WATER_STANCE.png';
-export { default as FOX_SUMMURAI_STREAM_SLASH }  from './Fox_Summurai/SUMURAI_STREAM_SLASH.png';
-export { default as FOX_STORM_STRIKE }           from './Fox_Summurai/FOX_STORM_STRIKE.png';
-export { default as FOX_SHINSOKU }               from './Fox_Summurai/FOX_SHINSOKU.png';
-export { default as FOX_DEFLECT }                from './Fox_Summurai/FOX_DEFLECT.png';
+// --- Fox Samurai Animation Frames ---
+export { default as FOX_SAMURAI_BATTOJUTSU }    from './FOX_SAMURAI/FOX_BATTOJUTSU.png';
+export { default as FOX_SAMURAI_HEAVY_STRIKE }  from './FOX_SAMURAI/fox_heavy_strike_2.png';
+export { default as FOX_SAMURAI_MEND }          from './FOX_SAMURAI/fox_mend.png';
+export { default as FOX_SAMURAI_STILL_WIND }    from './FOX_SAMURAI/fox_still_wind.png';
+export { default as FOX_SAMURAI_FREEZE_SLASH }  from './FOX_SAMURAI/fox_freeze_slash.png';
+export { default as FOX_SAMURAI_FLAME_STRIKE }  from './FOX_SAMURAI/fox_flame_strike.png';
+export { default as FOX_QUICK_STEPS }            from './FOX_SAMURAI/fox_quick_steps.png';
+export { default as FOX_GUARD_STANCE }           from './FOX_SAMURAI/fox_water_stance.png';
+export { default as FOX_SAMURAI_STREAM_SLASH }  from './FOX_SAMURAI/SAMURAI_STREAM_SLASH.png';
+export { default as FOX_STORM_STRIKE }           from './FOX_SAMURAI/fox_storm_strike.png';
+export { default as FOX_SHINSOKU }               from './FOX_SAMURAI/fox_shinsoku.png';
+export { default as FOX_DEFLECT }                from './FOX_SAMURAI/FOX_DEFLECT.png';
