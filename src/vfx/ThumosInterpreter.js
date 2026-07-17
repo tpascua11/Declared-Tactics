@@ -115,6 +115,7 @@ export class ThumosInterpreter {
       const initRot = shape === 'spark' ? Math.atan2(vy, vx) : (rotation ? Math.random() * Math.PI * 2 : 0);
 
       const g = new PIXI.Graphics();
+      drawParticle(g, sz, 0xffffff);
       const baseX = sx + (Math.random() - 0.5) * 6;
       g.x         = baseX;
       g.y         = sy + (Math.random() - 0.5) * 6;
@@ -131,7 +132,7 @@ export class ThumosInterpreter {
 
     const tickerFn = () => {
       const now = performance.now();
-      const dt  = (now - last) * 0.001;
+      const dt  = Math.min((now - last) * 0.001, 0.05);
       last = now;
       elapsed += dt;
 
@@ -176,9 +177,7 @@ export class ThumosInterpreter {
         p.g.alpha = lerp(1, 0, t);
         p.g.scale.set(lerp(1, 0, t));
 
-        const color = getColor(stops, t);
-        p.g.clear();
-        drawParticle(p.g, p.sz, color);
+        p.g.tint = getColor(stops, t);
       }
     };
 
