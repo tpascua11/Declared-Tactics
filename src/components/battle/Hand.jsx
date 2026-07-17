@@ -10,6 +10,7 @@ import { playSelectSfx } from '../../vfx/animationRegistry';
 import GuideModal from './GuideModal';
 import AdvancedGuideModal from './AdvancedGuideModal';
 import SettingsModal from '../map/SettingsModal';
+import { Z } from '../shared/zLayers';
 
 export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, tagPool, onRestartBattle, isDefeated, allowRetry }) {
   const [holdProgress, setHoldProgress] = useState(0);
@@ -72,11 +73,15 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
   const restartFaded = isDefeated && !allowRetry;
 
   return (
+    // Whole hand is UI above the battlefield (HAND_UI). On defeat it lifts to
+    // RESULT_UI so the restart strip stays clickable above the result dim —
+    // children (cards, tooltips, strip) are trapped in this stacking context.
     <div className="h-[180px] flex-shrink-0 flex flex-col border-t border-white/10 mb-2"
-      style={{ background: 'rgba(0,0,0,0.25)' }}>
+      style={{ background: 'rgba(0,0,0,0.25)', position: 'relative', zIndex: isDefeated ? Z.RESULT_UI : Z.HAND_UI }}>
 
       {/* Button row — 3 sections */}
-      <div className="flex-shrink-0 flex border-b border-white/10" style={{ height: '2.5rem', position: 'relative', zIndex: isDefeated ? 9003 : 0 }}>
+      {/* Local stacking only — the root above carries the global layer */}
+      <div className="flex-shrink-0 flex border-b border-white/10" style={{ height: '2.5rem', position: 'relative', zIndex: isDefeated ? 1 : 0 }}>
 
         {/* LEFT — settings + restart battle (split inside fixed 25% so resource bar doesn't shift) */}
         <div className="w-[25%] flex border-r border-white/10">

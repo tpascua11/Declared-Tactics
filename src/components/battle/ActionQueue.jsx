@@ -4,11 +4,12 @@
 
 import { useRef, useState } from 'react';
 import { projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
+import { Z } from '../shared/zLayers';
 
-const DEFEAT_BTN_BASE = { width: '20rem', position: 'relative', zIndex: 9003, color: '#fff' };
+const DEFEAT_BTN_BASE = { width: '20rem', position: 'relative', zIndex: Z.RESULT_UI, color: '#fff' };
 const STYLE_KEEP_FIGHTING = { ...DEFEAT_BTN_BASE, background: 'linear-gradient(to right, #e94560, #b83b5e)', border: '2px solid #b8860b', boxShadow: '0 0 14px rgba(233,69,96,0.5), 0 0 10px rgba(184,134,11,0.4)' };
 const STYLE_RESTART       = { ...DEFEAT_BTN_BASE, background: 'linear-gradient(to right, #c0392b, #8e1c1c)', border: '2px solid #7a1a1a', boxShadow: '0 0 14px rgba(192,57,43,0.5), 0 0 8px rgba(142,28,28,0.4)' };
-const STYLE_RETURN_TO_MAP = { position: 'relative', zIndex: 9003, background: 'linear-gradient(to right, #e2e8f0, #ffffff)', color: '#0f0f1a', border: '2px solid #b8860b', boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25), 0 0 10px rgba(184,134,11,0.4)', cursor: 'pointer' };
+const STYLE_RETURN_TO_MAP = { position: 'relative', zIndex: Z.RESULT_UI, background: 'linear-gradient(to right, #e2e8f0, #ffffff)', color: '#0f0f1a', border: '2px solid #b8860b', boxShadow: '0 0 18px rgba(255,255,255,0.6), 0 0 36px rgba(255,255,255,0.25), 0 0 10px rgba(184,134,11,0.4)', cursor: 'pointer' };
 
 function DefeatPrimaryButton({ onClick, style, children }) {
   return (
@@ -231,7 +232,7 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
                   <span style={{ position: 'relative', zIndex: 1 }}>Return to Map</span>
                 </button>
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 font-display tracking-widest whitespace-nowrap"
-                  style={{ background: 'rgba(10,10,20,0.88)', color: '#d4a843', border: '1px solid #6b4c2a', fontSize: '0.8rem', zIndex: 9010 }}>
+                  style={{ background: 'rgba(10,10,20,0.88)', color: '#d4a843', border: '1px solid #6b4c2a', fontSize: '0.8rem', zIndex: Z.RESULT_UI }}>
                   Hold to confirm
                 </div>
               </div>
@@ -239,7 +240,7 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
           ) : (
             <button
               className="w-full py-2 rounded-lg font-display tracking-widest text-sm hover:scale-105 transition-transform relative overflow-hidden"
-              style={{ width: '20rem', position: 'relative', zIndex: 9003, background: '#4da6ff', color: '#fff', border: '2px solid #b8860b', boxShadow: '0 0 14px rgba(77,166,255,0.4), 0 0 10px rgba(184,134,11,0.4)' }}
+              style={{ width: '20rem', position: 'relative', zIndex: Z.RESULT_UI, background: '#4da6ff', color: '#fff', border: '2px solid #b8860b', boxShadow: '0 0 14px rgba(77,166,255,0.4), 0 0 10px rgba(184,134,11,0.4)' }}
               onClick={onExecute}
             >
               <span className="execute-shine" />

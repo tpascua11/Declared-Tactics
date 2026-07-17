@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
 import { ThumosInterpreter } from '../../vfx/ThumosInterpreter';
 import PIXI_DATA from '../../vfx/pixi_data';
+import { Z } from '../shared/zLayers';
 
 // ── Reference: manual spawnBurst (pre-ThumosInterpreter) ──────
 function spawnBurst(app, x, y) {
@@ -56,7 +57,7 @@ export default function EffectsLayer() {
         position: 'fixed',
         inset: '0',
         pointerEvents: 'none',
-        zIndex: '100',
+        zIndex: `${Z.VFX}`,
         background: 'transparent',
         opacity: '0',
       });

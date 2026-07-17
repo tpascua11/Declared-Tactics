@@ -7,6 +7,7 @@
 import { useRef } from 'react';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import '../../battle/handlers';
+import { Z } from '../shared/zLayers';
 
 const CARD_W = 88;   // px  (≈ 5.5rem)
 const CARD_H = 132;  // px  (= 8.25rem, matches Hand card height)
@@ -170,6 +171,7 @@ export default function BattleQueue({ characters, phase, announcement }) {
 
   const containerStyle = {
     position:   'relative',
+    zIndex:     Z.QUEUE_ROW, // lowest battle band — internal z (cards/masks) stays local
     height:     'calc(10rem + 20px)',
     background: 'rgba(0,0,0,0.35)',
     borderTop:    '1px solid rgba(255,255,255,0.08)',

@@ -23,6 +23,7 @@ import TagPool from '../components/battle/TagPool';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
+import { Z } from '../components/shared/zLayers';
 
 // Per-reaction fuse options — same merges the VFX editor previews:
 // DEFLECT keeps the hit css and the clang trails impact (fuse defaults),
@@ -380,7 +381,7 @@ export default function BattleScreen() {
 
       {/* Retarget line overlay — portalled to document.body so it sits outside the CSS-transformed GameCanvas */}
       {lineCoords && createPortal(
-        <svg className="fixed inset-0 pointer-events-none" style={{ zIndex: 9999 }} width="100%" height="100%">
+        <svg className="fixed inset-0 pointer-events-none" style={{ zIndex: Z.TARGETING }} width="100%" height="100%">
           <defs>
             <filter id="arc-glow">
               <feGaussianBlur stdDeviation="2.5" result="blur"/>
@@ -408,7 +409,7 @@ export default function BattleScreen() {
       )}
 
       {gs.phase === 'RESULT' && gs.result === 'WIN' && (
-        <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: 9000, padding: '20%', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.4s ease-in' }}>
+        <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: Z.RESULT, padding: '20%', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.4s ease-in' }}>
           <div style={{
             fontFamily: "'Georgia', serif",
             fontSize: '5rem',
@@ -426,9 +427,10 @@ export default function BattleScreen() {
       {gs.phase === 'RESULT' && gs.result !== 'WIN' && (
         <>
           {/* Dark background layer */}
-          <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 9000, backgroundColor: 'rgba(0,0,0,0.72)', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.8s ease-in' }} />
+          <div className="fixed inset-0 pointer-events-none" style={{ zIndex: Z.RESULT, backgroundColor: 'rgba(0,0,0,0.72)', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.8s ease-in' }} />
           {/* DEFEATED text — above background */}
-          <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: 9002, padding: '20%', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.4s ease-in' }}>
+          {/* Same layer as the backdrop — later in DOM, so it paints above it */}
+          <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: Z.RESULT, padding: '20%', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.4s ease-in' }}>
             <div style={{
               fontFamily: "'Georgia', serif",
               fontSize: '5rem',
@@ -449,7 +451,7 @@ export default function BattleScreen() {
         onClick={() => setRetargetingSlot(null)}
       >
 
-        {/* TOP — Enemy Zone */}
+        {/* ROW 1 — Enemy Zone (flex-1: fills leftover height) */}
         <EnemyZone
           enemies={enemies}
           activeAnimations={activeAnimations}
@@ -462,18 +464,16 @@ export default function BattleScreen() {
           battleBackground={gs.battleBackground}
         />
 
-        {/* MIDDLE — Battle Queue Row */}
+        {/* ROW 2 — Battle Queue timeline (fixed ~180px) */}
         <BattleQueue
           characters={gs.characters}
           phase={gs.phase}
           announcement={announcement}
         />
 
-        {/* BOTTOM — Player Zone */}
-        <div className="flex-shrink-0 flex flex-col">
-
-          {/* Center row: Buff Column | Character Column | Slot Column */}
-          <div className="flex-1 flex items-end justify-center overflow-hidden pt-2 pb-4 max-h-[26rem]" style={{ position: 'relative' }}>
+        {/* ROW 3 — Player row: BattleLog | debuff tags | portrait | buff tags + slots.
+            Content-sized (portrait height + padding), capped at 26rem. */}
+        <div className="flex-shrink-0 flex items-end justify-center overflow-hidden pt-2 pb-4 max-h-[26rem]" style={{ position: 'relative' }}>
 
             {/* Defeat tip — top of player zone, result screen only */}
             {gs.phase === 'RESULT' && gs.result !== 'WIN' && gs.sourceLevel?.defeat_tip && (
@@ -488,7 +488,7 @@ export default function BattleScreen() {
                 fontStyle: 'italic',
                 fontWeight: 500,
                 padding: '8px 12px',
-                zIndex: 9003,
+                zIndex: Z.RESULT_UI,
                 textAlign: 'left',
               }}>
                 {typedTip}
@@ -532,23 +532,21 @@ export default function BattleScreen() {
 
           </div>
 
-          {/* BOTTOM — Hand */}
-          <Hand
-            cards={player.cards}
-            queue={player.queue}
-            totalSlots={effectiveSlots}
-            onCardClick={handleCardClick}
-            disabled={gs.phase !== 'QUEUE_SETUP'}
-            resources={player.resources}
-            ResourceBar={ResourceBar}
-            baseSpeed={player.base_speed}
-            tagPool={player.active_tag_pool}
-            onRestartBattle={handleRestartBattle}
-            isDefeated={gs.phase === 'RESULT' && gs.result !== 'WIN'}
-            allowRetry={!!gs.scenario?.allow_retry}
-          />
-
-        </div>
+        {/* ROW 4 — Hand */}
+        <Hand
+          cards={player.cards}
+          queue={player.queue}
+          totalSlots={effectiveSlots}
+          onCardClick={handleCardClick}
+          disabled={gs.phase !== 'QUEUE_SETUP'}
+          resources={player.resources}
+          ResourceBar={ResourceBar}
+          baseSpeed={player.base_speed}
+          tagPool={player.active_tag_pool}
+          onRestartBattle={handleRestartBattle}
+          isDefeated={gs.phase === 'RESULT' && gs.result !== 'WIN'}
+          allowRetry={!!gs.scenario?.allow_retry}
+        />
 
       </div>
 

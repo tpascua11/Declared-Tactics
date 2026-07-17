@@ -2,6 +2,7 @@
 //  PlayerPortrait — Center focal point of player zone
 // ============================================================
 import { COOL_FOX as fallbackImg } from '../../assets';
+import { Z } from '../shared/zLayers';
 
 export default function PlayerPortrait({ player, activeAnimations = {}, floatingNumbers = [], isVictory = false }) {
   const hpPct = Math.max(0, (player.health / player.max_health) * 100);
@@ -12,8 +13,9 @@ export default function PlayerPortrait({ player, activeAnimations = {}, floating
 
   return (
     <div className="flex flex-col items-center">
-      {/* w-64 h-96 = 256×384 = 2:3 card ratio — relative wrapper lets numbers escape overflow-hidden */}
-      <div className="relative">
+      {/* w-64 h-96 = 256×384 = 2:3 card ratio — relative wrapper lets numbers escape overflow-hidden.
+          CARDS layer: battlefield entity — above the queue row, below VFX and hand UI. */}
+      <div className="relative" style={{ zIndex: Z.CARDS }}>
       <div
         data-character-id={player.id}
         className={`relative w-[14rem] h-[21rem] rounded-2xl border-4 border-[#4da6ff]
