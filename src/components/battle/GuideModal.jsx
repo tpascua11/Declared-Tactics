@@ -5,6 +5,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import '../shared/shine-btn.css';
+import { Z } from '../shared/zLayers';
 import '../../vfx/aura_animations.css';
 import { playSelectSfx } from '../../vfx/animationRegistry';
 import {
@@ -126,8 +127,11 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
     return () => clearTimeout(t);
   }, [page]);
 
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70" style={{ paddingBottom: nudgeUp }} onClick={onClose}>
+  // Portalled to document.body: inside the CSS-transformed GameCanvas the modal's
+  // z-index is trapped below the body-level Pixi canvas (Z.VFX) — at body level
+  // Z.MODAL genuinely wins, so VFX plays behind the modal.
+  return createPortal(
+    <div className="fixed inset-0 flex items-center justify-center bg-black/70" style={{ zIndex: Z.MODAL, paddingBottom: nudgeUp }} onClick={onClose}>
       <div
         className="relative w-[80%] max-w-2xl bg-gray-900 border border-white/20 rounded-lg p-8 text-white font-mono flex flex-col"
         style={{ height: '54rem' }}
@@ -183,8 +187,9 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
         {page === 2 && (
           <div ref={page2Ref} className="relative">
             {/* SVG targeting lines — portalled to body so viewport coords align exactly */}
+            {/* Same layer as the modal — appended to body later, so it paints above it */}
             {guideLines && createPortal(
-              <svg className="fixed inset-0 pointer-events-none" style={{ zIndex: 9999, width: '100%', height: '100%' }}>
+              <svg className="fixed inset-0 pointer-events-none" style={{ zIndex: Z.MODAL, width: '100%', height: '100%' }}>
                 <defs>
                   <filter id="guide-glow">
                     <feGaussianBlur stdDeviation="2.5" result="blur"/>
@@ -515,6 +520,7 @@ export default function GuideModal({ onClose, nudgeUp = 0 }) {
           ✕
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

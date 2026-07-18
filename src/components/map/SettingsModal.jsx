@@ -1,15 +1,19 @@
+import { createPortal } from 'react-dom';
 import { useMusicVolume, useUiVolume, useSfxVolume } from '../../hooks/useMusic';
 import { playSelectSfx } from '../../vfx/animationRegistry';
+import { Z } from '../shared/zLayers';
 
 export default function SettingsModal({ onClose }) {
   const [musicVolume, setMusicVolume] = useMusicVolume();
   const [uiVolume, setUiVolume] = useUiVolume();
   const [sfxVolume, setSfxVolume] = useSfxVolume();
 
-  return (
+  // Portalled to document.body so Z.MODAL beats the body-level Pixi canvas —
+  // inside the transformed GameCanvas any z-index is trapped below it.
+  return createPortal(
     <div
       style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
+        position: 'fixed', inset: 0, zIndex: Z.MODAL,
         background: 'rgba(0,0,0,0.72)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
@@ -100,6 +104,7 @@ export default function SettingsModal({ onClose }) {
           CLOSE
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

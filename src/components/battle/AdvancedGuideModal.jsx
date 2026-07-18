@@ -2,8 +2,10 @@
 //  AdvancedGuideModal — Advanced How To Play overlay (template)
 // ============================================================
 
+import { createPortal } from 'react-dom';
 import { FOX_QUICK_STEPS, ENM_SAM_HEAVY_STRIKE_1 } from '../../assets/index.js';
 import { playSelectSfx } from '../../vfx/animationRegistry';
+import { Z } from '../shared/zLayers';
 
 function ExampleCard({ name, image, color, speed }) {
   return (
@@ -52,8 +54,10 @@ function ExampleCard({ name, image, color, speed }) {
 }
 
 export default function AdvancedGuideModal({ onClose, nudgeUp = 0 }) {
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70" style={{ paddingBottom: nudgeUp }} onClick={onClose}>
+  // Portalled to document.body so Z.MODAL beats the body-level Pixi canvas —
+  // inside the transformed GameCanvas any z-index is trapped below it.
+  return createPortal(
+    <div className="fixed inset-0 flex items-center justify-center bg-black/70" style={{ zIndex: Z.MODAL, paddingBottom: nudgeUp }} onClick={onClose}>
       <div
         className="relative w-[80%] max-w-2xl bg-gray-900 border border-white/20 rounded-lg p-8 text-white font-mono"
         onClick={e => e.stopPropagation()}
@@ -113,6 +117,7 @@ export default function AdvancedGuideModal({ onClose, nudgeUp = 0 }) {
           ✕
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

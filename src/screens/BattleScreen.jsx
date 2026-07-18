@@ -472,8 +472,11 @@ export default function BattleScreen() {
         />
 
         {/* ROW 3 — Player row: BattleLog | debuff tags | portrait | buff tags + slots.
-            Content-sized (portrait height + padding), capped at 26rem. */}
-        <div className="flex-shrink-0 flex items-end justify-center overflow-hidden pt-2 pb-4 max-h-[26rem]" style={{ position: 'relative' }}>
+            Content-sized (portrait height + padding), capped at 26rem.
+            Overflow stays visible (like the Hand) so CSS animations can carry the
+            portrait up past the BattleQueue row — clipping here reads as a z-order
+            bug. The root column still clips at the screen edges. */}
+        <div className="flex-shrink-0 flex items-end justify-center overflow-visible pt-2 pb-4 max-h-[26rem]" style={{ position: 'relative' }}>
 
             {/* Defeat tip — top of player zone, result screen only */}
             {gs.phase === 'RESULT' && gs.result !== 'WIN' && gs.sourceLevel?.defeat_tip && (
