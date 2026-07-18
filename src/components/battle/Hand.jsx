@@ -79,50 +79,15 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
     <div className="h-[180px] flex-shrink-0 flex flex-col border-t border-white/10 mb-2"
       style={{ background: 'rgba(0,0,0,0.25)', position: 'relative', zIndex: isDefeated ? Z.RESULT_UI : Z.HAND_UI }}>
 
-      {/* Button row — 3 sections */}
+      {/* Button row — resource bar only (settings/restart/how-to-play moved into left card-area buttons) */}
       {/* Local stacking only — the root above carries the global layer */}
       <div className="flex-shrink-0 flex border-b border-white/10" style={{ height: '2.5rem', position: 'relative', zIndex: isDefeated ? 1 : 0 }}>
 
-        {/* LEFT — settings + restart battle (split inside fixed 25% so resource bar doesn't shift) */}
-        <div className="w-[25%] flex border-r border-white/10">
-          <div
-            className="w-[38%] flex items-center justify-center border-r border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10"
-            style={{ cursor: 'pointer' }}
-            onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
-          >
-            <span className="text-[10px] font-mono tracking-wider relative z-10" style={{ color: '#ffffff' }}>SETTINGS</span>
-          </div>
-          <div
-            className={`flex-1 flex items-center justify-center transition-colors relative overflow-hidden select-none hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
-            style={{ cursor: 'pointer' }}
-            onMouseDown={handleHoldStart}
-            onMouseUp={handleHoldEnd}
-            onMouseLeave={handleHoldEnd}
-            onTouchStart={handleHoldStart}
-            onTouchEnd={handleHoldEnd}
-          >
-            <span className="text-[10px] font-mono tracking-wider relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : '#ffffff', textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>HOLD TO RESTART BATTLE</span>
-            {holdProgress > 0 && (
-              <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
-            )}
-          </div>
-        </div>
-
-        {/* MIDDLE — resource bar */}
         <div className="flex-1 flex items-center justify-center px-6">
           {ResourceBar && resources
             ? <ResourceBar resources={resources} planned={disabled ? {} : planned} plannedGain={disabled ? {} : plannedGain} />
             : <div className="w-full h-5 rounded-full bg-gray-700/60" />
           }
-        </div>
-
-        {/* RIGHT — how to play */}
-        <div
-          className="w-[25%] flex items-center justify-center border-l border-white/10 transition-colors relative overflow-hidden select-none hover:bg-white/10"
-          style={{ cursor: 'pointer' }}
-          onClick={() => { playSelectSfx(); setGuideOpen(true); }}
-        >
-          <span className="text-[11px] font-mono tracking-widest relative z-10" style={{ color: '#ffffff' }}>HOW TO PLAY</span>
         </div>
 
         {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
@@ -131,8 +96,22 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
 
       </div>
 
-      {/* Card area — cards sit at the bottom with breathing room */}
-      <div className="flex-1 flex items-start justify-center px-4 pt-2">
+      {/* Card area — 3 sections: left 10% / middle 80% / right 10% */}
+      <div className="flex-1 flex items-start">
+
+        {/* LEFT — 10% — template buttons */}
+        <div className="w-[10%] h-full flex flex-col gap-2">
+          {[1, 2, 3].map(n => (
+            <button
+              key={n}
+              type="button"
+              className="flex-1 w-full flex items-center justify-center text-[11px] font-mono border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+            />
+          ))}
+        </div>
+
+        {/* MIDDLE — 80% — cards sit at the bottom with breathing room */}
+        <div className="w-[80%] h-full flex items-start justify-center px-4 pt-2">
         {cards.map((card, idx) => {
           const influence = projectedSpeedInfluence(tagPool, queue, nextSlotIndex);
           const wouldSpeed = nextSlotIndex >= 0
@@ -230,6 +209,40 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
             </div>
           );
         })}
+        </div>
+
+        {/* RIGHT — 10% — settings / restart / how to play */}
+        <div className="w-[10%] h-full flex flex-col gap-2">
+          <button
+            type="button"
+            className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+            onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
+          >
+            SETTINGS
+          </button>
+          <button
+            type="button"
+            className={`flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded relative overflow-hidden select-none transition-colors hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
+            onMouseDown={handleHoldStart}
+            onMouseUp={handleHoldEnd}
+            onMouseLeave={handleHoldEnd}
+            onTouchStart={handleHoldStart}
+            onTouchEnd={handleHoldEnd}
+          >
+            <span className="relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : undefined, textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>RESTART</span>
+            {holdProgress > 0 && (
+              <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
+            )}
+          </button>
+          <button
+            type="button"
+            className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+            onClick={() => { playSelectSfx(); setGuideOpen(true); }}
+          >
+            HOW TO PLAY
+          </button>
+        </div>
+
       </div>
     </div>
   );
