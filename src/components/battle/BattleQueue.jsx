@@ -174,12 +174,17 @@ export default function BattleQueue({ characters, phase, announcement }) {
   const [entry, setEntry] = useState('pre');
   useEffect(() => {
     if (phase !== 'BATTLE') { setEntry('pre'); return; }
-    let raf2;
+    let raf2, timer;
     const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => setEntry('flying'));
+      raf2 = requestAnimationFrame(() => {
+        setEntry('flying');
+        // In-flight transitions keep the stagger delay they started with, so
+        // 'done' can follow immediately — this just ensures the first
+        // BATTLE_STEP re-render doesn't inherit the entrance stagger.
+        timer = setTimeout(() => setEntry('done'), 50);
+      });
     });
-    const timer = setTimeout(() => setEntry('done'), 1100);
-    return () => { cancelAnimationFrame(raf1); if (raf2) cancelAnimationFrame(raf2); clearTimeout(timer); };
+    return () => { cancelAnimationFrame(raf1); if (raf2) cancelAnimationFrame(raf2); if (timer) clearTimeout(timer); };
   }, [phase]);
 
 

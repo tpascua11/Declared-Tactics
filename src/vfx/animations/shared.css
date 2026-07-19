@@ -265,3 +265,14 @@
   animation: execute_shine_sweep 2.4s ease-in-out infinite;
   pointer-events: none;
 }
+
+/* ── Action Queue: current-action pulse ──────────────────────
+   Marks the next slot up for execution while battle resolves.
+   ─────────────────────────────────────────────────────────── */
+@keyframes queue_slot_pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(255,255,255,0.35), inset 0 0 4px rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.55); }
+  50%      { box-shadow: 0 0 16px rgba(255,255,255,0.9), inset 0 0 8px rgba(255,255,255,0.25); border-color: rgba(255,255,255,1); }
+}
+.queue-slot-current {
+  animation: queue_slot_pulse 1s ease-in-out infinite;
+}

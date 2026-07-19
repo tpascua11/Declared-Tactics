@@ -28,6 +28,18 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
   const filledCount = queue.filter(Boolean).length;
   const canExecute = !isBattling && filledCount > 0 && filledCount >= totalSlots;
 
+  // Freeze the queue's visual layout the moment battle starts, so executed
+  // cards fade out in place instead of the row shifting left as the real
+  // (engine) queue is consumed via slice(1).
+  const frozenQueueRef = useRef(null);
+  if (isBattling && !frozenQueueRef.current) {
+    frozenQueueRef.current = queue.filter(Boolean);
+  }
+  if (!isBattling) frozenQueueRef.current = null;
+
+  const frozenQueue = frozenQueueRef.current;
+  const consumedCount = frozenQueue ? frozenQueue.length - filledCount : 0;
+
   const [holdProgress, setHoldProgress] = useState(0);
   const holdIntervalRef = useRef(null);
 
@@ -71,19 +83,25 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
           </div>
         )}
         {Array.from({ length: totalSlots }).map((_, i) => {
-          const slot = queue[i];
-          const borderColor = slot ? slot.color : '#ffffff22';
+          const slot = frozenQueue ? frozenQueue[i] : queue[i];
+          const isConsumed = frozenQueue ? i < consumedCount : false;
+          const isCurrent  = frozenQueue ? i === consumedCount && slot : false;
+          const borderColor = isCurrent ? '#ffffff' : (slot ? slot.color : '#ffffff22');
           return (
             <div key={i} className="relative flex flex-row overflow-visible">
-            {i > 0 && (
-              <div className="flex items-center justify-center pointer-events-none" style={{ height: '8.25rem', width: '1rem', marginLeft: '-4px' }}>
-                <span className="text-lg font-mono font-bold" style={{
-                  color: queue[i - 1] ? '#ffffffcc' : '#ffffff44',
-                  textShadow: queue[i - 1] ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none',
-                  transition: 'color 0.2s, text-shadow 0.2s',
-                }}>→</span>
-              </div>
-            )}
+            {i > 0 && (() => {
+              const prevSlot = frozenQueue ? frozenQueue[i - 1] : queue[i - 1];
+              const prevActive = prevSlot && !(frozenQueue && (i - 1) < consumedCount);
+              return (
+                <div className="flex items-center justify-center pointer-events-none" style={{ height: '8.25rem', width: '1rem', marginLeft: '-4px' }}>
+                  <span className="text-lg font-mono font-bold" style={{
+                    color: prevActive ? '#ffffffcc' : '#ffffff44',
+                    textShadow: prevActive ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none',
+                    transition: 'color 0.2s, text-shadow 0.2s',
+                  }}>→</span>
+                </div>
+              );
+            })()}
             <div className="relative flex flex-col overflow-visible" style={{ width: '5.5rem' }}>
 
               {/* Target box */}
@@ -129,13 +147,16 @@ export default function ActionQueue({ queue, totalSlots, enemies, retargetingSlo
               {/* Card — hover and click isolated here */}
               <div
                 onClick={() => slot && !isBattling && onClearSlot(i)}
-                className={`flex flex-col transition-all duration-200 ${slot ? 'cursor-pointer hover:scale-105 hover:-translate-y-1' : 'border-dashed'}`}
+                className={`flex flex-col transition-all duration-200 ${slot && !isBattling ? 'cursor-pointer hover:scale-105 hover:-translate-y-1' : 'border-dashed'} ${isCurrent ? 'queue-slot-current' : ''}`}
                 style={{
                   height: '8.25rem',
                   background: '#09090f',
-                  border: `2px ${slot ? 'solid' : 'dashed'} ${borderColor}`,
+                  border: `2px solid ${isConsumed ? '#ffffff33' : borderColor}`,
                   borderRadius: '3px',
-                  boxShadow: slot ? `0 0 10px ${slot.color}55, inset 0 0 6px ${slot.color}11` : 'none',
+                  boxShadow: slot && !isConsumed ? `0 0 10px ${slot.color}55, inset 0 0 6px ${slot.color}11` : 'none',
+                  opacity: isConsumed ? 0.35 : 1,
+                  filter: isConsumed ? 'grayscale(1)' : 'none',
+                  transition: 'opacity 0.5s ease, filter 0.5s ease, transform 0.2s, border-color 0.3s, box-shadow 0.3s',
                   isolation: 'isolate',
                 }}
               >
