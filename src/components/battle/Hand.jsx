@@ -131,7 +131,7 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
                     transition-all duration-200
                     ${isDisabled
                       ? 'cursor-not-allowed border-gray-700 hover:z-50'
-                      : 'cursor-pointer hover:-translate-y-8 hover:scale-110 hover:z-50'
+                      : 'cursor-pointer hover:-translate-y-8 hover:scale-110 hover:z-50 active:scale-95 active:brightness-90 active:duration-75'
                     }`}
                   style={{
                     marginLeft: idx > 0 ? '-18px' : '0',
