@@ -58,6 +58,7 @@ export default function BattleScreen() {
   const [resultVisible, setResultVisible] = useState(false);
   const [typedTip, setTypedTip] = useState('');
   const [announcement, setAnnouncement] = useState(null);
+  const [logVisible, setLogVisible] = useState(true);
   const floatIdRef = useRef(0);
   const floatTimersRef = useRef([]);
   const animClearTimersRef = useRef([]);
@@ -499,7 +500,7 @@ export default function BattleScreen() {
             )}
 
             {/* Battle Log — absolutely positioned in left column space, does not affect flex layout */}
-            <BattleLog logs={gs.logs} turn={gs.turn} />
+            {logVisible && <BattleLog logs={gs.logs} turn={gs.turn} />}
 
             {/* LEFT — Condition tag column (fixed width, right-aligned so buffs hug the gap) */}
             <div style={{ width: '340px', paddingRight: '12px', display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', alignSelf: 'flex-end' }}>
@@ -549,6 +550,8 @@ export default function BattleScreen() {
           onRestartBattle={handleRestartBattle}
           isDefeated={gs.phase === 'RESULT' && gs.result !== 'WIN'}
           allowRetry={!!gs.scenario?.allow_retry}
+          logVisible={logVisible}
+          onToggleLog={() => setLogVisible(v => !v)}
         />
 
       </div>

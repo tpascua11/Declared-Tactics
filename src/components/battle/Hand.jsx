@@ -12,7 +12,7 @@ import AdvancedGuideModal from './AdvancedGuideModal';
 import SettingsModal from '../map/SettingsModal';
 import { Z } from '../shared/zLayers';
 
-export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, tagPool, onRestartBattle, isDefeated, allowRetry }) {
+export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, resources, ResourceBar, baseSpeed, tagPool, onRestartBattle, isDefeated, allowRetry, logVisible, onToggleLog }) {
   const [holdProgress, setHoldProgress] = useState(0);
   const [guideOpen, setGuideOpen] = useState(false);
   const [advancedGuideOpen, setAdvancedGuideOpen] = useState(false);
@@ -83,8 +83,16 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
         {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} onOpenAdvanced={() => { setGuideOpen(false); setAdvancedGuideOpen(true); }} nudgeUp={180} />}
         {advancedGuideOpen && <AdvancedGuideModal onClose={() => setAdvancedGuideOpen(false)} nudgeUp={180} />}
 
-        {/* LEFT — 10% — empty */}
-        <div className="w-[10%] h-full" style={{ background: '#0f0f1a' }} />
+        {/* LEFT — 10% — battle log toggle */}
+        <div className="w-[10%] h-full flex flex-col items-start gap-2 p-2" style={{ background: '#0f0f1a' }}>
+          <button
+            type="button"
+            className={`flex-1 w-1/2 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border rounded transition-colors ${logVisible ? 'border-white/40 bg-white/10 text-white' : 'border-white/20 text-white/70 hover:bg-white/10 hover:text-white'}`}
+            onClick={() => { playSelectSfx(); onToggleLog?.(); }}
+          >
+            LOG
+          </button>
+        </div>
 
         {/* MIDDLE — 80% — resource bar (same position as before) + cards below */}
         <div className="w-[80%] h-full flex flex-col border border-white/10 rounded-2xl">

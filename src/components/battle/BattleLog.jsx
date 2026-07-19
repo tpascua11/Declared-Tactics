@@ -2,8 +2,6 @@
 //  BattleLog — Fixed panel in the left column of the player zone
 // ============================================================
 
-import { useEffect, useRef } from 'react';
-
 const LOG_COLORS = {
   dmg:   'text-[#e94560]',
   heal:  'text-green-400',
@@ -14,65 +12,54 @@ const LOG_COLORS = {
   normal:'text-gray-400',
 };
 
-export default function BattleLog({ logs, turn }) {
-  const scrollRef = useRef(null);
+// Ambient display only fades in the newest 14 lines — full history still
+// lives in gs.logs untouched; the LOG button's full view reads that directly.
+const MAX_AMBIENT_LINES = 14;
 
-  useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [logs]);
+function opacityForAge(ageFromNewest) {
+  if (ageFromNewest < 4) return 1;
+  if (ageFromNewest < 9) return 0.55;
+  return 0.25;
+}
+
+export default function BattleLog({ logs, turn }) {
+  const visibleLogs = logs.slice(-MAX_AMBIENT_LINES);
+  const firstIndex = logs.length - visibleLogs.length;
 
   return (
-    <>
-      <style>{`
-        .battle-log-scroll::-webkit-scrollbar { width: 4px; }
-        .battle-log-scroll::-webkit-scrollbar-thumb { background: transparent; border-radius: 2px; transition: background 0.2s; }
-        .battle-log-scroll::-webkit-scrollbar-track { background: transparent; }
-        .battle-log-scroll:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
-        .battle-log-scroll { scrollbar-width: thin; scrollbar-color: transparent transparent; }
-        .battle-log-scroll:hover { scrollbar-color: rgba(255,255,255,0.2) transparent; }
-      `}</style>
-      <div
-        style={{
-          position:     'absolute',
-          left:         0,
-          top:          0,
-          bottom:       0,
-          width:        '600px',
-          background:   'rgba(9,9,15,0.72)',
-          border:       '1px solid rgba(255,255,255,0.07)',
-          borderRadius: '3px',
-          display:      'flex',
-          flexDirection:'column',
-          zIndex:       5,
-          willChange:   'transform',
-        }}
-      >
-        {/* Header */}
-        <div
-          className="flex-shrink-0 px-3 py-[5px] border-b border-white/[0.06]"
-          style={{ background: '#131320' }}
-        >
-          <span className="text-[9px] font-mono tracking-widest text-gray-500">
-            BATTLE LOG — T{turn}
-          </span>
-        </div>
-
-        {/* Entries */}
-        <div
-          ref={scrollRef}
-          className="battle-log-scroll flex-1 overflow-y-auto flex flex-col gap-[3px]"
-          style={{ padding: '6px 10px' }}
-        >
-          {logs.map((l, i) => (
-            <div
-              key={i}
-              className={`text-[17px] font-mono leading-tight ${LOG_COLORS[l.type] ?? LOG_COLORS.normal}`}
-            >
-              {l.msg}
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+    <div
+      style={{
+        position:      'absolute',
+        left:          0,
+        top:           0,
+        bottom:        0,
+        width:         '600px',
+        display:       'flex',
+        flexDirection: 'column',
+        justifyContent:'flex-end',
+        overflow:      'hidden',
+        zIndex:        5,
+        pointerEvents: 'none',
+        border:        '1px solid rgba(255,255,255,0.06)',
+        borderRadius:  '3px',
+        padding:       '6px 10px',
+        gap:           '3px',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 15%)',
+        maskImage:       'linear-gradient(to bottom, transparent 0%, black 15%)',
+      }}
+    >
+      {visibleLogs.map((l, i) => {
+        const ageFromNewest = visibleLogs.length - 1 - i;
+        return (
+          <div
+            key={firstIndex + i}
+            className={`text-[17px] font-mono leading-tight transition-opacity duration-500 ${LOG_COLORS[l.type] ?? LOG_COLORS.normal}`}
+            style={{ opacity: opacityForAge(ageFromNewest) }}
+          >
+            {l.msg}
+          </div>
+        );
+      })}
+    </div>
   );
 }
