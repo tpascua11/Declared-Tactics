@@ -4,7 +4,7 @@
 //  Only visible during BATTLE phase
 // ============================================================
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import '../../battle/handlers';
 import { Z } from '../shared/zLayers';
@@ -168,6 +168,20 @@ export default function BattleQueue({ characters, phase, announcement }) {
   }
   if (phase !== 'BATTLE') initialLengthsRef.current = null;
 
+  // Entrance animation: 'pre' renders cards offscreen at their faction's side,
+  // 'flying' moves them to real positions (staggered outward from center),
+  // 'done' drops the stagger delay so mid-battle slide-overs stay snappy.
+  const [entry, setEntry] = useState('pre');
+  useEffect(() => {
+    if (phase !== 'BATTLE') { setEntry('pre'); return; }
+    let raf2;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setEntry('flying'));
+    });
+    const timer = setTimeout(() => setEntry('done'), 1100);
+    return () => { cancelAnimationFrame(raf1); if (raf2) cancelAnimationFrame(raf2); clearTimeout(timer); };
+  }, [phase]);
+
 
   const containerStyle = {
     position:   'relative',
@@ -251,8 +265,11 @@ export default function BattleQueue({ characters, phase, announcement }) {
       {slots.map(({ action, slot }) => {
         const distance = Math.abs(slot);
         const scale    = distance === 0 ? 1 : scaleForDistance(distance);
-        const xOffset  = slot * (CARD_W + GAP);
-        const opacity  = distance === 0 ? 1 : Math.max(0.3, 1 - distance * 0.22);
+        // Center card enters from its owner's side; others from their fan side.
+        const fromSide = slot !== 0 ? Math.sign(slot) : (action._char.faction === 'enemy' ? -1 : 1);
+        const pre      = entry === 'pre';
+        const xOffset  = slot * (CARD_W + GAP) + (pre ? fromSide * 640 : 0);
+        const opacity  = pre ? 0 : (distance === 0 ? 1 : Math.max(0.3, 1 - distance * 0.22));
 
         return (
           <div
@@ -264,6 +281,7 @@ export default function BattleQueue({ characters, phase, announcement }) {
               transform:       `translateY(-50%) scale(${scale})`,
               transformOrigin: 'center center',
               transition:      'left 0.45s cubic-bezier(0.4,0,0.2,1), transform 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.45s ease',
+              transitionDelay: entry === 'flying' ? `${distance * 0.06}s` : '0s',
               zIndex:          distance === 0 ? 10 : Math.max(1, 9 - distance),
               opacity,
             }}

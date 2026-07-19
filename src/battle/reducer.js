@@ -181,7 +181,7 @@ export function battleReducer(state, action) {
       const firstActiveEnemyId = firstOwner?.faction === 'enemy'
         ? firstAction.owner_id
         : firstTarget?.faction === 'enemy' ? firstAction.target_id : null;
-      return { ...state, characters: startChars, phase: 'BATTLE', logs: turnStartLogs, activeEnemyId: firstActiveEnemyId, pendingAnimation: [] };
+      return { ...state, characters: startChars, phase: 'BATTLE', stepCount: 0, logs: turnStartLogs, activeEnemyId: firstActiveEnemyId, pendingAnimation: [] };
     }
 
     case 'BATTLE_STEP': {
@@ -323,6 +323,7 @@ export function battleReducer(state, action) {
         ...newState,
         phase: 'BATTLE',
         stepCount: state.stepCount + 1,
+        totalCount: (state.totalCount ?? 0) + 1,
         logs: [...state.logs, ...newLogs],
         pendingAnimation,
         activeEnemyId,
@@ -390,6 +391,7 @@ export function battleReducer(state, action) {
         result: null,
         turn: 1,
         stepCount: 0,
+        totalCount: 0,
         characters,
         enemyBench: newBench,
         currentStageIndex: checkpoint.stageIndex,

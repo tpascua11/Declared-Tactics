@@ -86,6 +86,7 @@ export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
     enemyBench,
     logs: [{ msg: '⚔️  System Ready. Queue your actions and execute.', type: 'info' }],
     stepCount: 0,
+    totalCount: 0,
     pendingAnimation: [],
     activeEnemyId: null,
     lastTargetId: characters.find(c => c.faction === 'enemy' && c.health > 0)?.id ?? null,
