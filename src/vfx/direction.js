@@ -3,5 +3,5 @@
 // instead of hardcoding a sign — that keeps one preset working for both
 // player and enemy forever, with no per-animation direction logic.
 export function getForwardSign(faction) {
-  return faction === 'enemy' ? -1 : 1;
+  return faction === 'enemy' ? 1 : -1;
 }

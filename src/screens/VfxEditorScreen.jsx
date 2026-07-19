@@ -7,6 +7,7 @@ import { PORTRAIT_SAMURAI, ENEMY_WOLF_SAMURAI } from '../assets';
 import { ANIMATIONS, playBattleSfx } from '../vfx/animationRegistry';
 import PIXI_DATA from '../vfx/pixi_data';
 import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
+import { getForwardSign } from '../vfx/direction';
 import fuseDeflect from '../vfx/fuseDeflect';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import EffectsLayer from '../components/battle/EffectsLayer';
@@ -49,6 +50,9 @@ export default function VfxEditorScreen() {
   const [jsonError, setJsonError]   = useState(null);
   // null | 'deflect' | 'avoid' — mutually exclusive reaction toggles
   const [reaction, setReaction]     = useState(null);
+  // Which side is the attacker (config.css.owner) vs defender (config.css.target) —
+  // lets the editor preview an animation's --dir mirroring on the enemy side too.
+  const [attackerIsEnemy, setAttackerIsEnemy] = useState(false);
   // Which animation each reaction fuses in — editable per-reaction
   const [reactionAnims, setReactionAnims] = useState(
     Object.fromEntries(Object.entries(REACTIONS).map(([k, r]) => [k, r.defaultAnim]))
@@ -94,15 +98,21 @@ export default function VfxEditorScreen() {
       if (config.css) {
         const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
         const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
+        if (enemyEl)  enemyEl.style.setProperty('--dir', String(getForwardSign('enemy')));
+        if (playerEl) playerEl.style.setProperty('--dir', String(getForwardSign('player')));
+        // config.css.owner is the attacker, config.css.target is the defender —
+        // normally player attacks enemy; the toggle flips which element plays which.
+        const attackerEl = attackerIsEnemy ? enemyEl : playerEl;
+        const defenderEl = attackerIsEnemy ? playerEl : enemyEl;
         (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
           const p = CSS_PRESETS[preset];
-          if (!p || !enemyEl) return;
-          setTimeout(() => playPreset(enemyEl, p, { duration, iterations }), start);
+          if (!p || !defenderEl) return;
+          setTimeout(() => playPreset(defenderEl, p, { duration, iterations }), start);
         });
         (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
           const p = CSS_PRESETS[preset];
-          if (!p || !playerEl) return;
-          setTimeout(() => playPreset(playerEl, p, { duration, iterations }), start);
+          if (!p || !attackerEl) return;
+          setTimeout(() => playPreset(attackerEl, p, { duration, iterations }), start);
         });
       }
       if (config.sfx) {
@@ -135,12 +145,16 @@ export default function VfxEditorScreen() {
       const inlineJson = parsedJson?.length > 0 ? parsedJson : undefined;
       const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
       const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
-      if (enemyEl) {
-        const er = enemyEl.getBoundingClientRect();
-        const target = { x: er.left + er.width / 2, y: er.top + er.height / 2 };
+      // Same attacker/defender swap as the css block above — target is the
+      // defender, owner is the attacker, whichever side that currently is.
+      const attackerEl = attackerIsEnemy ? enemyEl : playerEl;
+      const defenderEl = attackerIsEnemy ? playerEl : enemyEl;
+      if (defenderEl) {
+        const dr = defenderEl.getBoundingClientRect();
+        const target = { x: dr.left + dr.width / 2, y: dr.top + dr.height / 2 };
         let owner = null;
-        if (playerEl) {
-          const pr = playerEl.getBoundingClientRect();
+        if (attackerEl) {
+          const pr = attackerEl.getBoundingClientRect();
           owner = { x: pr.left + pr.width / 2, y: pr.top + pr.height / 2 };
         }
         window.dispatchEvent(new CustomEvent('play-thumos-animation', {
@@ -241,6 +255,17 @@ export default function VfxEditorScreen() {
               <option key={key} value={key}>{key}</option>
             ))}
           </select>
+
+          <button
+            onClick={() => setAttackerIsEnemy(v => !v)}
+            className={`px-3 py-2 text-xs font-mono rounded tracking-widest transition-colors ${
+              attackerIsEnemy
+                ? 'bg-[#e94560] text-white font-bold'
+                : 'bg-[#1a1a2e] border border-white/20 text-white/60 hover:text-white'
+            }`}
+          >
+            ENEMY ATTACKS {attackerIsEnemy ? 'ON' : 'OFF'}
+          </button>
 
           {Object.keys(REACTIONS).map(key => (
             <div key={key} className="flex items-center gap-1">
