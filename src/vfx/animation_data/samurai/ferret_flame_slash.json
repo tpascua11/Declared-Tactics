@@ -1,0 +1,23 @@
+{
+  "name": "ferret_flame_slash",
+  "duration": 1400,
+  "sfx": [
+    { "src": "STEP.wav", "start": 0,   "volume": 0.6 },
+    { "src": "STEP.wav", "start": 105, "volume": 0.6 },
+    { "src": "STEP.wav", "start": 210, "volume": 0.6 },
+    { "src": "STEP.wav", "start": 300, "volume": 0.6 },
+    { "src": "SWORD_SWING.wav", "start": 300, "volume": 0.7 },
+    { "src": "FLAMES", "start": 400, "volume": 0.8 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "flame_impact", "start": 400, "duration": 984 }
+    ],
+    "owner": [
+      { "preset": "ferret_zigzag",      "start": 0,   "duration": 300 },
+      { "preset": "ferret_flame_lunge", "start": 300, "duration": 100 },
+      { "preset": "ferret_flame_return","start": 400, "duration": 280 }
+    ]
+  },
+  "floatingNumber": { "color": "#f97316" }
+}

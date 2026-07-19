@@ -1,0 +1,20 @@
+{
+  "name": "ferret_slice",
+  "duration": 705,
+  "sfx": [
+    { "src": "STEP.wav", "start": 0,   "volume": 0.6 },
+    { "src": "STEP.wav", "start": 200, "volume": 0.6 },
+    { "src": "SLICE_1.wav", "start": 375, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "heavy_shake", "start": 375, "duration": 330 }
+    ],
+    "owner": [
+      { "preset": "ferret_wiggle",    "start": 0,   "duration": 285 },
+      { "preset": "ferret_lunge_snap", "start": 285, "duration": 90 },
+      { "preset": "ferret_return",    "start": 375, "duration": 275 }
+    ]
+  },
+  "floatingNumber": { "color": "#ff4444" }
+}

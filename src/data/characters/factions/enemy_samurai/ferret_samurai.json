@@ -21,7 +21,7 @@
       "speed_mod": -10,
       "payload_type": "PHYSICAL",
       "tag_type": ["PHYSICAL", "SLASH"],
-      "animation": "heavy_slice",
+      "animation": "ferret_slice",
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
@@ -50,7 +50,7 @@
       "speed_mod": 0,
       "payload_type": "MAGIC",
       "tag_type": ["MAGIC", "FIRE"],
-      "animation": "flame_strike",
+      "animation": "ferret_flame_slash",
       "animation_intensity": 0.8,
       "properties": [],
       "tags": {

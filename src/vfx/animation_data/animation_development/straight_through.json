@@ -1,0 +1,13 @@
+{
+  "name": "straight_through",
+  "duration": 250,
+  "sfx": [
+    { "src": "WIND_1.wav", "start": 0, "volume": 0.7 },
+    { "src": "STEP.wav", "start": 0, "volume": 0.6 }
+  ],
+  "css": {
+    "owner": [
+      { "preset": "straight_through", "start": 0, "duration": 250 }
+    ]
+  }
+}

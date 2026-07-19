@@ -1,0 +1,82 @@
+[
+  {
+    "name": "spark slash trail",
+    "delay": 184,
+    "speed": 80,
+    "emitAngle": "auto",
+    "rate": 25,
+    "sizeMin": 8,
+    "sizeMax": 26,
+    "lifetime": 0.75,
+    "spreadX": 60,
+    "spreadY": 15,
+    "gravity": 20,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#ffdd44",
+      "#ff6600"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -130,
+      "fromY": -130,
+      "dx": 260,
+      "dy": 260,
+      "duration": 130
+    }
+  },
+  {
+    "name": "flame slash",
+    "delay": 464,
+    "speed": 160,
+    "emitAngle": "auto",
+    "rate": 35,
+    "sizeMin": 10,
+    "sizeMax": 28,
+    "lifetime": 0.5,
+    "spreadX": 80,
+    "spreadY": 80,
+    "gravity": 25,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 380,
+    "colorStops": [
+      "#ffdd44",
+      "#ff6600",
+      "#ff2200"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -130,
+      "fromY": -130,
+      "dx": 260,
+      "dy": 260,
+      "duration": 240
+    }
+  },
+  {
+    "name": "impact burst",
+    "delay": 904,
+    "offsetX": 90,
+    "offsetY": 90,
+    "speed": 480,
+    "angle": 225,
+    "rate": 5,
+    "sizeMin": 10,
+    "sizeMax": 32,
+    "lifetime": 0.6,
+    "spreadX": 200,
+    "spreadY": 40,
+    "gravity": 35,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 500,
+    "colorStops": [
+      "#ffaa00",
+      "#ff4400",
+      "#aa1100"
+    ]
+  }
+]

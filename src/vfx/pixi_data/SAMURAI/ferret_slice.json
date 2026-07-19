@@ -1,0 +1,50 @@
+[
+  {
+    "delay": 375,
+    "speed": 120,
+    "emitAngle": "auto",
+    "rate": 35,
+    "sizeMin": 1,
+    "sizeMax": 11,
+    "lifetime": 0.8,
+    "spreadX": 20,
+    "spreadY": 80,
+    "gravity": 30,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#ffe066",
+      "#ff6a00"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -120,
+      "fromY": -120,
+      "dx": 240,
+      "dy": 240,
+      "duration": 160
+    }
+  },
+  {
+    "delay": 495,
+    "offsetX": 35,
+    "offsetY": 35,
+    "speed": 350,
+    "angle": 225,
+    "rate": 35,
+    "sizeMin": 3,
+    "sizeMax": 12,
+    "lifetime": 0.5,
+    "spread": 260,
+    "gravity": 100,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 100,
+    "colorStops": [
+      "#ffffff",
+      "#ffe066",
+      "#ff6a00"
+    ]
+  }
+]
