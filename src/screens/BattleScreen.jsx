@@ -69,13 +69,19 @@ export default function BattleScreen() {
   const { ResourceBar } = CLASS_REGISTRY[player.class_id] ?? {};
   const effectiveSlots = getEffectiveActionSlots(player);
 
+  // Single source of truth for result-screen state — everything downstream
+  // (music, overlays, defeat tip, Hand/ActionQueue result buttons) branches off these.
+  const isResult  = gs.phase === 'RESULT';
+  const isVictory = isResult && gs.result === 'WIN';
+  const isDefeat  = isResult && !isVictory;
+
   const battleTrack = gs.music ? MUSIC_REGISTRY[gs.music] : null;
-  const victoryRegistry = gs.result === 'WIN' ? VICTORY_MUSIC : DEFEAT_MUSIC;
+  const victoryRegistry = isVictory ? VICTORY_MUSIC : DEFEAT_MUSIC;
   const victoryTrackId = (victoryRegistry[player.class_id] ?? victoryRegistry.default);
   const victoryTrack = MUSIC_REGISTRY[victoryTrackId];
 
   useMusic(battleTrack, { loop: true, baseVolume: gs.musicVolume ?? 0.2, enabled: gs.phase === 'QUEUE_SETUP' || gs.phase === 'BATTLE', restartKey: gs.retryKey });
-  useMusic(victoryTrack, { loop: false, baseVolume: 0.35, enabled: gs.phase === 'RESULT' });
+  useMusic(victoryTrack, { loop: false, baseVolume: 0.35, enabled: isResult });
 
 
   // ── Cleanup ───────────────────────────────────────────────
@@ -111,14 +117,14 @@ export default function BattleScreen() {
   }
 
   useEffect(() => {
-    if (gs.phase !== 'RESULT') { setResultVisible(false); return; }
+    if (!isResult) { setResultVisible(false); return; }
     const t = setTimeout(() => setResultVisible(true), 400);
     return () => clearTimeout(t);
-  }, [gs.phase]);
+  }, [isResult]);
 
   useEffect(() => {
     const tip = gs.sourceLevel?.defeat_tip;
-    if (gs.phase !== 'RESULT' || gs.result === 'WIN' || !tip) { setTypedTip(''); return; }
+    if (!isDefeat || !tip) { setTypedTip(''); return; }
     setTypedTip('');
     let i = 0;
     const interval = setInterval(() => {
@@ -127,7 +133,7 @@ export default function BattleScreen() {
       if (i >= tip.length) clearInterval(interval);
     }, 18);
     return () => clearInterval(interval);
-  }, [gs.phase, gs.result, gs.sourceLevel?.defeat_tip]);
+  }, [isDefeat, gs.sourceLevel?.defeat_tip]);
 
   // ── Stage Transitions ─────────────────────────────────────
   // Stage-clear shine — fires when advancing to a new stage, completely outside the battle loop.
@@ -367,8 +373,8 @@ export default function BattleScreen() {
   }
 
   function handleExecute() {
-    if (gs.phase === 'RESULT') {
-      onBattleEnd(player.health, gs.result === 'WIN');
+    if (isResult) {
+      onBattleEnd(player.health, isVictory);
       return;
     }
     if (gs.phase !== 'QUEUE_SETUP') return;
@@ -411,7 +417,7 @@ export default function BattleScreen() {
         document.body
       )}
 
-      {gs.phase === 'RESULT' && gs.result === 'WIN' && (
+      {isVictory && (
         <div className="fixed inset-0 flex items-start justify-center pointer-events-none" style={{ zIndex: Z.RESULT, padding: '20%', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.4s ease-in' }}>
           <div style={{
             fontFamily: "'Georgia', serif",
@@ -427,7 +433,7 @@ export default function BattleScreen() {
         </div>
       )}
 
-      {gs.phase === 'RESULT' && gs.result !== 'WIN' && (
+      {isDefeat && (
         <>
           {/* Dark background layer */}
           <div className="fixed inset-0 pointer-events-none" style={{ zIndex: Z.RESULT, backgroundColor: 'rgba(0,0,0,0.72)', opacity: resultVisible ? 1 : 0, transition: 'opacity 1.8s ease-in' }} />
@@ -482,7 +488,7 @@ export default function BattleScreen() {
         <div className="flex-shrink-0 flex items-end justify-center overflow-visible pt-2 pb-4 max-h-[26rem]" style={{ position: 'relative' }}>
 
             {/* Defeat tip — top of player zone, result screen only */}
-            {gs.phase === 'RESULT' && gs.result !== 'WIN' && gs.sourceLevel?.defeat_tip && (
+            {isDefeat && gs.sourceLevel?.defeat_tip && (
               <div style={{
                 position: 'absolute',
                 top: '0.5rem',
@@ -510,7 +516,7 @@ export default function BattleScreen() {
             </div>
 
             {/* CENTER — Character column */}
-            <PlayerPortrait player={player} activeAnimations={activeAnimations} floatingNumbers={floatingNumbers} isVictory={gs.phase === 'RESULT' && gs.result === 'WIN'} />
+            <PlayerPortrait player={player} activeAnimations={activeAnimations} floatingNumbers={floatingNumbers} isVictory={isVictory} />
 
             {/* RIGHT — Advanced tag column + Slot column */}
             <div style={{ width: '340px', paddingLeft: '12px', display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: '12px' }}>
@@ -524,7 +530,7 @@ export default function BattleScreen() {
                 onRetargetBoxClick={handleRetargetBoxClick}
                 onExecute={handleExecute}
                 isBattling={gs.phase === 'BATTLE'}
-                isResult={gs.phase === 'RESULT'}
+                isResult={isResult}
                 result={gs.result}
                 fizzlingCard={gs.pendingAnimation?.find(a => a.type === 'fizzle') ? { name: gs.pendingAnimation.find(a => a.type === 'fizzle').cardName } : null}
                 tagPool={player.active_tag_pool}
@@ -550,7 +556,7 @@ export default function BattleScreen() {
           baseSpeed={player.base_speed}
           tagPool={player.active_tag_pool}
           onRestartBattle={handleRestartBattle}
-          isDefeated={gs.phase === 'RESULT' && gs.result !== 'WIN'}
+          isDefeated={isDefeat}
           allowRetry={!!gs.scenario?.allow_retry}
           logVisible={logVisible}
           onToggleLog={() => setLogVisible(v => !v)}

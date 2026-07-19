@@ -16,8 +16,9 @@
 //  A parent with a z-index TRAPS its children: a child's z-index
 //  only counts inside that parent's stacking context. If a child
 //  must reach a global layer (e.g. the defeat-screen restart strip),
-//  its ancestors must not pin it under a lower layer — see Hand.jsx,
-//  which lifts its whole root to RESULT_UI when defeated.
+//  lift only that child, not its ancestors — otherwise the ancestor's
+//  whole subtree escapes layers it should still sit under (e.g. the
+//  result-dim overlay). See Hand.jsx's button-strip wrapper.
 // ============================================================
 
 export const Z = {

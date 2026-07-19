@@ -73,11 +73,16 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
   const restartFaded = isDefeated && !allowRetry;
 
   return (
-    // Whole hand is UI above the battlefield (HAND_UI). On defeat it lifts to
-    // RESULT_UI so the restart strip stays clickable above the result dim —
-    // children (cards, tooltips, strip) are trapped in this stacking context.
+    // Hand stays pinned at HAND_UI (below RESULT) so the shared result-dim
+    // overlay darkens it naturally on defeat — no per-element dimming needed.
+    // Only the button strip lifts to RESULT_UI, so it stays clickable/legible
+    // above the dim; see the wrapper below.
+    // Lesson learned here: Hand used to lift its WHOLE root to RESULT_UI for
+    // this, which dragged everything (cards, LOG, resource bar) out from
+    // under the dim and broke the darkening. Always scope a z-index lift to
+    // the exact element that needs it — never a shared ancestor.
     <div className="h-[180px] flex-shrink-0 flex mb-2"
-      style={{ background: 'rgba(0,0,0,0.25)', position: 'relative', zIndex: isDefeated ? Z.RESULT_UI : Z.HAND_UI }}>
+      style={{ background: 'rgba(0,0,0,0.25)', position: 'relative', zIndex: Z.HAND_UI }}>
 
         {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
         {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} onOpenAdvanced={() => { setGuideOpen(false); setAdvancedGuideOpen(true); }} nudgeUp={180} />}
@@ -214,7 +219,8 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
             type="button"
             className="flex-1 w-1/2 invisible flex items-center justify-center text-[11px] font-mono border border-white/20 rounded text-white/70"
           />
-          <div className="flex-[3] w-1/2 flex flex-col gap-2 border border-white/10 rounded p-1">
+          <div className="flex-[3] w-1/2 flex flex-col gap-2 border border-white/10 rounded p-1"
+            style={{ position: 'relative', zIndex: isDefeated ? Z.RESULT_UI : 'auto' }}>
             <button
               type="button"
               className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
