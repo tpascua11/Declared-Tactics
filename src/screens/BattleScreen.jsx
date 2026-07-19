@@ -11,7 +11,7 @@ import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/Music/index';
 import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
-import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
+import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
 import fuseDeflect from '../vfx/fuseDeflect';
 import '../vfx/animations.css';
@@ -251,15 +251,21 @@ export default function BattleScreen() {
         const ownerFaction  = gs.characters.find(c => c.id === anim.ownerId)?.faction;
         if (targetEl) targetEl.style.setProperty('--dir', String(getForwardSign(targetFaction)));
         if (ownerEl)  ownerEl.style.setProperty('--dir', String(getForwardSign(ownerFaction)));
-        (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
+        (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations, ...params }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !targetEl) return;
-          setTimeout(() => playPreset(targetEl, p, { duration, iterations }), start);
+          setTimeout(() => {
+            applyDynamicVars(targetEl, params);
+            playPreset(targetEl, p, { duration, iterations });
+          }, start);
         });
-        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
+        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations, ...params }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !ownerEl) return;
-          setTimeout(() => playPreset(ownerEl, p, { duration, iterations }), start);
+          setTimeout(() => {
+            applyDynamicVars(ownerEl, params);
+            playPreset(ownerEl, p, { duration, iterations });
+          }, start);
         });
 
         // activeAnimations also gates EnemyZone's death-fade (isDead && !anim) —

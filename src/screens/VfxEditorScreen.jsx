@@ -4,15 +4,15 @@
 
 import { useState, useEffect } from 'react';
 import { PORTRAIT_SAMURAI, ENEMY_WOLF_SAMURAI } from '../assets';
-import { ANIMATIONS, playBattleSfx } from '../vfx/animationRegistry';
+import { ANIMATIONS, ANIMATION_DEVELOPMENT_KEYS, playBattleSfx } from '../vfx/animationRegistry';
 import PIXI_DATA from '../vfx/pixi_data';
-import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
+import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
 import fuseDeflect from '../vfx/fuseDeflect';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import EffectsLayer from '../components/battle/EffectsLayer';
 
-const ANIM_KEYS = Object.keys(ANIMATIONS);
+const ANIM_KEYS = Object.keys(ANIMATIONS).filter(k => !ANIMATION_DEVELOPMENT_KEYS.includes(k));
 
 const MOCK_PLAYER = {
   id: 'editor_player',
@@ -104,15 +104,21 @@ export default function VfxEditorScreen() {
         // normally player attacks enemy; the toggle flips which element plays which.
         const attackerEl = attackerIsEnemy ? enemyEl : playerEl;
         const defenderEl = attackerIsEnemy ? playerEl : enemyEl;
-        (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
+        (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations, distance }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !defenderEl) return;
-          setTimeout(() => playPreset(defenderEl, p, { duration, iterations }), start);
+          setTimeout(() => {
+            if (distance != null) defenderEl.style.setProperty('--dist', `${distance}px`);
+            playPreset(defenderEl, p, { duration, iterations });
+          }, start);
         });
-        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
+        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations, distance }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !attackerEl) return;
-          setTimeout(() => playPreset(attackerEl, p, { duration, iterations }), start);
+          setTimeout(() => {
+            if (distance != null) attackerEl.style.setProperty('--dist', `${distance}px`);
+            playPreset(attackerEl, p, { duration, iterations });
+          }, start);
         });
       }
       if (config.sfx) {
@@ -255,6 +261,19 @@ export default function VfxEditorScreen() {
               <option key={key} value={key}>{key}</option>
             ))}
           </select>
+
+          {ANIMATION_DEVELOPMENT_KEYS.length > 0 && (
+            <select
+              value={ANIMATION_DEVELOPMENT_KEYS.includes(selected) ? selected : ''}
+              onChange={e => e.target.value && setSelected(e.target.value)}
+              className="bg-[#1a1a2e] border border-[#4da6ff]/50 text-[#4da6ff] text-sm rounded px-3 py-2 font-mono focus:outline-none focus:border-[#4da6ff]"
+            >
+              <option value="" disabled>DEV...</option>
+              {ANIMATION_DEVELOPMENT_KEYS.map(key => (
+                <option key={key} value={key}>{key}</option>
+              ))}
+            </select>
+          )}
 
           <button
             onClick={() => setAttackerIsEnemy(v => !v)}

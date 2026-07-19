@@ -32,8 +32,9 @@
 
 import { SHARED_PRESETS } from './shared';
 import { SAMURAI_PRESETS } from './samurai';
+import { ENEMY_SAMURAI_PRESETS } from './enemy_samurai';
 
-export const CSS_PRESETS = { ...SHARED_PRESETS, ...SAMURAI_PRESETS };
+export const CSS_PRESETS = { ...SHARED_PRESETS, ...SAMURAI_PRESETS, ...ENEMY_SAMURAI_PRESETS };
 
 // Plays a preset on `el` via the Web Animations API.
 //
@@ -64,6 +65,21 @@ export function playPreset(el, preset, { duration, iterations = 1 }) {
   const options = { duration, iterations, easing: 'linear', fill: preset.fill ?? 'none' };
   if (preset.pseudoElement) options.pseudoElement = preset.pseudoElement;
   return el.animate(keyframes, options);
+}
+
+// params = the rest-spread of extra keys on an animation_data JSON
+// css.target/css.owner timeline entry (e.g. { distance: 26 }), passed into
+// the preset like function args: key -> same-named CSS var (numbers get
+// px), e.g. distance:26 -> --distance:26px, read via calc(var(--distance)
+// ...) in the preset's keyframes. No rename, no lookup table — a new param
+// (e.g. "scale") needs zero code changes here or at call sites.
+// MUST run before playPreset(el, ...) — el.animate() reads calc(var(--x))
+// at start time; setting vars after that call is a silent no-op.
+export function applyDynamicVars(el, params) {
+  if (!el || !params) return;
+  Object.entries(params).forEach(([key, value]) => {
+    el.style.setProperty(`--${key}`, typeof value === 'number' ? `${value}px` : String(value));
+  });
 }
 
 export default CSS_PRESETS;

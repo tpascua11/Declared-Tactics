@@ -174,6 +174,13 @@ animationDataCtx.keys().forEach(key => {
   };
 });
 
+// Names of animations living under animation_data/animation_development/ —
+// in-progress/test entries, kept out of the main ANIM_KEYS dropdown and
+// listed in their own dropdown in VfxEditorScreen instead.
+export const ANIMATION_DEVELOPMENT_KEYS = animationDataCtx.keys()
+  .filter(key => key.startsWith('./animation_development/'))
+  .map(key => key.replace(/^.*\//, '').replace(/\.json$/, ''));
+
 // JSON-sourced entries override legacy ones by name — migrated animations
 // win, everything else still plays via the old CSS-class path for now.
 export const ANIMATIONS = { ...LEGACY_ANIMATIONS, ...JSON_ANIMATIONS };

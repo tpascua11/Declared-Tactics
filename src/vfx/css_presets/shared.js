@@ -175,6 +175,46 @@ export const SHARED_PRESETS = {
     ],
   },
 
+  // Attack lunge — attacker leans toward its target a bit and settles back.
+  // Uses --dir (set per-element from faction, see vfx/direction.js) so one
+  // preset serves both player and enemy instead of a hand-mirrored pair.
+  attack_lunge: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'translateY(0px)' },
+      { offset: 0.35, transform: 'translateY(calc(var(--dir) * 22px))' },
+      { offset: 1,    transform: 'translateY(0px)' },
+    ],
+  },
+
+  // Dynamic lunge — same lean-and-settle shape as attack_lunge, but the
+  // distance isn't baked in. Reads --distance (from a `distance` field on
+  // the timeline entry in animation_data JSON, forwarded 1:1 by
+  // applyDynamicVars — see css_presets/index.js) alongside --dir, so any
+  // attack can pick its own lunge distance without a new named preset.
+  dynamic_lunge: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'translateY(0px)' },
+      { offset: 0.35, transform: 'translateY(calc(var(--dir) * var(--distance)))' },
+      { offset: 1,    transform: 'translateY(0px)' },
+    ],
+  },
+
+  // Straight through — one-way exit, not a lunge-and-return. Travels
+  // 150vh (viewport-relative, not px, so it clears the screen at any
+  // window size) toward --dir and stays there: fill:'forwards' overrides
+  // playPreset()'s default fill:'none', so it doesn't snap back once the
+  // animation ends. Character fully leaves the visible screen.
+  straight_through: {
+    easing: 'ease-in',
+    fill: 'forwards',
+    keyframes: [
+      { offset: 0, transform: 'translateY(0px)' },
+      { offset: 1, transform: 'translateY(calc(var(--dir) * 150vh))' },
+    ],
+  },
+
   // Enemy enter — drop-in with an overshoot settle, engine-wide (any
   // faction). Used when new enemies join the battlefield.
   enemy_enter_drop: {
