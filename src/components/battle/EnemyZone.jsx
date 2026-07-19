@@ -8,6 +8,7 @@ import TagPool from './TagPool';
 import EnemyResourceBar from './EnemyResourceBar';
 import { SCENARIO_BACKGROUNDS } from '../../assets';
 import { AURA_REGISTRY } from '../../battle/registry/aura_registry';
+import { Z } from '../shared/zLayers';
 
 const CARD_SIZES = {
   small:  { card: 'w-32 h-48',  icon: 'text-3xl py-2',   name: 'text-[10px]', hpText: 'text-[10px]' },
@@ -75,11 +76,11 @@ function getMidCardOffset(enemies) {
   return totalWidth / 2 - midCardCenter;
 }
 
-export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumbers = [], activeEnemyId, selectedTargetId, phase, onSelectTarget, battleBackground }) {
+export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumbers = [], selectedTargetId, phase, onSelectTarget, battleBackground }) {
   const bgImage = SCENARIO_BACKGROUNDS[battleBackground] ?? SCENARIO_BACKGROUNDS['CITADEL_1_ENEMY'];
   const offset = getMidCardOffset(enemies);
   return (
-    <div className="relative flex-1 min-h-0 mx-4 mt-3 mb-0 rounded-xl overflow-hidden flex flex-row items-end justify-center gap-20 pb-10"
+    <div className="relative flex-1 min-h-0 mx-4 mt-3 mb-0 rounded-xl overflow-visible flex flex-row items-end justify-center gap-20 pb-10"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -100,7 +101,6 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
         const tempHpPct = Math.min((enemy.temp_hp ?? 0) / enemy.max_health * 100, 100 - hpPct);
         const isDead = enemy.health <= 0;
         const anim = activeAnimations[enemy.id];
-        const isActive = activeEnemyId === enemy.id && !isDead;
         const isSelected = selectedTargetId === enemy.id && !isDead && phase === 'QUEUE_SETUP';
         const isSelectable = phase === 'QUEUE_SETUP' && !isDead;
         const tags = enemy.active_tag_pool || [];
@@ -114,7 +114,6 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
           <div
             key={enemy.id}
             className={`flex flex-row items-end gap-1.5 transition-all duration-300 ${isDead && !anim ? 'opacity-30' : 'opacity-100'} ${isSelectable ? 'cursor-pointer' : ''}`}
-            style={{ transform: isActive ? 'translateY(35px)' : 'translateY(0)' }}
             onClick={e => { if (!isSelectable) return; e.stopPropagation(); onSelectTarget(enemy.id); }}
           >
 
@@ -124,7 +123,7 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
             </div>
 
             {/* Enemy Card — wrapped in relative so floating numbers escape overflow-hidden */}
-            <div className="relative shrink-0" style={{ zIndex: 1 }}>
+            <div className="relative shrink-0" style={{ zIndex: Z.CARDS }}>
               <div
                 data-enemy-id={enemy.id}
                 className={`${sz.card} relative rounded-lg border-2 overflow-hidden ${anim?.cssClass ?? ''}`}

@@ -470,7 +470,6 @@ export default function BattleScreen() {
           enemies={enemies}
           activeAnimations={activeAnimations}
           floatingNumbers={floatingNumbers}
-          activeEnemyId={gs.activeEnemyId}
           selectedTargetId={gs.lastTargetId}
           phase={gs.phase}
           retargetingSlot={retargetingSlot}
