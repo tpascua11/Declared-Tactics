@@ -2,7 +2,7 @@
 //  Hand — Bottom section showing available cards to play
 // ============================================================
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { effectiveResourceAtExecution, projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 import { battle_registry } from '../../battle/registry/battle_registry';
 import { DEBUG_HAND_COST } from '../../debug';
@@ -17,7 +17,40 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
   const [guideOpen, setGuideOpen] = useState(false);
   const [advancedGuideOpen, setAdvancedGuideOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
+  const [menuSlidIn, setMenuSlidIn] = useState(false);
   const holdIntervalRef = useRef(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
+
+  // Panel slides in from off-screen right on open, and slides back out
+  // to the right on close (unmounting once the transition finishes).
+  useEffect(() => {
+    if (!menuOpen) {
+      setMenuSlidIn(false);
+      return;
+    }
+    setMenuMounted(true);
+    // Double rAF: the first frame commits the off-screen starting
+    // position, the second flips it to trigger the CSS transition.
+    let raf2;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setMenuSlidIn(true));
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [menuOpen]);
 
   function handleHoldStart(e) {
     if (!onRestartBattle) return;
@@ -92,7 +125,7 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
         <div className="w-[10%] h-full flex flex-col items-start gap-2 p-2" style={{ background: '#0f0f1a' }}>
           <button
             type="button"
-            className={`flex-1 w-1/2 flex flex-col items-center justify-center gap-0.5 text-center leading-tight font-mono tracking-wider border rounded transition-colors ${logVisible ? 'border-white/40 bg-white/10 text-white' : 'border-white/20 text-white/70 hover:bg-white/10 hover:text-white'}`}
+            className={`flex-1 w-1/2 flex flex-col items-center justify-center gap-0.5 text-center leading-tight font-mono tracking-wider border rounded transition-colors bg-white/10 text-white hover:bg-white/10 hover:text-white ${logVisible ? 'border-white/40' : 'border-white/20'}`}
             onClick={() => { playSelectSfx(); onToggleLog?.(); }}
           >
             <span className="text-xl">📜</span>
@@ -213,43 +246,55 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
           </div>
         </div>
 
-        {/* RIGHT — 10% — hidden template slot, then settings/restart/how-to-play */}
-        <div className="w-[10%] h-full flex flex-col items-end gap-2 p-2" style={{ background: '#0f0f1a' }}>
+        {/* RIGHT — 10% — menu toggle that reveals settings/restart/how-to-play */}
+        <div ref={menuRef} className="w-[10%] h-full flex flex-col items-end gap-2 p-2" style={{ background: '#0f0f1a', position: 'relative' }}>
           <button
             type="button"
-            className="flex-1 w-1/2 invisible flex items-center justify-center text-[11px] font-mono border border-white/20 rounded text-white/70"
-          />
-          <div className="flex-[3] w-1/2 flex flex-col gap-2 border border-white/10 rounded p-1"
-            style={{ position: 'relative', zIndex: isDefeated ? Z.RESULT_UI : 'auto' }}>
-            <button
-              type="button"
-              className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-              onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
-            >
-              MUSIC/SOUND
-            </button>
-            <button
-              type="button"
-              className={`flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded relative overflow-hidden select-none transition-colors hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
-              onMouseDown={handleHoldStart}
-              onMouseUp={handleHoldEnd}
-              onMouseLeave={handleHoldEnd}
-              onTouchStart={handleHoldStart}
-              onTouchEnd={handleHoldEnd}
-            >
-              <span className="relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : undefined, textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>RESTART</span>
-              {holdProgress > 0 && (
-                <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
-              )}
-            </button>
-            <button
-              type="button"
-              className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-              onClick={() => { playSelectSfx(); setGuideOpen(true); }}
-            >
-              HOW TO PLAY
-            </button>
-          </div>
+            className={`flex-1 w-1/2 flex flex-col items-center justify-center gap-0.5 text-center leading-tight font-mono tracking-wider border rounded transition-colors ${menuOpen ? 'border-white/40 bg-white/10 text-white' : 'border-white/20 text-white/70 hover:bg-white/10 hover:text-white'}`}
+            onClick={() => { playSelectSfx(); setMenuOpen(v => !v); }}
+          >
+            <span className="text-xl">📘</span>
+            <span className="text-sm">MENU</span>
+          </button>
+
+          {menuMounted && (
+            <div className="absolute bottom-full right-2 mb-2 w-32 flex flex-col gap-2 p-2 border border-white/10 rounded transition-transform duration-200 ease-out"
+              style={{
+                background: '#0f0f1a',
+                zIndex: isDefeated ? Z.RESULT_UI : Z.MODAL,
+                transform: menuSlidIn ? 'translateX(0)' : 'translateX(100%)',
+              }}
+              onTransitionEnd={(e) => { if (e.target === e.currentTarget && !menuOpen) setMenuMounted(false); }}>
+              <button
+                type="button"
+                className="w-full h-10 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
+              >
+                MUSIC/SOUND
+              </button>
+              <button
+                type="button"
+                className={`w-full h-10 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded relative overflow-hidden select-none transition-colors hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
+                onMouseDown={handleHoldStart}
+                onMouseUp={handleHoldEnd}
+                onMouseLeave={handleHoldEnd}
+                onTouchStart={handleHoldStart}
+                onTouchEnd={handleHoldEnd}
+              >
+                <span className="relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : undefined, textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>RESTART</span>
+                {holdProgress > 0 && (
+                  <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
+                )}
+              </button>
+              <button
+                type="button"
+                className="w-full h-10 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+                onClick={() => { playSelectSfx(); setGuideOpen(true); }}
+              >
+                HOW TO PLAY
+              </button>
+            </div>
+          )}
         </div>
 
     </div>
