@@ -73,10 +73,16 @@ function scaleForDistance(d) {
   return Math.max(0.48, 1 - d * 0.13);
 }
 
-// A just-consumed center card: sits at full opacity, then on mount transitions
-// to invisible, then unmounts itself. Owns its own fade timing so there's no
-// gap between "card leaves the queue" and "fade-out visual starts".
-function ExitingCenterCard({ action, onDone }) {
+function opacityForSlot(distance, pre) {
+  return pre ? 0 : (distance === 0 ? 1 : Math.max(0.3, 1 - distance * 0.22));
+}
+
+// A card that just dropped out of the queue — either because it executed
+// (center) or because its owner died mid-round (any slot). Stays put at its
+// last known position, holding its last-known opacity, then on mount
+// transitions to invisible and unmounts itself. Owns its own fade timing so
+// there's no gap between "card leaves the queue" and "fade-out visual starts".
+function ExitingActionCard({ action, slot, startOpacity, onDone }) {
   const [fading, setFading] = useState(false);
   useEffect(() => {
     const raf1 = requestAnimationFrame(() => {
@@ -86,20 +92,24 @@ function ExitingCenterCard({ action, onDone }) {
     return () => { cancelAnimationFrame(raf1); clearTimeout(timer); };
   }, []);
 
+  const distance = Math.abs(slot);
+  const scale    = distance === 0 ? 1 : scaleForDistance(distance);
+  const xOffset  = slot * (CARD_W + GAP);
+
   return (
     <div
       style={{
         position:      'absolute',
-        left:          `calc(50% - ${CARD_W / 2}px)`,
+        left:          `calc(50% + ${xOffset - CARD_W / 2}px)`,
         top:           '42%',
-        transform:     'translateY(-50%) scale(1)',
+        transform:     `translateY(-50%) scale(${scale})`,
         transition:    'opacity 0.3s ease',
-        opacity:       fading ? 0 : 1,
+        opacity:       fading ? 0 : startOpacity,
         zIndex:        11,
         pointerEvents: 'none',
       }}
     >
-      <ActionCard action={action} isCenter />
+      <ActionCard action={action} isCenter={distance === 0} />
     </div>
   );
 }
@@ -228,34 +238,67 @@ export default function BattleQueue({ characters, phase, announcement }) {
     overflow:   'hidden',
   };
 
-  // Outgoing center card: when the center action's stable key changes (it
-  // just executed and dropped out of the queue), keep its card rendered
-  // briefly, fading out instead of vanishing the instant it's consumed.
-  // Detected synchronously during render (not in an effect) so the outgoing
-  // card is added to the list in the SAME paint as its removal from the
-  // queue — otherwise there's a one-frame gap where it's just gone, and it
-  // pops back in a tick later to start fading (reads as a flicker/refresh).
-  // Uses useState (not a ref) to track the previous center action: refs
-  // mutated during render don't survive React.StrictMode's double-invoke in
-  // dev — the mutation from the discarded first pass makes the second,
-  // real pass see "no change" and the fade never triggers.
+  const allActions    = phase === 'BATTLE' ? simulateExecutionOrder(characters, initialLengthsRef.current) : [];
+  const centerAction  = allActions[0];
+  const rest          = allActions.slice(1);
+  const enemyActions  = rest.filter(a => a._char.faction === 'enemy');
+  const playerActions = rest.filter(a => a._char.faction === 'player');
+
+  // slot 0 = center, negative = enemy (left), positive = player (right)
+  const slots = allActions.length > 0 ? [
+    { action: centerAction, slot: 0 },
+    ...enemyActions.map((a, i)  => ({ action: a, slot: -(i + 1) })),
+    ...playerActions.map((a, i) => ({ action: a, slot:   i + 1  })),
+  ] : [];
+
+  // Outgoing cards: any card that drops out of the queue between renders —
+  // either because it executed (center) or its owner died mid-round, which
+  // can wipe out several slots at once — keeps rendering at its last known
+  // slot/opacity, fading out instead of vanishing instantly.
+  //
+  // Detected synchronously during render (not in an effect) so outgoing
+  // cards are captured in the SAME paint as their removal from `slots` —
+  // otherwise there's a one-frame gap where they're just gone, and they pop
+  // back in a tick later to start fading (reads as a flicker/refresh).
+  //
+  // The key-set comparison lives in useState (not a ref): refs mutated
+  // during render don't survive React.StrictMode's double-invoke in dev —
+  // the mutation from the discarded first pass makes the second, real pass
+  // see "no change" and the fade never triggers. The per-key slot/opacity
+  // cache is a plain ref, though — it's just tracking "latest known
+  // position," not gating any change-detection, so it's safe to keep fresh
+  // on every render regardless of StrictMode's double-invoke.
   const [exitingCards, setExitingCards] = useState([]);
-  const [prevCenter, setPrevCenter] = useState(null);
+  const [prevKeys, setPrevKeys] = useState([]);
+  const latestMetaRef = useRef({});
 
-  const allActions   = phase === 'BATTLE' ? simulateExecutionOrder(characters, initialLengthsRef.current) : [];
-  const centerAction = allActions[0];
+  const pre = entry === 'pre';
+  const currentKeys = slots.map(({ action }) => action._stableKey);
+  slots.forEach(({ action, slot }) => {
+    latestMetaRef.current[action._stableKey] = { action, slot, opacity: opacityForSlot(Math.abs(slot), pre) };
+  });
 
-  if (prevCenter?._stableKey !== centerAction?._stableKey) {
-    setPrevCenter(centerAction ?? null);
-    if (prevCenter) {
-      const exitKey = `${prevCenter._stableKey}_exit`;
-      setExitingCards(ec => ec.some(c => c.key === exitKey) ? ec : [...ec, { key: exitKey, action: prevCenter }]);
+  const keysChanged = currentKeys.length !== prevKeys.length || currentKeys.some(k => !prevKeys.includes(k));
+  if (keysChanged) {
+    const removedKeys = prevKeys.filter(k => !currentKeys.includes(k));
+    if (removedKeys.length > 0) {
+      setExitingCards(ec => {
+        const existing = new Set(ec.map(c => c.key));
+        const additions = removedKeys
+          .filter(k => !existing.has(`${k}_exit`))
+          .map(k => ({ key: `${k}_exit`, origKey: k, ...latestMetaRef.current[k] }));
+        return additions.length > 0 ? [...ec, ...additions] : ec;
+      });
     }
+    setPrevKeys(currentKeys);
   }
 
-  const removeExiting = (key) => setExitingCards(ec => ec.filter(c => c.key !== key));
-  const exitingCardEls = exitingCards.map(({ key, action }) => (
-    <ExitingCenterCard key={key} action={action} onDone={() => removeExiting(key)} />
+  const removeExiting = (key, origKey) => {
+    setExitingCards(ec => ec.filter(c => c.key !== key));
+    delete latestMetaRef.current[origKey];
+  };
+  const exitingCardEls = exitingCards.map(({ key, origKey, action, slot, opacity }) => (
+    <ExitingActionCard key={key} action={action} slot={slot} startOpacity={opacity} onDone={() => removeExiting(key, origKey)} />
   ));
 
   if (phase !== 'BATTLE') {
@@ -270,17 +313,6 @@ export default function BattleQueue({ characters, phase, announcement }) {
       </div>
     );
   }
-
-  const rest          = allActions.slice(1);
-  const enemyActions  = rest.filter(a => a._char.faction === 'enemy');
-  const playerActions = rest.filter(a => a._char.faction === 'player');
-
-  // slot 0 = center, negative = enemy (left), positive = player (right)
-  const slots = [
-    { action: centerAction, slot: 0 },
-    ...enemyActions.map((a, i)  => ({ action: a, slot: -(i + 1) })),
-    ...playerActions.map((a, i) => ({ action: a, slot:   i + 1  })),
-  ];
 
   return (
     <div style={containerStyle}>
@@ -327,8 +359,8 @@ export default function BattleQueue({ characters, phase, announcement }) {
         zIndex:     15,
       }} />
 
-      {/* Outgoing center card — fades away instead of disappearing
-          the instant it's consumed. */}
+      {/* Outgoing cards — fade away instead of disappearing instantly,
+          whether from executing (center) or their owner dying. */}
       {exitingCardEls}
 
       {slots.map(({ action, slot }) => {
@@ -336,9 +368,8 @@ export default function BattleQueue({ characters, phase, announcement }) {
         const scale    = distance === 0 ? 1 : scaleForDistance(distance);
         // Center card enters from its owner's side; others from their fan side.
         const fromSide = slot !== 0 ? Math.sign(slot) : (action._char.faction === 'enemy' ? -1 : 1);
-        const pre      = entry === 'pre';
         const xOffset  = slot * (CARD_W + GAP) + (pre ? fromSide * 640 : 0);
-        const opacity  = pre ? 0 : (distance === 0 ? 1 : Math.max(0.3, 1 - distance * 0.22));
+        const opacity  = opacityForSlot(distance, pre);
 
         return (
           <div
