@@ -73,6 +73,37 @@ function scaleForDistance(d) {
   return Math.max(0.48, 1 - d * 0.13);
 }
 
+// A just-consumed center card: sits at full opacity, then on mount transitions
+// to invisible, then unmounts itself. Owns its own fade timing so there's no
+// gap between "card leaves the queue" and "fade-out visual starts".
+function ExitingCenterCard({ action, onDone }) {
+  const [fading, setFading] = useState(false);
+  useEffect(() => {
+    const raf1 = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setFading(true));
+    });
+    const timer = setTimeout(onDone, 300);
+    return () => { cancelAnimationFrame(raf1); clearTimeout(timer); };
+  }, []);
+
+  return (
+    <div
+      style={{
+        position:      'absolute',
+        left:          `calc(50% - ${CARD_W / 2}px)`,
+        top:           '42%',
+        transform:     'translateY(-50%) scale(1)',
+        transition:    'opacity 0.3s ease',
+        opacity:       fading ? 0 : 1,
+        zIndex:        11,
+        pointerEvents: 'none',
+      }}
+    >
+      <ActionCard action={action} isCenter />
+    </div>
+  );
+}
+
 // ── card ─────────────────────────────────────────────────────
 
 function ActionCard({ action, isCenter }) {
@@ -187,7 +218,6 @@ export default function BattleQueue({ characters, phase, announcement }) {
     return () => { cancelAnimationFrame(raf1); if (raf2) cancelAnimationFrame(raf2); if (timer) clearTimeout(timer); };
   }, [phase]);
 
-
   const containerStyle = {
     position:   'relative',
     zIndex:     Z.QUEUE_ROW, // lowest battle band — internal z (cards/masks) stays local
@@ -198,19 +228,49 @@ export default function BattleQueue({ characters, phase, announcement }) {
     overflow:   'hidden',
   };
 
-  if (phase !== 'BATTLE') return <div style={containerStyle} />;
+  // Outgoing center card: when the center action's stable key changes (it
+  // just executed and dropped out of the queue), keep its card rendered
+  // briefly, fading out instead of vanishing the instant it's consumed.
+  // Detected synchronously during render (not in an effect) so the outgoing
+  // card is added to the list in the SAME paint as its removal from the
+  // queue — otherwise there's a one-frame gap where it's just gone, and it
+  // pops back in a tick later to start fading (reads as a flicker/refresh).
+  // Uses useState (not a ref) to track the previous center action: refs
+  // mutated during render don't survive React.StrictMode's double-invoke in
+  // dev — the mutation from the discarded first pass makes the second,
+  // real pass see "no change" and the fade never triggers.
+  const [exitingCards, setExitingCards] = useState([]);
+  const [prevCenter, setPrevCenter] = useState(null);
 
-  const allActions = simulateExecutionOrder(characters, initialLengthsRef.current);
+  const allActions   = phase === 'BATTLE' ? simulateExecutionOrder(characters, initialLengthsRef.current) : [];
+  const centerAction = allActions[0];
+
+  if (prevCenter?._stableKey !== centerAction?._stableKey) {
+    setPrevCenter(centerAction ?? null);
+    if (prevCenter) {
+      const exitKey = `${prevCenter._stableKey}_exit`;
+      setExitingCards(ec => ec.some(c => c.key === exitKey) ? ec : [...ec, { key: exitKey, action: prevCenter }]);
+    }
+  }
+
+  const removeExiting = (key) => setExitingCards(ec => ec.filter(c => c.key !== key));
+  const exitingCardEls = exitingCards.map(({ key, action }) => (
+    <ExitingCenterCard key={key} action={action} onDone={() => removeExiting(key)} />
+  ));
+
+  if (phase !== 'BATTLE') {
+    return <div style={containerStyle}>{exitingCardEls}</div>;
+  }
 
   if (allActions.length === 0) {
     return (
       <div style={containerStyle} className="flex items-center justify-center">
         <span className="text-[9px] font-mono text-gray-700 tracking-widest">RESOLVING...</span>
+        {exitingCardEls}
       </div>
     );
   }
 
-  const centerAction  = allActions[0];
   const rest          = allActions.slice(1);
   const enemyActions  = rest.filter(a => a._char.faction === 'enemy');
   const playerActions = rest.filter(a => a._char.faction === 'player');
@@ -266,6 +326,10 @@ export default function BattleQueue({ characters, phase, announcement }) {
         background: 'rgba(255,255,255,0.07)',
         zIndex:     15,
       }} />
+
+      {/* Outgoing center card — fades away instead of disappearing
+          the instant it's consumed. */}
+      {exitingCardEls}
 
       {slots.map(({ action, slot }) => {
         const distance = Math.abs(slot);
