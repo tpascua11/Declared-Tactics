@@ -76,153 +76,145 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
     // Whole hand is UI above the battlefield (HAND_UI). On defeat it lifts to
     // RESULT_UI so the restart strip stays clickable above the result dim —
     // children (cards, tooltips, strip) are trapped in this stacking context.
-    <div className="h-[180px] flex-shrink-0 flex flex-col border-t border-white/10 mb-2"
+    <div className="h-[180px] flex-shrink-0 flex border-t border-white/10 mb-2"
       style={{ background: 'rgba(0,0,0,0.25)', position: 'relative', zIndex: isDefeated ? Z.RESULT_UI : Z.HAND_UI }}>
-
-      {/* Button row — resource bar only (settings/restart/how-to-play moved into left card-area buttons) */}
-      {/* Local stacking only — the root above carries the global layer */}
-      <div className="flex-shrink-0 flex border-b border-white/10" style={{ height: '2.5rem', position: 'relative', zIndex: isDefeated ? 1 : 0 }}>
-
-        <div className="flex-1 flex items-center justify-center px-6">
-          {ResourceBar && resources
-            ? <ResourceBar resources={resources} planned={disabled ? {} : planned} plannedGain={disabled ? {} : plannedGain} />
-            : <div className="w-full h-5 rounded-full bg-gray-700/60" />
-          }
-        </div>
 
         {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
         {guideOpen && <GuideModal onClose={() => setGuideOpen(false)} onOpenAdvanced={() => { setGuideOpen(false); setAdvancedGuideOpen(true); }} nudgeUp={180} />}
         {advancedGuideOpen && <AdvancedGuideModal onClose={() => setAdvancedGuideOpen(false)} nudgeUp={180} />}
 
-      </div>
+        {/* LEFT — 10% — empty */}
+        <div className="w-[10%] h-full" style={{ background: '#0f0f1a' }} />
 
-      {/* Card area — 3 sections: left 10% / middle 80% / right 10% */}
-      <div className="flex-1 flex items-start">
+        {/* MIDDLE — 80% — resource bar (same position as before) + cards below */}
+        <div className="w-[80%] h-full flex flex-col border border-white/10 rounded-2xl">
 
-        {/* LEFT — 10% — template buttons */}
-        <div className="w-[10%] h-full flex flex-col gap-2">
-          {[1, 2, 3].map(n => (
-            <button
-              key={n}
-              type="button"
-              className="flex-1 w-full flex items-center justify-center text-[11px] font-mono border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-            />
-          ))}
-        </div>
+          <div className="flex-shrink-0 flex items-center justify-center px-6 border-b border-white/10" style={{ height: '2.5rem' }}>
+            <div className="w-full rounded-full">
+              {ResourceBar && resources
+                ? <ResourceBar resources={resources} planned={disabled ? {} : planned} plannedGain={disabled ? {} : plannedGain} />
+                : <div className="w-full h-5 rounded-full bg-gray-700/60" />
+              }
+            </div>
+          </div>
 
-        {/* MIDDLE — 80% — cards sit at the bottom with breathing room */}
-        <div className="w-[80%] h-full flex items-start justify-center px-4 pt-2">
-        {cards.map((card, idx) => {
-          const influence = projectedSpeedInfluence(tagPool, queue, nextSlotIndex);
-          const wouldSpeed = nextSlotIndex >= 0
-            ? (baseSpeed + (card.speed_mod ?? 0)) - projectedSpeedPenalty(queue, nextSlotIndex) + influence
-            : null;
-          const canAfford = DEBUG_HAND_COST || (nextSlotIndex >= 0 && Object.entries(card.cost ?? {}).every(
-            ([type, amount]) => effectiveResourceAtExecution(type, nextSlotIndex, queue, resources) >= amount
-          ));
-          const isDisabled = disabled || nextSlotIndex === -1 || !canAfford;
+          <div className="flex-1 flex items-start justify-center px-4 pt-2">
+            {cards.map((card, idx) => {
+              const influence = projectedSpeedInfluence(tagPool, queue, nextSlotIndex);
+              const wouldSpeed = nextSlotIndex >= 0
+                ? (baseSpeed + (card.speed_mod ?? 0)) - projectedSpeedPenalty(queue, nextSlotIndex) + influence
+                : null;
+              const canAfford = DEBUG_HAND_COST || (nextSlotIndex >= 0 && Object.entries(card.cost ?? {}).every(
+                ([type, amount]) => effectiveResourceAtExecution(type, nextSlotIndex, queue, resources) >= amount
+              ));
+              const isDisabled = disabled || nextSlotIndex === -1 || !canAfford;
 
-          return (
-            <div
-              key={card.id}
-              onClick={() => !isDisabled && onCardClick(card)}
-              className={`group relative overflow-visible flex flex-col border-2
-                transition-all duration-200
-                ${isDisabled
-                  ? 'cursor-not-allowed border-gray-700 hover:z-50'
-                  : 'cursor-pointer hover:-translate-y-8 hover:scale-110 hover:z-50'
-                }`}
-              style={{
-                marginLeft: idx > 0 ? '-18px' : '0',
-                width: '5.5rem',
-                height: '8.25rem',
-                background: '#09090f',
-                borderColor: isDisabled ? '#374151' : card.color,
-                boxShadow: isDisabled ? 'none' : `0 0 10px ${card.color}55, inset 0 0 6px ${card.color}11`,
-                borderRadius: '3px',
-                zIndex: isDisabled ? 0 : 10,
-                position: 'relative',
-              }}
-            >
-              {/* Card content — faded when disabled */}
-              <div className={`flex flex-col flex-1 ${isDisabled ? 'opacity-40' : ''}`}>
+              return (
+                <div
+                  key={card.id}
+                  onClick={() => !isDisabled && onCardClick(card)}
+                  className={`group relative overflow-visible flex flex-col border-2
+                    transition-all duration-200
+                    ${isDisabled
+                      ? 'cursor-not-allowed border-gray-700 hover:z-50'
+                      : 'cursor-pointer hover:-translate-y-8 hover:scale-110 hover:z-50'
+                    }`}
+                  style={{
+                    marginLeft: idx > 0 ? '-18px' : '0',
+                    width: '5.5rem',
+                    height: '8.25rem',
+                    background: '#09090f',
+                    borderColor: isDisabled ? '#374151' : card.color,
+                    boxShadow: isDisabled ? 'none' : `0 0 10px ${card.color}55, inset 0 0 6px ${card.color}11`,
+                    borderRadius: '3px',
+                    zIndex: isDisabled ? 0 : 10,
+                    position: 'relative',
+                  }}
+                >
+                  {/* Card content — faded when disabled */}
+                  <div className={`flex flex-col flex-1 ${isDisabled ? 'opacity-40' : ''}`}>
 
-                {/* Header strip — name */}
-                <div className="relative flex-shrink-0"
-                  style={{ background: '#0d0d1a', borderBottom: `1px solid ${card.color}44`, height: '1.3rem', overflow: 'visible', zIndex: 2 }}>
-                  <span className="absolute inset-0 flex items-center justify-center px-1 text-[11px] font-bold font-mono text-center leading-tight" style={{ color: card.color }}>
-                    {card.name}
-                  </span>
-                </div>
+                    {/* Header strip — name */}
+                    <div className="relative flex-shrink-0"
+                      style={{ background: '#0d0d1a', borderBottom: `1px solid ${card.color}44`, height: '1.3rem', overflow: 'visible', zIndex: 2 }}>
+                      <span className="absolute inset-0 flex items-center justify-center px-1 text-[11px] font-bold font-mono text-center leading-tight" style={{ color: card.color }}>
+                        {card.name}
+                      </span>
+                    </div>
 
-                {/* Art area */}
-                <div className="relative flex-1">
-                  <div className="absolute inset-0 overflow-hidden">
-                    {card.image
-                      ? <img src={card.image} alt={card.name} className="w-full h-full object-contain" />
-                      : <div className="w-full h-full flex items-center justify-center text-3xl">{card.icon}</div>
-                    }
-                    {/* Scanlines */}
-                    <div className="absolute inset-0 pointer-events-none"
-                      style={{ background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 3px)' }} />
+                    {/* Art area */}
+                    <div className="relative flex-1">
+                      <div className="absolute inset-0 overflow-hidden">
+                        {card.image
+                          ? <img src={card.image} alt={card.name} className="w-full h-full object-contain" />
+                          : <div className="w-full h-full flex items-center justify-center text-3xl">{card.icon}</div>
+                        }
+                        {/* Scanlines */}
+                        <div className="absolute inset-0 pointer-events-none"
+                          style={{ background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 3px)' }} />
+                      </div>
+                    </div>
+
+                    {/* Footer strip — speed */}
+                    <div className="flex items-center justify-center flex-shrink-0"
+                      style={{ background: '#0d0d1a', borderTop: `1px solid ${card.color}55`, height: '1.1rem' }}>
+                      <span className="text-[11px] font-bold font-mono" style={{ color: card.color }}>
+                        SPD {wouldSpeed !== null && !isDisabled ? wouldSpeed : baseSpeed + (card.speed_mod ?? 0)}
+                      </span>
+                    </div>
+
+                  </div>
+
+                  {/* Tooltip — outside the opacity wrapper so it's always full opacity */}
+                  <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2
+                    w-64 rounded-lg border border-gray-600 shadow-xl z-[100]
+                    opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                    style={{ background: '#1a1a2e' }}>
+                    <div className="h-1.5 rounded-t-lg" style={{ background: card.color }} />
+                    <div className="px-4 py-3 flex flex-col gap-2">
+                      <div className="text-base font-bold text-white font-body">{card.name}</div>
+                      <div className="text-xs text-gray-400 font-mono">{card.tag_type.join(' · ')}</div>
+                      <div className="text-sm text-gray-300 leading-snug mt-1">{card.desc}</div>
+                      <div className="text-xs text-[#4da6ff] font-mono mt-1">BASE SPD {baseSpeed}{card.speed_mod !== 0 ? ` ${card.speed_mod > 0 ? '+' : ''}${card.speed_mod}` : ''}</div>
+                      {influence !== 0 && (
+                        <div className={`text-xs font-mono mt-1 ${influence > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          SPD INFLUENCE {influence > 0 ? '+' : ''}{influence}
+                        </div>
+                      )}
+                      {Object.entries(card.cost ?? {}).map(([type, amount]) => {
+                        const free = nextSlotIndex >= 0 ? effectiveResourceAtExecution(type, nextSlotIndex, queue, resources) : 0;
+                        const hasEnough = free >= amount;
+                        return (
+                          <div key={type} className={`text-xs font-mono mt-1 ${hasEnough ? 'text-yellow-400' : 'text-red-400'}`}>
+                            COST: {amount} {type.replace(/_/g, ' ')}
+                            {!hasEnough && ' — NOT ENOUGH'}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-
-                {/* Footer strip — speed */}
-                <div className="flex items-center justify-center flex-shrink-0"
-                  style={{ background: '#0d0d1a', borderTop: `1px solid ${card.color}55`, height: '1.1rem' }}>
-                  <span className="text-[11px] font-bold font-mono" style={{ color: card.color }}>
-                    SPD {wouldSpeed !== null && !isDisabled ? wouldSpeed : baseSpeed + (card.speed_mod ?? 0)}
-                  </span>
-                </div>
-
-              </div>
-
-              {/* Tooltip — outside the opacity wrapper so it's always full opacity */}
-              <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2
-                w-64 rounded-lg border border-gray-600 shadow-xl z-[100]
-                opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                style={{ background: '#1a1a2e' }}>
-                <div className="h-1.5 rounded-t-lg" style={{ background: card.color }} />
-                <div className="px-4 py-3 flex flex-col gap-2">
-                  <div className="text-base font-bold text-white font-body">{card.name}</div>
-                  <div className="text-xs text-gray-400 font-mono">{card.tag_type.join(' · ')}</div>
-                  <div className="text-sm text-gray-300 leading-snug mt-1">{card.desc}</div>
-                  <div className="text-xs text-[#4da6ff] font-mono mt-1">BASE SPD {baseSpeed}{card.speed_mod !== 0 ? ` ${card.speed_mod > 0 ? '+' : ''}${card.speed_mod}` : ''}</div>
-                  {influence !== 0 && (
-                    <div className={`text-xs font-mono mt-1 ${influence > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      SPD INFLUENCE {influence > 0 ? '+' : ''}{influence}
-                    </div>
-                  )}
-                  {Object.entries(card.cost ?? {}).map(([type, amount]) => {
-                    const free = nextSlotIndex >= 0 ? effectiveResourceAtExecution(type, nextSlotIndex, queue, resources) : 0;
-                    const hasEnough = free >= amount;
-                    return (
-                      <div key={type} className={`text-xs font-mono mt-1 ${hasEnough ? 'text-yellow-400' : 'text-red-400'}`}>
-                        COST: {amount} {type.replace(/_/g, ' ')}
-                        {!hasEnough && ' — NOT ENOUGH'}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
         </div>
 
-        {/* RIGHT — 10% — settings / restart / how to play */}
-        <div className="w-[10%] h-full flex flex-col gap-2">
+        {/* RIGHT — 10% — hidden template slot, then settings/restart/how-to-play */}
+        <div className="w-[10%] h-full flex flex-col items-end gap-2 p-2" style={{ background: '#0f0f1a' }}>
           <button
             type="button"
-            className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+            className="flex-1 w-1/2 invisible flex items-center justify-center text-[11px] font-mono border border-white/20 rounded text-white/70"
+          />
+          <button
+            type="button"
+            className="flex-1 w-1/2 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
             onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
           >
-            SETTINGS
+            MUSIC/SOUND
           </button>
           <button
             type="button"
-            className={`flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded relative overflow-hidden select-none transition-colors hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
+            className={`flex-1 w-1/2 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded relative overflow-hidden select-none transition-colors hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
             onMouseDown={handleHoldStart}
             onMouseUp={handleHoldEnd}
             onMouseLeave={handleHoldEnd}
@@ -236,14 +228,13 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
           </button>
           <button
             type="button"
-            className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+            className="flex-1 w-1/2 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
             onClick={() => { playSelectSfx(); setGuideOpen(true); }}
           >
             HOW TO PLAY
           </button>
         </div>
 
-      </div>
     </div>
   );
 }
