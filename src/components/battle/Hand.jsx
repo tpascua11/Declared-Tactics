@@ -214,34 +214,36 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
             type="button"
             className="flex-1 w-1/2 invisible flex items-center justify-center text-[11px] font-mono border border-white/20 rounded text-white/70"
           />
-          <button
-            type="button"
-            className="flex-1 w-1/2 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-            onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
-          >
-            MUSIC/SOUND
-          </button>
-          <button
-            type="button"
-            className={`flex-1 w-1/2 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded relative overflow-hidden select-none transition-colors hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
-            onMouseDown={handleHoldStart}
-            onMouseUp={handleHoldEnd}
-            onMouseLeave={handleHoldEnd}
-            onTouchStart={handleHoldStart}
-            onTouchEnd={handleHoldEnd}
-          >
-            <span className="relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : undefined, textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>RESTART</span>
-            {holdProgress > 0 && (
-              <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
-            )}
-          </button>
-          <button
-            type="button"
-            className="flex-1 w-1/2 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
-            onClick={() => { playSelectSfx(); setGuideOpen(true); }}
-          >
-            HOW TO PLAY
-          </button>
+          <div className="flex-[3] w-1/2 flex flex-col gap-2 border border-white/10 rounded p-1">
+            <button
+              type="button"
+              className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+              onClick={() => { playSelectSfx(); setSettingsOpen(true); }}
+            >
+              MUSIC/SOUND
+            </button>
+            <button
+              type="button"
+              className={`flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded relative overflow-hidden select-none transition-colors hover:bg-white/10${isDefeated && !restartFaded ? ' restart-marching-ants' : ''}`}
+              onMouseDown={handleHoldStart}
+              onMouseUp={handleHoldEnd}
+              onMouseLeave={handleHoldEnd}
+              onTouchStart={handleHoldStart}
+              onTouchEnd={handleHoldEnd}
+            >
+              <span className="relative z-10" style={{ color: holdProgress > 0 ? '#e94560' : restartFaded ? '#ffffff22' : undefined, textShadow: isDefeated && !restartFaded ? '0 0 8px #fff, 0 0 16px #ffffff88' : 'none' }}>RESTART</span>
+              {holdProgress > 0 && (
+                <div className="absolute bottom-0 left-0 h-[2px] bg-[#e94560]" style={{ width: `${holdProgress * 100}%`, transition: 'none' }} />
+              )}
+            </button>
+            <button
+              type="button"
+              className="flex-1 w-full flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border border-white/20 rounded text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+              onClick={() => { playSelectSfx(); setGuideOpen(true); }}
+            >
+              HOW TO PLAY
+            </button>
+          </div>
         </div>
 
     </div>
