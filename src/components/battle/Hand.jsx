@@ -76,7 +76,7 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
     // Whole hand is UI above the battlefield (HAND_UI). On defeat it lifts to
     // RESULT_UI so the restart strip stays clickable above the result dim —
     // children (cards, tooltips, strip) are trapped in this stacking context.
-    <div className="h-[180px] flex-shrink-0 flex border-t border-white/10 mb-2"
+    <div className="h-[180px] flex-shrink-0 flex mb-2"
       style={{ background: 'rgba(0,0,0,0.25)', position: 'relative', zIndex: isDefeated ? Z.RESULT_UI : Z.HAND_UI }}>
 
         {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
@@ -87,10 +87,11 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
         <div className="w-[10%] h-full flex flex-col items-start gap-2 p-2" style={{ background: '#0f0f1a' }}>
           <button
             type="button"
-            className={`flex-1 w-1/2 flex items-center justify-center text-center leading-tight text-[10px] font-mono tracking-wider border rounded transition-colors ${logVisible ? 'border-white/40 bg-white/10 text-white' : 'border-white/20 text-white/70 hover:bg-white/10 hover:text-white'}`}
+            className={`flex-1 w-1/2 flex flex-col items-center justify-center gap-0.5 text-center leading-tight font-mono tracking-wider border rounded transition-colors ${logVisible ? 'border-white/40 bg-white/10 text-white' : 'border-white/20 text-white/70 hover:bg-white/10 hover:text-white'}`}
             onClick={() => { playSelectSfx(); onToggleLog?.(); }}
           >
-            LOG
+            <span className="text-xl">📜</span>
+            <span className="text-sm">LOG</span>
           </button>
         </div>
 
