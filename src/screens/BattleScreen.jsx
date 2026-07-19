@@ -12,6 +12,7 @@ import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/Music/ind
 import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
 import CSS_PRESETS, { playPreset } from '../vfx/css_presets';
+import { getForwardSign } from '../vfx/direction';
 import fuseDeflect from '../vfx/fuseDeflect';
 import '../vfx/animations.css';
 import '../vfx/aura_animations.css';
@@ -246,6 +247,10 @@ export default function BattleScreen() {
       if (config.css) {
         const targetEl = getCharacterEl(anim.targetId);
         const ownerEl  = anim.ownerId ? getCharacterEl(anim.ownerId) : null;
+        const targetFaction = gs.characters.find(c => c.id === anim.targetId)?.faction;
+        const ownerFaction  = gs.characters.find(c => c.id === anim.ownerId)?.faction;
+        if (targetEl) targetEl.style.setProperty('--dir', String(getForwardSign(targetFaction)));
+        if (ownerEl)  ownerEl.style.setProperty('--dir', String(getForwardSign(ownerFaction)));
         (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !targetEl) return;
