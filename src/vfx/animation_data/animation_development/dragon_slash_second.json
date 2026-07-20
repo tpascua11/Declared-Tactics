@@ -1,5 +1,5 @@
 {
-  "name": "dragon_slash_2",
+  "name": "dragon_slash_second",
   "duration": 1400,
   "sfx": [
     { "src": "SWORD_SWING.wav", "start": 0, "volume": 0.7, "phase": "windup" },
@@ -7,7 +7,7 @@
   ],
   "css": {
     "target": [
-      { "preset": "dragon_slash_impact", "start": 216, "duration": 984, "phase": "impact" }
+      { "preset": "dragon_slash_impact_reverse", "start": 216, "duration": 984, "phase": "impact" }
     ]
   },
   "floatingNumber": { "color": "#f97316" }

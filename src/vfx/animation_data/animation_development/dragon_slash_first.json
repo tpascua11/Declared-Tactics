@@ -7,7 +7,7 @@
   ],
   "css": {
     "target": [
-      { "preset": "flame_impact", "start": 216, "duration": 984, "phase": "impact" }
+      { "preset": "dragon_slash_impact", "start": 216, "duration": 984, "phase": "impact" }
     ]
   },
   "floatingNumber": { "color": "#f97316" }

@@ -24,6 +24,42 @@ export const SAMURAI_PRESETS = {
     ],
   },
 
+  // Flash of light at impact, tinted blue/teal — target is punched
+  // upward, then right after the impact sound lands, gets knocked a
+  // full ~100px to the top-right, holds there, then settles back.
+  dragon_slash_impact: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0, 0) rotate(0deg)',                                    filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+      { offset: 0.06, transform: 'translate(0, -14px) rotate(5deg)',                                filter: 'brightness(3.4) sepia(1) saturate(6) hue-rotate(160deg)' },
+      { offset: 0.14, transform: 'translate(6px, -16px) rotate(0deg)',           filter: 'brightness(3) sepia(0.9) saturate(5.5) hue-rotate(160deg)' },
+      { offset: 0.20, transform: 'translate(13px, -17px) rotate(-8deg)',         filter: 'brightness(2.6) sepia(0.8) saturate(4.8) hue-rotate(160deg)' },
+      { offset: 0.225, transform: 'translate(62px, -62px) rotate(-17deg)',       filter: 'brightness(2.3) sepia(0.7) saturate(4.2) hue-rotate(160deg)' },
+      { offset: 0.27, transform: 'translate(47px, -47px) rotate(-12deg)',       filter: 'brightness(2) sepia(0.6) saturate(3.6) hue-rotate(160deg)' },
+      { offset: 0.5,  transform: 'translate(47px, -47px) rotate(-12deg)',       filter: 'brightness(1.5) sepia(0.35) saturate(2.2) hue-rotate(140deg)' },
+      { offset: 0.85, transform: 'translate(47px, -47px) rotate(-12deg)',         filter: 'brightness(1.1) sepia(0.1) saturate(1.2) hue-rotate(60deg)' },
+      { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',                                    filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+    ],
+  },
+
+  // Mirror of dragon_slash_impact for dragon_slash_second — that slash
+  // travels the opposite direction (top-left instead of top-right), so
+  // the knockback and tilt are mirrored to match. Same filter/timing.
+  dragon_slash_impact_reverse: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0, 0) rotate(0deg)',                                    filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+      { offset: 0.06, transform: 'translate(0, -14px) rotate(-5deg)',                               filter: 'brightness(3.4) sepia(1) saturate(6) hue-rotate(160deg)' },
+      { offset: 0.14, transform: 'translate(-6px, -16px) rotate(0deg)',           filter: 'brightness(3) sepia(0.9) saturate(5.5) hue-rotate(160deg)' },
+      { offset: 0.20, transform: 'translate(-13px, -17px) rotate(8deg)',          filter: 'brightness(2.6) sepia(0.8) saturate(4.8) hue-rotate(160deg)' },
+      { offset: 0.225, transform: 'translate(-62px, -62px) rotate(17deg)',        filter: 'brightness(2.3) sepia(0.7) saturate(4.2) hue-rotate(160deg)' },
+      { offset: 0.27, transform: 'translate(-47px, -47px) rotate(12deg)',        filter: 'brightness(2) sepia(0.6) saturate(3.6) hue-rotate(160deg)' },
+      { offset: 0.5,  transform: 'translate(-47px, -47px) rotate(12deg)',        filter: 'brightness(1.5) sepia(0.35) saturate(2.2) hue-rotate(140deg)' },
+      { offset: 0.85, transform: 'translate(-47px, -47px) rotate(12deg)',          filter: 'brightness(1.1) sepia(0.1) saturate(1.2) hue-rotate(60deg)' },
+      { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',                                    filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+    ],
+  },
+
   // Two-hit ice reaction (↘ slash then ↖ slash) — cyan/blue hue-rotate flash
   // per hit. No hold to strip; impact starts immediately at offset 0.
   ice_impact: {
