@@ -1,0 +1,135 @@
+[
+  {
+    "name": "spark slash trail",
+    "delay": 184,
+    "speed": 80,
+    "emitAngle": "auto",
+    "rate": 25,
+    "sizeMin": 8,
+    "sizeMax": 26,
+    "lifetime": 0.75,
+    "spreadX": 60,
+    "spreadY": 15,
+    "gravity": 20,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#a5f3fc",
+      "#2dd4bf"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": 159,
+      "fromY": 92,
+      "dx": -318,
+      "dy": -184,
+      "duration": 130
+    }
+  },
+  {
+    "name": "flame slash",
+    "delay": 464,
+    "speed": 160,
+    "emitAngle": "auto",
+    "rate": 35,
+    "sizeMin": 10,
+    "sizeMax": 28,
+    "lifetime": 0.5,
+    "spreadX": 80,
+    "spreadY": 80,
+    "gravity": 25,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 380,
+    "colorStops": [
+      "#e0f9ff",
+      "#38bdf8",
+      "#0d9488"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": 159,
+      "fromY": 92,
+      "dx": -318,
+      "dy": -184,
+      "duration": 240
+    }
+  },
+  {
+    "name": "lightning trail",
+    "delay": 300,
+    "speed": 170,
+    "emitAngle": "auto",
+    "rate": 60,
+    "sizeMin": 4,
+    "sizeMax": 14,
+    "lifetime": 0.5,
+    "spreadX": 165,
+    "spreadY": 165,
+    "gravity": 0,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "colorStops": [
+      "#ffffff",
+      "#ffffff",
+      "#eaffff"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": 159,
+      "fromY": 92,
+      "dx": -318,
+      "dy": -184,
+      "duration": 240
+    }
+  },
+  {
+    "name": "impact burst",
+    "delay": 904,
+    "offsetX": -110,
+    "offsetY": -64,
+    "speed": 480,
+    "angle": 30,
+    "rate": 5,
+    "sizeMin": 10,
+    "sizeMax": 32,
+    "lifetime": 0.3,
+    "spreadX": 200,
+    "spreadY": 40,
+    "gravity": 35,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 250,
+    "colorStops": [
+      "#7dd3fc",
+      "#22d3ee",
+      "#0f766e"
+    ]
+  },
+  {
+    "name": "impact lightning",
+    "delay": 904,
+    "offsetX": -110,
+    "offsetY": -64,
+    "speed": 500,
+    "angle": 30,
+    "rate": 6,
+    "sizeMin": 8,
+    "sizeMax": 20,
+    "lifetime": 0.4,
+    "spreadX": 220,
+    "spreadY": 220,
+    "gravity": 0,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "emitDuration": 300,
+    "colorStops": [
+      "#ffffff",
+      "#ffffff",
+      "#eaffff"
+    ]
+  }
+]
