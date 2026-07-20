@@ -13,6 +13,7 @@ import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
 import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
+import { spawnAfterimageTrail } from '../vfx/afterimage';
 import fuseDeflect from '../vfx/fuseDeflect';
 import '../vfx/animations.css';
 import '../vfx/aura_animations.css';
@@ -251,22 +252,34 @@ export default function BattleScreen() {
         const ownerFaction  = gs.characters.find(c => c.id === anim.ownerId)?.faction;
         if (targetEl) targetEl.style.setProperty('--dir', String(getForwardSign(targetFaction)));
         if (ownerEl)  ownerEl.style.setProperty('--dir', String(getForwardSign(ownerFaction)));
+
+        // lastEnd = real end of this attack's own css entries, not
+        // config.duration (that also drives battle pacing and can be
+        // shorter). At lastEnd, cancel every tracked anim — undoes any
+        // stray fill:'forwards' hold, e.g. straight_through_exit.
+        const spawnedAnims = [];
+        let lastEnd = 0;
         (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations, ...params }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !targetEl) return;
+          lastEnd = Math.max(lastEnd, start + duration);
           setTimeout(() => {
             applyDynamicVars(targetEl, params);
-            playPreset(targetEl, p, { duration, iterations });
+            spawnedAnims.push(playPreset(targetEl, p, { duration, iterations }));
           }, start);
         });
         (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations, ...params }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !ownerEl) return;
+          lastEnd = Math.max(lastEnd, start + duration);
           setTimeout(() => {
             applyDynamicVars(ownerEl, params);
-            playPreset(ownerEl, p, { duration, iterations });
+            spawnedAnims.push(playPreset(ownerEl, p, { duration, iterations }));
           }, start);
         });
+        animClearTimersRef.current.push(setTimeout(() => {
+          spawnedAnims.forEach(a => a?.cancel());
+        }, lastEnd));
 
         // activeAnimations also gates EnemyZone's death-fade (isDead && !anim) —
         // mark the target "busy" for config.duration so a killed enemy doesn't
@@ -275,6 +288,17 @@ export default function BattleScreen() {
         animClearTimersRef.current.push(setTimeout(() => {
           setActiveAnimations(prev => ({ ...prev, [anim.targetId]: null }));
         }, config.duration));
+      }
+
+      // 2b. AFTERIMAGE — real cloned-DOM trail (see vfx/afterimage.js),
+      // separate from config.css: a preset only animates ONE existing
+      // element, it can't spawn extras. config.afterimage.target/owner
+      // each hold spawnAfterimageTrail's options object directly.
+      if (config.afterimage) {
+        const targetEl = getCharacterEl(anim.targetId);
+        const ownerEl  = anim.ownerId ? getCharacterEl(anim.ownerId) : null;
+        if (config.afterimage.target && targetEl) spawnAfterimageTrail(targetEl, config.afterimage.target);
+        if (config.afterimage.owner  && ownerEl)  spawnAfterimageTrail(ownerEl, config.afterimage.owner);
       }
 
       // 3. SFX — play sound(s), supports multiple sounds with individual timings.

@@ -8,6 +8,7 @@ import { ANIMATIONS, ANIMATION_DEVELOPMENT_KEYS, playBattleSfx } from '../vfx/an
 import PIXI_DATA from '../vfx/pixi_data';
 import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
+import { spawnAfterimageTrail } from '../vfx/afterimage';
 import fuseDeflect from '../vfx/fuseDeflect';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import EffectsLayer from '../components/battle/EffectsLayer';
@@ -104,22 +105,43 @@ export default function VfxEditorScreen() {
         // normally player attacks enemy; the toggle flips which element plays which.
         const attackerEl = attackerIsEnemy ? enemyEl : playerEl;
         const defenderEl = attackerIsEnemy ? playerEl : enemyEl;
-        (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations, distance }) => {
+        // lastEnd = real end of this attack's own css entries — see
+        // BattleScreen's matching block for why.
+        const spawnedAnims = [];
+        let lastEnd = 0;
+        (config.css.target ?? []).forEach(({ preset, start = 0, duration, iterations, ...params }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !defenderEl) return;
+          lastEnd = Math.max(lastEnd, start + duration);
           setTimeout(() => {
-            if (distance != null) defenderEl.style.setProperty('--dist', `${distance}px`);
-            playPreset(defenderEl, p, { duration, iterations });
+            applyDynamicVars(defenderEl, params);
+            spawnedAnims.push(playPreset(defenderEl, p, { duration, iterations }));
           }, start);
         });
-        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations, distance }) => {
+        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations, ...params }) => {
           const p = CSS_PRESETS[preset];
           if (!p || !attackerEl) return;
+          lastEnd = Math.max(lastEnd, start + duration);
           setTimeout(() => {
-            if (distance != null) attackerEl.style.setProperty('--dist', `${distance}px`);
-            playPreset(attackerEl, p, { duration, iterations });
+            applyDynamicVars(attackerEl, params);
+            spawnedAnims.push(playPreset(attackerEl, p, { duration, iterations }));
           }, start);
         });
+        setTimeout(() => {
+          spawnedAnims.forEach(a => a?.cancel());
+        }, lastEnd);
+      }
+
+      // AFTERIMAGE — mirrors BattleScreen's config.afterimage handling;
+      // same ENEMY ATTACKS toggle logic as the css block above, re-resolved
+      // here since this block is a separate `if`, not nested inside it.
+      if (config.afterimage) {
+        const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
+        const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
+        const attackerEl = attackerIsEnemy ? enemyEl : playerEl;
+        const defenderEl = attackerIsEnemy ? playerEl : enemyEl;
+        if (config.afterimage.target && defenderEl) spawnAfterimageTrail(defenderEl, config.afterimage.target);
+        if (config.afterimage.owner  && attackerEl) spawnAfterimageTrail(attackerEl, config.afterimage.owner);
       }
       if (config.sfx) {
         const sfxList = Array.isArray(config.sfx)

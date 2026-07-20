@@ -201,17 +201,38 @@ export const SHARED_PRESETS = {
     ],
   },
 
-  // Straight through — one-way exit, not a lunge-and-return. Travels
-  // 150vh (viewport-relative, not px, so it clears the screen at any
-  // window size) toward --dir and stays there: fill:'forwards' overrides
-  // playPreset()'s default fill:'none', so it doesn't snap back once the
-  // animation ends. Character fully leaves the visible screen.
-  straight_through: {
+  // Straight through — split into 2 chained timeline entries (see
+  // straight_through.json's css.owner) instead of one preset with a
+  // teleport-via-close-offsets trick: that version shared one easing
+  // across both legs, so whichever curve made the exit feel right (fast
+  // launch, ease-in) made the return spend most of its time still
+  // off-screen before rushing into view right at the very end — the
+  // trailing afterimages had nothing visible to land on for most of the
+  // return. Splitting gives the return its own ease-out (fast start, so
+  // it's back in view immediately) independent of the exit's ease-in.
+
+  // 1. Exit — rushes off-screen (150vh, viewport-relative, clears any
+  // window size) toward --dir and holds there (fill:'forwards') until the
+  // return preset's own first keyframe takes over the transform — no gap,
+  // so no visible snap-back to origin in between.
+  straight_through_exit: {
     easing: 'ease-in',
     fill: 'forwards',
     keyframes: [
       { offset: 0, transform: 'translateY(0px)' },
       { offset: 1, transform: 'translateY(calc(var(--dir) * 150vh))' },
+    ],
+  },
+
+  // 2. Return — starts already at the OPPOSITE edge (-150vh): taking over
+  // the transform the instant this preset starts IS the teleport, no
+  // interpolation needed. Ends back at rest, so default fill:'none' is
+  // fine — no cleanup needed, same reasoning as every other preset.
+  straight_through_return: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0, transform: 'translateY(calc(var(--dir) * -150vh))' },
+      { offset: 1, transform: 'translateY(0px)' },
     ],
   },
 

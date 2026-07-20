@@ -16,5 +16,8 @@
       { "preset": "ferret_return",    "start": 375, "duration": 275 }
     ]
   },
+  "afterimage": {
+    "owner": { "count": 8, "spacing": 50, "fadeDuration": 350 }
+  },
   "floatingNumber": { "color": "#ff4444" }
 }

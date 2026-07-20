@@ -58,7 +58,9 @@ export const CSS_PRESETS = { ...SHARED_PRESETS, ...SAMURAI_PRESETS, ...ENEMY_SAM
 // animation ends, no manual cleanup needed). A few presets are authored to
 // deliberately end in a non-resting state (e.g. shinsoku_disappear ends
 // fully invisible) and set fill:'forwards' to stay there until something
-// else changes it.
+// else changes it — callers (BattleScreen/VfxEditorScreen) are responsible
+// for eventually cancelling a fill:'forwards' animation once its attack's
+// real content has finished playing, so it can't outlive the attack.
 export function playPreset(el, preset, { duration, iterations = 1 }) {
   if (!el || !preset) return null;
   const keyframes = preset.keyframes.map(k => ({ ...k, easing: preset.easing ?? 'linear' }));
