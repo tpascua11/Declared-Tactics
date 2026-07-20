@@ -13,7 +13,7 @@ import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
 import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
-import { spawnAfterimageTrail } from '../vfx/afterimage';
+import { spawnAfterimageTrail, clearAfterimageTimers } from '../vfx/afterimage';
 import fuseDeflect from '../vfx/fuseDeflect';
 import '../vfx/animations.css';
 import '../vfx/aura_animations.css';
@@ -93,6 +93,7 @@ export default function BattleScreen() {
       floatTimersRef.current.forEach(clearTimeout);
       animClearTimersRef.current.forEach(clearTimeout);
       clearTimeout(restartTransitionTimerRef.current);
+      clearAfterimageTimers();
     };
   }, []);
 

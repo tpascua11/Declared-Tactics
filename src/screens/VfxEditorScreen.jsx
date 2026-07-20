@@ -8,7 +8,7 @@ import { ANIMATIONS, ANIMATION_DEVELOPMENT_KEYS, playBattleSfx } from '../vfx/an
 import PIXI_DATA from '../vfx/pixi_data';
 import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
-import { spawnAfterimageTrail } from '../vfx/afterimage';
+import { spawnAfterimageTrail, clearAfterimageTimers } from '../vfx/afterimage';
 import fuseDeflect from '../vfx/fuseDeflect';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import EffectsLayer from '../components/battle/EffectsLayer';
@@ -65,6 +65,8 @@ export default function VfxEditorScreen() {
     setJsonText(JSON.stringify(data ?? [], null, 2));
     setJsonError(null);
   }, [selected]);
+
+  useEffect(() => () => clearAfterimageTimers(), []);
 
   function handleJsonChange(e) {
     setJsonText(e.target.value);

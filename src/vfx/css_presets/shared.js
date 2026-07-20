@@ -187,11 +187,8 @@ export const SHARED_PRESETS = {
     ],
   },
 
-  // Dynamic lunge — same lean-and-settle shape as attack_lunge, but the
-  // distance isn't baked in. Reads --distance (from a `distance` field on
-  // the timeline entry in animation_data JSON, forwarded 1:1 by
-  // applyDynamicVars — see css_presets/index.js) alongside --dir, so any
-  // attack can pick its own lunge distance without a new named preset.
+  // Like attack_lunge, but distance comes from --distance (a `distance`
+  // field on the JSON entry) instead of a hardcoded number.
   dynamic_lunge: {
     easing: 'ease-out',
     keyframes: [

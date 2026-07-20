@@ -1,13 +1,8 @@
-// Real multi-copy motion trail. Unlike css_presets (which only describe
-// ONE element's own animation via calc()/keyframes), a true afterimage
-// needs actual extra DOM nodes — a WAAPI preset can't spawn elements, only
-// animate an existing one. spawnAfterimageTrail clones `el` `count` times,
-// staggered `spacing` ms apart. Each clone's position is captured with
-// getBoundingClientRect() AT ITS OWN SPAWN TIME, inside its setTimeout —
-// not once upfront — because `el` is actively mid-flight (translateY via
-// WAAPI) while these timers are pending, so a later spawn genuinely
-// captures a further-along position. That's what makes the ghosts trail
-// along the whole path instead of clustering at the launch point.
+// Real multi-copy motion trail (spawns actual clones — a WAAPI preset
+// can't do this, it only animates one existing element). Each clone's
+// position is captured fresh, inside its own setTimeout, not upfront —
+// `el` is still moving while these are pending, so later spawns land
+// further along the path instead of clustering at the start.
 
 // Pending spawn timers — exposed so a screen unmount can cancel them,
 // mirroring the animClearTimersRef pattern BattleScreen already uses.
