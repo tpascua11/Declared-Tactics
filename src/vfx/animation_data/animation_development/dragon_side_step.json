@@ -1,0 +1,15 @@
+{
+  "name": "dragon_side_step",
+  "duration": 600,
+  "sfx": [
+    { "src": "STEP.wav", "start": 0,   "volume": 0.7 },
+    { "src": "STEP.wav", "start": 300, "volume": 0.7 }
+  ],
+  "css": {
+    "owner": [
+      { "preset": "dragon_hard_step",  "start": 0,   "duration": 300 },
+      { "preset": "dragon_step_right", "start": 300, "duration": 300 }
+    ]
+  },
+  "floatingNumber": null
+}

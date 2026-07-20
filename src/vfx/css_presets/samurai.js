@@ -438,6 +438,50 @@ export const SAMURAI_PRESETS = {
     ],
   },
 
+  // Dragon hard step — a hard step to the left, angled forward toward
+  // the opponent (Y uses --dir so it's forward for either side). Snaps
+  // out fast then settles into the stepped stance and HOLDS there
+  // (fill:'forwards') — this is footwork setting up for the slash that
+  // follows immediately after, not a full step-and-return.
+  dragon_hard_step: {
+    easing: 'ease-out',
+    fill: 'forwards',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0px, 0px) rotate(0deg)',                                filter: 'brightness(1)' },
+      { offset: 0.35, transform: 'translate(-55px, calc(var(--dir) * 35px)) rotate(-6deg)',         filter: 'brightness(1.6)' },
+      { offset: 1,    transform: 'translate(-42px, calc(var(--dir) * 28px)) rotate(-3deg)',         filter: 'brightness(1)' },
+    ],
+  },
+
+  // Dragon step right — a real positional dash to the right (110px, no
+  // --dir, literal screen-right), not a stylized snap like dragon_hard_step.
+  // Meant to pair with an afterimage.owner trail in the JSON so the real
+  // cloned-DOM copies sell the distance covered. Holds at the new position.
+  dragon_step_right: {
+    easing: 'ease-out',
+    fill: 'forwards',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0px, 0px)' },
+      { offset: 0.3,  transform: 'translate(110px, 0px)' },
+      { offset: 1,    transform: 'translate(110px, 0px)' },
+    ],
+  },
+
+  // Dragon step forward — steps forward (Y uses --dir, forward for
+  // either side) while rotating 15deg clockwise mid-step, holds flat at
+  // that 15deg angle and forward position, then slowly returns all the
+  // way back to the resting position/angle by the end.
+  dragon_step_forward: {
+    easing: 'ease-out',
+    fill: 'forwards',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0px, 0px) rotate(0deg)' },
+      { offset: 0.3,  transform: 'translate(0px, calc(var(--dir) * 90px)) rotate(15deg)' },
+      { offset: 0.8,  transform: 'translate(0px, calc(var(--dir) * 90px)) rotate(15deg)' },
+      { offset: 1,    transform: 'translate(0px, 0px) rotate(0deg)' },
+    ],
+  },
+
   // Gatotsu — fang thrust. No wind-up; frame 0 is already the impact
   // (target driven back), blade snaps out with a diminishing oscillation.
   gatotsu_thrust: {

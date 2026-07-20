@@ -1,0 +1,16 @@
+{
+  "name": "dragon_step_forward",
+  "duration": 500,
+  "sfx": [
+    { "src": "STEP.wav", "start": 0, "volume": 0.7 }
+  ],
+  "css": {
+    "owner": [
+      { "preset": "dragon_step_forward", "start": 0, "duration": 500 }
+    ]
+  },
+  "afterimage": {
+    "owner": { "count": 3, "spacing": 20, "fadeDuration": 175 }
+  },
+  "floatingNumber": null
+}
