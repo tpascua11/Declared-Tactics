@@ -1,0 +1,118 @@
+CSS_PRESETS/INDEX.JS — DEEP REFERENCE
+========================================
+Function-by-function API mechanics for src/vfx/css_presets/index.js.
+NOT the place for "why"/architecture — see css_animation_philosophy.txt
+for the connector conventions and composition principles this API serves.
+Read this when actually modifying index.js or debugging one of these
+three functions; skip it for routine preset/JSON authoring.
+
+playPreset(el, preset, { duration, iterations = 1 })
+-------------------------------------------------------
+Plays a preset on `el` via the Web Animations API (el.animate()).
+
+GOTCHA — WAAPI per-keyframe easing:
+  WAAPI's outer `options.easing` applies to the WHOLE animation as one
+  curve. It does NOT re-apply per segment the way CSS @keyframes'
+  animation-timing-function does. Left alone, multi-step impacts (like
+  flame_impact, which has ~12 keyframes) feel smoothed-out/weaker — the
+  sharp per-hop snap gets averaged into one long arc instead of each hop
+  getting its own accelerate/decelerate. Fix: preset.easing is baked onto
+  EVERY individual keyframe (`k => ({...k, easing: preset.easing})`), and
+  the outer options.easing is forced to 'linear' so each hop's speed
+  curve comes entirely from its own baked-in easing, not the outer one.
+  This is the ONE place presets get played — never call el.animate()
+  directly anywhere else, or this fix is bypassed.
+
+preset.pseudoElement:
+  Some effects (shine sweep, marching-ants border) need a whole extra
+  visual layer (a gradient sweep, a dashed border) that transform/filter
+  on the base element can't produce — drawn on ::before/::after instead.
+  When set, options.pseudoElement targets that layer instead of `el`.
+
+iterations:
+  Defaults to 1 (play once). For presets whose source CSS looped
+  `infinite` but were always cut short by a fixed duration in practice.
+
+preset.fill:
+  Defaults to 'none' — snaps back to normal the instant the animation
+  ends, no cleanup needed (WAAPI's default behavior). A few presets
+  deliberately end in a non-resting state (e.g. shinsoku_vanish ends
+  fully invisible) and set fill:'forwards' to stay there "until something
+  else changes it" (shinsoku_vanish's own comment).
+  CALLER CONTRACT: fill:'forwards' animations do NOT expire on their own.
+  BattleScreen.jsx/VfxEditorScreen.jsx are responsible for eventually
+  cancelling them — they track every Animation object a specific attack's
+  own css.target/css.owner entries spawn, then force-cancel all of them
+  once the LAST entry's real end (start+duration, from the entries
+  themselves, NOT config.duration — that also drives battle pacing and
+  can be shorter than the visuals) is reached. Skipping this is exactly
+  what caused straight_through_exit to leave a card stuck invisible
+  off-screen (see css_animation_philosophy.txt's fill:'forwards' section
+  for the full story of why).
+
+applyDynamicVars(el, params)
+--------------------------------
+`params` = the rest-spread of extra keys on a css.target/css.owner JSON
+timeline entry, after preset/start/duration/iterations are destructured
+off (e.g. `{ distance: 26 }` from `{ preset:"x", start:0, duration:100,
+distance:26 }`). Each key becomes a same-named CSS custom property on
+`el` — numbers get a px suffix (`distance:26` -> `--distance:26px`),
+everything else is String()'d as-is. No rename, no lookup table: a brand
+new JSON param needs zero code changes here, as long as some preset's
+calc() reads the matching var name.
+
+ORDERING REQUIREMENT: MUST run before playPreset(el, ...) for the same
+entry. el.animate() reads calc(var(--x)) synchronously at the moment
+it's called — setting the var AFTER that call is a silent no-op (the
+animation already captured whatever the var was at start time, or its
+CSS-authored fallback / invalid value if unset).
+
+captureCurrentTransform(el)
+--------------------------------
+Reads el's ACTUAL current rendered translateX/Y — wherever a previous
+chained preset left it, whether mid-flight or fully finished — via
+getComputedStyle(el).transform, parsed by `new DOMMatrixReadOnly(...)`.
+Exposes the result as --from-x/--from-y.
+
+WHY getComputedStyle specifically: it returns the real, currently-
+rendered value, INCLUDING whatever a WAAPI animation is mid-interpolating
+right now — not just the last explicitly-set JS/CSS value. That's the
+whole point: "wherever the element visually is at this exact instant."
+
+WHY m41/m42: CSS transforms collapse into one 4x4 matrix regardless of
+how many functions were chained. Properties are named m11..m44, laid out
+as 4 columns of 4; the 4th column (m41,m42,m43,m44) is where translation
+lives — m41=X, m42=Y, m43=Z (unused, 2D only), m44=homogeneous coord
+(normally 1). Rotation/scale/skew live in the top-left 3x3 block,
+completely separate. So m41/m42 isolates "just the X/Y shift," ignoring
+whatever else the transform is doing.
+
+GOTCHA — transform function order affects what m41/m42 reads back.
+CSS composes transform functions left-to-right, but they take effect on
+a point in the OPPOSITE order (last-written acts first, first-written
+acts last/outermost). translate(100px,0) rotate(90deg) [translate first]
+-> the rotation is applied in the local frame BEFORE the outer translate,
+so m41/m42 comes out as exactly (100,0), untouched by the rotation.
+rotate(90deg) translate(100px,0) [reversed] -> the translation vector
+itself gets rotated before being placed in the final matrix, so m41/m42
+comes out as roughly (0,100) instead — completely different from what
+was authored. RULE: any preset meant to be chainable via --from-x/--from-y
+must write translate(...) FIRST, before any rotate()/scale(). Every
+existing preset already follows this; it's a constraint for new ones.
+
+STATUS — UNVERIFIED: getComputedStyle(el).transform returns the literal
+string 'none' when nothing has ever transformed the element (e.g. the
+very first preset in a chain, on a fresh card). Whether
+`new DOMMatrixReadOnly('none')` parses that as identity (m41=0, m42=0)
+or throws has not been confirmed via a live test. If it throws, this
+needs a guard: `transform === 'none' ? identity : new
+DOMMatrixReadOnly(transform)`. The samurai_hard_step_test_lr/rl dev
+animations (animation_data/animation_development/) exist specifically to
+exercise this case — both start a chain from a completely untransformed
+card. If either throws a console error or the card jumps to a garbage
+position on the FIRST preset of the chain, this is the fix needed.
+
+CALL-SITE CONTRACT: must run before EVERY playPreset() call, same spot
+as --dir (getForwardSign) and applyDynamicVars. Currently wired into
+VfxEditorScreen.jsx only — NOT yet wired into BattleScreen.jsx (was
+explicitly scoped out: "lets do vfxEditor only for this right now").

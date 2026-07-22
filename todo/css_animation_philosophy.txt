@@ -40,39 +40,27 @@ the other two connectors below.
 CONNECTOR 2 — MAGNITUDE (--distance / generic params)
 --------------------------------------------------------
 applyDynamicVars(el, params) in css_presets/index.js: any EXTRA key on a
-css.target/css.owner JSON timeline entry (beyond preset/start/duration/
-iterations) gets forwarded 1:1 as a same-named CSS var. { "distance": 26 }
-becomes --distance:26px, read via calc(var(--distance)...) in the preset.
-No rename, no lookup table — a brand new parameter (e.g. "scale") needs
-ZERO code changes anywhere, as long as some preset's calc() reads the
-matching var name. This is the general mechanism; --dir is really just
-the first instance of the same pattern (computed instead of JSON-authored).
+css.target/css.owner JSON timeline entry gets forwarded 1:1 as a
+same-named CSS var — { "distance": 26 } becomes --distance:26px, read via
+calc(var(--distance)...) in the preset. A brand new parameter needs ZERO
+code changes anywhere, as long as some preset's calc() reads the matching
+var name. This is the general mechanism; --dir is really just the first
+instance of the same pattern (computed instead of JSON-authored).
+Mechanics/gotchas: see css_preset_guide_line.txt.
 
 CONNECTOR 3 — POSITION CONTINUITY (--from-x / --from-y)
 -----------------------------------------------------------
-captureCurrentTransform(el) in css_presets/index.js: reads el's ACTUAL
-current rendered transform via getComputedStyle + DOMMatrixReadOnly
-(m41/m42 = the translateX/Y components of the combined matrix — rotation/
-scale live elsewhere in the matrix, translation always lives in the 4th
-column). Exposes it as --from-x/--from-y. Call right before EVERY
-playPreset(), same spot as --dir.
+captureCurrentTransform(el) in css_presets/index.js reads el's ACTUAL
+current rendered position and exposes it as --from-x/--from-y, called
+right before EVERY playPreset(), same spot as --dir.
 A preset written as translate(calc(var(--from-x) + 110px), var(--from-y))
 instead of a hardcoded translate(110px, 0px) becomes truly reusable — it
 continues correctly from wherever the PREVIOUS preset actually left the
 element, in ANY order, with no manually-copied value that can drift out
 of sync. This is what turns "chained presets" into genuine LEGO bricks
 instead of presets secretly welded to one specific sibling.
-
-GOTCHA — transform function order affects what --from-x/--from-y reads
-back. translate(...) must be written FIRST in a preset's transform string,
-before any rotate()/scale(). CSS composes transform functions left-to-
-right, but they take effect on a point in the OPPOSITE order (last-written
-acts first). translate(100px,0) rotate(90deg) -> m41/m42 = exactly
-(100,0), rotation never touches it (rotation happens before the outer
-translate is applied). rotate(90deg) translate(100px,0) -> the rotation
-gets applied to the translation vector itself, so m41/m42 comes back as
-roughly (0,100) instead — completely different numbers than what was
-authored. Every existing preset already follows the safe order; keep it.
+Mechanics (why m41/m42, the translate-before-rotate ordering requirement,
+the unverified 'none' edge case): see css_preset_guide_line.txt.
 
 CHAINING / CONTINUITY RULE
 ----------------------------
