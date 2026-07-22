@@ -457,28 +457,67 @@ export const SAMURAI_PRESETS = {
   // --dir, literal screen-right), not a stylized snap like dragon_hard_step.
   // Meant to pair with an afterimage.owner trail in the JSON so the real
   // cloned-DOM copies sell the distance covered. Holds at the new position.
+  // offset 0 matches dragon_hard_step's own ending transform exactly (its
+  // chain partner in dragon_side_step.json) so the handoff between them
+  // doesn't pop back to origin — see dragon_hard_step's own last keyframe.
   dragon_step_right: {
     easing: 'ease-out',
     fill: 'forwards',
     keyframes: [
-      { offset: 0,    transform: 'translate(0px, 0px)' },
-      { offset: 0.3,  transform: 'translate(110px, 0px)' },
-      { offset: 1,    transform: 'translate(110px, 0px)' },
+      { offset: 0,    transform: 'translate(-42px, calc(var(--dir) * 28px)) rotate(-3deg)', filter: 'brightness(1)' },
+      { offset: 0.3,  transform: 'translate(110px, 0px) rotate(0deg)', filter: 'brightness(1)' },
+      { offset: 1,    transform: 'translate(110px, 0px) rotate(0deg)', filter: 'brightness(1)' },
+    ],
+  },
+
+  // Samurai hard step left/right — test presets for captureCurrentTransform
+  // (see css_presets/index.js). Forward 100px (--dir) + 100px left/right,
+  // written relative to --from-x/--from-y instead of a hardcoded starting
+  // point, so either can chain after the other (or after anything else)
+  // in any order and still continue correctly from wherever it actually
+  // starts, with no manually-copied value like dragon_step_right needed.
+  samurai_hard_step_left: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0, transform: 'translate(var(--from-x), var(--from-y))' },
+      { offset: 1, transform: 'translate(calc(var(--from-x) - 100px), calc(var(--from-y) + var(--dir) * 100px))' },
+    ],
+  },
+  samurai_hard_step_right: {
+    easing: 'ease-out',
+    keyframes: [
+      { offset: 0, transform: 'translate(var(--from-x), var(--from-y))' },
+      { offset: 1, transform: 'translate(calc(var(--from-x) + 100px), calc(var(--from-y) + var(--dir) * 100px))' },
     ],
   },
 
   // Dragon step forward — steps forward (Y uses --dir, forward for
-  // either side) while rotating 15deg clockwise mid-step, holds flat at
-  // that 15deg angle and forward position, then slowly returns all the
+  // either side) while rotating 10deg clockwise mid-step, holds flat at
+  // that 10deg angle and forward position, then slowly returns all the
   // way back to the resting position/angle by the end.
   dragon_step_forward: {
     easing: 'ease-out',
     fill: 'forwards',
     keyframes: [
       { offset: 0,    transform: 'translate(0px, 0px) rotate(0deg)' },
-      { offset: 0.3,  transform: 'translate(0px, calc(var(--dir) * 90px)) rotate(15deg)' },
-      { offset: 0.8,  transform: 'translate(0px, calc(var(--dir) * 90px)) rotate(15deg)' },
+      { offset: 0.3,  transform: 'translate(0px, calc(var(--dir) * 90px)) rotate(10deg)' },
+      { offset: 0.8,  transform: 'translate(0px, calc(var(--dir) * 90px)) rotate(10deg)' },
       { offset: 1,    transform: 'translate(0px, 0px) rotate(0deg)' },
+    ],
+  },
+
+  // Dragon step forward, long-hold variant — same snap (~150ms) and same
+  // return (~100ms) as dragon_step_forward in absolute time, tuned for
+  // being stretched across a much longer duration (e.g. 1350ms in
+  // dragon_slash_combo) so the snap doesn't slow down along with the hold.
+  dragon_step_forward_hold: {
+    easing: 'ease-out',
+    fill: 'forwards',
+    keyframes: [
+      { offset: 0,     transform: 'translate(0px, 0px) rotate(0deg)' },
+      { offset: 0.111, transform: 'translate(0px, calc(var(--dir) * 90px)) rotate(10deg)' },
+      { offset: 0.926, transform: 'translate(0px, calc(var(--dir) * 90px)) rotate(10deg)' },
+      { offset: 1,     transform: 'translate(0px, 0px) rotate(0deg)' },
     ],
   },
 

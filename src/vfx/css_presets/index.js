@@ -84,4 +84,23 @@ export function applyDynamicVars(el, params) {
   });
 }
 
+// Reads el's ACTUAL current rendered translateX/Y (wherever a previous
+// chained preset left it, mid-flight or finished) and exposes it as
+// --from-x/--from-y. UNVERIFIED: getComputedStyle(el).transform returns
+// the literal string 'none' when nothing has moved the element yet (e.g.
+// the first preset in a chain) — whether DOMMatrixReadOnly('none') parses
+// that as identity (0,0) or throws has not been tested live. If it
+// throws, this needs a `transform === 'none' ? identity : new
+// DOMMatrixReadOnly(transform)` guard. A preset writing its own keyframes
+// relative to these vars (e.g. translate(calc(var(--from-x) + 110px),
+// var(--from-y))) becomes a reusable delta — continues correctly from
+// whatever ran before it, in any order. Call right before EVERY
+// playPreset(), same spot --dir is set.
+export function captureCurrentTransform(el) {
+  if (!el) return;
+  const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+  el.style.setProperty('--from-x', `${m.m41}px`);
+  el.style.setProperty('--from-y', `${m.m42}px`);
+}
+
 export default CSS_PRESETS;

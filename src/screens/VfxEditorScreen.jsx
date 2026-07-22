@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { PORTRAIT_SAMURAI, ENEMY_WOLF_SAMURAI } from '../assets';
 import { ANIMATIONS, ANIMATION_DEVELOPMENT_KEYS, playBattleSfx } from '../vfx/animationRegistry';
 import PIXI_DATA from '../vfx/pixi_data';
-import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
+import CSS_PRESETS, { playPreset, applyDynamicVars, captureCurrentTransform } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
 import { spawnAfterimageTrail, clearAfterimageTimers } from '../vfx/afterimage';
 import fuseDeflect from '../vfx/fuseDeflect';
@@ -116,6 +116,7 @@ export default function VfxEditorScreen() {
           if (!p || !defenderEl) return;
           lastEnd = Math.max(lastEnd, start + duration);
           setTimeout(() => {
+            captureCurrentTransform(defenderEl);
             applyDynamicVars(defenderEl, params);
             spawnedAnims.push(playPreset(defenderEl, p, { duration, iterations }));
           }, start);
@@ -125,6 +126,7 @@ export default function VfxEditorScreen() {
           if (!p || !attackerEl) return;
           lastEnd = Math.max(lastEnd, start + duration);
           setTimeout(() => {
+            captureCurrentTransform(attackerEl);
             applyDynamicVars(attackerEl, params);
             spawnedAnims.push(playPreset(attackerEl, p, { duration, iterations }));
           }, start);

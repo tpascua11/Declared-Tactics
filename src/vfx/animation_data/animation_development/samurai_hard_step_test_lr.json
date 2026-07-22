@@ -1,0 +1,10 @@
+{
+  "name": "samurai_hard_step_test_lr",
+  "duration": 600,
+  "css": {
+    "owner": [
+      { "preset": "samurai_hard_step_left",  "start": 0,   "duration": 300 },
+      { "preset": "samurai_hard_step_right", "start": 300, "duration": 300 }
+    ]
+  }
+}

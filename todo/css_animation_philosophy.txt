@@ -1,0 +1,166 @@
+CSS ANIMATION PHILOSOPHY — SEED KNOWLEDGE
+==========================================
+Not a reference table of every preset. The underlying principles, so new
+presets/combinations can be reasoned out, not just memorized. See
+true_css_interpreter.txt for the original architecture this builds on.
+
+THE CORE MODEL
+---------------
+A preset (css_presets/*.js) is a pure, reusable "brick": keyframes + easing,
+nothing else. No timing, no target, no direction baked in. An animation_data
+JSON file is the TIMELINE — it decides which bricks play, when, on whom,
+and with what parameters. The engine (BattleScreen.jsx/VfxEditorScreen.jsx)
+is a fixed, generic interpreter that never knows any specific attack exists.
+
+The test for "is this actually data-driven": can a brand new attack be
+built as a pure JSON diff, zero code changes? If yes, the system is working
+as intended. Code changes are only for teaching the engine a genuinely NEW
+CAPABILITY (a new channel, a new connector) — using that capability
+afterward should always be pure data.
+
+WHAT MAKES A PRESET A REAL "BRICK" (composable, order-independent) VS A
+ONE-OFF WELDED TO ITS SPECIFIC NEIGHBOR: three connector conventions.
+Skip these and a preset becomes secretly coupled to whatever's supposed
+to run right before/after it — fragile, easy to desync later.
+
+CONNECTOR 1 — DIRECTION (--dir)
+--------------------------------
+src/vfx/direction.js: getForwardSign(faction) -> 1 or -1.
+Player's forward is up (negative Y), enemy's is down (positive Y), toward
+each other. Computed FRESH from the real attacking character's faction
+every time an animation plays (BattleScreen looks up gs.characters by
+anim.ownerId/targetId) — never hardcoded per-attack.
+Written into a preset as: calc(var(--dir) * Npx). One preset then serves
+BOTH factions. The old anti-pattern this replaced: hand-mirrored duplicate
+presets (speed_dash_lunge vs speed_dash_lunge_up) — same shape, opposite
+sign, copy-pasted. Never do that again; use --dir instead.
+Set on the element right before every playPreset() call, same spot as
+the other two connectors below.
+
+CONNECTOR 2 — MAGNITUDE (--distance / generic params)
+--------------------------------------------------------
+applyDynamicVars(el, params) in css_presets/index.js: any EXTRA key on a
+css.target/css.owner JSON timeline entry (beyond preset/start/duration/
+iterations) gets forwarded 1:1 as a same-named CSS var. { "distance": 26 }
+becomes --distance:26px, read via calc(var(--distance)...) in the preset.
+No rename, no lookup table — a brand new parameter (e.g. "scale") needs
+ZERO code changes anywhere, as long as some preset's calc() reads the
+matching var name. This is the general mechanism; --dir is really just
+the first instance of the same pattern (computed instead of JSON-authored).
+
+CONNECTOR 3 — POSITION CONTINUITY (--from-x / --from-y)
+-----------------------------------------------------------
+captureCurrentTransform(el) in css_presets/index.js: reads el's ACTUAL
+current rendered transform via getComputedStyle + DOMMatrixReadOnly
+(m41/m42 = the translateX/Y components of the combined matrix — rotation/
+scale live elsewhere in the matrix, translation always lives in the 4th
+column). Exposes it as --from-x/--from-y. Call right before EVERY
+playPreset(), same spot as --dir.
+A preset written as translate(calc(var(--from-x) + 110px), var(--from-y))
+instead of a hardcoded translate(110px, 0px) becomes truly reusable — it
+continues correctly from wherever the PREVIOUS preset actually left the
+element, in ANY order, with no manually-copied value that can drift out
+of sync. This is what turns "chained presets" into genuine LEGO bricks
+instead of presets secretly welded to one specific sibling.
+
+GOTCHA — transform function order affects what --from-x/--from-y reads
+back. translate(...) must be written FIRST in a preset's transform string,
+before any rotate()/scale(). CSS composes transform functions left-to-
+right, but they take effect on a point in the OPPOSITE order (last-written
+acts first). translate(100px,0) rotate(90deg) -> m41/m42 = exactly
+(100,0), rotation never touches it (rotation happens before the outer
+translate is applied). rotate(90deg) translate(100px,0) -> the rotation
+gets applied to the translation vector itself, so m41/m42 comes back as
+roughly (0,100) instead — completely different numbers than what was
+authored. Every existing preset already follows the safe order; keep it.
+
+CHAINING / CONTINUITY RULE
+----------------------------
+Multiple timeline entries (css.owner: [{...},{...},{...}]) let one attack
+compose several presets into a multi-phase motion via pure JSON sequencing
+— no bespoke "combo" code per attack. Two ways to keep a chain visually
+seamless (no pop between parts):
+  a) Manually match values — preset B's first keyframe literally equals
+     preset A's last keyframe value (works, but drifts if either changes
+     later without updating the other — this caused a real bug once,
+     dragon_step_right started at (0,0) instead of matching
+     dragon_hard_step's actual ending transform).
+  b) Use --from-x/--from-y (Connector 3) — no manual matching needed,
+     can't drift, and presets built this way can chain in ANY order.
+Prefer (b) for anything meant to be reusable across multiple attacks.
+
+WHY SPLIT INTO MULTIPLE PRESETS AT ALL, INSTEAD OF ONE WITH MORE KEYFRAMES?
+------------------------------------------------------------------------------
+Only one real reason: playPreset() bakes ONE easing value onto every
+keyframe in a preset (WAAPI's outer easing applies to the whole animation,
+not per-segment like CSS @keyframes — see true_css_interpreter.txt gotcha
+#2). If every phase of a motion shares the same easing, it should be ONE
+preset with more keyframes — continuity is then already 100% free/native,
+since keyframe-to-keyframe interpolation within a single animation needs
+no --from-x/--from-y at all. Only split into separate chained presets when
+different phases genuinely need different easing curves (e.g. a fast
+ease-out snap forward vs a slow ease-in-out drift back — one shared curve
+made the return spend most of its time still off-screen before rushing
+into view at the very end, which is why ferret_pounce and straight_through
+both got split this way).
+
+FILL:'FORWARDS' — HANDLE WITH CARE
+--------------------------------------
+Default fill:'none' snaps back to the resting state the instant a preset's
+animation ends, automatically, no cleanup needed. fill:'forwards' holds
+the ending value indefinitely instead — but WAAPI composes MULTIPLE
+overlapping animations on the same element/property by creation-order
+stacking, not by "newest always wins forever." A fill:'forwards' preset
+early in a chain can silently REASSERT its held effect later, after a
+subsequent preset's own (temporary, fill:'none') effect naturally expires
+— this is exactly what caused straight_through_exit to leave the card
+stuck invisible off-screen after straight_through_return had already
+finished and looked fine.
+The fix in place: BattleScreen.jsx/VfxEditorScreen.jsx track every
+Animation object a specific attack's own css.target/css.owner entries
+spawn, then force-cancel ALL of them once the LAST entry's real end
+(start+duration, computed from the entries themselves) is reached —
+deliberately NOT tied to the JSON's top-level "duration" field, since that
+also drives battle pacing (how long BattleScreen waits before the next
+step) and can be intentionally SHORTER than the visuals it kicks off.
+Cancelling removes an animation's effect entirely regardless of which
+property it touched (transform, filter, opacity, boxShadow — anything),
+so this cleanup is fully generic, not preset-specific.
+
+THE AFTERIMAGE CHANNEL — A DIFFERENT KIND OF SYSTEM
+--------------------------------------------------------
+src/vfx/afterimage.js: spawnAfterimageTrail(el, {count, spacing,
+fadeDuration, opacity}) — NOT a css_preset. A WAAPI preset can only
+animate ONE existing element; a real afterimage trail needs actual new
+DOM nodes (el.cloneNode(true), appended to document.body). That's a
+structurally different operation, which is why it lives as its own JSON
+channel (config.afterimage.target/owner) parallel to config.css/config.pixi/
+config.sfx, not squeezed into the css.owner array as a fake preset.
+Each ghost's position is captured fresh, inside its own setTimeout, AT
+ITS OWN SPAWN TIME — not once upfront — because the real element is
+still moving while these staggered spawns are pending. That's what makes
+ghosts trail along the actual motion instead of clustering at the start.
+Current limits (both manual-tuning, not yet solved generically):
+  - No "start" delay — always begins at time 0 of the whole animation.
+  - Its span is just count*spacing, decoupled from the real motion's
+    duration — has to be hand-tuned to roughly match, or ghosts either
+    stop early (span too short) or keep spawning after the motion is
+    already done (span too long, captures the reset position instead).
+clearAfterimageTimers() must be called on screen unmount (both screens
+already do this) — otherwise pending spawn timers can fire after the
+screen is gone, creating orphaned ghosts appended to a now-unrelated
+screen's document.body.
+
+AOE CAVEAT — OWNER-SIDE CHAINING IS NOT YET AOE-SAFE
+----------------------------------------------------------
+An AOE attack pushes ONE pendingAnimation entry PER TARGET HIT (see
+reducer.js aoeHits.forEach), all sharing the same ownerId/attacker but
+different targetId. Each entry independently re-triggers config.css.owner
+— so a chained owner motion would fire once per enemy hit, nearly
+simultaneously, competing with itself on the same attacker element.
+config.css.target has no such problem (each hit is a genuinely different
+element, correctly isolated). Rule of thumb: keep chained/continuity-
+dependent motion (--from-x/--from-y presets especially) on css.target, or
+scope css.owner chaining to single-target attacks only, until an AOE
+guard (mirroring the existing skipSfx: i>0 pattern) gets built for the
+owner side specifically.

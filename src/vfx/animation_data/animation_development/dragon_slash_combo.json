@@ -1,0 +1,21 @@
+{
+  "name": "dragon_slash_combo",
+  "duration": 1400,
+  "sfx": [
+    { "src": "STEP.wav", "start": 0, "volume": 0.7 },
+    { "src": "SWORD_SWING.wav", "start": 0, "volume": 0.7, "phase": "windup" },
+    { "src": "DRAGON_SLASH_1.wav", "start": 300, "volume": 0.8, "phase": "impact" }
+  ],
+  "css": {
+    "owner": [
+      { "preset": "dragon_step_forward_hold", "start": 0, "duration": 1200 }
+    ],
+    "target": [
+      { "preset": "dragon_slash_impact", "start": 216, "duration": 984, "phase": "impact" }
+    ]
+  },
+  "afterimage": {
+    "owner": { "count": 3, "spacing": 20, "fadeDuration": 175 }
+  },
+  "floatingNumber": { "color": "#f97316" }
+}
