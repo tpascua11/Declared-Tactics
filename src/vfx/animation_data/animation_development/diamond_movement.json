@@ -1,0 +1,12 @@
+{
+  "name": "diamond_movement",
+  "duration": 1200,
+  "css": {
+    "owner": [
+      { "preset": "basic_step", "start": 0,   "duration": 300, "step-x": 100,  "step-y": 100 },
+      { "preset": "basic_step", "start": 300, "duration": 300, "step-x": -100, "step-y": 100 },
+      { "preset": "basic_step", "start": 600, "duration": 300, "step-x": -100, "step-y": -100 },
+      { "preset": "basic_step", "start": 900, "duration": 300, "step-x": 100,  "step-y": -100 }
+    ]
+  }
+}
