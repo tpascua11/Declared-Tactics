@@ -63,78 +63,12 @@ export const SHARED_PRESETS = {
     ],
   },
 
-  // Steel border — a thick solid white ring appears around the unit,
-  // holds, then fades. box-shadow with 0 blur and a wide spread paints a
-  // hard-edged band (not a soft glow), which is what makes it read as a
-  // "thick border" rather than a bloom. Plays on the base element itself,
-  // not a pseudo-element wash — nothing about the card's own content or
-  // real border-color is touched. box-shadow is used instead of animating
-  // border-color directly because every card sets its own resting
-  // border-color inline (varies per character); box-shadow starts/ends at
-  // 0 alpha, which is genuinely invisible regardless of the base border
-  // color, so there's no color "pop" a hard borderColor swap would have.
-  // NOT inset — the card's portrait <img> is absolute/inset-0 and paints
-  // on top of the card's own box decorations, so an inset shadow would be
-  // completely hidden underneath it. An outer shadow draws outside the
-  // card's edge instead, above the image, and isn't clipped by the card's
-  // own overflow-hidden (that only clips child content, not the box's own
-  // shadow).
-  steel_border: {
-    easing: 'ease-in-out',
-    keyframes: [
-      { offset: 0,    boxShadow: '0 0 0px 0px rgba(255,255,255,0)' },
-      { offset: 0.15, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95)' },
-      { offset: 0.80, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95)' },
-      { offset: 1,    boxShadow: '0 0 0px 0px rgba(255,255,255,0)' },
-    ],
-  },
-
-  // Steel guard shine — same solid steel_border ring, plus a second
-  // box-shadow layer that flares outward brighter mid-animation, like the
-  // border catching a glint of light, then settles back to the plain
-  // ring before fading. box-shadow can't do a traveling highlight (no
-  // gradients), so the "shine" is a brightness/bloom pulse on top of the
-  // steady ring rather than a moving streak — comma-separated box-shadow
-  // values let the two layers (ring + flare) animate independently in one
-  // preset.
-  steel_guard_shine: {
-    easing: 'ease-in-out',
-    keyframes: [
-      { offset: 0,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),   0 0 0px 0px rgba(255,255,255,0)' },
-      { offset: 0.15, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 5px rgba(255,255,255,0)' },
-      { offset: 0.40, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 16px 6px rgba(255,255,255,0.9)' },
-      { offset: 0.60, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 4px 5px rgba(255,255,255,0.2)' },
-      { offset: 0.80, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 5px rgba(255,255,255,0)' },
-      { offset: 1,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),   0 0 0px 0px rgba(255,255,255,0)' },
-    ],
-  },
-
-  // Steel guard shine 2 — same solid steel_border ring, plus a second
-  // box-shadow layer that starts right at the edge and grows its spread
-  // outward while fading, like a ripple/shockwave expanding from the
-  // border. Follows the card's own rounded-rect shape (box-shadow spread
-  // traces the box, not a true circle) — reads as an expanding ring
-  // rather than the brightness "glint" flare steel_guard_shine uses.
-  steel_guard_shine_2: {
-    easing: 'ease-out',
-    keyframes: [
-      { offset: 0,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),   0 0 0px 0px rgba(255,255,255,0)' },
-      { offset: 0.15, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 5px rgba(255,255,255,0.8)' },
-      { offset: 0.45, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 22px rgba(255,255,255,0.35)' },
-      { offset: 0.75, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 40px rgba(255,255,255,0)' },
-      { offset: 0.80, boxShadow: '0 0 0px 5px rgba(255,255,255,0.95), 0 0 0px 40px rgba(255,255,255,0)' },
-      { offset: 1,    boxShadow: '0 0 0px 0px rgba(255,255,255,0),   0 0 0px 0px rgba(255,255,255,0)' },
-    ],
-  },
-
-  // Steel deflect ring — impact version of steel_border. The ring SNAPS on
-  // (full bright by 3%, with a brief overshoot: thicker spread + blur bloom
-  // for the first frames) instead of easing in, then settles to the plain
-  // 5px band, holds, fades. Second box-shadow layer is the "bounce-off"
-  // ripple: born at the edge on the same impact frame, expands and
-  // dissipates fast (gone by ~30%), tinted faintly steel-blue so it reads
-  // as metal rather than generic light. Same outer-shadow reasoning as
-  // steel_border (inset would hide under the portrait <img>).
+  // box-shadow (not border-color) because every card sets its own resting
+  // border-color inline — box-shadow can start/end at 0 alpha regardless
+  // of that base color. NOT inset — the card's portrait <img> is
+  // absolute/inset-0 and would hide an inset shadow underneath it.
+  // Second box-shadow layer is the "bounce-off" ripple, tinted faintly
+  // steel-blue so it reads as metal rather than generic light.
   steel_deflect_ring: {
     easing: 'ease-out',
     keyframes: [
