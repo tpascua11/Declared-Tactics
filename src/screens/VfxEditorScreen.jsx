@@ -9,6 +9,7 @@ import PIXI_DATA from '../vfx/pixi_data';
 import CSS_PRESETS, { playPreset, applyDynamicVars, captureCurrentTransform } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
 import { spawnAfterimageTrail, clearAfterimageTimers } from '../vfx/afterimage';
+import DOM_PRESETS, { playDomPreset, clearAllDomSpawns } from '../vfx/dom_presets';
 import fuseDeflect from '../vfx/fuseDeflect';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import EffectsLayer from '../components/battle/EffectsLayer';
@@ -66,7 +67,10 @@ export default function VfxEditorScreen() {
     setJsonError(null);
   }, [selected]);
 
-  useEffect(() => () => clearAfterimageTimers(), []);
+  useEffect(() => () => {
+    clearAfterimageTimers();
+    clearAllDomSpawns();
+  }, []);
 
   function handleJsonChange(e) {
     setJsonText(e.target.value);
@@ -133,6 +137,39 @@ export default function VfxEditorScreen() {
         });
         setTimeout(() => {
           spawnedAnims.forEach(a => a?.cancel());
+        }, lastEnd);
+      }
+
+      // DOM channel — spawner presets (dom_presets/). Same entry shape and
+      // start-scheduling as the css block above; at the chain's real end
+      // handles get finish()ed, not cancel()ed — pending spawns are cleared
+      // but in-flight visuals self-remove. Hard removal is unmount-only
+      // (clearAllDomSpawns). Contract: todo/css_animation_philosophy.txt.
+      if (config.dom) {
+        const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
+        const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
+        const attackerEl = attackerIsEnemy ? enemyEl : playerEl;
+        const defenderEl = attackerIsEnemy ? playerEl : enemyEl;
+        const spawnedHandles = [];
+        let lastEnd = 0;
+        (config.dom.target ?? []).forEach(({ preset, start = 0, duration, ...params }) => {
+          if (!DOM_PRESETS[preset] || !defenderEl) return;
+          lastEnd = Math.max(lastEnd, start + duration);
+          setTimeout(() => {
+            const h = playDomPreset(preset, defenderEl, { duration, ...params });
+            if (h) spawnedHandles.push(h);
+          }, start);
+        });
+        (config.dom.owner ?? []).forEach(({ preset, start = 0, duration, ...params }) => {
+          if (!DOM_PRESETS[preset] || !attackerEl) return;
+          lastEnd = Math.max(lastEnd, start + duration);
+          setTimeout(() => {
+            const h = playDomPreset(preset, attackerEl, { duration, ...params });
+            if (h) spawnedHandles.push(h);
+          }, start);
+        });
+        setTimeout(() => {
+          spawnedHandles.forEach(h => h.finish());
         }, lastEnd);
       }
 

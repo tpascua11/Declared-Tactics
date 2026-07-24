@@ -8,5 +8,10 @@
       { "preset": "basic_step", "start": 600, "duration": 300, "step-x": -100, "step-y": -100 },
       { "preset": "basic_step", "start": 900, "duration": 300, "step-x": 100,  "step-y": -100 }
     ]
+  },
+  "dom": {
+    "owner": [
+      { "preset": "afterimage_trail", "start": 0, "duration": 1200, "spacing": 40, "count": 5 }
+    ]
   }
 }

@@ -115,29 +115,88 @@ Cancelling removes an animation's effect entirely regardless of which
 property it touched (transform, filter, opacity, boxShadow — anything),
 so this cleanup is fully generic, not preset-specific.
 
-THE AFTERIMAGE CHANNEL — A DIFFERENT KIND OF SYSTEM
---------------------------------------------------------
-src/vfx/afterimage.js: spawnAfterimageTrail(el, {count, spacing,
-fadeDuration, opacity}) — NOT a css_preset. A WAAPI preset can only
-animate ONE existing element; a real afterimage trail needs actual new
-DOM nodes (el.cloneNode(true), appended to document.body). That's a
-structurally different operation, which is why it lives as its own JSON
-channel (config.afterimage.target/owner) parallel to config.css/config.pixi/
-config.sfx, not squeezed into the css.owner array as a fake preset.
-Each ghost's position is captured fresh, inside its own setTimeout, AT
-ITS OWN SPAWN TIME — not once upfront — because the real element is
-still moving while these staggered spawns are pending. That's what makes
-ghosts trail along the actual motion instead of clustering at the start.
-Current limits (both manual-tuning, not yet solved generically):
-  - No "start" delay — always begins at time 0 of the whole animation.
-  - Its span is just count*spacing, decoupled from the real motion's
-    duration — has to be hand-tuned to roughly match, or ghosts either
-    stop early (span too short) or keep spawning after the motion is
-    already done (span too long, captures the reset position instead).
-clearAfterimageTimers() must be called on screen unmount (both screens
-already do this) — otherwise pending spawn timers can fire after the
-screen is gone, creating orphaned ghosts appended to a now-unrelated
-screen's document.body.
+CHANNEL LEGEND — ANIMATORS VS SPAWNERS
+-------------------------------------------
+The JSON channels divide by EXECUTION MODEL, not by visual theme:
+  css  — ANIMATOR: animates the ONE existing element (WAAPI keyframes
+         on the character card). Bricks live in css_presets/.
+  dom  — SPAWNER: creates NEW DOM nodes, each with its own lifecycle
+         (clones, echoes, decals). Bricks live in dom_presets/.
+  pixi — SPAWNER: creates canvas particles (ThumosInterpreter).
+  sfx  — sound.
+The css/dom boundary is a hard capability line, not a style choice:
+WAAPI's element.animate() can only change properties on an element that
+already exists — it cannot create anything. Any effect that needs new
+nodes (cloneNode/appendChild, staggered spawn timers, its own cleanup
+path) is a dom preset, never a fake css preset. Candidates that belong
+here as they get built: echo/delay clones, split-image feints,
+persistent ground decals, DOM projectiles/shockwaves, shatter/debris.
+
+THE DOM CHANNEL — CONTRACT AND FIRST PRESET (afterimage_trail)
+------------------------------------------------------------------
+config.dom mirrors config.css exactly — owner/target sides, entries of
+{ "preset": <registry name>, "start": ms, "duration": ms, ...params }:
+  "dom": { "owner": [
+    { "preset": "afterimage_trail", "start": 0, "duration": 1200,
+      "spacing": 40, "count": 5 } ] }
+TIMING IS ONLY A SWITCH. "start" turns the preset on, start+duration
+turns it off — that is timing's ENTIRE footprint. It never shapes the
+effect. What the effect looks like is defined purely by what the
+preset OBSERVES while switched on; for afterimage_trail that means
+DISTANCE, not a clock:
+  - a rAF watcher reads the element's actual rendered position
+    (getBoundingClientRect) each frame — never the css channel's
+    config; the dom channel stays fully independent of how or why the
+    element moves. Every "spacing" px of observed travel drops one
+    ghost at that spot. A stationary element spawns nothing — which is
+    also why stale ghosts (the old time-scheduled bug: spawns firing
+    after the motion already stopped) are now structurally impossible.
+  - "spacing" = px of path between ghosts (spatially even by
+    construction, immune to easing — a time-sampler clusters ghosts
+    wherever an eased motion slows down).
+  - "count" = hard cap on ghosts alive AT ONCE; spawning past it
+    evicts the oldest into its own fade. Not a total.
+  - each ghost is SELF-TERMINATING: spawns, fades over fadeDuration,
+    removes its own node. Nothing manages a living ghost — the trail
+    "ends" by its last ghost dying on its own, exactly like the
+    original afterimage.js. The only ongoing thing needing external
+    shutdown is the watcher loop (see containment below).
+IMPLEMENTATION STATUS: dom_presets/afterimage_trail.js is live and
+wired into VfxEditorScreen; BattleScreen wiring + retiring the old
+top-level config.afterimage channel (src/vfx/afterimage.js) pending.
+Each dom preset's implementation stays its own module for now; a shared
+"DOM spawner engine" gets extracted only when a SECOND dom preset shows
+which parts (observation, cleanup registry) are genuinely shared
+rather than guessed.
+
+DOM CHAINING + THE CONTAINMENT RULE
+---------------------------------------
+Multiple config.dom entries sequenced by "start" chain exactly like
+css.owner entries do (afterimage burst during the dash, echo clone at
+the strike, decal after) — the engine runs EVERY entry, and entries
+from one attack must never interfere with another. A dom preset is a
+FUNCTION (el, params) -> handle with TWO stop levels, WAAPI-style:
+  finish() — soft stop: kills the preset's ongoing process (the
+    watcher loop), while visuals already alive complete their own
+    self-termination. The engine calls this on every handle at the
+    chain's real end (computed from the entries' own start+duration,
+    NOT the JSON's top-level pacing "duration" — that also drives
+    battle pacing and can be intentionally shorter). Usually a no-op
+    echo, since the preset's own duration deadline already stopped it.
+  cancel() — hard stop: finish() plus immediate removal of every
+    node still on screen. UNMOUNT ONLY (clearAllDomSpawns() in
+    dom_presets/index.js — screens call it like clearAfterimageTimers)
+    — the screen the ghosts float over is gone, so letting fades
+    complete would strand nodes over an unrelated screen. Never call
+    it at chain end: it visibly pops the still-fading tail of a trail
+    out of existence.
+Always play through playDomPreset(), never the preset module directly —
+that's what enrolls a spawn's handle for unmount cleanup. Containment
+stays airtight because self-termination is bounded: nothing a preset
+spawns lives past its own fade. Effects that SHOULD persist past their
+attack (lingering ground decals) will need an explicit opt-out param
+on their entry when such a preset gets built; persistence must be
+declared, never accidental.
 
 AOE CAVEAT — OWNER-SIDE CHAINING IS NOT YET AOE-SAFE
 ----------------------------------------------------------

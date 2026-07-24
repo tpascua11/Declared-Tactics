@@ -1,0 +1,19 @@
+{
+  "name": "straight_through_2",
+  "duration": 1000,
+  "sfx": [
+    { "src": "WIND_1.wav", "start": 0, "volume": 0.7 },
+    { "src": "STEP.wav", "start": 0, "volume": 0.6 }
+  ],
+  "css": {
+    "owner": [
+      { "preset": "straight_through_exit",   "start": 0,   "duration": 500 },
+      { "preset": "straight_through_return", "start": 500, "duration": 500 }
+    ]
+  },
+  "dom": {
+    "owner": [
+      { "preset": "afterimage_trail", "start": 0, "duration": 1000, "spacing": 120, "count": 8, "fadeDuration": 500 }
+    ]
+  }
+}

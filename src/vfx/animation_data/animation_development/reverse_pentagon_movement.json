@@ -3,11 +3,16 @@
   "duration": 1500,
   "css": {
     "owner": [
-      { "preset": "basic_step", "start": 0,    "duration": 300, "step-x": -95, "step-y": 69 },
-      { "preset": "basic_step", "start": 300,  "duration": 300, "step-x": 36,  "step-y": 112 },
-      { "preset": "basic_step", "start": 600,  "duration": 300, "step-x": 118, "step-y": 0 },
-      { "preset": "basic_step", "start": 900,  "duration": 300, "step-x": 36,  "step-y": -112 },
-      { "preset": "basic_step", "start": 1200, "duration": 300, "step-x": -95, "step-y": -69 }
+      { "preset": "basic_step", "start": 0,    "duration": 300, "step-x": -142, "step-y": 104 },
+      { "preset": "basic_step", "start": 300,  "duration": 300, "step-x": 54,   "step-y": 168 },
+      { "preset": "basic_step", "start": 600,  "duration": 300, "step-x": 176,  "step-y": 0 },
+      { "preset": "basic_step", "start": 900,  "duration": 300, "step-x": 54,   "step-y": -168 },
+      { "preset": "basic_step", "start": 1200, "duration": 300, "step-x": -142, "step-y": -104 }
+    ]
+  },
+  "dom": {
+    "owner": [
+      { "preset": "afterimage_trail", "start": 0, "duration": 1500, "spacing": 45, "count": 20, "fadeDuration": 2400, "fadeEasing": "ease-in", "opacity": 0.55 }
     ]
   }
 }
