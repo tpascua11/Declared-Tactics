@@ -1,23 +1,22 @@
 {
   "name": "ferret_slice",
-  "duration": 705,
+  "duration": 430,
   "sfx": [
     { "src": "STEP.wav", "start": 0,   "volume": 0.6 },
-    { "src": "STEP.wav", "start": 200, "volume": 0.6 },
-    { "src": "SLICE_1.wav", "start": 375, "volume": 0.7 }
+    { "src": "SLICE_1.wav", "start": 100, "volume": 0.7 }
   ],
   "css": {
     "target": [
-      { "preset": "heavy_shake", "start": 375, "duration": 330 }
+      { "preset": "heavy_shake", "start": 100, "duration": 330 }
     ],
     "owner": [
-      { "preset": "ferret_wiggle",    "start": 0,   "duration": 285 },
-      { "preset": "ferret_lunge_snap", "start": 285, "duration": 90 },
-      { "preset": "ferret_return",    "start": 375, "duration": 275 }
+      { "preset": "snap", "start": 0, "duration": 350, "distance": 140, "power": 35 }
     ]
   },
-  "afterimage": {
-    "owner": { "count": 8, "spacing": 50, "fadeDuration": 350 }
+  "dom": {
+    "owner": [
+      { "preset": "afterimage_trail", "start": 0, "duration": 350, "spacing": 25, "count": 5, "fadeDuration": 350 }
+    ]
   },
   "floatingNumber": { "color": "#ff4444" }
 }

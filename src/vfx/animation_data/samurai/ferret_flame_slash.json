@@ -19,8 +19,10 @@
       { "preset": "ferret_flame_return","start": 400, "duration": 280 }
     ]
   },
-  "afterimage": {
-    "owner": { "count": 8, "spacing": 55, "fadeDuration": 400 }
+  "dom": {
+    "owner": [
+      { "preset": "afterimage_trail", "start": 0, "duration": 700, "spacing": 55, "count": 8, "fadeDuration": 400 }
+    ]
   },
   "floatingNumber": { "color": "#f97316" }
 }

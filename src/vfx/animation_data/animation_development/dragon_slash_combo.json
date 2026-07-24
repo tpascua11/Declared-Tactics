@@ -14,8 +14,10 @@
       { "preset": "dragon_slash_impact", "start": 216, "duration": 984, "phase": "impact" }
     ]
   },
-  "afterimage": {
-    "owner": { "count": 3, "spacing": 20, "fadeDuration": 175 }
+  "dom": {
+    "owner": [
+      { "preset": "afterimage_trail", "start": 0, "duration": 160, "spacing": 30, "count": 3, "fadeDuration": 175 }
+    ]
   },
   "floatingNumber": { "color": "#f97316" }
 }

@@ -9,8 +9,10 @@
       { "preset": "dragon_step_forward", "start": 0, "duration": 500 }
     ]
   },
-  "afterimage": {
-    "owner": { "count": 3, "spacing": 20, "fadeDuration": 175 }
+  "dom": {
+    "owner": [
+      { "preset": "afterimage_trail", "start": 0, "duration": 160, "spacing": 30, "count": 3, "fadeDuration": 175 }
+    ]
   },
   "floatingNumber": null
 }

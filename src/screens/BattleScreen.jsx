@@ -14,6 +14,7 @@ import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
 import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
 import { spawnAfterimageTrail, clearAfterimageTimers } from '../vfx/afterimage';
+import DOM_PRESETS, { playDomPreset, clearAllDomSpawns } from '../vfx/dom_presets';
 import fuseDeflect from '../vfx/fuseDeflect';
 import '../vfx/animations.css';
 import '../vfx/aura_animations.css';
@@ -94,6 +95,7 @@ export default function BattleScreen() {
       animClearTimersRef.current.forEach(clearTimeout);
       clearTimeout(restartTransitionTimerRef.current);
       clearAfterimageTimers();
+      clearAllDomSpawns();
     };
   }, []);
 
@@ -291,7 +293,40 @@ export default function BattleScreen() {
         }, config.duration));
       }
 
-      // 2b. AFTERIMAGE — real cloned-DOM trail (see vfx/afterimage.js),
+      // 2b. DOM channel — spawner presets (dom_presets/), same entry shape
+      // and start-scheduling as the css block; handles get finish()ed at
+      // the chain's real end (watcher off, live ghosts self-terminate) —
+      // hard removal is unmount-only. Contract:
+      // todo/css_animation_philosophy.txt. Scheduling timers go through
+      // animClearTimersRef so unmount can't fire a spawn onto a dead screen.
+      if (config.dom) {
+        const targetEl = getCharacterEl(anim.targetId);
+        const ownerEl  = anim.ownerId ? getCharacterEl(anim.ownerId) : null;
+        const spawnedHandles = [];
+        let domLastEnd = 0;
+        (config.dom.target ?? []).forEach(({ preset, start = 0, duration, ...params }) => {
+          if (!DOM_PRESETS[preset] || !targetEl) return;
+          domLastEnd = Math.max(domLastEnd, start + duration);
+          animClearTimersRef.current.push(setTimeout(() => {
+            const h = playDomPreset(preset, targetEl, { duration, ...params });
+            if (h) spawnedHandles.push(h);
+          }, start));
+        });
+        (config.dom.owner ?? []).forEach(({ preset, start = 0, duration, ...params }) => {
+          if (!DOM_PRESETS[preset] || !ownerEl) return;
+          domLastEnd = Math.max(domLastEnd, start + duration);
+          animClearTimersRef.current.push(setTimeout(() => {
+            const h = playDomPreset(preset, ownerEl, { duration, ...params });
+            if (h) spawnedHandles.push(h);
+          }, start));
+        });
+        animClearTimersRef.current.push(setTimeout(() => {
+          spawnedHandles.forEach(h => h.finish());
+        }, domLastEnd));
+      }
+
+      // 2c. AFTERIMAGE (legacy channel, retiring into config.dom) — real
+      // cloned-DOM trail (see vfx/afterimage.js),
       // separate from config.css: a preset only animates ONE existing
       // element, it can't spawn extras. config.afterimage.target/owner
       // each hold spawnAfterimageTrail's options object directly.
