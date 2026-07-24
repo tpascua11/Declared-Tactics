@@ -11,7 +11,7 @@
   },
   "dom": {
     "owner": [
-      { "preset": "afterimage_trail", "start": 0, "duration": 1200, "spacing": 40, "count": 5 }
+      { "preset": "afterimage_trail", "start": 0, "duration": 1200, "tickRate": 85, "count": 5 }
     ]
   }
 }

@@ -3,27 +3,36 @@
 // handled here; the engine schedules entry.start, same division of
 // labor as css timeline entries.
 //
-// DISTANCE SAMPLER, not a clock: ghosts spawn per `spacing` px of the
-// element's OBSERVED travel (getBoundingClientRect each frame — never
-// the css channel's config). Timing's entire footprint is `duration`,
-// which only stops the watcher loop; it shapes nothing. A stationary
-// element spawns nothing. Every ghost is self-terminating (fades, then
-// removes itself) — no engine bookkeeping of nodes, only of the loop.
+// A STROBE, not a motion tracker: while switched on, every `tickRate`
+// ms it leaves a ghost of the element exactly as rendered that frame,
+// no matter what the element is doing. Dense ghosts where the card
+// lingers, sparse where it snaps — equal-time samples ARE the motion
+// (onion-skinning), so speed texture survives in the trail. `duration`
+// is only the on/off switch for the strobe; ghost look and death are
+// entirely tickRate/count/fade's business. Every ghost is
+// self-terminating (fades, then removes itself) — no engine
+// bookkeeping of nodes, only of the loop.
 //
 // A ghost is a FRAME CAPTURE: layout-size box anchored at the card's
-// untransformed center, with the whole computed transform matrix stamped
-// on as-is — so mid-flight rotation/scale/skew replay for free, nothing
-// decomposed per-property. Travel is measured between CENTERS because
-// rotation inflates the AABB and drifts its corner without any motion.
+// untransformed center, with the whole computed transform matrix
+// stamped on as-is — so mid-flight rotation/scale/skew replay for
+// free, nothing decomposed per-property.
 
-export function afterimage_trail(el, { duration = 400, spacing = 40, count = 5, fadeDuration = 300, fadeEasing = 'ease-out', opacity = 0.45 } = {}) {
+// Floor, not default: a JSON tickRate below this (or 0) clamps up.
+// Unfloored, tickRate 0 = a ghost every animation frame — DOM churn
+// bounded only by fadeDuration.
+export const TICK_RATE_MIN = 10;
+
+export function afterimage_trail(el, { duration = 400, tickRate = 40, count = 5, fadeDuration = 300, fadeEasing = 'ease-out', opacity = 0.45 } = {}) {
   const live = []; // oldest-first ghosts still on screen
   let rafId = null;
 
   if (el) {
     const zIndex = getComputedStyle(el).zIndex || '1';
 
-    const spawn = ({ rect, transform }) => {
+    const spawn = () => {
+      const rect = el.getBoundingClientRect();
+      const transform = getComputedStyle(el).transform;
       const clone = el.cloneNode(true);
       // Ghosts must never be findable as real characters.
       clone.removeAttribute('data-enemy-id');
@@ -73,35 +82,20 @@ export function afterimage_trail(el, { duration = 400, spacing = 40, count = 5, 
       while (live.length > count) live.shift().anim.finish();
     };
 
-    const sample = () => ({
-      rect: el.getBoundingClientRect(),
-      transform: getComputedStyle(el).transform,
-    });
-
-    let last = sample();
-    let departed = false;
+    const rate = Math.max(TICK_RATE_MIN, tickRate);
     const deadline = performance.now() + duration;
+    // First tick fires on the first frame — the start pose is always
+    // captured (the old departure-ghost guarantee, now just tick zero).
+    let nextTick = performance.now();
 
     const tick = (now) => {
       if (now >= deadline) {
         rafId = null;
         return;
       }
-      const cur = sample();
-      const traveled = Math.hypot(
-        (cur.rect.left + cur.rect.width / 2) - (last.rect.left + last.rect.width / 2),
-        (cur.rect.top + cur.rect.height / 2) - (last.rect.top + last.rect.height / 2)
-      );
-      if (!departed && traveled >= 1) {
-        // Departure ghost — left where the body WAS at the first sign of
-        // movement, not spacing-px later (the old t=0 spawn's one virtue,
-        // kept without spawning on a card that never moves at all).
-        departed = true;
-        spawn(last);
-      }
-      if (traveled >= spacing) {
-        last = cur;
-        spawn(cur);
+      if (now >= nextTick) {
+        spawn();
+        nextTick = now + rate;
       }
       rafId = requestAnimationFrame(tick);
     };

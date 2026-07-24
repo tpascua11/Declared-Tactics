@@ -50,12 +50,24 @@ straight_through.
 
 WHAT THE REPLACEMENT ADDED THAT THE OLD ONE NEVER HAD
 -----------------------------------------------------
-- distance sampling (rAF + getBoundingClientRect, center-to-center)
-- departure ghost at the start position on first observed movement
 - frame capture: full computed transform stamped on the ghost
   (rotation/scale replay), anchored at the untransformed center
 - GameCanvas fit-scale compensation, measured from the DOM
 - finish()/cancel() containment via playDomPreset + clearAllDomSpawns
+
+POSTSCRIPT — THE DISTANCE-SAMPLING INTERLUDE (also retired)
+-----------------------------------------------------------
+The first dom_presets version replaced the clock with DISTANCE
+sampling: `spacing` px of observed center-to-center travel per ghost,
+plus a departure ghost on first movement. Retired days later for two
+reasons: (1) equal-distance ghosts ERASE the motion's speed texture —
+ghost bunching where a card lingers is onion-skinning, i.e. the honest
+signal, not a bug; (2) authoring spacing in px forced reading the css
+channel's keyframes to compute path lengths — cross-channel coupling
+in practice. Current model: `tickRate` ms per frame capture (floored
+at TICK_RATE_MIN) inside the start/duration switch window. The old
+channel's real defect was never ticking — it was count x spacing
+forming a second clock that outlived the switch.
 
 IF A TRAIL BUG APPEARS
 ----------------------

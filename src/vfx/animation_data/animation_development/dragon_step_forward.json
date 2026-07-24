@@ -11,7 +11,7 @@
   },
   "dom": {
     "owner": [
-      { "preset": "afterimage_trail", "start": 0, "duration": 160, "spacing": 30, "count": 3, "fadeDuration": 175 }
+      { "preset": "afterimage_trail", "start": 0, "duration": 160, "tickRate": 50, "count": 3, "fadeDuration": 175 }
     ]
   },
   "floatingNumber": null

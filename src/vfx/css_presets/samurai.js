@@ -60,6 +60,20 @@ export const SAMURAI_PRESETS = {
     ],
   },
 
+  // Tornado slash impact — same dragon flash filter language as
+  // dragon_slash_impact, but the card gets spun instead of knocked back:
+  // a violent decaying rotation (up to 160deg swings) settling to 0.
+  tornado_slash_impact: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    transform: 'rotate(0deg)',    filter: 'brightness(3.4) sepia(1) saturate(6) hue-rotate(160deg)' },
+      { offset: 0.15, transform: 'rotate(54deg)',   filter: 'brightness(2) sepia(0.6) saturate(3.6) hue-rotate(160deg)' },
+      { offset: 0.5,  transform: 'rotate(180deg)',  filter: 'brightness(1.5) sepia(0.35) saturate(2.2) hue-rotate(140deg)' },
+      { offset: 0.85, transform: 'rotate(306deg)',  filter: 'brightness(1.1) sepia(0.05) saturate(1.1) hue-rotate(30deg)' },
+      { offset: 1,    transform: 'rotate(360deg)',  filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+    ],
+  },
+
   // Two-hit ice reaction (↘ slash then ↖ slash) — cyan/blue hue-rotate flash
   // per hit. No hold to strip; impact starts immediately at offset 0.
   ice_impact: {

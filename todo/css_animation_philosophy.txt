@@ -138,22 +138,29 @@ config.dom mirrors config.css exactly — owner/target sides, entries of
 { "preset": <registry name>, "start": ms, "duration": ms, ...params }:
   "dom": { "owner": [
     { "preset": "afterimage_trail", "start": 0, "duration": 1200,
-      "spacing": 40, "count": 5 } ] }
+      "tickRate": 85, "count": 5 } ] }
 TIMING IS ONLY A SWITCH. "start" turns the preset on, start+duration
-turns it off — that is timing's ENTIRE footprint. It never shapes the
-effect. What the effect looks like is defined purely by what the
-preset OBSERVES while switched on; for afterimage_trail that means
-DISTANCE, not a clock:
-  - a rAF watcher reads the element's actual rendered position
-    (getBoundingClientRect) each frame — never the css channel's
+turns it off — that is timing's ENTIRE footprint. The switch and the
+effect's own params cooperate but never overlap: the switch says WHEN
+the strobe runs, the params say what it does while running. (The old
+channel's sin wasn't ticking — it was count x spacing forming a second
+secret clock that kept spawning after the switch's window, i.e. after
+the motion had stopped. The switch owns the window now; nothing else
+has one.)
+afterimage_trail is a STROBE — while on, every tick it leaves a frame
+capture of the element exactly as rendered, no matter what the element
+is doing:
+  - it OBSERVES the rendered DOM (getBoundingClientRect +
+    getComputedStyle transform each spawn) — never the css channel's
     config; the dom channel stays fully independent of how or why the
-    element moves. Every "spacing" px of observed travel drops one
-    ghost at that spot. A stationary element spawns nothing — which is
-    also why stale ghosts (the old time-scheduled bug: spawns firing
-    after the motion already stopped) are now structurally impossible.
-  - "spacing" = px of path between ghosts (spatially even by
-    construction, immune to easing — a time-sampler clusters ghosts
-    wherever an eased motion slows down).
+    element moves. Rotation/scale/skew replay on ghosts for free.
+  - "tickRate" = ms between ghosts (clamped to TICK_RATE_MIN, 10).
+    Authored in the same unit as the rest of the timeline — no
+    cross-channel px math. Equal-TIME samples preserve the motion's
+    speed texture, onion-skinning style: ghosts bunch where the card
+    lingers, stretch apart where it snaps. (A distance-sampled version
+    was tried and retired for flattening exactly that — see
+    todo/afterimage_past.txt.)
   - "count" = hard cap on ghosts alive AT ONCE; spawning past it
     evicts the oldest into its own fade. Not a total.
   - each ghost is SELF-TERMINATING: spawns, fades over fadeDuration,

@@ -16,7 +16,7 @@
   },
   "dom": {
     "owner": [
-      { "preset": "afterimage_trail", "start": 0, "duration": 160, "spacing": 15, "count": 15, "fadeDuration": 2000 }
+      { "preset": "afterimage_trail", "start": 0, "duration": 160, "tickRate": 25, "count": 15, "fadeDuration": 2000 }
     ]
   },
   "floatingNumber": { "color": "#f97316" }
