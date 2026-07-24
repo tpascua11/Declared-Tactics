@@ -1,0 +1,63 @@
+AFTERIMAGE — PAST CHANNEL (retired 2026-07, branch feature-battle-enhancement-2)
+=================================================================
+
+This file exists so nobody re-derives (or re-invents) the old channel.
+The living contract is in todo/css_animation_philosophy.txt; the living
+code is src/vfx/dom_presets/afterimage_trail.js. Nothing here is
+current — it is the record of what was removed and why.
+
+WHAT EXISTED
+------------
+src/vfx/afterimage.js — spawnAfterimageTrail(el, opts) +
+clearAfterimageTimers(). A top-level `"afterimage"` block in animation
+JSONs (a sibling of css/sfx, with its own hardcoded dispatch block in
+BattleScreen and VfxEditorScreen), holding the options object directly:
+
+    "afterimage": { "owner": { "count": 8, "spacing": 55, "fadeDuration": 400 } }
+
+Its model was a CLOCK, not observation: `count` = total ghosts ever,
+`spacing` = ms between spawns, each spawn a setTimeout that read the
+element's position at fire time. Ghosts were self-terminating clones
+(fade then remove own node) — that part was good and survived.
+
+WHY IT WAS RETIRED
+------------------
+1. Time-sampling lies about motion: eased movement bunches equal-time
+   ghosts unevenly in space, and a card that never moves still gets a
+   full stack of ghosts piled on top of itself (stale-ghost look).
+2. One-off channel: its own JSON key, its own dispatch code in every
+   screen, its own cleanup export — per-effect plumbing instead of a
+   preset behind the generic dom channel.
+3. Params conflated rhythm with look. The replacement's rule: timing is
+   only an on/off switch; the look is defined purely by observed
+   movement (spacing = px of path per ghost, count = concurrent cap).
+
+TRANSLATION RULE USED FOR THE MIGRATION
+---------------------------------------
+old spacing (ms) x old count ~= how long it watched  -> new `duration`
+path length / desired ghost count                    -> new `spacing` (px)
+old count (total)                                    -> new `count` is a
+  concurrent CAP, not a total — set it >= ghosts alive at peak
+  (path px / spacing, bounded by fadeDuration) or the trail's tail
+  gets eaten early.
+fadeDuration / opacity carried over unchanged.
+
+All four users were migrated as pure JSON diffs (straight_through,
+ferret_flame_slash, dragon_slash_combo, dragon_step_forward;
+ferret_slice was rebuilt by hand onto the snap preset around the same
+time). Verified equivalence case: straight_through_2 vs the legacy
+straight_through.
+
+WHAT THE REPLACEMENT ADDED THAT THE OLD ONE NEVER HAD
+-----------------------------------------------------
+- distance sampling (rAF + getBoundingClientRect, center-to-center)
+- departure ghost at the start position on first observed movement
+- frame capture: full computed transform stamped on the ghost
+  (rotation/scale replay), anchored at the untransformed center
+- GameCanvas fit-scale compensation, measured from the DOM
+- finish()/cancel() containment via playDomPreset + clearAllDomSpawns
+
+IF A TRAIL BUG APPEARS
+----------------------
+It is in dom_presets/afterimage_trail.js. There is no second
+implementation anymore — do not recreate one.

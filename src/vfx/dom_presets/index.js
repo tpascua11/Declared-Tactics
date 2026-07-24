@@ -13,8 +13,7 @@ import { afterimage_trail } from './afterimage_trail';
 
 export const DOM_PRESETS = { afterimage_trail };
 
-// Screens must call clearAllDomSpawns() on unmount (same obligation as
-// clearAfterimageTimers had).
+// Screens must call clearAllDomSpawns() on unmount.
 const liveHandles = new Set();
 
 // ALWAYS play dom presets through here, never the preset module

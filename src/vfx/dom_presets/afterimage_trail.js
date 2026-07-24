@@ -9,6 +9,12 @@
 // which only stops the watcher loop; it shapes nothing. A stationary
 // element spawns nothing. Every ghost is self-terminating (fades, then
 // removes itself) — no engine bookkeeping of nodes, only of the loop.
+//
+// A ghost is a FRAME CAPTURE: layout-size box anchored at the card's
+// untransformed center, with the whole computed transform matrix stamped
+// on as-is — so mid-flight rotation/scale/skew replay for free, nothing
+// decomposed per-property. Travel is measured between CENTERS because
+// rotation inflates the AABB and drifts its corner without any motion.
 
 export function afterimage_trail(el, { duration = 400, spacing = 40, count = 5, fadeDuration = 300, fadeEasing = 'ease-out', opacity = 0.45 } = {}) {
   const live = []; // oldest-first ghosts still on screen
@@ -17,19 +23,36 @@ export function afterimage_trail(el, { duration = 400, spacing = 40, count = 5, 
   if (el) {
     const zIndex = getComputedStyle(el).zIndex || '1';
 
-    const spawn = (rect) => {
+    const spawn = ({ rect, transform }) => {
       const clone = el.cloneNode(true);
       // Ghosts must never be findable as real characters.
       clone.removeAttribute('data-enemy-id');
       clone.removeAttribute('data-character-id');
+      // Rotation/scale about the default center origin never move the
+      // center — only translation (m41/m42) does. So observed center minus
+      // translation = untransformed anchor, and the matrix re-applies
+      // cleanly on top with nothing double-counted. offsetWidth/Height,
+      // not rect.width/height: the rect is the transform-inflated AABB.
+      const m = transform === 'none' ? new DOMMatrixReadOnly() : new DOMMatrixReadOnly(transform);
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      // The ghost hangs on document.body, OUTSIDE GameCanvas's fit-scale
+      // wrapper, and the card's own matrix can't see that ancestor scale —
+      // but the rect can: observed AABB width over the AABB width the own
+      // matrix alone would produce. Assumes the ancestor scale is uniform
+      // (GameCanvas's is). Everything screen-space gets multiplied by it:
+      // the composed transform and the translation inside the anchor math.
+      const ownAabbW = w * Math.abs(m.a) + h * Math.abs(m.c);
+      const s = ownAabbW > 0 ? rect.width / ownAabbW : 1;
       Object.assign(clone.style, {
         position: 'fixed',
-        left: `${rect.left}px`,
-        top: `${rect.top}px`,
-        width: `${rect.width}px`,
-        height: `${rect.height}px`,
+        left: `${rect.left + rect.width / 2 - s * m.m41 - w / 2}px`,
+        top: `${rect.top + rect.height / 2 - s * m.m42 - h / 2}px`,
+        width: `${w}px`,
+        height: `${h}px`,
         margin: '0',
         pointerEvents: 'none',
+        transform: transform === 'none' ? `scale(${s})` : `scale(${s}) ${transform}`,
         zIndex,
         opacity: '0',
       });
@@ -50,7 +73,12 @@ export function afterimage_trail(el, { duration = 400, spacing = 40, count = 5, 
       while (live.length > count) live.shift().anim.finish();
     };
 
-    let lastRect = el.getBoundingClientRect();
+    const sample = () => ({
+      rect: el.getBoundingClientRect(),
+      transform: getComputedStyle(el).transform,
+    });
+
+    let last = sample();
     let departed = false;
     const deadline = performance.now() + duration;
 
@@ -59,18 +87,21 @@ export function afterimage_trail(el, { duration = 400, spacing = 40, count = 5, 
         rafId = null;
         return;
       }
-      const rect = el.getBoundingClientRect();
-      const traveled = Math.hypot(rect.left - lastRect.left, rect.top - lastRect.top);
+      const cur = sample();
+      const traveled = Math.hypot(
+        (cur.rect.left + cur.rect.width / 2) - (last.rect.left + last.rect.width / 2),
+        (cur.rect.top + cur.rect.height / 2) - (last.rect.top + last.rect.height / 2)
+      );
       if (!departed && traveled >= 1) {
         // Departure ghost — left where the body WAS at the first sign of
         // movement, not spacing-px later (the old t=0 spawn's one virtue,
         // kept without spawning on a card that never moves at all).
         departed = true;
-        spawn(lastRect);
+        spawn(last);
       }
       if (traveled >= spacing) {
-        lastRect = rect;
-        spawn(rect);
+        last = cur;
+        spawn(cur);
       }
       rafId = requestAnimationFrame(tick);
     };

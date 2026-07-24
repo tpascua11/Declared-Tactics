@@ -162,8 +162,9 @@ DISTANCE, not a clock:
     original afterimage.js. The only ongoing thing needing external
     shutdown is the watcher loop (see containment below).
 IMPLEMENTATION STATUS: dom_presets/afterimage_trail.js is live and
-wired into VfxEditorScreen; BattleScreen wiring + retiring the old
-top-level config.afterimage channel (src/vfx/afterimage.js) pending.
+wired into both VfxEditorScreen and BattleScreen. The old top-level
+config.afterimage channel is fully retired (history in
+todo/afterimage_past.txt).
 Each dom preset's implementation stays its own module for now; a shared
 "DOM spawner engine" gets extracted only when a SECOND dom preset shows
 which parts (observation, cleanup registry) are genuinely shared

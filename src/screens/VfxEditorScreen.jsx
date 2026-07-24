@@ -8,7 +8,6 @@ import { ANIMATIONS, ANIMATION_DEVELOPMENT_KEYS, playBattleSfx } from '../vfx/an
 import PIXI_DATA from '../vfx/pixi_data';
 import CSS_PRESETS, { playPreset, applyDynamicVars, captureCurrentTransform } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
-import { spawnAfterimageTrail, clearAfterimageTimers } from '../vfx/afterimage';
 import DOM_PRESETS, { playDomPreset, clearAllDomSpawns } from '../vfx/dom_presets';
 import fuseDeflect from '../vfx/fuseDeflect';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
@@ -68,7 +67,6 @@ export default function VfxEditorScreen() {
   }, [selected]);
 
   useEffect(() => () => {
-    clearAfterimageTimers();
     clearAllDomSpawns();
   }, []);
 
@@ -173,17 +171,6 @@ export default function VfxEditorScreen() {
         }, lastEnd);
       }
 
-      // AFTERIMAGE — mirrors BattleScreen's config.afterimage handling;
-      // same ENEMY ATTACKS toggle logic as the css block above, re-resolved
-      // here since this block is a separate `if`, not nested inside it.
-      if (config.afterimage) {
-        const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
-        const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
-        const attackerEl = attackerIsEnemy ? enemyEl : playerEl;
-        const defenderEl = attackerIsEnemy ? playerEl : enemyEl;
-        if (config.afterimage.target && defenderEl) spawnAfterimageTrail(defenderEl, config.afterimage.target);
-        if (config.afterimage.owner  && attackerEl) spawnAfterimageTrail(attackerEl, config.afterimage.owner);
-      }
       if (config.sfx) {
         const sfxList = Array.isArray(config.sfx)
           ? config.sfx

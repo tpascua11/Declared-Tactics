@@ -13,7 +13,6 @@ import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
 import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
-import { spawnAfterimageTrail, clearAfterimageTimers } from '../vfx/afterimage';
 import DOM_PRESETS, { playDomPreset, clearAllDomSpawns } from '../vfx/dom_presets';
 import fuseDeflect from '../vfx/fuseDeflect';
 import '../vfx/animations.css';
@@ -94,7 +93,6 @@ export default function BattleScreen() {
       floatTimersRef.current.forEach(clearTimeout);
       animClearTimersRef.current.forEach(clearTimeout);
       clearTimeout(restartTransitionTimerRef.current);
-      clearAfterimageTimers();
       clearAllDomSpawns();
     };
   }, []);
@@ -323,18 +321,6 @@ export default function BattleScreen() {
         animClearTimersRef.current.push(setTimeout(() => {
           spawnedHandles.forEach(h => h.finish());
         }, domLastEnd));
-      }
-
-      // 2c. AFTERIMAGE (legacy channel, retiring into config.dom) — real
-      // cloned-DOM trail (see vfx/afterimage.js),
-      // separate from config.css: a preset only animates ONE existing
-      // element, it can't spawn extras. config.afterimage.target/owner
-      // each hold spawnAfterimageTrail's options object directly.
-      if (config.afterimage) {
-        const targetEl = getCharacterEl(anim.targetId);
-        const ownerEl  = anim.ownerId ? getCharacterEl(anim.ownerId) : null;
-        if (config.afterimage.target && targetEl) spawnAfterimageTrail(targetEl, config.afterimage.target);
-        if (config.afterimage.owner  && ownerEl)  spawnAfterimageTrail(ownerEl, config.afterimage.owner);
       }
 
       // 3. SFX — play sound(s), supports multiple sounds with individual timings.

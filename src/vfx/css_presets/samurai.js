@@ -455,7 +455,7 @@ export const SAMURAI_PRESETS = {
 
   // Dragon step right — a real positional dash to the right (110px, no
   // --dir, literal screen-right), not a stylized snap like dragon_hard_step.
-  // Meant to pair with an afterimage.owner trail in the JSON so the real
+  // Meant to pair with a dom.owner afterimage_trail in the JSON so the real
   // cloned-DOM copies sell the distance covered. Holds at the new position.
   // offset 0 matches dragon_hard_step's own ending transform exactly (its
   // chain partner in dragon_side_step.json) so the handoff between them
