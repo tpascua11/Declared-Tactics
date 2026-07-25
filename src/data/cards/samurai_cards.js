@@ -75,7 +75,7 @@ export const SAMURAI_CARDS = [
   {
     id: 'speed_up',
     name: 'Shinsoku',
-    speed_mod: 20,
+    speed_mod: 40,
     ignores_slot_penalty: true,
     tag_type: ['PHYSICAL'],
     properties: ['SPEED_ACTION'],
@@ -258,6 +258,8 @@ export const SAMURAI_CARDS = [
           reduction: 0.95,
           reaction_anim: 'steel_guard_deflect',
           label: 'Uke',
+          reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] },
+        { tag_name: 'UKE_SPIRIT',
           reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] },
       ],
       target: [],

@@ -25,6 +25,7 @@ export const SAMURAI = {
   ],
   permanent_tags: [
     { tag_name: 'UNDER_THE_SUN', tier: 'permanent' },
+    { tag_name: 'CLASHING_SPIRIT', tier: 'permanent' },
   ],
   combat_start_tags: [],
   starting_cards: ['heavy_slice', 'flame_strike', 'battojutsu', 'uke'],

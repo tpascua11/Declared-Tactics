@@ -181,17 +181,19 @@ function runPhaseOnReceive(tag_pool, payload, character, hit_result) {
   return remaining;
 }
 
-function runPhasePostAttack(tag_pool, payload, character, hit_result) {
+function runPhasePostAttack(tag_pool, payload, character, hit_result, deflected) {
+  const logs = [];
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('POST_ATTACK')) {
-      entry.handlers['POST_ATTACK'](payload, character, tag, hit_result);
+      const result = entry.handlers['POST_ATTACK'](payload, character, tag, hit_result, deflected);
+      logs.push(...(result?.logs ?? []));
     }
   }
-  return tag_pool;
+  return { tag_pool, logs };
 }
 
-function runPhaseDamageReduce(tag_pool, payload) {
+function runPhaseDamageReduce(tag_pool, payload, character) {
   const remaining = [];
   const logs = [];
   let reacted = false;
@@ -199,7 +201,7 @@ function runPhaseDamageReduce(tag_pool, payload) {
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('DAMAGE_REDUCE')) {
-      const result = entry.handlers['DAMAGE_REDUCE'](payload, tag);
+      const result = entry.handlers['DAMAGE_REDUCE'](payload, tag, character);
       payload = result.payload;
       if (result.logs) logs.push(...result.logs);
       // Reaction captured at fire time, while the fired tag is in hand —
@@ -490,7 +492,7 @@ export function ExecuteAction(action, interaction_result, state) {
 
       // DAMAGE_REDUCE — clone payload so each enemy's mitigation is independent
       let defPayload = structuredClone(payload);
-      const damageReduceResult = runPhaseDamageReduce(defTarget.active_tag_pool, defPayload);
+      const damageReduceResult = runPhaseDamageReduce(defTarget.active_tag_pool, defPayload, defTarget);
       defTarget.active_tag_pool = damageReduceResult.tag_pool;
       defPayload = damageReduceResult.payload;
       logs.push(...(damageReduceResult.logs ?? []));
@@ -550,7 +552,10 @@ export function ExecuteAction(action, interaction_result, state) {
   const hit_result = total_damage > 0 ? 'HIT' : 'MISS';
 
   // ── POST_ATTACK ──
-  owner.active_tag_pool = runPhasePostAttack(owner.active_tag_pool, payload, owner, hit_result);
+  const anyDeflected = isAoe ? aoeHits.some(h => h.deflected) : (aoeHits[0]?.deflected ?? false);
+  const postAttack = runPhasePostAttack(owner.active_tag_pool, payload, owner, hit_result, anyDeflected);
+  owner.active_tag_pool = postAttack.tag_pool;
+  logs.push(...postAttack.logs);
 
 
   // Single-target reaction facts ride the lone delivery entry; AOE keeps them per-target.

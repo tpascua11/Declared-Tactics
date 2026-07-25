@@ -52,6 +52,22 @@ registerTag('ONE_UNDER_THE_SUN', {
   handlers: { END_OF_TURN: OneUnderTheSunHandler },
 });
 
+// `deflected` is true when a DAMAGE_REDUCE tag reacted on any target this action hit.
+function ClashingSpiritHandler(payload, character, tag, hit_result, deflected) {
+  if (!deflected) return { consumed: false };
+  const res = character.resources?.BATTLE_SPIRIT;
+  if (res) res.current = Math.min(res.current + 1, res.max);
+  return {
+    consumed: false,
+    logs: [{ msg: `⚔️ ${character.name}'s attack is deflected — gains 1 Battle Spirit`, type: 'resource' }],
+  };
+}
+
+registerTag('CLASHING_SPIRIT', {
+  phases: ['POST_ATTACK'],
+  handlers: { POST_ATTACK: ClashingSpiritHandler },
+});
+
 // ── GOUKI ──
 // Buff with up to 3 stacks. On apply: cleanses all debuffs from the holder.
 // DAMAGE_REDUCE: reduces incoming damage by 25% per stack. Consumes 1 stack per hit.

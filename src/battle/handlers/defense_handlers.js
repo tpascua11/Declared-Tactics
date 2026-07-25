@@ -66,6 +66,30 @@ registerTag('BLOCKING', {
   handlers: { DAMAGE_REDUCE: BlockingDamageReduceHandler },
 });
 
+// ── UKE_SPIRIT ──
+// Rides alongside BLOCKING on the Uke card — reacts on its own DAMAGE_REDUCE
+// pass, independent of BLOCKING's reduction math, so a hit landing while
+// blocking refunds 1 Battle Spirit.
+function UkeSpiritDamageReduceHandler(payload, tag, character) {
+  const totalDamage = payload.damages.reduce((sum, d) => sum + d.power, 0);
+  if (totalDamage === 0) return { payload, consumed: false };
+
+  const res = character.resources?.BATTLE_SPIRIT;
+  if (res) res.current = Math.min(res.current + 1, res.max);
+
+  return {
+    payload,
+    consumed: false,
+    logs: [{ msg: `☯️ ${character.name} gains 1 Battle Spirit`, type: 'resource' }],
+  };
+}
+
+registerTag('UKE_SPIRIT', {
+  phases: ['DAMAGE_REDUCE'],
+  status_type: 'buff',
+  handlers: { DAMAGE_REDUCE: UkeSpiritDamageReduceHandler },
+});
+
 // ── EVADING ──
 
 // One evading stance at a time — applying a new one replaces the old.
