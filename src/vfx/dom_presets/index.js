@@ -18,13 +18,16 @@ const liveHandles = new Set();
 
 // ALWAYS play dom presets through here, never the preset module
 // directly — this enrolls the spawn in unmount cleanup. The engine
-// holds the returned handle and cancel()s it at the chain's real end.
+// holds the returned handle and finish()es it at the chain's real end.
+// Either stop un-enrolls the handle; a finished spawn needs nothing
+// from unmount cleanup (its visuals self-remove).
 export function playDomPreset(name, el, params = {}) {
   const preset = DOM_PRESETS[name];
   if (!preset || !el) return null;
   const inner = preset(el, params);
   const handle = {
     finish() {
+      liveHandles.delete(handle);
       inner.finish();
     },
     cancel() {
