@@ -66,11 +66,13 @@ export function SpeedCheckAllAvailableActions(characters) {
     if (action.priority_flag === 'SKIP') continue;
 
     // Collect speed modifiers from tags — handlers return a number, never mutate calc_speed
+    // or context (speed checks run for ALL characters every step; mutation compounds).
     let speedMod = 0;
+    const speedContext = { action, owner: character };
     for (const tag of character.active_tag_pool) {
       const entry = battle_registry[tag.tag_name];
       if (entry?.phases?.includes('SPEED_CALC')) {
-        speedMod += entry.handlers['SPEED_CALC'](action, character, tag) ?? 0;
+        speedMod += entry.handlers['SPEED_CALC'](speedContext, tag) ?? 0;
       }
     }
     action.calc_speed = (character.base_speed + (action.speed_mod ?? 0)) - (character.action_count ?? 0) * 20 + speedMod;

@@ -17,7 +17,7 @@ function OldFreezeOnApply(pool, tag) {
   }
 }
 
-function OldFreezeSpeedCalcHandler(action, character, tag) {
+function OldFreezeSpeedCalcHandler(context, tag) {
   return -(tag.stacks * 5);
 }
 
@@ -151,7 +151,7 @@ function ElectrifiedOnApply(pool, tag) {
   }
 }
 
-function ElectrifiedSpeedCalcHandler(action, character, tag) {
+function ElectrifiedSpeedCalcHandler(context, tag) {
   return -20;
 }
 
@@ -199,8 +199,8 @@ function ParalysisOnApply(pool, tag) {
   }
 }
 
-function ParalysisSpeedCalcHandler(action, character, tag) {
-  return (character?.action_count ?? 0) === 0 ? -20 : 0;
+function ParalysisSpeedCalcHandler(context, tag) {
+  return (context.owner?.action_count ?? 0) === 0 ? -20 : 0;
 }
 
 function ParalysisEndOfTurnHandler(context, tag) {
@@ -235,7 +235,7 @@ registerTag('PARALYSIS', {
 // Kept for OLD_ELECTRIFIED reference. Injected on turn start, applies -20 speed,
 // consumed after the first action fires via reset: ON_OWNER_ACTION.
 
-function ShockedSpeedCalcHandler(action, character, tag) {
+function ShockedSpeedCalcHandler(context, tag) {
   return -20;
 }
 

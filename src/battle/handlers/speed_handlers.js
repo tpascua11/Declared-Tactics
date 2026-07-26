@@ -3,11 +3,14 @@
 //  Phase: SPEED_CALC
 //  Applied during SpeedCheckAllAvailableActions
 //  Modifies calc_speed on the action before sorting
+//  SPEED_CALC handler signature: (context, tag), context = { action, owner }.
+//  Must return a number, never mutate context/tag — runs for every
+//  character's queued action every step, so mutation compounds.
 // ============================================================
 
 import { registerTag } from '../registry/battle_registry';
 
-export function SpeedBoostHandler(action, character, tag) {
+export function SpeedBoostHandler(context, tag) {
   return tag.amount * (tag.stacks ?? 1);
 }
 
