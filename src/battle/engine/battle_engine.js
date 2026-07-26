@@ -454,10 +454,13 @@ export function ExecuteAction(action, interaction_result, state) {
   payload = imbueResult.payload;
 
   // ── BUILD DAMAGES from card target tags ──
+  // owner: resolvedTarget — target tags act on the resolved target, not the
+  // attacker. DAMAGE (the only tag placed here today) ignores it entirely,
+  // since damage is applied to the real target later in the defender loop.
   for (const tag of (action.tags?.target || [])) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('DELIVERY')) {
-      const result = entry.handlers['DELIVERY']({ payload, owner }, tag);
+      const result = entry.handlers['DELIVERY']({ payload, owner: resolvedTarget }, tag);
       payload = result.payload;
     }
   }

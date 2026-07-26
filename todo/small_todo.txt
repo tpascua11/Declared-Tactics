@@ -7,14 +7,6 @@ SMALL TODOS
     Cleaner to have two distinct paths so the loop has no branching on payload type.
     File: src/battle/engine/battle_engine.js ~ line 460-522
 
-[ ] battle_engine.js — DELIVERY phase passes owner, not resolvedTarget, for card
-    `tags.target` entries (the "BUILD DAMAGES from card target tags" loop).
-    Harmless today because DAMAGE (the only tag ever placed in a target array)
-    doesn't touch a character reference — damage is applied to the real target
-    later, in the separate defender loop. Would misfire the moment a target-array
-    HEAL/CLEANSE/GAIN_RESOURCE tag is authored (it'd apply to the attacker).
-    File: src/battle/engine/battle_engine.js ~ line 456-463
-
 [ ] Mend card — desc doesn't match implementation.
     HEAL adds temp_hp (a shield-style buffer, consumed on next hit), not real HP,
     despite desc saying "Restore 200 HP". REGEN tag power is 25, desc says 33/turn.
