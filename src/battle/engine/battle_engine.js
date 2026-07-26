@@ -181,28 +181,30 @@ function runPhaseOnReceive(tag_pool, payload, character, hit_result) {
   return remaining;
 }
 
-function runPhasePostAttack(tag_pool, payload, character, hit_result, deflected) {
+function runPhasePostAttack(tag_pool, payload, owner, hit_result, deflected) {
   const logs = [];
+  const context = { payload, owner, hit_result, deflected };
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('POST_ATTACK')) {
-      const result = entry.handlers['POST_ATTACK'](payload, character, tag, hit_result, deflected);
+      const result = entry.handlers['POST_ATTACK'](context, tag);
       logs.push(...(result?.logs ?? []));
     }
   }
   return { tag_pool, logs };
 }
 
-function runPhaseDamageReduce(tag_pool, payload, character) {
+function runPhaseDamageReduce(tag_pool, payload, target) {
   const remaining = [];
   const logs = [];
   let reacted = false;
   let reaction_anim = null;
+  const context = { payload, target };
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('DAMAGE_REDUCE')) {
-      const result = entry.handlers['DAMAGE_REDUCE'](payload, tag, character);
-      payload = result.payload;
+      const result = entry.handlers['DAMAGE_REDUCE'](context, tag);
+      context.payload = result.payload;
       if (result.logs) logs.push(...result.logs);
       // Reaction captured at fire time, while the fired tag is in hand —
       // the handler flags `reacted`, the tag data names the animation.
@@ -212,7 +214,7 @@ function runPhaseDamageReduce(tag_pool, payload, character) {
       remaining.push(tag);
     }
   }
-  return { tag_pool: remaining, payload, logs, reacted, reaction_anim };
+  return { tag_pool: remaining, payload: context.payload, logs, reacted, reaction_anim };
 }
 
 function runPhasePreAction(tag_pool, action, owner) {

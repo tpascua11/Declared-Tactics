@@ -1,14 +1,14 @@
 // ============================================================
 //  POST ATTACK HANDLERS
 //  Phase: POST_ATTACK
-//  Fires after delivery. Receives hit_result.
-//  Handler signature: (payload, character, tag, hit_result)
+//  Fires after delivery. Handler signature: (context, tag), where
+//  context = { payload, owner, hit_result, deflected }.
 // ============================================================
 
 import { registerTag } from '../registry/battle_registry';
 
-export function ComboStackHandler(payload, character, tag, hit_result) {
-  if (hit_result !== 'HIT') return { consumed: false };
+export function ComboStackHandler(context, tag) {
+  if (context.hit_result !== 'HIT') return { consumed: false };
   tag.stack_count = (tag.stack_count || 0) + 1;
   return { consumed: false };
 }

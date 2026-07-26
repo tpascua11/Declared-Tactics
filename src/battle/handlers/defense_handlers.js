@@ -4,6 +4,11 @@
 //  counterpart of the DAMAGE tag. One registered handler per
 //  defensive phase; each card's tag instance supplies the options.
 //
+//  DAMAGE_REDUCE handler signature: (context, tag), where
+//  context = { payload, target } — target is the character being hit.
+//  Mutate context.target/tag in place; payload is sometimes replaced
+//  wholesale, so return it and the phase runner rethreads it forward.
+//
 //  BLOCKING — DAMAGE_REDUCE — the hit lands, weakened:
 //    { tag_name: 'BLOCKING',
 //      reduction: 0.75,                        // fraction of damage blocked
@@ -41,7 +46,8 @@ function BlockingOnApply(pool, tag) {
   pool.push(tag);
 }
 
-function BlockingDamageReduceHandler(payload, tag) {
+function BlockingDamageReduceHandler(context, tag) {
+  const { payload } = context;
   const totalDamage = payload.damages.reduce((sum, d) => sum + d.power, 0);
   if (totalDamage === 0) return { payload, consumed: false };
 
@@ -70,17 +76,18 @@ registerTag('BLOCKING', {
 // Rides alongside BLOCKING on the Uke card — reacts on its own DAMAGE_REDUCE
 // pass, independent of BLOCKING's reduction math, so a hit landing while
 // blocking refunds 1 Battle Spirit.
-function UkeSpiritDamageReduceHandler(payload, tag, character) {
+function UkeSpiritDamageReduceHandler(context, tag) {
+  const { payload, target } = context;
   const totalDamage = payload.damages.reduce((sum, d) => sum + d.power, 0);
   if (totalDamage === 0) return { payload, consumed: false };
 
-  const res = character.resources?.BATTLE_SPIRIT;
+  const res = target.resources?.BATTLE_SPIRIT;
   if (res) res.current = Math.min(res.current + 1, res.max);
 
   return {
     payload,
     consumed: false,
-    logs: [{ msg: `☯️ ${character.name} gains 1 Battle Spirit`, type: 'resource' }],
+    logs: [{ msg: `☯️ ${target.name} gains 1 Battle Spirit`, type: 'resource' }],
   };
 }
 
