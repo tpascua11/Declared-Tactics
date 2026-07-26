@@ -5,10 +5,11 @@
 
 import { registerTag } from '../registry/battle_registry';
 
-export function UndyingSpiritHandler(payload, character, tag) {
+export function UndyingSpiritHandler(context, tag) {
+  const { payload, target } = context;
   const totalDamage = payload.damages.reduce((sum, d) => sum + d.power, 0);
-  if (totalDamage >= character.max_health * 0.10) {
-    const res = character.resources?.BATTLE_SPIRIT;
+  if (totalDamage >= target.max_health * 0.10) {
+    const res = target.resources?.BATTLE_SPIRIT;
     if (res) res.current = Math.min(res.current + 1, res.max);
   }
   return { consumed: false };
@@ -85,7 +86,8 @@ function GoukiOnApply(pool, tag) {
   }
 }
 
-function GoukiDamageReduceHandler(payload, tag) {
+function GoukiDamageReduceHandler(context, tag) {
+  const { payload } = context;
   const totalDamage = payload.damages.reduce((sum, d) => sum + d.power, 0);
   if (totalDamage === 0) return { payload, consumed: false };
 
@@ -128,7 +130,8 @@ function HaraiOnApply(pool, tag) {
   pool.push(tag);
 }
 
-function HaraiDamageReduceHandler(payload, tag) {
+function HaraiDamageReduceHandler(context, tag) {
+  const { payload } = context;
   const totalDamage = payload.damages.reduce((sum, d) => sum + d.power, 0);
   if (totalDamage === 0) return { payload, consumed: false };
 

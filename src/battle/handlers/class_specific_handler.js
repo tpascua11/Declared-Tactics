@@ -10,7 +10,8 @@ import { registerTag } from '../registry/battle_registry';
 // PRE_ACTION: grants 1 Battle Spirit and consumes 1 stack. Removed when stacks hit 0.
 // ON_RECEIVE: consumed entirely when the owner takes a HIT.
 
-function StillWindPreActionHandler(action, owner, tag) {
+function StillWindPreActionHandler(context, tag) {
+  const { action, owner } = context;
   if (action.properties?.includes('SPEED_ACTION')) {
     return { cancelled: false, consumed: false };
   }
@@ -28,8 +29,8 @@ function StillWindPreActionHandler(action, owner, tag) {
   };
 }
 
-function StillWindOnReceiveHandler(payload, character, tag, hit_result) {
-  if (hit_result === 'HIT') {
+function StillWindOnReceiveHandler(context, tag) {
+  if (context.hit_result === 'HIT') {
     return { consumed: true };
   }
   return { consumed: false };
@@ -40,7 +41,8 @@ function StillWindOnReceiveHandler(payload, character, tag, hit_result) {
 // DAMAGE_REDUCE: reduces all incoming damage by 75% until the owner acts next.
 // Removed by ON_OWNER_ACTION reset when the owner takes their next action.
 
-function SteelWillDamageReduceHandler(payload, tag) {
+function SteelWillDamageReduceHandler(context, tag) {
+  const { payload } = context;
   const reduced = {
     ...payload,
     damages: payload.damages.map(d => ({ ...d, power: Math.round(d.power * 0.50) })),

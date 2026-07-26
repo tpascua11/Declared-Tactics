@@ -167,12 +167,13 @@ function runPhaseInjectFlat(tag_pool, payload, character) {
   return { tag_pool: remaining, payload };
 }
 
-function runPhaseOnReceive(tag_pool, payload, character, hit_result) {
+function runPhaseOnReceive(tag_pool, payload, target, hit_result) {
   const remaining = [];
+  const context = { payload, target, hit_result };
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('ON_RECEIVE')) {
-      const result = entry.handlers['ON_RECEIVE'](payload, character, tag, hit_result);
+      const result = entry.handlers['ON_RECEIVE'](context, tag);
       if (!result.consumed) remaining.push(tag);
     } else {
       remaining.push(tag);
@@ -220,6 +221,7 @@ function runPhaseDamageReduce(tag_pool, payload, target) {
 function runPhasePreAction(tag_pool, action, owner) {
   const logs = [];
   const remaining = [];
+  const context = { action, owner };
 
   // Strip stance/buff tags that expire when the owner acts (e.g. QUICK_STEPS from a prior slot).
   // Done here — at the START of the next action — so the tag survives after being applied
@@ -233,7 +235,7 @@ function runPhasePreAction(tag_pool, action, owner) {
     const tag = activePool[i];
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('PRE_ACTION')) {
-      const result = entry.handlers['PRE_ACTION'](action, owner, tag);
+      const result = entry.handlers['PRE_ACTION'](context, tag);
       logs.push(...(result.logs ?? []));
       if (result.cancelled) return { cancelled: true, logs, tag_pool: [...remaining, ...activePool.slice(i + 1)] };
       if (!result.consumed) remaining.push(tag);
