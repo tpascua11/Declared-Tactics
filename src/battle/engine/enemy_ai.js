@@ -134,7 +134,7 @@ function getEffectiveSpeed(character, card, slotIndex) {
   for (const tag of character.active_tag_pool ?? []) {
     const entry = tagRegistry[tag.tag_name];
     if (entry?.phases?.includes('SPEED_CALC')) {
-      speedMod += entry.handlers['SPEED_CALC'](null, character, tag) ?? 0;
+      speedMod += entry.handlers['SPEED_CALC']({ action: null, owner: character }, tag) ?? 0;
     }
   }
   return base + speedMod;

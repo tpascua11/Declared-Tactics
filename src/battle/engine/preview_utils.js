@@ -53,7 +53,7 @@ export function projectedSpeedInfluence(tagPool, queue, slotIndex) {
     tags = tags.filter(tag => {
       const entry = battle_registry[tag.tag_name];
       if (!entry?.phases?.includes('IMBUE')) return true;
-      const result = entry.handlers['IMBUE'](fakePayload, null, tag);
+      const result = entry.handlers['IMBUE']({ payload: fakePayload }, tag);
       return !result.consumed;
     });
 
@@ -75,7 +75,7 @@ export function projectedSpeedInfluence(tagPool, queue, slotIndex) {
     if (entry?.phases?.includes('SPEED_CALC')) {
       // action_count: slotIndex lets first-action guards (e.g. PARALYSIS) preview
       // correctly — penalty shows for slot 0 only, not all slots.
-      speedMod += entry.handlers['SPEED_CALC'](null, { action_count: slotIndex }, tag) ?? 0;
+      speedMod += entry.handlers['SPEED_CALC']({ action: null, owner: { action_count: slotIndex } }, tag) ?? 0;
     }
   }
   return speedMod;

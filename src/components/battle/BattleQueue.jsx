@@ -20,7 +20,7 @@ function applySpeedCalc(baseSpeed, tagPool, char) {
   for (const tag of tagPool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('SPEED_CALC')) {
-      speedMod += entry.handlers['SPEED_CALC'](null, char, tag) ?? 0;
+      speedMod += entry.handlers['SPEED_CALC']({ action: null, owner: char }, tag) ?? 0;
     }
   }
   return baseSpeed + speedMod;
