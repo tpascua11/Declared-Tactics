@@ -2,7 +2,7 @@
 //  INCOMING HANDLERS
 //  Tags that fire on the *defender* when an action targets them.
 //  Phase: ON_INCOMING
-//  Handler signature: (incoming_action, defender, tag, state)
+//  Handler signature: (context, tag), context = { action, target, state }
 //  Return: { cancelled, consumed, logs }
 // ============================================================
 
@@ -18,7 +18,8 @@ import { registerTag } from '../registry/battle_registry';
 // can bypass this tag. Bypass is handled by the engine in runPhaseOnIncoming —
 // this handler only runs if the bypass check did not fire.
 
-function QuickStepsHandler(incoming_action, defender, tag) {
+function QuickStepsHandler(context, tag) {
+  const { action: incoming_action, target: defender } = context;
   const { dodge_anchor } = tag;
   const incoming_speed = incoming_action.calc_speed;
   const dodge_range = tag.dodge_range ?? 5;

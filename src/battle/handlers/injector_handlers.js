@@ -97,10 +97,10 @@ registerTag('FUEL_TO_THE_FLAMES', {
   handlers: { INJECT_FLAT: FuelToTheFlamesHandler },
 });
 
-export function BattojutsuOnMiss(action, owner, tag) {
+export function BattojutsuOnMiss(context, tag) {
   return {
     consumed: true,
-    logs: [{ msg: `💨 ${owner.name}'s Battojutsu was spent — attack missed!`, type: 'debuff' }],
+    logs: [{ msg: `💨 ${context.owner.name}'s Battojutsu was spent — attack missed!`, type: 'debuff' }],
   };
 }
 

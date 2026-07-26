@@ -106,7 +106,8 @@ function EvadingOnApply(pool, tag) {
   pool.push(tag);
 }
 
-function EvadingOnIncomingHandler(incoming_action, defender, tag) {
+function EvadingOnIncomingHandler(context, tag) {
+  const { action: incoming_action, target: defender } = context;
   // Speed window — opt-in via `dodge_range` on the card's tag data.
   // dodge_anchor is stamped at resolution (enrichFromAction) from the
   // stance action's own calc_speed, so WHERE the window sits depends on

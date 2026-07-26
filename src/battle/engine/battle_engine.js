@@ -290,15 +290,16 @@ function resolveTagInteractions(action, target) {
 // ── ON_MISS PHASE RUNNER ──
 // Runs on the *attacker's* tag pool when their attack is evaded or cancelled by the defender.
 // Tags that should be spent on a miss (e.g. charge-ups, stance buffs) register for this phase.
-// Handler signature: (action, owner, tag) → { consumed, logs }
+// Handler signature: (context, tag) → { consumed, logs }, context = { action, owner }
 
 function runPhaseOnMiss(tag_pool, action, owner) {
   const logs = [];
   const remaining = [];
+  const context = { action, owner };
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('ON_MISS')) {
-      const result = entry.handlers['ON_MISS'](action, owner, tag);
+      const result = entry.handlers['ON_MISS'](context, tag);
       logs.push(...(result.logs ?? []));
       if (!result.consumed) remaining.push(tag);
     } else {
@@ -314,10 +315,13 @@ function runPhaseOnMiss(tag_pool, action, owner) {
 // trigger counters, etc. — this is the general defender-side gate.
 // interactionResult from resolveTagInteractions is passed through so each
 // handler can check if it is being bypassed by the incoming action.
+// Handler signature: (context, tag) → { cancelled, consumed, logs },
+// context = { action, target, state }
 
 function runPhaseOnIncoming(tag_pool, incoming_action, defender, state, interactionResult = { activeInteractions: [] }) {
   const logs = [];
   const remaining = [];
+  const context = { action: incoming_action, target: defender, state };
 
   for (let i = 0; i < tag_pool.length; i++) {
     const tag = tag_pool[i];
@@ -335,7 +339,7 @@ function runPhaseOnIncoming(tag_pool, incoming_action, defender, state, interact
         continue;
       }
 
-      const result = entry.handlers['ON_INCOMING'](incoming_action, defender, tag, state);
+      const result = entry.handlers['ON_INCOMING'](context, tag);
       logs.push(...(result.logs ?? []));
       if (result.cancelled) {
         const keep = result.consumed ? [] : [tag];

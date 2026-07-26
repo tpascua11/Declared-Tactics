@@ -18,7 +18,8 @@ export function SpeedBoostImbueHandler(payload, character, tag) {
   return { payload, consumed: true };
 }
 
-export function SpeedBoostOnMiss(action, owner, tag) {
+export function SpeedBoostOnMiss(context, tag) {
+  const { action, owner } = context;
   if (tag.mode === 'turns') return { consumed: false };
   if (action.properties?.includes('SPEED_ACTION')) return { consumed: false };
   return {
