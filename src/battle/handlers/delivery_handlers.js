@@ -2,38 +2,46 @@
 //  DELIVERY HANDLERS
 //  Phase: DELIVERY
 //  Build damage entries and immediate effects
+//  Handler signature: (context, tag), context = { payload, owner } —
+//  owner is whichever character the tag was resolved against (self tags:
+//  the card's owner; target tags: also owner at both current call sites,
+//  a pre-existing quirk preserved as-is, not something this pass changed).
 // ============================================================
 
 import { registerTag } from '../registry/battle_registry';
 
-export function DamageHandler(payload, character, tag) {
+export function DamageHandler(context, tag) {
+  const { payload } = context;
   payload.damages.push({ element: tag.type, power: tag.power });
   return { payload, consumed: true };
 }
 
-export function HealHandler(payload, character, tag) {
-  const missing = character.max_health - character.health;
-  const tempCap = Math.max(0, missing - (character.temp_hp ?? 0));
-  character.temp_hp = (character.temp_hp ?? 0) + Math.min(tag.power, tempCap);
+export function HealHandler(context, tag) {
+  const { payload, owner } = context;
+  const missing = owner.max_health - owner.health;
+  const tempCap = Math.max(0, missing - (owner.temp_hp ?? 0));
+  owner.temp_hp = (owner.temp_hp ?? 0) + Math.min(tag.power, tempCap);
   return {
     payload,
     consumed: true,
-    logs: [{ msg: `💙 ${character.name} gains ${tag.power} temp HP`, type: 'heal' }],
+    logs: [{ msg: `💙 ${owner.name} gains ${tag.power} temp HP`, type: 'heal' }],
   };
 }
 
 // NOTE: Watch for Speed Up + Cleanse interaction — if enemy speed seems to change unexpectedly, check here.
-export function CleanseHandler(payload, character) {
-  const removed = character.active_tag_pool.filter(t => t.status_type === 'debuff').length;
-  character.active_tag_pool = character.active_tag_pool.filter(t => t.status_type !== 'debuff');
+export function CleanseHandler(context) {
+  const { payload, owner } = context;
+  const removed = owner.active_tag_pool.filter(t => t.status_type === 'debuff').length;
+  owner.active_tag_pool = owner.active_tag_pool.filter(t => t.status_type !== 'debuff');
   const logs = removed > 0
-    ? [{ msg: `✨ ${character.name}'s debuffs are cleared`, type: 'buff' }]
+    ? [{ msg: `✨ ${owner.name}'s debuffs are cleared`, type: 'buff' }]
     : [];
   return { payload, consumed: true, logs };
 }
 
-export function GainResourceHandler(payload, character, tag) {
-  const res = character.resources?.[tag.resource_type];
+export function GainResourceHandler(context, tag) {
+  const { payload, owner } = context;
+  const res = owner.resources?.[tag.resource_type];
   if (!res) return { payload, consumed: true };
   res.current = Math.min(res.current + tag.power, res.max);
   return { payload, consumed: true };

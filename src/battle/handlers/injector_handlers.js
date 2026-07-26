@@ -3,11 +3,13 @@
 //  Phase: INJECT
 //  Scale how hard the attack hits — conditionally
 //  Only consumed if condition passes
+//  Handler signature: (context, tag), context = { payload, owner }.
 // ============================================================
 
 import { registerTag } from '../registry/battle_registry';
 
-export function MagicChargeHandler(payload, character, tag) {
+export function MagicChargeHandler(context, tag) {
+  const { payload } = context;
   if (payload.type !== 'MAGIC') return { payload, consumed: false };
   if (payload.tag_types?.includes('CHARGING')) return { payload, consumed: false };
   const boost = tag.multiplier * tag.stack_count;
@@ -26,7 +28,8 @@ export function MagicChargeOnApply(pool, tag) {
   }
 }
 
-export function FireChargeHandler(payload, character, tag) {
+export function FireChargeHandler(context, tag) {
+  const { payload } = context;
   const hasFireDamage = payload.damages.some(d => d.element === 'FIRE');
   if (!hasFireDamage) return { payload, consumed: false };
   payload.damages.forEach(d => {
@@ -35,7 +38,8 @@ export function FireChargeHandler(payload, character, tag) {
   return { payload, consumed: true };
 }
 
-export function MomentumHandler(payload, character, tag) {
+export function MomentumHandler(context, tag) {
+  const { payload } = context;
   if (payload.type !== 'PHYSICAL') return { payload, consumed: false };
   const boost = tag.multiplier * tag.stack_count;
   payload.damages.forEach(d => {
@@ -53,7 +57,8 @@ export function FuelToTheFlamesOnApply(pool, tag) {
   }
 }
 
-export function FuelToTheFlamesHandler(payload, character, tag) {
+export function FuelToTheFlamesHandler(context, tag) {
+  const { payload } = context;
   const hasFireDamage = payload.damages.some(d => d.element === 'FIRE');
   if (!hasFireDamage) return { payload, consumed: false };
   payload.damages.forEach(d => {
@@ -104,7 +109,8 @@ export function BattojutsuOnMiss(context, tag) {
   };
 }
 
-export function BattojutsuHandler(payload, character, tag) {
+export function BattojutsuHandler(context, tag) {
+  const { payload } = context;
   // Non-attacking action — add 1 stack (10%), cap at 10 stacks
   if (payload.damages.length === 0) {
     tag.stack_count = Math.min(tag.stack_count + 1, 10);

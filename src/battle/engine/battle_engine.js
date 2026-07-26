@@ -126,47 +126,50 @@ export function InteractionCheck(actionA, actionB) {
 
 function runPhaseImbue(tag_pool, payload) {
   const remaining = [];
+  const context = { payload };
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('IMBUE')) {
-      const result = entry.handlers['IMBUE'](payload, null, tag);
-      payload = result.payload;
+      const result = entry.handlers['IMBUE'](context, tag);
+      context.payload = result.payload;
       if (!result.consumed) remaining.push(tag);
     } else {
       remaining.push(tag);
     }
   }
-  return { tag_pool: remaining, payload };
+  return { tag_pool: remaining, payload: context.payload };
 }
 
-function runPhaseInjectMult(tag_pool, payload, character) {
+function runPhaseInjectMult(tag_pool, payload, owner) {
   const remaining = [];
+  const context = { payload, owner };
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('INJECT_MULT')) {
-      const result = entry.handlers['INJECT_MULT'](payload, character, tag);
-      payload = result.payload;
+      const result = entry.handlers['INJECT_MULT'](context, tag);
+      context.payload = result.payload;
       if (!result.consumed) remaining.push(tag);
     } else {
       remaining.push(tag);
     }
   }
-  return { tag_pool: remaining, payload };
+  return { tag_pool: remaining, payload: context.payload };
 }
 
-function runPhaseInjectFlat(tag_pool, payload, character) {
+function runPhaseInjectFlat(tag_pool, payload, owner) {
   const remaining = [];
+  const context = { payload, owner };
   for (const tag of tag_pool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('INJECT_FLAT')) {
-      const result = entry.handlers['INJECT_FLAT'](payload, character, tag);
-      payload = result.payload;
+      const result = entry.handlers['INJECT_FLAT'](context, tag);
+      context.payload = result.payload;
       if (!result.consumed) remaining.push(tag);
     } else {
       remaining.push(tag);
     }
   }
-  return { tag_pool: remaining, payload };
+  return { tag_pool: remaining, payload: context.payload };
 }
 
 function runPhaseOnReceive(tag_pool, payload, target, hit_result) {
@@ -454,7 +457,7 @@ export function ExecuteAction(action, interaction_result, state) {
   for (const tag of (action.tags?.target || [])) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('DELIVERY')) {
-      const result = entry.handlers['DELIVERY'](payload, owner, tag);
+      const result = entry.handlers['DELIVERY']({ payload, owner }, tag);
       payload = result.payload;
     }
   }
@@ -547,7 +550,7 @@ export function ExecuteAction(action, interaction_result, state) {
   for (const tag of resolveSelfTags(action, owner)) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('DELIVERY')) {
-      const result = entry.handlers['DELIVERY'](payload, owner, tag);
+      const result = entry.handlers['DELIVERY']({ payload, owner }, tag);
       payload = result.payload || payload;
       for (const log of (result.logs ?? [])) {
         logs.push({ ...log, msg: `[${String(action.calc_speed).padStart(3, ' ')}] ${log.msg}` });

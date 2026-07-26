@@ -14,7 +14,8 @@ export function SpeedBoostHandler(context, tag) {
   return tag.amount * (tag.stacks ?? 1);
 }
 
-export function SpeedBoostImbueHandler(payload, character, tag) {
+export function SpeedBoostImbueHandler(context, tag) {
+  const { payload } = context;
   if (tag.mode === 'turns') return { payload, consumed: false };
   // Speed actions (e.g. Shinsoku) don't consume the boost — stacks persist
   if (payload.properties?.includes('SPEED_ACTION')) return { payload, consumed: false };
