@@ -564,7 +564,7 @@ export default function BattleScreen() {
             )}
 
             {/* Battle Log — absolutely positioned in left column space, does not affect flex layout */}
-            {logVisible && <BattleLog logs={gs.logs} turn={gs.turn} />}
+            <BattleLog logs={gs.logs} turn={gs.turn} visible={logVisible} />
 
             {/* LEFT — Condition tag column (fixed width, right-aligned so buffs hug the gap) */}
             <div style={{ width: '340px', paddingRight: '12px', display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end', alignSelf: 'flex-end' }}>
