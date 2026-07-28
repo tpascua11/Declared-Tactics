@@ -195,6 +195,7 @@ export { default as FOX_SAMURAI_MEND }          from './FOX_SAMURAI/fox_mend.png
 export { default as FOX_SAMURAI_STILL_WIND }    from './FOX_SAMURAI/fox_still_wind.png';
 export { default as FOX_SAMURAI_FREEZE_SLASH }  from './FOX_SAMURAI/fox_freeze_slash.png';
 export { default as FOX_SAMURAI_FLAME_STRIKE }  from './FOX_SAMURAI/fox_flame_strike.png';
+export { default as FOX_DRAGON_SLASH }          from './FOX_SAMURAI/fox_dragon_slash.png';
 export { default as FOX_QUICK_STEPS }            from './FOX_SAMURAI/fox_quick_steps.png';
 export { default as FOX_GUARD_STANCE }           from './FOX_SAMURAI/fox_water_stance.png';
 export { default as FOX_SAMURAI_STREAM_SLASH }  from './FOX_SAMURAI/SAMURAI_STREAM_SLASH.png';

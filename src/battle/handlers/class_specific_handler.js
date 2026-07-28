@@ -74,3 +74,51 @@ registerTag('STILL_WIND', {
     ON_RECEIVE: StillWindOnReceiveHandler,
   },
 });
+
+// ── DRAGON SLASH ──
+// DRAGON_SLASH_RESOLVE is an action tag (see samurai_cards.js dragon_slash) —
+// merged in as if applied by an earlier action, scoped to this action only.
+// SPEED_CALC: at <=5% HP, cancels the slot speed penalty entirely.
+// INJECT_FLAT: same HP read, adds flat damage on top of the card's base power.
+// ACTION_END: always consumed — this tag only exists for this one action.
+
+function DragonSlashResolveSpeedCalcHandler(context, tag) {
+  const { owner } = context;
+  const ratio = owner.health / owner.max_health;
+  let bonus = 0;
+  if (ratio <= 0.05) bonus = 80;
+  else if (ratio <= 0.25) bonus = 60;
+  else if (ratio <= 0.50) bonus = 40;
+  else if (ratio <= 0.75) bonus = 20;
+  if (ratio <= 0.05) bonus += (owner.action_count ?? 0) * 20;
+  return bonus;
+}
+
+function DragonSlashResolveInjectFlatHandler(context, tag) {
+  const { payload, owner } = context;
+  const ratio = owner.health / owner.max_health;
+  let flat = 0;
+  if (ratio <= 0.05) flat = 367;
+  else if (ratio <= 0.25) flat = 267;
+  else if (ratio <= 0.50) flat = 167;
+  else if (ratio <= 0.75) flat = 67;
+  payload.damages.forEach(d => { d.power += flat; });
+  return { payload, consumed: false };
+}
+
+function DragonSlashResolveActionEndHandler(context, tag) {
+  return { consumed: true };
+}
+
+registerTag('DRAGON_SLASH_RESOLVE', {
+  phases: ['SPEED_CALC', 'INJECT_FLAT', 'ACTION_END'],
+  handlers: {
+    SPEED_CALC: DragonSlashResolveSpeedCalcHandler,
+    INJECT_FLAT: DragonSlashResolveInjectFlatHandler,
+    ACTION_END: DragonSlashResolveActionEndHandler,
+  },
+});
+
+registerTag('DRAGON_SLASH_CAST', {
+  status_type: 'buff',
+});

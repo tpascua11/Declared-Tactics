@@ -15,12 +15,21 @@ const GAP    = 10;   // px between card slots
 
 // ── helpers ──────────────────────────────────────────────────
 
-function applySpeedCalc(baseSpeed, tagPool, char) {
+function applySpeedCalc(baseSpeed, tagPool, actionTags, char) {
+  const context = { action: null, owner: char };
   let speedMod = 0;
   for (const tag of tagPool) {
     const entry = battle_registry[tag.tag_name];
     if (entry?.phases?.includes('SPEED_CALC')) {
-      speedMod += entry.handlers['SPEED_CALC']({ action: null, owner: char }, tag) ?? 0;
+      speedMod += entry.handlers['SPEED_CALC'](context, tag) ?? 0;
+    }
+  }
+  // Action tags — scoped to this action, not yet in char.active_tag_pool
+  // (that merge only happens inside ExecuteAction at real execution time).
+  for (const tag of actionTags ?? []) {
+    const entry = battle_registry[tag.tag_name];
+    if (entry?.phases?.includes('SPEED_CALC')) {
+      speedMod += entry.handlers['SPEED_CALC'](context, tag) ?? 0;
     }
   }
   return baseSpeed + speedMod;
@@ -57,7 +66,13 @@ export function simulateExecutionOrder(characters, initialLengths) {
         const action = q[0];
         const char = action._char;
         const base = (char.base_speed + (action.speed_mod ?? 0)) - speedPenalties[id] * 20;
-        return { ...action, _simSpeed: applySpeedCalc(base, tagPools[id] || [], char) };
+        // action_count overridden to the simulated slot penalty counter, not the
+        // character's real action_count — handlers like DRAGON_SLASH_RESOLVE read
+        // owner.action_count to cancel out this same penalty term, and for a
+        // character's 2nd+ queued action within this simulation, speedPenalties[id]
+        // has already advanced past the real character.action_count.
+        const simChar = { ...char, action_count: speedPenalties[id] };
+        return { ...action, _simSpeed: applySpeedCalc(base, tagPools[id] || [], action.action_tags, simChar) };
       });
     if (candidates.length === 0) break;
     candidates.sort((a, b) => b._simSpeed - a._simSpeed);

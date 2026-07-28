@@ -75,6 +75,15 @@ export function SpeedCheckAllAvailableActions(characters) {
         speedMod += entry.handlers['SPEED_CALC'](speedContext, tag) ?? 0;
       }
     }
+    // Action tags — scoped to this action, not yet merged into active_tag_pool
+    // (that only happens inside ExecuteAction, which hasn't run for anyone yet;
+    // this loop runs every step for every character's front-of-queue action).
+    for (const tag of action.action_tags ?? []) {
+      const entry = battle_registry[tag.tag_name];
+      if (entry?.phases?.includes('SPEED_CALC')) {
+        speedMod += entry.handlers['SPEED_CALC'](speedContext, tag) ?? 0;
+      }
+    }
     action.calc_speed = (character.base_speed + (action.speed_mod ?? 0)) - (character.action_count ?? 0) * 20 + speedMod;
     //console.log('[SpeedCheck]', character.name, '|', action.name, '| calc_speed:', action.calc_speed, '| speedMod:', speedMod, '| action_count:', character.action_count ?? 0);
     actions.push({ ...action, owner_id: character.id, owner_name: character.name });
@@ -261,6 +270,20 @@ function runPhasePreAction(tag_pool, action, owner) {
   return { cancelled: false, logs, tag_pool: remaining };
 }
 
+function runPhaseActionEnd(tag_pool) {
+  const remaining = [];
+  for (const tag of tag_pool) {
+    const entry = battle_registry[tag.tag_name];
+    if (entry?.phases?.includes('ACTION_END')) {
+      const result = entry.handlers['ACTION_END']({}, tag);
+      if (!result.consumed) remaining.push(tag);
+    } else {
+      remaining.push(tag);
+    }
+  }
+  return remaining;
+}
+
 // ── TAG INTERACTION RESOLVER ──
 // Scans the target's active_tag_pool for tags whose registry traits overlap
 // with the action's tag_interactions declarations.
@@ -378,11 +401,22 @@ export function ExecuteAction(action, interaction_result, state) {
   if (!owner || !target) return { newState, logs };
   if (owner.health <= 0) return { newState, logs };
 
+  // Action tags — merged in as if applied by an earlier action, so PRE_ACTION/
+  // IMBUE/INJECT/etc. see them as ordinary pool contents for this action's own
+  // resolution. Whether one lingers after or expires is per tag_name (ACTION_END
+  // phase, run at every exit point below), not a property of this array.
+  for (const tag of action.action_tags ?? []) {
+    owner.active_tag_pool = addTagToPool(owner.active_tag_pool, tag, action);
+  }
+
   // PRE_ACTION phase — tag-based gates, then engine resource check
   const preAction = runPhasePreAction(owner.active_tag_pool, action, owner);
   logs.push(...preAction.logs);
   owner.active_tag_pool = preAction.tag_pool;
-  if (preAction.cancelled) return { newState, logs, fizzled: true };
+  if (preAction.cancelled) {
+    owner.active_tag_pool = runPhaseActionEnd(owner.active_tag_pool);
+    return { newState, logs, fizzled: true };
+  }
 
   // Deduct resource costs at execution time
   for (const [resourceType, amount] of Object.entries(action.cost ?? {})) {
@@ -418,6 +452,7 @@ export function ExecuteAction(action, interaction_result, state) {
       const onMiss = runPhaseOnMiss(owner.active_tag_pool, action, owner);
       logs.push(...onMiss.logs);
       owner.active_tag_pool = onMiss.tag_pool;
+      owner.active_tag_pool = runPhaseActionEnd(owner.active_tag_pool);
       // Every evade fuses: authored reaction_anim if the tag has one, the
       // generic 'evade' otherwise — same default idiom as animationHint.
       return { newState, logs, evaded: true, evaderId: resolvedTarget.id, attackerId: owner.id, animationHint, evadeAnim: onIncoming.reaction_anim ?? 'evade' };
@@ -573,6 +608,10 @@ export function ExecuteAction(action, interaction_result, state) {
   owner.active_tag_pool = postAttack.tag_pool;
   logs.push(...postAttack.logs);
 
+  // ACTION_END — tags opting into this phase are dropped now, regardless of
+  // whether they came from action_tags or a normal grant. Anything not
+  // declaring it (a lasting Mend/Burn, a real buff) survives untouched.
+  owner.active_tag_pool = runPhaseActionEnd(owner.active_tag_pool);
 
   // Single-target reaction facts ride the lone delivery entry; AOE keeps them per-target.
   const singleHit = !isAoe ? aoeHits[0] : null;

@@ -289,4 +289,28 @@ export const SAMURAI_CARDS = [
       target: [],
     },
   },
+  {
+    id: 'dragon_slash',
+    name: 'Dragon Slash',
+    speed_mod: -20,
+    tag_type: ['PHYSICAL', 'SLASH'],
+    cost: { BATTLE_SPIRIT: 3 },
+    icon: '🐉',
+    image: 'FOX_DRAGON_SLASH',
+    color: '#facc15',
+    desc: '333 damage. The lower your HP, the faster and harder this strikes — at 5% HP or below, ignores the slot speed penalty entirely. If deflected/blocked, a second Dragon Slash queued this round comes out +20 speed faster, shatters the target\'s defense, and deals +150% damage.',
+    animation: 'dragon_slash_combo',
+    animation_intensity: 1.2,
+    action_tags: [
+      { tag_name: 'DRAGON_SLASH_RESOLVE' },
+    ],
+    tags: {
+      self: [
+        { tag_name: 'DRAGON_SLASH_CAST', reset: ['END_OF_TURN'] },
+      ],
+      target: [
+        { tag_name: 'DAMAGE', type: 'PHYSICAL', power: 333 },
+      ],
+    },
+  },
 ];
