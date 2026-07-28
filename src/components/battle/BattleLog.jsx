@@ -72,6 +72,7 @@ export default function BattleLog({ logs, turn, visible }) {
       ref={scrollRef}
       onScroll={handleScroll}
       onTransitionEnd={(e) => { if (e.target === e.currentTarget && !visible) setMounted(false); }}
+      className="battle-log-scroll"
       style={{
         position:      'absolute',
         left:          0,
@@ -83,8 +84,6 @@ export default function BattleLog({ logs, turn, visible }) {
         overflowY:     'auto',
         zIndex:        5,
         pointerEvents: 'auto',
-        border:        '1px solid rgba(255,255,255,0.06)',
-        borderRadius:  '3px',
         padding:       '6px 10px',
         gap:           '3px',
         transition:      'transform 200ms ease-out',
