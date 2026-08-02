@@ -4,17 +4,107 @@
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
   "stages": [
     {
-      "enemies": ["boar_samurai", "ferret_samurai"]
+      "enemies": ["dragon_samurai_teacher"]
     },
     {
-      "enemies": ["ferret_samurai", "ferret_samurai", "ferret_samurai", "ferret_samurai", "ferret_samurai"]
-    },
-    {
-      "enemies": ["wolf_samurai", "tiger_samurai"]
+      "enemies": ["dragon_samurai_teacher"]
     }
   ],
-  "music": "WAY_OF_THE_SAMURAI_BATTLE_5",
+  "music": "SAMURAI_TUTORIAL",
   "music_volume": 0.25,
   "allow_retry": true,
-  "rewards": {}
+  "rewards": {},
+  "dialog": [
+    {
+      "turn": 1,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Alright kid, time to remember your BASICS! You choose up to {{red-bold}}three Actions{{/red-bold}} and commit to 'em, once they're queued, they're locked till their turn comes up. Have a go, kid. Choose anyone!"
+    },
+    {
+      "turn": 2,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Heavy Slice is your default attack — use it often, especially when I'm blocking. The clash of swords rises our Battle Spirit!"
+    },
+    {
+      "turn": 3,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Brace yourself, kid! My first move this turn is {{red-bold}}Flame Strike{{/red-bold}}, feel the heat! Hahahaha!"
+    },
+    {
+      "turn": 4,
+      "speaker": "SAMURAI TEACHER",
+      "text": "That Battōjutsu I sheathed last round built up my {{red-bold}}Blaze Slash{{/red-bold}}, it's landing as my 3rd action this round! You better queue Uke as your 2nd action, it'll come out faster!"
+    },
+    {
+      "turn": 5,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Well done! Fight on till the next!"
+    },
+    {
+      "turn": 6,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Still stalling, kid? You can't stay curled up by that fire back home your whole life. The Samurai Lands won't wait for you!"
+    },
+    {
+      "turn": 7,
+      "speaker": "SAMURAI TEACHER",
+      "text": "I know, I know, you miss home already. But a Fox who never leaves the den never grows a tail worth telling stories about!"
+    },
+    {
+      "turn": 8,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Hahahaha! Look at you, dragging your paws like you'd rather be back for dinner. Queue up, kid!"
+    },
+    {
+      "turn": 9,
+      "speaker": "SAMURAI TEACHER",
+      "text": "No one's walking through that door to save you this time. Out here, you grow up fast, or not at all."
+    },
+    {
+      "turn": 10,
+      "speaker": "SAMURAI TEACHER",
+      "text": "You're still here? Half the pups in the Samurai Lands would've queued three Actions by now, kid."
+    },
+    {
+      "turn": 11,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Hahahaha! Homesick already? We're only getting started, Fox!"
+    },
+    {
+      "turn": 12,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Keep stalling and I'll start charging you rent for standing in my field."
+    },
+    {
+      "turn": 13,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Alright, kid, enough moping. Show me you're ready to leave the den for real!"
+    },
+    {
+      "turn": 14,
+      "speaker": "SAMURAI TEACHER",
+      "text": "..."
+    },
+    {
+      "turn": 15,
+      "speaker": "SAMURAI TEACHER",
+      "text": "..."
+    },
+    {
+      "turn": 16,
+      "speaker": "SAMURAI TEACHER",
+      "text": "..."
+    },
+    {
+      "turn": 17,
+      "speaker": "SAMURAI TEACHER",
+      "text": "That's it. You asked for it!"
+    },
+    {
+      "stage": 1,
+      "turn": 1,
+      "speaker": "SAMURAI TEACHER",
+      "text": "Alright kid, it's time for the last lesson here. Watch my Aura, you can predict what's to come."
+    }
+  ]
 }

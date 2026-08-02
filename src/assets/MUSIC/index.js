@@ -16,6 +16,7 @@ import samuraiDefeat from './SAMURAI_DEFEAT.mp3';
 import introMusic from './INTRO.mp3';
 import samuraiCompletion from './SAMURAI_COMPLETION.mp3';
 import samuraiBoss1 from './SAMURAI_BOSS_1.mp3';
+import samuraiTutorial from './SAMURAI_TUTORIAL.mp3';
 
 export { samuraiDefeat as introMusic };
 
@@ -31,6 +32,7 @@ export const MUSIC_REGISTRY = {
 
 
   SAMURAI_BOSS_1: samuraiBoss1,
+  SAMURAI_TUTORIAL: samuraiTutorial,
   samurai_victory: samuraiVictory,
   samurai_defeat: samuraiDefeat,
   samurai_completion: samuraiCompletion,
