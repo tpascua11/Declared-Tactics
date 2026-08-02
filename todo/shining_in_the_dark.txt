@@ -1,0 +1,75 @@
+SHINING IN THE DARK
+====================
+
+Goal: when weather has a dark tint (WEATHER_REGISTRY[key].tint, see
+weather_registry.js), cut bright "undimmed" holes in it over the UI
+elements that should stay readable/prominent instead of getting darkened
+along with everything else:
+  - each character card (enemy cards + player portrait)
+  - the battle queue row (BattleQueue)
+  - the hand section (Hand)
+
+This was built once and reverted (kept simple/dark-only per user request) —
+notes below are what worked, what didn't, and where to pick it up.
+
+ARCHITECTURE (what worked)
+---------------------------
+WeatherInterpreter.js already draws the tint as a full-viewport
+PIXI.Graphics rect, redrawn every tick so it tracks resizes. To cut holes:
+  - Add a second Graphics ("holeGfx") as a child directly above tintGfx in
+    the same container, with `blendMode = 'erase'`. Circles drawn on it
+    subtract from the tint drawn just below — confirmed this works in
+    PIXI v8 without needing a render group, since it's the pixi canvas's
+    own framebuffer being erased (the canvas sits above the DOM at Z.VFX,
+    pointer-events:none — erasing it just reveals the DOM card underneath).
+  - Order matters: tintGfx, then holeGfx, then particles. Particles must be
+    added to the container AFTER holeGfx so the erase pass (which only
+    affects pixels already drawn) doesn't touch them.
+  - WeatherInterpreter needs a `setBrightSpots(spots)` method storing
+    `{x, y, radius}` circles read live by the ticker each frame.
+
+For CARDS specifically: BattleScreen already has getCharacterScreenPos-style
+DOM lookups. Track positions with a rAF loop (not a React effect dep — cards
+move via CSS transforms like hop-forward/floaty-idle that the reducer
+doesn't know about, so DOM is the only source of truth) querying
+`[data-enemy-id], [data-character-id]` and computing center + radius from
+getBoundingClientRect().
+
+For QUEUE/HAND: these are fixed-ish layout regions, not per-character.
+Give their wrapper elements a stable selector (e.g. `data-weather-bright`)
+and include that selector in the same rAF query — no need for a separate
+tracking mechanism, just fold them into the one spots array.
+  - BattleQueue row wrapper: the `<div style={{ position: 'relative' }}>`
+    wrapping <BattleQueue /> in BattleScreen.jsx (~line 582).
+  - Hand root: the `<div className="h-[180px] ...">` in Hand.jsx (~line 117).
+
+PLUMBING: EffectsLayer's pixi init is async (app.init().then(...)), so a
+one-shot CustomEvent dispatched on mount can race the listener and get
+lost. Use a tiny pub/sub with last-value replay instead (see weatherBus.js
+for the pattern already used for the weather key itself) — call it
+weatherBrightSpotsBus.js: `setBrightSpots(spots)` / `subscribeBrightSpots(fn)`,
+where subscribe immediately replays the current value.
+
+GOTCHA HIT LAST TIME: wired BattleScreen to call setBrightSpots() and wrote
+WeatherInterpreter.setBrightSpots(), but forgot to actually subscribe to the
+bus in EffectsLayer.jsx and forward spots into weatherRef.current — resulted
+in "no light" (holes never drew because the spots list stayed empty). Don't
+forget that connection this time.
+
+POLISH TO CONSIDER (not done last time, flagged then deferred):
+  - Hole edges were hard-cut circles (blendMode erase, no falloff) — reads
+    as a cookie-cutter hole rather than light. Consider a soft radial
+    gradient falloff on holeGfx instead of a flat-alpha circle.
+  - Radius was derived from getBoundingClientRect() every frame, which
+    reflects live CSS transform scale — during a shake/pulse animation the
+    hole could subtly grow/shrink in sync, reading as twitchy. Consider
+    keying radius off layout size instead of the live scaled rect.
+
+FILES INVOLVED
+--------------
+src/vfx/WeatherInterpreter.js       — holeGfx + setBrightSpots()
+src/vfx/weatherBrightSpotsBus.js    — new, pub/sub (recreate, was deleted)
+src/components/battle/EffectsLayer.jsx — subscribe + forward to weatherRef
+src/screens/BattleScreen.jsx        — rAF loop building the spots array
+src/components/battle/Hand.jsx      — data-weather-bright="hand" on root
+BattleQueue wrapper in BattleScreen.jsx — data-weather-bright="queue"

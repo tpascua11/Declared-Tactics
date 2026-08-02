@@ -77,6 +77,7 @@ export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
     music: scenario?.music ?? null,
     musicVolume: scenario?.music_volume ?? 0.2,
     battleBackground: scenario?.battle_background ?? null,
+    weather: scenario?.weather ?? null,
     turn: 1,
     result: null,          // WIN | LOSS
     characters,

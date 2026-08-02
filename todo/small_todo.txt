@@ -7,6 +7,15 @@ SMALL TODOS
     Cleaner to have two distinct paths so the loop has no branching on payload type.
     File: src/battle/engine/battle_engine.js ~ line 460-522
 
+[ ] Weather particles reacting to attack impacts — e.g. snow scatters at hit point.
+    EffectsLayer.jsx already holds live refs to both interpreters and already
+    receives the impact (x, y) in its 'play-thumos-animation' handler before
+    calling ThumosInterpreter.play(). Add WeatherInterpreter.disturb(x, y, radius,
+    force): kick nearby particles with an outward velocity that decays back to
+    normal fall over ~1s. Call it from EffectsLayer's onPlay handler. Decide:
+    every hit, or only strong/AOE attacks.
+    Files: src/vfx/WeatherInterpreter.js, src/components/battle/EffectsLayer.jsx
+
 [ ] Mend card — desc doesn't match implementation.
     HEAL adds temp_hp (a shield-style buffer, consumed on next hit), not real HP,
     despite desc saying "Restore 200 HP". REGEN tag power is 25, desc says 33/turn.

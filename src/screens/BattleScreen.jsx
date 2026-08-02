@@ -26,6 +26,7 @@ import PlayerPortrait from '../components/battle/PlayerPortrait';
 import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
 import DialogBox, { stripDialogMarkup } from '../components/battle/DialogBox';
+import { setWeather } from '../vfx/weatherBus';
 import { Z } from '../components/shared/zLayers';
 
 // Per-reaction fuse options — same merges the VFX editor previews:
@@ -91,6 +92,17 @@ export default function BattleScreen() {
   useMusic(battleTrack, { loop: true, baseVolume: gs.musicVolume ?? 0.2, enabled: gs.phase === 'QUEUE_SETUP' || gs.phase === 'BATTLE', restartKey: gs.retryKey });
   useMusic(victoryTrack, { loop: false, baseVolume: 0.35, enabled: isResult });
 
+  // Ambient weather (pixi overlay, driven by EffectsLayer) — on while queuing/fighting, off otherwise.
+  // Dependency is the resolved value, not gs.phase directly — phase toggles between
+  // QUEUE_SETUP and BATTLE every turn, and re-setting on every toggle would restart
+  // the particle loop (snow "resetting") even though the active weather never changed.
+  const activeWeather = (gs.phase === 'QUEUE_SETUP' || gs.phase === 'BATTLE') ? gs.weather : null;
+  useEffect(() => {
+    setWeather(activeWeather);
+  }, [activeWeather]);
+  useEffect(() => {
+    return () => setWeather(null);
+  }, []);
 
   // ── Cleanup ───────────────────────────────────────────────
   // Clean up any in-flight float/anim timers on unmount

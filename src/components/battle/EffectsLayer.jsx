@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
 import { ThumosInterpreter } from '../../vfx/ThumosInterpreter';
+import { WeatherInterpreter } from '../../vfx/WeatherInterpreter';
+import { subscribeWeather } from '../../vfx/weatherBus';
+import { WEATHER_REGISTRY } from '../../battle/registry/weather_registry';
 import PIXI_DATA from '../../vfx/pixi_data';
 import { Z } from '../shared/zLayers';
 
@@ -38,12 +41,14 @@ function spawnBurst(app, x, y) {
 export default function EffectsLayer() {
   const appRef = useRef(null);
   const interpreterRef = useRef(null);
+  const weatherRef = useRef(null);
 
   useEffect(() => {
     if (appRef.current) return;
 
     let cancelled = false;
     let onPlay;
+    let unsubscribeWeather;
     const app = new PIXI.Application();
 
     app.init({
@@ -68,6 +73,7 @@ export default function EffectsLayer() {
       requestAnimationFrame(() => { if (!cancelled) app.canvas.style.opacity = '1'; });
       appRef.current = app;
       interpreterRef.current = new ThumosInterpreter(app);
+      weatherRef.current = new WeatherInterpreter(app);
 
       onPlay = (e) => {
         const { animType, json: inlineJson, target, owner, x, y, noFallback } = e.detail;
@@ -79,12 +85,20 @@ export default function EffectsLayer() {
         else if (!noFallback) spawnBurst(app, resolvedTarget.x, resolvedTarget.y);
       };
       window.addEventListener('play-thumos-animation', onPlay);
+
+      unsubscribeWeather = subscribeWeather((key) => {
+        const config = WEATHER_REGISTRY[key];
+        if (config) weatherRef.current.play(config);
+        else weatherRef.current.stop();
+      });
     });
 
     return () => {
       cancelled = true;
       if (onPlay) window.removeEventListener('play-thumos-animation', onPlay);
+      unsubscribeWeather?.();
       interpreterRef.current?.stop();
+      weatherRef.current?.stop();
       if (appRef.current) {
         try {
           if (app.canvas) app.canvas.style.display = 'none';

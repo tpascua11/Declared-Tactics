@@ -2,6 +2,7 @@
   "id": "testing_enemy_ground",
   "name": "Testing Enemy Ground",
   "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "weather": "snow",
   "stages": [
     {
       "enemies": ["dragon_samurai_teacher"]
