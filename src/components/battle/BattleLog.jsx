@@ -11,6 +11,7 @@ const LOG_COLORS = {
   clash:  'text-purple-400',
   fizzle: 'text-orange-400',
   info:  'text-[#ffd700]',
+  dialog: 'text-white',
   normal:'text-gray-400',
 };
 

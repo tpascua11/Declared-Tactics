@@ -87,6 +87,7 @@ function advanceStageOrWin(state, logs) {
       enemyBench: newBench,
       currentStageIndex: nextStageIndex,
       phase: 'QUEUE_SETUP',
+      turn: 1,
       checkpoint: { stageIndex: nextStageIndex, player: checkpointPlayer },
       logs: [...logs, { msg: `━━━ REST ━━━`, type: 'info' }, ...restLogs, ...healLogs, ...resourceLogs, { msg: `⚔️  STAGE ${nextStageIndex + 1} BEGINS!`, type: 'info' }],
       activeEnemyId: null,
@@ -107,6 +108,11 @@ function advanceStageOrWin(state, logs) {
 
 export function battleReducer(state, action) {
   switch (action.type) {
+
+    // Generic log append — callers (e.g. BattleScreen's dialogue popup) decide
+    // what and when to log; the reducer has no opinion on the content.
+    case 'LOG':
+      return { ...state, logs: [...state.logs, action.payload] };
 
     case 'ADD_TO_QUEUE': {
       const chars = JSON.parse(JSON.stringify(state.characters));

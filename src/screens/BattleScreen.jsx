@@ -25,6 +25,7 @@ import TagPool from '../components/battle/TagPool';
 import PlayerPortrait from '../components/battle/PlayerPortrait';
 import ActionQueue from '../components/battle/ActionQueue';
 import Hand from '../components/battle/Hand';
+import DialogBox, { stripDialogMarkup } from '../components/battle/DialogBox';
 import { Z } from '../components/shared/zLayers';
 
 // Per-reaction fuse options — same merges the VFX editor previews:
@@ -65,6 +66,7 @@ export default function BattleScreen() {
   const floatTimersRef = useRef([]);
   const animClearTimersRef = useRef([]);
   const battleTimerRef = useRef(null);
+  const loggedDialogRef = useRef(null);
 
   const player = gs.characters.find(c => c.faction === 'player');
   const enemies = gs.characters.filter(c => c.faction === 'enemy');
@@ -76,6 +78,10 @@ export default function BattleScreen() {
   const isResult  = gs.phase === 'RESULT';
   const isVictory = isResult && gs.result === 'WIN';
   const isDefeat  = isResult && !isVictory;
+
+  const dialogLine = gs.phase === 'QUEUE_SETUP'
+    ? gs.scenario?.dialog?.find(d => (d.stage ?? 0) === gs.currentStageIndex && d.turn === gs.turn)
+    : null;
 
   const battleTrack = gs.music ? MUSIC_REGISTRY[gs.music] : null;
   const victoryRegistry = isVictory ? VICTORY_MUSIC : DEFEAT_MUSIC;
@@ -118,6 +124,16 @@ export default function BattleScreen() {
     }, 1050);
     setTimeout(() => setShowRestartTransition(false), 2300);
   }
+
+  // Echo the on-screen dialogue line into the battle log, markup stripped —
+  // reducer.js just appends whatever payload it's given here. Ref-guarded
+  // (not just a [dialogLine] dep) because StrictMode double-invokes effects
+  // on initial mount, which would otherwise double-log the opening line.
+  useEffect(() => {
+    if (!dialogLine || loggedDialogRef.current === dialogLine) return;
+    loggedDialogRef.current = dialogLine;
+    dispatch({ type: 'LOG', payload: { msg: `${dialogLine.speaker}: "${stripDialogMarkup(dialogLine.text)}"`, type: 'dialog' } });
+  }, [dialogLine]);
 
   useEffect(() => {
     if (!isResult) { setResultVisible(false); return; }
@@ -529,12 +545,19 @@ export default function BattleScreen() {
           battleBackground={gs.battleBackground}
         />
 
-        {/* ROW 2 — Battle Queue timeline (fixed ~180px) */}
-        <BattleQueue
-          characters={gs.characters}
-          phase={gs.phase}
-          announcement={announcement}
-        />
+        {/* ROW 2 — Battle Queue timeline (fixed ~180px). Relative wrapper so
+            DialogBox can overlay the row while it's otherwise empty (QUEUE_SETUP). */}
+        <div style={{ position: 'relative' }}>
+          <BattleQueue
+            characters={gs.characters}
+            phase={gs.phase}
+            announcement={announcement}
+          />
+          <DialogBox
+            speakerName={dialogLine?.speaker}
+            text={dialogLine?.text ?? null}
+          />
+        </div>
 
         {/* ROW 3 — Player row: BattleLog | debuff tags | portrait | buff tags + slots.
             Content-sized (portrait height + padding), capped at 26rem.
