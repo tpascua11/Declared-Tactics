@@ -88,6 +88,7 @@ export { default as ENEMY_TURTLE_SAMURAI } from './Enemy/TURTLE_SAMURAI.png';
 export { default as ENEMY_FALCON_SAMURAI } from './Enemy/FALCON_SAMURAI.png';
 export { default as ENEMY_BOAR_SAMURAI } from './Enemy/BOAR_SAMURAI.png';
 export { default as ENEMY_DRAGON_SAMURAI } from './Enemy/DRAGON_SAMURAI_2.png';
+export { default as ENEMY_DRAGON_SAMURAI_TEACHER } from './Enemy/dragon_samurai_teacher.png';
 export { default as BOSS_DARK_FOX_SAMURAI } from './Enemy/Dark_Fox_Samurai.png';
 export { default as BOSS_LIGHT_FOX_SAMURAI } from './Enemy/Light_Fox_Samurai.png';
 

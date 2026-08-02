@@ -11,6 +11,7 @@ import falcon_samurai        from './falcon_samurai.json';
 import falcon_samurai_2      from './falcon_samurai_2.json';
 import boar_samurai          from './boar_samurai.json';
 import dragon_samurai        from './dragon_samurai.json';
+import dragon_samurai_teacher from './dragon_samurai_teacher.json';
 import dark_fox_samurai      from './dark_fox_samurai.json';
 import light_fox_samurai     from './light_fox_samurai.json';
 
@@ -28,6 +29,7 @@ export default [
   falcon_samurai_2,
   boar_samurai,
   dragon_samurai,
+  dragon_samurai_teacher,
   dark_fox_samurai,
   light_fox_samurai,
 ];
