@@ -1,5 +1,5 @@
 {
-  "id": "tiger_samurai",
+  "id": "tiger_samurai_v2",
   "name": "TIGER SAMURAI",
   "portrait": "ENEMY_TIGER_SAMURAI",
   "card_size": "large",
@@ -78,18 +78,23 @@
         "target": []
       }
     },
-    "Harai": {
-      "name": "Harai",
-      "icon": "ENEMY_RESOLVE",
-      "cost": { "BATTLE_SPIRIT": 1 },
-      "speed_mod": 10,
+    "Uke": {
+      "name": "Uke",
+      "icon": "ENEMY_DEFLECT",
+      "speed_mod": 0,
       "payload_type": "PHYSICAL",
-      "tag_type": ["SPIRITUAL", "STANCE"],
+      "tag_type": ["PHYSICAL", "STANCE"],
       "animation": "harai",
       "animation_intensity": 1.0,
       "properties": [],
       "tags": {
-        "self": [{ "tag_name": "HARAI", "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }],
+        "self": [
+          { "tag_name": "BLOCKING",
+            "reduction": 0.95,
+            "reaction_anim": "steel_guard_deflect",
+            "label": "Uke",
+            "reset": ["ON_OWNER_ACTION", "END_OF_TURN"] }
+        ],
         "target": []
       }
     }
@@ -110,7 +115,7 @@
     {
       "id": "default",
       "aura": "lightning_wisp",
-      "actions": ["Still Winds", "Harai"]
+      "actions": ["Still Winds", "Uke"]
     }
   ]
 }

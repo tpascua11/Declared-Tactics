@@ -28,7 +28,7 @@ export const SAMURAI = {
     { tag_name: 'CLASHING_SPIRIT', tier: 'permanent' },
   ],
   combat_start_tags: [],
-  starting_cards: ['heavy_slice', 'flame_strike', 'battojutsu', 'uke', 'dragon_slash'],
+  starting_cards: ['heavy_slice', 'flame_strike', 'battojutsu', 'uke', 'mikiri'],
   //starting_cards: ['heavy_slice', 'flame_strike', 'storm_strike', 'quick_steps', 'still_wind', 'harai', 'mend', 'speed_up', 'freeze_slash', 'stream_slash', 'battojutsu'],
   card_order: [
     'heavy_slice',
