@@ -72,16 +72,16 @@ export default function DialogModal({ dialog, onClose }) {
       onClick={advance}
       style={{
         position: 'fixed', inset: 0, zIndex: 300,
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(0,0,0,0.85)',
         fontFamily: "'Courier New', monospace",
         cursor: 'pointer',
-        padding: '0 40px 20px',
+        padding: '0 40px',
       }}
     >
       {/* Outer shell — fixed size */}
       <div style={{
-        width: 1400, height: 800,
+        width: 1400, height: 760,
         background: 'linear-gradient(160deg,#0a1220,#071018)',
         border: '1.5px solid #4da6ff33',
         borderRadius: 16,
@@ -90,13 +90,15 @@ export default function DialogModal({ dialog, onClose }) {
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
       }}>
         {/* Row above everything else — scene image fills the row, cropped to fit rather than squeezed */}
-        {mapIconSrc && (
-          <div style={{
-            width: '100%', height: 368, marginBottom: 20,
-            position: 'relative', overflow: 'hidden', borderRadius: 12,
-            border: '3px solid #fff',
-            boxShadow: '0 0 40px rgba(255,255,255,0.6)',
-          }}>
+        <div style={{
+          width: '100%', height: 368, marginBottom: 20,
+          position: 'relative', overflow: 'hidden', borderRadius: 12,
+          border: mapIconSrc ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
+          boxShadow: mapIconSrc ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
+          background: mapIconSrc ? 'transparent' : '#000',
+        }}>
+          {mapIconSrc && (
+            <>
             <img src={mapIconSrc} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
             {dialog.title && (
               <div style={{
@@ -108,8 +110,9 @@ export default function DialogModal({ dialog, onClose }) {
                 {dialog.title}
               </div>
             )}
-          </div>
-        )}
+            </>
+          )}
+        </div>
 
         {/* Row: portraits + dialog box */}
         <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
