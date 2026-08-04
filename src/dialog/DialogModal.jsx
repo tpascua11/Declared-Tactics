@@ -65,7 +65,7 @@ export default function DialogModal({ dialog, onClose }) {
   };
 
   let renderedChars = 0;
-  const mapIconSrc = dialog.mapIcon ? ASSETS[dialog.mapIcon] : null;
+  const mapIconSrc = dialog.mapIcon ? (ASSETS[dialog.mapIcon] ?? ASSETS.SCENARIO_BACKGROUNDS[dialog.mapIcon]) : null;
 
   return (
     <div
@@ -89,20 +89,23 @@ export default function DialogModal({ dialog, onClose }) {
         padding: 24,
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
       }}>
-        {/* Row above everything else — single map icon for the stage */}
+        {/* Row above everything else — scene image fills the row, cropped to fit rather than squeezed */}
         {mapIconSrc && (
-          <div style={{ width: 860, alignSelf: 'center', display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-            <div style={{
-              width: 430, height: 384,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12,
-            }}>
-              {dialog.title && (
-                <div style={{ fontSize: 26, color: '#f5d76e', textShadow: '0 0 20px #c8a135', letterSpacing: 2 }}>
-                  {dialog.title}
-                </div>
-              )}
-              <img src={mapIconSrc} alt="" style={{ width: 384, height: 384, border: '2px solid #fff', imageRendering: 'pixelated' }} />
-            </div>
+          <div style={{
+            width: '100%', height: 368, marginBottom: 20,
+            position: 'relative', overflow: 'hidden', borderRadius: 12,
+          }}>
+            <img src={mapIconSrc} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            {dialog.title && (
+              <div style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                textAlign: 'center', padding: '10px 0',
+                background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)',
+                fontSize: 26, color: '#f5d76e', textShadow: '0 0 20px #c8a135', letterSpacing: 2,
+              }}>
+                {dialog.title}
+              </div>
+            )}
           </div>
         )}
 
