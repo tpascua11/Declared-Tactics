@@ -3,8 +3,15 @@ import { resolveDialogSpeaker } from './resolveDialogSpeaker';
 import { parseDialogText } from './parseDialogText';
 import { playSelectSfx } from '../vfx/animationRegistry';
 import * as ASSETS from '../assets';
+import './DialogModal.css';
+
+// TODO: external close triggers (e.g. a caller unmounting this directly instead
+// of waiting for the dialog to reach its last line) bypass requestClose below,
+// so the slide/fade-out never plays — only the natural end-of-dialog advance
+// gets the exit animation right now. Needs an imperative close handle later.
 
 const TYPE_MS_PER_CHAR = 12;
+const CLOSE_ANIM_MS = 400;
 
 function hexToRgba(hex, alpha) {
   const n = parseInt(hex.replace('#', ''), 16);
@@ -51,6 +58,12 @@ export default function DialogModal({ dialog, onClose }) {
   const rightSpeaker = speakerForSide('right', lineIndex);
   const activeSide = line.speaker.side;
 
+  const [closing, setClosing] = useState(false);
+  const requestClose = () => {
+    setClosing(true);
+    setTimeout(onClose, CLOSE_ANIM_MS);
+  };
+
   const advance = () => {
     playSelectSfx();
     if (typedCount < fullText.length) {
@@ -60,7 +73,7 @@ export default function DialogModal({ dialog, onClose }) {
     if (lineIndex + 1 < resolvedLines.length) {
       setLineIndex(lineIndex + 1);
     } else {
-      onClose();
+      requestClose();
     }
   };
 
@@ -74,13 +87,15 @@ export default function DialogModal({ dialog, onClose }) {
         position: 'fixed', inset: 0, zIndex: 300,
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(0,0,0,0.85)',
+        opacity: closing ? 0 : 1,
+        transition: `opacity ${CLOSE_ANIM_MS}ms ease-in`,
         fontFamily: "'Courier New', monospace",
         cursor: 'pointer',
         padding: '0 40px',
       }}
     >
-      {/* Outer shell — fixed size */}
-      <div style={{
+      {/* Outer shell — fixed size, slides in on mount / out on close */}
+      <div className={closing ? 'dialog-shell-exit' : 'dialog-shell-enter'} style={{
         width: 1400, height: 760,
         background: 'linear-gradient(160deg,#0a1220,#071018)',
         border: '1.5px solid #4da6ff33',

@@ -1,0 +1,10 @@
+@keyframes dialogShellSlideIn {
+  from { transform: translateY(-80px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes dialogShellSlideOut {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(-80px); opacity: 0; }
+}
+.dialog-shell-enter { animation: dialogShellSlideIn 0.4s ease-out; }
+.dialog-shell-exit  { animation: dialogShellSlideOut 0.4s ease-in forwards; }
