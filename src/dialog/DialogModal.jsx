@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { resolveDialogSpeaker } from './resolveDialogSpeaker';
 import { parseDialogText } from './parseDialogText';
 import { playSelectSfx } from '../vfx/animationRegistry';
+import * as ASSETS from '../assets';
 
 const TYPE_MS_PER_CHAR = 12;
 
@@ -64,64 +65,111 @@ export default function DialogModal({ dialog, onClose }) {
   };
 
   let renderedChars = 0;
+  const mapIconSrc = dialog.mapIcon ? ASSETS[dialog.mapIcon] : null;
 
   return (
     <div
       onClick={advance}
       style={{
         position: 'fixed', inset: 0, zIndex: 300,
-        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end',
         background: 'rgba(0,0,0,0.85)',
         fontFamily: "'Courier New', monospace",
         cursor: 'pointer',
         padding: '0 40px 20px',
       }}
     >
-      {/* Hugging the dialog window's left edge */}
-      <PortraitSlot speaker={leftSpeaker} active={activeSide === 'left'} />
-
-      {/* Center: dialog box */}
-      <div style={{
-        flex: 1,
-        maxWidth: 860,
-        margin: '0 28px',
-        background: 'linear-gradient(160deg,#0a1220,#071018)',
-        border: '1.5px solid #4da6ff33',
-        borderRadius: 12,
-        boxShadow: '0 0 80px rgba(77,166,255,0.1)',
-        padding: '18px 22px',
-        minHeight: '21rem',
-        display: 'flex', flexDirection: 'column',
-      }}>
-        {line.speaker.name && (
-          <div className="font-body" style={{ fontSize: 30, color: line.speaker.color, letterSpacing: 2, marginBottom: 8, textDecoration: 'underline', textUnderlineOffset: '6px' }}>
-            {line.speaker.name}
+      {/* Row above everything else — single map icon for the stage */}
+      {mapIconSrc && (
+        <div style={{ width: 860, display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <div style={{
+            width: 430, height: 384,
+            background: 'linear-gradient(160deg,#0a1220,#071018)',
+            border: '1.5px solid #4da6ff33',
+            borderRadius: 12,
+            boxShadow: '0 0 80px rgba(77,166,255,0.1)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12,
+          }}>
+            {dialog.title && (
+              <div style={{ fontSize: 26, color: '#f5d76e', textShadow: '0 0 20px #c8a135', letterSpacing: 2 }}>
+                {dialog.title}
+              </div>
+            )}
+            <img src={mapIconSrc} alt="" style={{ width: 256, height: 256, border: '2px solid #fff', imageRendering: 'pixelated' }} />
           </div>
-        )}
-        <div style={{
-          fontSize: 24, color: line.speaker.name ? '#cfe3ee' : '#9fb0bd',
-          lineHeight: 1.7, fontWeight: 500, flex: 1,
-          fontStyle: line.speaker.name ? 'normal' : 'italic',
-        }}>
-          {segments.map((seg, i) => {
-            const start = renderedChars;
-            renderedChars += seg.text.length;
-            const visible = seg.text.slice(0, Math.max(0, typedCount - start));
-            if (!visible) return null;
-            return (
-              <span key={i} style={{ color: seg.color ?? undefined }}>
-                {visible}
-              </span>
-            );
-          })}
         </div>
-        {typedCount >= fullText.length && (
-          <div style={{ textAlign: 'right', color: '#4a6a8a' }}>▼</div>
-        )}
-      </div>
+      )}
 
-      {/* Hugging the dialog window's right edge */}
-      <PortraitSlot speaker={rightSpeaker} active={activeSide === 'right'} align="right" />
+      {/* Row: portraits + dialog box */}
+      <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+        {/* Hugging the dialog window's left edge */}
+        <PortraitSlot speaker={leftSpeaker} active={activeSide === 'left'} />
+        <Connector speaker={leftSpeaker} active={activeSide === 'left'} pointRight />
+
+        {/* Center: dialog box */}
+        <div style={{
+          flex: 1,
+          maxWidth: 860,
+          background: 'linear-gradient(160deg,#0a1220,#071018)',
+          border: '1.5px solid #4da6ff33',
+          borderRadius: 12,
+          boxShadow: '0 0 80px rgba(77,166,255,0.1)',
+          padding: '18px 22px',
+          minHeight: '19rem',
+          alignSelf: 'flex-end',
+          display: 'flex', flexDirection: 'column',
+        }}>
+          {line.speaker.name && (
+            <div className="font-body" style={{ fontSize: 30, color: line.speaker.color, letterSpacing: 2, marginBottom: 8, textDecoration: 'underline', textUnderlineOffset: '6px' }}>
+              {line.speaker.name}
+            </div>
+          )}
+          <div style={{
+            fontSize: 24, color: line.speaker.name ? '#cfe3ee' : '#9fb0bd',
+            lineHeight: 1.7, fontWeight: 500, flex: 1,
+            fontStyle: line.speaker.name ? 'normal' : 'italic',
+          }}>
+            {segments.map((seg, i) => {
+              const start = renderedChars;
+              renderedChars += seg.text.length;
+              const visible = seg.text.slice(0, Math.max(0, typedCount - start));
+              if (!visible) return null;
+              return (
+                <span key={i} style={{ color: seg.color ?? undefined }}>
+                  {visible}
+                </span>
+              );
+            })}
+          </div>
+          {typedCount >= fullText.length && (
+            <div style={{ textAlign: 'right', color: '#4a6a8a' }}>▼</div>
+          )}
+        </div>
+
+        {/* Hugging the dialog window's right edge */}
+        <Connector speaker={rightSpeaker} active={activeSide === 'right'} />
+        <PortraitSlot speaker={rightSpeaker} active={activeSide === 'right'} align="right" />
+      </div>
+    </div>
+  );
+}
+
+// Arrow bridging a portrait to the dialog box — points toward the box,
+// glows in the speaker's color while they're talking, dim otherwise.
+function Connector({ speaker, active, pointRight = false }) {
+  const color = active && speaker ? speaker.color : 'rgba(255,255,255,0.15)';
+  return (
+    <div style={{ width: 28, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{
+        width: 0, height: 0,
+        borderTop: '10px solid transparent',
+        borderBottom: '10px solid transparent',
+        ...(pointRight
+          ? { borderLeft: `16px solid ${color}` }
+          : { borderRight: `16px solid ${color}` }),
+        filter: active && speaker ? `drop-shadow(0 0 6px ${color})` : 'none',
+        transition: 'border-color 0.2s, filter 0.2s',
+      }} />
     </div>
   );
 }

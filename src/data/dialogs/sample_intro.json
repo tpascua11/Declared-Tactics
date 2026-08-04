@@ -1,5 +1,7 @@
 {
   "id": "sample_intro",
+  "mapIcon": "MAP_ICON_FOREST_1",
+  "title": "TREE TRAIL",
   "lines": [
     {
       "speaker": { "source": "class", "id": "samurai" },
