@@ -234,22 +234,22 @@ function RewardMock({ line }) {
 
   const sections = [];
   if (card) {
-    sections.push({ label: 'LEARN', cards: [
+    sections.push({ label: 'You Learn!:', cards: [
       { key: card.id, name: card.name, color: card.color, image: card.image, icon: card.icon, footer: spdLabel, animated: true },
     ] });
   }
   if (gold != null) {
-    sections.push({ label: 'ITEMS', cards: [
+    sections.push({ label: 'You Gain!:', cards: [
       { key: 'gold', name: 'GOLD', color: '#ffd700', image: ASSETS.ITEM_GOLD_1, footer: `+${gold}` },
     ] });
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 16, flex: 1 }}>
       <div style={{ display: 'flex', gap: 32 }}>
         {sections.map(section => (
-          <div key={section.label} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ fontSize: 9, letterSpacing: 3, color: 'rgba(255,255,255,0.4)' }}>{section.label}</div>
+          <div key={section.label} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div className="font-body" style={{ fontSize: 15, color: '#cfe3ee' }}>{section.label}</div>
             <div style={{ display: 'flex', gap: 14 }}>
               {section.cards.map(c => <RewardCardBox key={c.key} card={c} />)}
             </div>
