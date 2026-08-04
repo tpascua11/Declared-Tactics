@@ -64,6 +64,10 @@ export default function DialogModal({ dialog, onClose }) {
     setTimeout(onClose, CLOSE_ANIM_MS);
   };
 
+  // Second-stage reveal (banner wipe, portrait fade, dialog box slide) fires
+  // once the shell's own slide-in animation finishes, not on mount.
+  const [entered, setEntered] = useState(false);
+
   const advance = () => {
     playSelectSfx();
     if (typedCount < fullText.length) {
@@ -95,7 +99,10 @@ export default function DialogModal({ dialog, onClose }) {
       }}
     >
       {/* Outer shell — fixed size, slides in on mount / out on close */}
-      <div className={closing ? 'dialog-shell-exit' : 'dialog-shell-enter'} style={{
+      <div
+        className={closing ? 'dialog-shell-exit' : 'dialog-shell-enter'}
+        onAnimationEnd={() => { if (!closing) setEntered(true); }}
+        style={{
         width: 1400, height: 760,
         background: 'linear-gradient(160deg,#0a1220,#071018)',
         border: '1.5px solid #4da6ff33',
@@ -108,19 +115,27 @@ export default function DialogModal({ dialog, onClose }) {
         <div style={{
           width: '100%', height: 368, marginBottom: 20,
           position: 'relative', overflow: 'hidden', borderRadius: 12,
-          border: mapIconSrc ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
-          boxShadow: mapIconSrc ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
-          background: mapIconSrc ? 'transparent' : '#000',
+          border: (mapIconSrc && entered) ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
+          boxShadow: (mapIconSrc && entered) ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
+          background: '#000',
+          transition: 'border-color 2s ease-out, box-shadow 2s ease-out',
         }}>
           {mapIconSrc && (
             <>
-            <img src={mapIconSrc} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={mapIconSrc} alt="" style={{
+              position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+              clipPath: entered ? 'inset(0 0 0 0)' : 'inset(0 50% 0 50%)',
+              transition: 'clip-path 2s ease-out',
+            }} />
             {dialog.title && (
               <div style={{
                 position: 'absolute', bottom: 0, left: 0, right: 0,
                 textAlign: 'center', padding: '24px 0',
                 background: 'radial-gradient(ellipse 260px 90px at center, rgba(0,0,0,0.75) 0%, transparent 75%)',
                 fontSize: 32, fontWeight: 'bold', color: '#f5d76e', textShadow: '0 0 24px #c8a135, 0 0 8px rgba(0,0,0,0.9)', letterSpacing: 3,
+                opacity: entered ? 1 : 0,
+                transition: 'opacity 0.6s ease-out',
+                transitionDelay: entered ? '2s' : '0s',
               }}>
                 {dialog.title}
               </div>
@@ -132,8 +147,8 @@ export default function DialogModal({ dialog, onClose }) {
         {/* Row: portraits + dialog box */}
         <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
           {/* Hugging the dialog window's left edge */}
-          <PortraitSlot speaker={leftSpeaker} active={activeSide === 'left'} />
-          <Connector speaker={leftSpeaker} active={activeSide === 'left'} pointRight />
+          <PortraitSlot speaker={leftSpeaker} active={activeSide === 'left'} visible={entered} />
+          <Connector speaker={leftSpeaker} active={activeSide === 'left'} pointRight visible={entered} />
 
           {/* Center: dialog box */}
           <div style={{
@@ -147,6 +162,9 @@ export default function DialogModal({ dialog, onClose }) {
             minHeight: '19rem',
             alignSelf: 'flex-end',
             display: 'flex', flexDirection: 'column',
+            transform: entered ? 'translateY(0)' : 'translateY(40px)',
+            opacity: entered ? 1 : 0,
+            transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
           }}>
             {line.speaker.name && (
               <div className="font-body" style={{ fontSize: 30, color: line.speaker.color, letterSpacing: 2, marginBottom: 8, textDecoration: 'underline', textUnderlineOffset: '6px' }}>
@@ -176,8 +194,8 @@ export default function DialogModal({ dialog, onClose }) {
           </div>
 
           {/* Hugging the dialog window's right edge */}
-          <Connector speaker={rightSpeaker} active={activeSide === 'right'} />
-          <PortraitSlot speaker={rightSpeaker} active={activeSide === 'right'} align="right" />
+          <Connector speaker={rightSpeaker} active={activeSide === 'right'} visible={entered} />
+          <PortraitSlot speaker={rightSpeaker} active={activeSide === 'right'} align="right" visible={entered} />
         </div>
       </div>
     </div>
@@ -186,10 +204,13 @@ export default function DialogModal({ dialog, onClose }) {
 
 // Arrow bridging a portrait to the dialog box — points toward the box,
 // glows in the speaker's color while they're talking, dim otherwise.
-function Connector({ speaker, active, pointRight = false }) {
+function Connector({ speaker, active, pointRight = false, visible = true }) {
   const color = active && speaker ? speaker.color : 'rgba(255,255,255,0.15)';
   return (
-    <div style={{ width: 28, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{
+      width: 28, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+      opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease-out',
+    }}>
       <div style={{
         width: 0, height: 0,
         borderTop: '10px solid transparent',
@@ -206,10 +227,16 @@ function Connector({ speaker, active, pointRight = false }) {
 
 // Same card footprint as the battle PlayerPortrait (w-[14rem] h-[21rem], border-4,
 // rounded-2xl) so dialog and battle read as the same character card.
-function PortraitSlot({ speaker, active, align = 'left' }) {
+function PortraitSlot({ speaker, active, align = 'left', visible = true }) {
+  const offset = align === 'right' ? 60 : -60;
+  const fade = {
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateX(0)' : `translateX(${offset}px)`,
+    transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+  };
   if (!speaker) {
     return (
-      <div style={{ width: '14rem', flexShrink: 0 }}>
+      <div style={{ width: '14rem', flexShrink: 0, ...fade }}>
         <div style={{
           width: '14rem', height: '21rem',
           border: '4px solid rgba(255,255,255,0.1)',
@@ -220,7 +247,7 @@ function PortraitSlot({ speaker, active, align = 'left' }) {
     );
   }
   return (
-    <div style={{ width: '14rem', flexShrink: 0 }}>
+    <div style={{ width: '14rem', flexShrink: 0, ...fade }}>
       <div style={{
         position: 'relative',
         width: '14rem', height: '21rem',
