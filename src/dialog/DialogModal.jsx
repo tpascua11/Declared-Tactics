@@ -94,14 +94,16 @@ export default function DialogModal({ dialog, onClose }) {
           <div style={{
             width: '100%', height: 368, marginBottom: 20,
             position: 'relative', overflow: 'hidden', borderRadius: 12,
+            border: '3px solid #fff',
+            boxShadow: '0 0 40px rgba(255,255,255,0.6)',
           }}>
             <img src={mapIconSrc} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
             {dialog.title && (
               <div style={{
                 position: 'absolute', bottom: 0, left: 0, right: 0,
-                textAlign: 'center', padding: '10px 0',
-                background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)',
-                fontSize: 26, color: '#f5d76e', textShadow: '0 0 20px #c8a135', letterSpacing: 2,
+                textAlign: 'center', padding: '24px 0',
+                background: 'radial-gradient(ellipse 260px 90px at center, rgba(0,0,0,0.75) 0%, transparent 75%)',
+                fontSize: 32, fontWeight: 'bold', color: '#f5d76e', textShadow: '0 0 24px #c8a135, 0 0 8px rgba(0,0,0,0.9)', letterSpacing: 3,
               }}>
                 {dialog.title}
               </div>
