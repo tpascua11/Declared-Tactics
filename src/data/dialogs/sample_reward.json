@@ -1,0 +1,18 @@
+{
+  "id": "sample_reward",
+  "mapIcon": "samurai_battlefield_8",
+  "title": "TREE TRAIL",
+  "lines": [
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "Victory. Let's see what we earned."
+    },
+    {
+      "type": "reward",
+      "gold": 20,
+      "classId": "samurai",
+      "cardId": "quick_steps",
+      "desc": "A dodge stance — evade every attack within 10 speed of this action."
+    }
+  ]
+}

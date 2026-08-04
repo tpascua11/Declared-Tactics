@@ -9,6 +9,9 @@
 // --- Player Map Icons ---
 export { default as MAP_TOKEN_SAMURAI } from './Player_Map_Icons/SAMURAI.png';
 
+// --- General Items ---
+export { default as ITEM_GOLD_1 } from './Items_General/Gold_1.png';
+
 // --- Portraits ---
 export { default as COOL_FOX } from './COOL_FOX.png';
 export { default as PORTRAIT_SAMURAI } from './Player_Portraits/SAMURAI_2.png';

@@ -3,7 +3,12 @@ import { resolveDialogSpeaker } from './resolveDialogSpeaker';
 import { parseDialogText } from './parseDialogText';
 import { playSelectSfx } from '../vfx/animationRegistry';
 import * as ASSETS from '../assets';
+import { CLASS_REGISTRY } from '../data/classes/class_registry';
 import './DialogModal.css';
+import '../components/shared/shine-btn.css';
+
+const CARD_W = 88;
+const CARD_H = 132;
 
 // TODO: external close triggers (e.g. a caller unmounting this directly instead
 // of waiting for the dialog to reach its last line) bypass requestClose below,
@@ -29,7 +34,8 @@ export default function DialogModal({ dialog, onClose }) {
 
   const [lineIndex, setLineIndex] = useState(0);
   const line = resolvedLines[lineIndex];
-  const segments = useMemo(() => parseDialogText(line.text), [line.text]);
+  const isReward = line.type === 'reward';
+  const segments = useMemo(() => (isReward ? [] : parseDialogText(line.text)), [isReward, line.text]);
   const fullText = useMemo(() => segments.map(s => s.text).join(''), [segments]);
 
   const [typedCount, setTypedCount] = useState(0);
@@ -47,16 +53,16 @@ export default function DialogModal({ dialog, onClose }) {
 
   const speakerForSide = (side, uptoIndex) => {
     for (let i = uptoIndex; i >= 0; i--) {
-      if (resolvedLines[i].speaker.side === side) return resolvedLines[i].speaker;
+      if (resolvedLines[i].speaker?.side === side) return resolvedLines[i].speaker;
     }
     for (let i = uptoIndex + 1; i < resolvedLines.length; i++) {
-      if (resolvedLines[i].speaker.side === side) return resolvedLines[i].speaker;
+      if (resolvedLines[i].speaker?.side === side) return resolvedLines[i].speaker;
     }
     return null;
   };
   const leftSpeaker = speakerForSide('left', lineIndex);
   const rightSpeaker = speakerForSide('right', lineIndex);
-  const activeSide = line.speaker.side;
+  const activeSide = line.speaker?.side;
 
   const [closing, setClosing] = useState(false);
   const requestClose = () => {
@@ -159,37 +165,51 @@ export default function DialogModal({ dialog, onClose }) {
             borderRadius: 12,
             boxShadow: '0 0 80px rgba(77,166,255,0.1)',
             padding: '18px 22px',
-            minHeight: '19rem',
+            height: '19rem',
             alignSelf: 'flex-end',
             display: 'flex', flexDirection: 'column',
             transform: entered ? 'translateY(0)' : 'translateY(40px)',
             opacity: entered ? 1 : 0,
             transition: 'transform 0.4s ease-out, opacity 0.4s ease-out',
           }}>
-            {line.speaker.name && (
-              <div className="font-body" style={{ fontSize: 30, color: line.speaker.color, letterSpacing: 2, marginBottom: 8, textDecoration: 'underline', textUnderlineOffset: '6px' }}>
-                {line.speaker.name}
+            {/* Fixed header — stays put while the body below scrolls */}
+            {isReward ? (
+              <div className="font-body" style={{ fontSize: 26, color: '#f5d76e', letterSpacing: 2, marginBottom: 12, textDecoration: 'underline', textUnderlineOffset: '6px', flexShrink: 0 }}>
+                REWARDS
               </div>
+            ) : (
+              line.speaker.name && (
+                <div className="font-body" style={{ fontSize: 30, color: line.speaker.color, letterSpacing: 2, marginBottom: 8, textDecoration: 'underline', textUnderlineOffset: '6px', flexShrink: 0 }}>
+                  {line.speaker.name}
+                </div>
+              )
             )}
-            <div style={{
-              fontSize: 24, color: line.speaker.name ? '#cfe3ee' : '#9fb0bd',
-              lineHeight: 1.7, fontWeight: 500, flex: 1,
-              fontStyle: line.speaker.name ? 'normal' : 'italic',
-            }}>
-              {segments.map((seg, i) => {
-                const start = renderedChars;
-                renderedChars += seg.text.length;
-                const visible = seg.text.slice(0, Math.max(0, typedCount - start));
-                if (!visible) return null;
-                return (
-                  <span key={i} style={{ color: seg.color ?? undefined }}>
-                    {visible}
-                  </span>
-                );
-              })}
+
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+              {isReward ? (
+                <RewardMock line={line} />
+              ) : (
+                <div style={{
+                  fontSize: 24, color: line.speaker.name ? '#cfe3ee' : '#9fb0bd',
+                  lineHeight: 1.7, fontWeight: 500, flex: 1,
+                  fontStyle: line.speaker.name ? 'normal' : 'italic',
+                }}>
+                  {segments.map((seg, i) => {
+                    const start = renderedChars;
+                    renderedChars += seg.text.length;
+                    const visible = seg.text.slice(0, Math.max(0, typedCount - start));
+                    if (!visible) return null;
+                    return (
+                      <span key={i} style={{ color: seg.color ?? undefined }}>
+                        {visible}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
             </div>
             {typedCount >= fullText.length && (
-              <div style={{ textAlign: 'right', color: '#4a6a8a' }}>▼</div>
+              <div style={{ textAlign: 'right', color: '#4a6a8a', flexShrink: 0 }}>▼</div>
             )}
           </div>
 
@@ -197,6 +217,107 @@ export default function DialogModal({ dialog, onClose }) {
           <Connector speaker={rightSpeaker} active={activeSide === 'right'} visible={entered} />
           <PortraitSlot speaker={rightSpeaker} active={activeSide === 'right'} align="right" visible={entered} />
         </div>
+      </div>
+    </div>
+  );
+}
+
+// Reward mockup — every reward (gold included) is represented as a card,
+// grouped into labeled sections (ITEMS for gold, LEARN for unlocked cards).
+// Real cards resolve via CLASS_REGISTRY same as WinModal's CardWidget; gold
+// is just another card with a gold footer.
+function RewardMock({ line }) {
+  const { gold, classId, cardId, desc } = line;
+  const card = classId && cardId ? CLASS_REGISTRY[classId]?.cards.find(c => c.id === cardId) : null;
+  const spd = card?.speed_mod ?? 0;
+  const spdLabel = spd === 0 ? 'SPD —' : `SPD ${spd > 0 ? '+' : ''}${spd}`;
+
+  const sections = [];
+  if (card) {
+    sections.push({ label: 'LEARN', cards: [
+      { key: card.id, name: card.name, color: card.color, image: card.image, icon: card.icon, footer: spdLabel, animated: true },
+    ] });
+  }
+  if (gold != null) {
+    sections.push({ label: 'ITEMS', cards: [
+      { key: 'gold', name: 'GOLD', color: '#ffd700', image: ASSETS.ITEM_GOLD_1, footer: `+${gold}` },
+    ] });
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
+      <div style={{ display: 'flex', gap: 32 }}>
+        {sections.map(section => (
+          <div key={section.label} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ fontSize: 9, letterSpacing: 3, color: 'rgba(255,255,255,0.4)' }}>{section.label}</div>
+            <div style={{ display: 'flex', gap: 14 }}>
+              {section.cards.map(c => <RewardCardBox key={c.key} card={c} />)}
+            </div>
+          </div>
+        ))}
+      </div>
+      {desc && (
+        <div style={{ fontSize: 15, color: '#8aaabb', lineHeight: 1.6, fontStyle: 'italic' }}>
+          {desc}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// One reward's card visual — same layout as WinModal's CardWidget (name
+// strip / art with scanlines / footer strip), reused for gold and real cards.
+function RewardCardBox({ card: c }) {
+  return (
+    <div
+      className={c.animated ? 'shine-btn marching-ants' : ''}
+      style={{
+        flexShrink: 0,
+        width: CARD_W, height: CARD_H,
+        border: `2px solid ${c.color}`,
+        borderRadius: 3,
+        background: '#09090f',
+        boxShadow: `0 0 10px ${c.color}55, inset 0 0 6px ${c.color}11`,
+        display: 'flex', flexDirection: 'column',
+        overflow: 'hidden',
+        '--shine-color': `${c.color}88`,
+        '--ants-color': c.color,
+      }}>
+      <div style={{
+        flexShrink: 0, height: '1.3rem',
+        background: '#0d0d1a',
+        borderBottom: `1px solid ${c.color}44`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '0 4px',
+      }}>
+        <span style={{
+          fontSize: 11, fontWeight: 'bold', fontFamily: 'ui-monospace,monospace',
+          color: c.color, textAlign: 'center', lineHeight: 1.2,
+          overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '100%',
+        }}>
+          {c.name}
+        </span>
+      </div>
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        {c.image
+          ? <img src={c.image} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'contain', imageRendering: 'pixelated' }} />
+          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>{c.icon}</div>
+        }
+        {/* Scanlines */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'repeating-linear-gradient(0deg,rgba(0,0,0,0.25) 0px,rgba(0,0,0,0.25) 1px,transparent 1px,transparent 3px)',
+        }} />
+      </div>
+      <div style={{
+        flexShrink: 0, height: '1.1rem',
+        background: '#0d0d1a',
+        borderTop: `1px solid ${c.color}55`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <span style={{ fontSize: 11, fontWeight: 'bold', fontFamily: 'ui-monospace,monospace', color: c.color }}>
+          {c.footer}
+        </span>
       </div>
     </div>
   );
@@ -257,7 +378,7 @@ function PortraitSlot({ speaker, active, align = 'left', visible = true }) {
         background: '#050a10',
       }}>
         {speaker.portrait && (
-          <img src={speaker.portrait} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={speaker.portrait} alt="" className="absolute inset-0 w-full h-full object-cover" style={{ imageRendering: 'pixelated' }} />
         )}
         {/* Name overlay — same treatment as battle PlayerPortrait's name/HP band */}
         <div
