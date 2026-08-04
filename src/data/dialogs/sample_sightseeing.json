@@ -1,0 +1,21 @@
+{
+  "id": "sample_sightseeing",
+  "lines": [
+    {
+      "speaker": { "source": "narrator" },
+      "text": "The road climbs past <hl>Ember Keep</hl>, its lanterns still lit from last night's watch."
+    },
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "Smoke curls from the training yards below — someone's up early."
+    },
+    {
+      "speaker": { "source": "narrator" },
+      "text": "A cold wind rolls off the ridge, carrying the smell of pine and ash."
+    },
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "<color:c8a135>Worth remembering this view.</color>"
+    }
+  ]
+}

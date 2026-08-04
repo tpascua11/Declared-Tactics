@@ -1,0 +1,17 @@
+{
+  "id": "sample_intro",
+  "lines": [
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "Scouts spotted <hl>Ferret Clan</hl> banners near the keep gate."
+    },
+    {
+      "speaker": { "source": "enemy", "id": "ferret_samurai" },
+      "text": "You dare approach <color:c8a135>our territory</color>, outsider?"
+    },
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "Then we settle this the old way."
+    }
+  ]
+}

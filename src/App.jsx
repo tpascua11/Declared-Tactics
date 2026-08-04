@@ -13,6 +13,7 @@ import BattleScreen from './screens/BattleScreen';
 import MapScreen from './screens/MapScreen';
 import GameFinishScreen from './screens/GameFinishScreen';
 import VfxEditorScreen from './screens/VfxEditorScreen';
+import DialogEditorScreen from './screens/DialogEditorScreen';
 import CardShowerTransition from './components/shared/CardShowerTransition';
 import EffectsLayer from './components/battle/EffectsLayer';
 import { introMusic } from './assets/Music/index';
@@ -133,6 +134,9 @@ function PhaseRouter() {
       break;
     case 'VFX_EDITOR':
       screen = <VfxEditorScreen />;
+      break;
+    case 'DIALOG_EDITOR':
+      screen = <DialogEditorScreen />;
       break;
     default:
       screen = null;
