@@ -8,8 +8,8 @@ import { ENEMY_REGISTRY } from '../data/characters/enemy_registry';
 // Default border/glow color per source — overridable per line via speaker.color.
 const DEFAULT_COLOR = {
   class: '#4da6ff',
-  enemy: '#e94560',
-  narrator: '#8a9aab',
+  enemy: '#999999',
+  narrator: '#999999',
 };
 
 export function resolveDialogSpeaker(speaker) {

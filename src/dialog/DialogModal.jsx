@@ -79,76 +79,83 @@ export default function DialogModal({ dialog, onClose }) {
         padding: '0 40px 20px',
       }}
     >
-      {/* Row above everything else — single map icon for the stage */}
-      {mapIconSrc && (
-        <div style={{ width: 860, display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+      {/* Outer shell — fixed size */}
+      <div style={{
+        width: 1400, height: 800,
+        background: 'linear-gradient(160deg,#0a1220,#071018)',
+        border: '1.5px solid #4da6ff33',
+        borderRadius: 16,
+        boxShadow: '0 0 80px rgba(77,166,255,0.1)',
+        padding: 24,
+        display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+      }}>
+        {/* Row above everything else — single map icon for the stage */}
+        {mapIconSrc && (
+          <div style={{ width: 860, alignSelf: 'center', display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+            <div style={{
+              width: 430, height: 384,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12,
+            }}>
+              {dialog.title && (
+                <div style={{ fontSize: 26, color: '#f5d76e', textShadow: '0 0 20px #c8a135', letterSpacing: 2 }}>
+                  {dialog.title}
+                </div>
+              )}
+              <img src={mapIconSrc} alt="" style={{ width: 384, height: 384, border: '2px solid #fff', imageRendering: 'pixelated' }} />
+            </div>
+          </div>
+        )}
+
+        {/* Row: portraits + dialog box */}
+        <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+          {/* Hugging the dialog window's left edge */}
+          <PortraitSlot speaker={leftSpeaker} active={activeSide === 'left'} />
+          <Connector speaker={leftSpeaker} active={activeSide === 'left'} pointRight />
+
+          {/* Center: dialog box */}
           <div style={{
-            width: 430, height: 384,
+            flex: 1,
+            maxWidth: 860,
             background: 'linear-gradient(160deg,#0a1220,#071018)',
             border: '1.5px solid #4da6ff33',
             borderRadius: 12,
             boxShadow: '0 0 80px rgba(77,166,255,0.1)',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12,
+            padding: '18px 22px',
+            minHeight: '19rem',
+            alignSelf: 'flex-end',
+            display: 'flex', flexDirection: 'column',
           }}>
-            {dialog.title && (
-              <div style={{ fontSize: 26, color: '#f5d76e', textShadow: '0 0 20px #c8a135', letterSpacing: 2 }}>
-                {dialog.title}
+            {line.speaker.name && (
+              <div className="font-body" style={{ fontSize: 30, color: line.speaker.color, letterSpacing: 2, marginBottom: 8, textDecoration: 'underline', textUnderlineOffset: '6px' }}>
+                {line.speaker.name}
               </div>
             )}
-            <img src={mapIconSrc} alt="" style={{ width: 256, height: 256, border: '2px solid #fff', imageRendering: 'pixelated' }} />
-          </div>
-        </div>
-      )}
-
-      {/* Row: portraits + dialog box */}
-      <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-        {/* Hugging the dialog window's left edge */}
-        <PortraitSlot speaker={leftSpeaker} active={activeSide === 'left'} />
-        <Connector speaker={leftSpeaker} active={activeSide === 'left'} pointRight />
-
-        {/* Center: dialog box */}
-        <div style={{
-          flex: 1,
-          maxWidth: 860,
-          background: 'linear-gradient(160deg,#0a1220,#071018)',
-          border: '1.5px solid #4da6ff33',
-          borderRadius: 12,
-          boxShadow: '0 0 80px rgba(77,166,255,0.1)',
-          padding: '18px 22px',
-          minHeight: '19rem',
-          alignSelf: 'flex-end',
-          display: 'flex', flexDirection: 'column',
-        }}>
-          {line.speaker.name && (
-            <div className="font-body" style={{ fontSize: 30, color: line.speaker.color, letterSpacing: 2, marginBottom: 8, textDecoration: 'underline', textUnderlineOffset: '6px' }}>
-              {line.speaker.name}
+            <div style={{
+              fontSize: 24, color: line.speaker.name ? '#cfe3ee' : '#9fb0bd',
+              lineHeight: 1.7, fontWeight: 500, flex: 1,
+              fontStyle: line.speaker.name ? 'normal' : 'italic',
+            }}>
+              {segments.map((seg, i) => {
+                const start = renderedChars;
+                renderedChars += seg.text.length;
+                const visible = seg.text.slice(0, Math.max(0, typedCount - start));
+                if (!visible) return null;
+                return (
+                  <span key={i} style={{ color: seg.color ?? undefined }}>
+                    {visible}
+                  </span>
+                );
+              })}
             </div>
-          )}
-          <div style={{
-            fontSize: 24, color: line.speaker.name ? '#cfe3ee' : '#9fb0bd',
-            lineHeight: 1.7, fontWeight: 500, flex: 1,
-            fontStyle: line.speaker.name ? 'normal' : 'italic',
-          }}>
-            {segments.map((seg, i) => {
-              const start = renderedChars;
-              renderedChars += seg.text.length;
-              const visible = seg.text.slice(0, Math.max(0, typedCount - start));
-              if (!visible) return null;
-              return (
-                <span key={i} style={{ color: seg.color ?? undefined }}>
-                  {visible}
-                </span>
-              );
-            })}
+            {typedCount >= fullText.length && (
+              <div style={{ textAlign: 'right', color: '#4a6a8a' }}>▼</div>
+            )}
           </div>
-          {typedCount >= fullText.length && (
-            <div style={{ textAlign: 'right', color: '#4a6a8a' }}>▼</div>
-          )}
-        </div>
 
-        {/* Hugging the dialog window's right edge */}
-        <Connector speaker={rightSpeaker} active={activeSide === 'right'} />
-        <PortraitSlot speaker={rightSpeaker} active={activeSide === 'right'} align="right" />
+          {/* Hugging the dialog window's right edge */}
+          <Connector speaker={rightSpeaker} active={activeSide === 'right'} />
+          <PortraitSlot speaker={rightSpeaker} active={activeSide === 'right'} align="right" />
+        </div>
       </div>
     </div>
   );
