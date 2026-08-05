@@ -1,0 +1,13 @@
+{
+  "name": "hurricane_side",
+  "duration": 1000,
+  "sfx": [
+    { "src": "WIND_2.wav", "start": 0, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "wind_lift", "start": 0, "duration": 450, "iterations": 2 }
+    ]
+  },
+  "floatingNumber": null
+}

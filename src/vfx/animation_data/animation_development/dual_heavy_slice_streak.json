@@ -1,0 +1,18 @@
+{
+  "name": "dual_heavy_slice_streak",
+  "duration": 500,
+  "sfx": [
+    { "src": "HARD_SWING_1.wav", "start": 0,   "volume": 0.7 },
+    { "src": "HARD_SWING_1.wav", "start": 180, "volume": 0.5 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "heavy_shake", "start": 0,   "duration": 280 },
+      { "preset": "heavy_shake", "start": 180, "duration": 320 }
+    ]
+  },
+  "floatingNumber": [
+    { "color": "#ff4444", "delay": 0,   "split": 0.5 },
+    { "color": "#ff4444", "delay": 280, "split": 0.5 }
+  ]
+}

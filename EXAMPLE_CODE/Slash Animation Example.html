@@ -1,5 +1,35 @@
-import * as PIXI from 'pixi.js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dragon Slash — Thumos + Streak</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #0b0b10; overflow: hidden; }
+  #ui {
+    position: fixed; inset: 0; pointer-events: none;
+    display: flex; flex-direction: column; justify-content: space-between;
+    font-family: "Georgia", serif; color: #cfcfd6;
+  }
+  #title { padding: 28px 32px; letter-spacing: .35em; font-size: 13px; opacity: .55; text-transform: uppercase; }
+  #hint  { padding: 28px 32px; font-size: 13px; opacity: .45; align-self: flex-end; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<div id="ui">
+  <div id="title">dragon slash &nbsp;·&nbsp; thumos</div>
+  <div id="hint">1 / left click — dragon slash &nbsp;·&nbsp; 2 / right click — amakakeru &nbsp;·&nbsp; 3 — instant (all at once)</div>
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/8.5.2/pixi.min.js"></script>
+<script>
+// ===========================================================================
+// ThumosInterpreter — your engine, unchanged except:
+//   - module import removed (PIXI is global here)
+//   - one hook added at the top of _playLayer for "type": "streak"
+//   - _playStreak method added
+// ===========================================================================
 function lerp(a, b, t) { return a + (b - a) * t; }
 
 function lerpColor(c1, c2, t) {
@@ -21,16 +51,13 @@ function parseStops(colorStops) {
   );
 }
 
-export class ThumosInterpreter {
+class ThumosInterpreter {
   constructor(app) {
     this._app = app;
     this._layers = [];
     this._delayTimers = [];
   }
 
-  // Accepts a single config object or an array of config objects.
-  // target and owner are { x, y } positions. Emitters default to target;
-  // set "position": "owner" on an emitter to spawn at the attacker instead.
   play(json, target, owner) {
     const configs = Array.isArray(json) ? json : [json];
     for (const config of configs) {
@@ -125,18 +152,9 @@ export class ThumosInterpreter {
       g.blendMode = additive ? 'add' : 'normal';
       container.addChild(g);
 
-      // wavePhase randomizes each particle's sway so a column of particles
-      // doesn't oscillate in lockstep — waveAmp/waveFreq default to 0/1 so
-      // this is a no-op (baseX === g.x) unless a config opts in.
       const wavePhase = Math.random() * Math.PI * 2;
-      const baseY = g.y;
-      particles.push({ g, vx, vy, life, age: 0, sz, rotSpd, baseX, baseY, wavePhase });
+      particles.push({ g, vx, vy, life, age: 0, sz, rotSpd, baseX, wavePhase });
     };
-
-    // wave sways particles perpendicular to their emission angle (not always
-    // screen-x) so it reads as a side-to-side sway regardless of travel direction.
-    const wavePerpX = -Math.sin(angleRad);
-    const wavePerpY = Math.cos(angleRad);
 
     const tickerFn = () => {
       const now = performance.now();
@@ -179,10 +197,8 @@ export class ThumosInterpreter {
         }
         p.vy += gravity * dt;
         p.baseX += p.vx * dt;
-        p.baseY += p.vy * dt;
-        const wave = Math.sin(p.age * waveFreq * Math.PI * 2 + p.wavePhase) * waveAmp;
-        p.g.x = p.baseX + wave * wavePerpX;
-        p.g.y = p.baseY + wave * wavePerpY;
+        p.g.x = p.baseX + Math.sin(p.age * waveFreq * Math.PI * 2 + p.wavePhase) * waveAmp;
+        p.g.y += p.vy * dt;
         p.g.rotation += p.rotSpd * dt;
         p.g.alpha = lerp(1, 0, t);
         p.g.scale.set(lerp(1, 0, t));
@@ -198,7 +214,7 @@ export class ThumosInterpreter {
     this._layers.push(layer);
   }
 
-  // ---- streak: a swept, tapered polygon (blade cut) instead of particles ---
+  // ---- streak: the blade-cut layer ---------------------------------------
   _playStreak(json, x, y) {
     const motion = json.motion;
     if (!motion) return;
@@ -284,3 +300,188 @@ export class ThumosInterpreter {
     for (const layer of [...this._layers]) this._removeLayer(layer);
   }
 }
+
+// ===========================================================================
+// dragon_slash — your full config, untouched, with one streak layer added
+// on top using the exact same motion path (fromX/fromY/dx/dy).
+// ===========================================================================
+const dragonSlash = [
+  {
+    "type": "streak",
+    "name": "blade cut",
+    "colorStops": ["#e0f9ff", "#38bdf8"],
+    "coreColor": "#ffffff",
+    "width": 28,
+    "coreWidth": 2,
+    "fadeDuration": 420,
+    "additive": true,
+    "motion": { "fromX": -141, "fromY": 118, "dx": 282, "dy": -236, "duration": 110 }
+  },
+  {
+    "name": "spark slash trail",
+    "delay": 30,
+    "speed": 80,
+    "emitAngle": "auto",
+    "rate": 80,
+    "sizeMin": 9,
+    "sizeMax": 26,
+    "lifetime": 0.35,
+    "spreadX": 18,
+    "spreadY": 12,
+    "gravity": 20,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": ["#ffffff", "#a5f3fc", "#2dd4bf"],
+    "showHead": false,
+    "motion": { "fromX": -141, "fromY": 118, "dx": 282, "dy": -236, "duration": 70 }
+  },
+  {
+    "name": "flame slash",
+    "delay": 464,
+    "speed": 160,
+    "emitAngle": "auto",
+    "rate": 27,
+    "sizeMin": 9,
+    "sizeMax": 24,
+    "lifetime": 0.45,
+    "spreadX": 80,
+    "spreadY": 80,
+    "gravity": 25,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 380,
+    "colorStops": ["#e0f9ff", "#38bdf8", "#0d9488"],
+    "showHead": false,
+    "motion": { "fromX": -141, "fromY": 118, "dx": 282, "dy": -236, "duration": 160 }
+  },
+  {
+    "name": "lightning trail",
+    "delay": 300,
+    "speed": 170,
+    "emitAngle": "auto",
+    "rate": 60,
+    "sizeMin": 4,
+    "sizeMax": 14,
+    "lifetime": 0.5,
+    "spreadX": 165,
+    "spreadY": 165,
+    "gravity": 0,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "colorStops": ["#ffffff", "#ffffff", "#eaffff"],
+    "showHead": false,
+    "motion": { "fromX": -141, "fromY": 118, "dx": 282, "dy": -236, "duration": 240 }
+  },
+  {
+    "name": "impact burst",
+    "delay": 700,
+    "offsetX": 98,
+    "offsetY": -82,
+    "speed": 260,
+    "angle": 140,
+    "rate": 5,
+    "sizeMin": 8,
+    "sizeMax": 24,
+    "lifetime": 0.4,
+    "spreadX": 220,
+    "spreadY": 220,
+    "gravity": 35,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 350,
+    "colorStops": ["#7dd3fc", "#22d3ee", "#0f766e"]
+  },
+  {
+    "name": "impact lightning",
+    "delay": 550,
+    "offsetX": 138,
+    "offsetY": -115,
+    "speed": 200,
+    "angle": 140,
+    "rate": 130,
+    "sizeMin": 5,
+    "sizeMax": 13,
+    "lifetime": 0.55,
+    "spreadX": 290,
+    "spreadY": 290,
+    "gravity": 0,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "emitDuration": 50,
+    "colorStops": ["#ffffff", "#ffffff", "#eaffff"]
+  }
+];
+
+// ===========================================================================
+// amakakeru — your dragon_slash plus the second cut (the vacuum strike),
+// kept as a completely separate config. dragonSlash above stays untouched.
+// ===========================================================================
+const amakakeru = [
+  {
+    "type": "streak",
+    "name": "second cut — the vacuum strike",
+    "delay": 460,
+    "colorStops": ["#ccfbf1", "#2dd4bf"],
+    "coreColor": "#ffffff",
+    "width": 44,
+    "coreWidth": 3,
+    "fadeDuration": 520,
+    "additive": true,
+    "motion": { "fromX": -141, "fromY": 118, "dx": 282, "dy": -236, "duration": 150 }
+  },
+  ...dragonSlash
+];
+
+// ===========================================================================
+// dragonSlashInstant — third version: same layers as dragonSlash, but every
+// delay stripped so all particles erupt at the same moment as the cut.
+// ===========================================================================
+const dragonSlashInstant = dragonSlash.map(layer => {
+  const { delay, ...rest } = layer;
+  return rest;
+});
+
+// ===========================================================================
+// demo harness
+// ===========================================================================
+(async () => {
+  const app = new PIXI.Application();
+  await app.init({
+    resizeTo: window,
+    background: '#0b0b10',
+    antialias: true,
+    resolution: Math.min(window.devicePixelRatio || 1, 2),
+    autoDensity: true,
+  });
+  document.body.appendChild(app.canvas);
+
+  const thumos = new ThumosInterpreter(app);
+
+  const trigger = (config, x, y) => thumos.play(config, { x, y });
+
+  app.canvas.addEventListener('pointerdown', e => {
+    const config = e.button === 2 ? amakakeru
+                 : e.button === 1 ? dragonSlashInstant
+                 : dragonSlash;
+    trigger(config, e.clientX, e.clientY);
+  });
+  app.canvas.addEventListener('contextmenu', e => e.preventDefault());
+  window.addEventListener('keydown', e => {
+    const cx = app.screen.width / 2, cy = app.screen.height / 2;
+    if (e.code === 'Space' || e.code === 'Digit1') {
+      e.preventDefault();
+      trigger(dragonSlash, cx, cy);
+    } else if (e.code === 'Digit2') {
+      trigger(amakakeru, cx, cy);
+    } else if (e.code === 'Digit3') {
+      trigger(dragonSlashInstant, cx, cy);
+    }
+  });
+
+  setTimeout(() => trigger(dragonSlash, app.screen.width / 2, app.screen.height / 2), 500);
+})();
+</script>
+</body>
+</html>

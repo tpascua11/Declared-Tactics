@@ -1,0 +1,27 @@
+{
+  "name": "full_hurricane_slash",
+  "duration": 1500,
+  "sfx": [
+    { "src": "SWORD_SWING.wav", "start": 0, "volume": 0.7 },
+    { "src": "WIND_2.wav", "start": 250, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "heavy_shake", "start": 0,   "duration": 280 },
+      { "preset": "heavy_shake", "start": 180, "duration": 320 },
+      { "preset": "tornado_slash_impact_x2", "start": 350, "duration": 984 }
+    ],
+    "owner": [
+      { "preset": "attack_lunge", "start": 0, "duration": 300 }
+    ]
+  },
+  "dom": {
+    "target": [
+      { "preset": "afterimage_trail", "start": 350, "duration": 984, "tickRate": 50, "count": 20, "fadeDuration": 300 }
+    ]
+  },
+  "floatingNumber": [
+    { "color": "#2dd4bf", "delay": 0,   "split": 0.5 },
+    { "color": "#2dd4bf", "delay": 280, "split": 0.5 }
+  ]
+}

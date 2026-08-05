@@ -32,6 +32,8 @@ import IntroModal from '../components/map/IntroModal';
 import GuideModal from '../components/battle/GuideModal';
 import AdvancedGuideModal from '../components/battle/AdvancedGuideModal';
 import SettingsModal from '../components/map/SettingsModal';
+import DialogModal from '../dialog/DialogModal';
+import { DIALOG_REGISTRY } from '../data/dialogs/dialog_registry';
 
 const MAP_ICON_LOOKUP = {
   GARDEN_TOWN:    MAP_ICON_GARDEN_TOWN,
@@ -396,6 +398,7 @@ export default function MapScreen() {
   const [guideOpen,         setGuideOpen]         = useState(false);
   const [advancedGuideOpen, setAdvancedGuideOpen] = useState(false);
   const [settingsOpen,      setSettingsOpen]      = useState(false);
+  const [dialogPreviewOpen, setDialogPreviewOpen] = useState(false); // TEMP
 
   const [gridDims, setGridDims] = useState({ cols: 5, rows: TARGET_ROWS });
   const gridWrapRef = useRef(null);
@@ -736,6 +739,24 @@ export default function MapScreen() {
             }
           }}
         />
+      )}
+
+      {/* TEMP preview — not wired to anything yet */}
+      <button
+        onClick={() => setDialogPreviewOpen(o => !o)}
+        style={{
+          position: 'fixed', top: 12, right: 12, zIndex: 400,
+          padding: '6px 14px',
+          border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6,
+          background: '#111', color: '#fff',
+          fontSize: 11, letterSpacing: 1, cursor: 'pointer',
+          fontFamily: "'Courier New', monospace",
+        }}
+      >
+        DIALOG PREVIEW: {dialogPreviewOpen ? 'ON' : 'OFF'}
+      </button>
+      {dialogPreviewOpen && (
+        <DialogModal dialog={DIALOG_REGISTRY.sample_intro} onClose={() => {}} />
       )}
 
       {losePopup && (

@@ -22,6 +22,28 @@ export const SHARED_PRESETS = {
     ],
   },
 
+  // Ground-rumble shake — much larger amplitude than heavy_shake, oscillates
+  // fast then decays toward the end (settling after the tremor) instead of
+  // holding a constant amplitude throughout.
+  earthquake_shake: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0px, 0px) rotate(0deg)' },
+      { offset: 0.08, transform: 'translate(-6px, 3px) rotate(-2deg)' },
+      { offset: 0.16, transform: 'translate(7px, -4px) rotate(2deg)' },
+      { offset: 0.24, transform: 'translate(-8px, 2px) rotate(-3deg)' },
+      { offset: 0.32, transform: 'translate(6px, -5px) rotate(2deg)' },
+      { offset: 0.40, transform: 'translate(-7px, 4px) rotate(-2deg)' },
+      { offset: 0.48, transform: 'translate(8px, -3px) rotate(3deg)' },
+      { offset: 0.56, transform: 'translate(-6px, 2px) rotate(-2deg)' },
+      { offset: 0.64, transform: 'translate(5px, -4px) rotate(2deg)' },
+      { offset: 0.72, transform: 'translate(-4px, 3px) rotate(-1deg)' },
+      { offset: 0.80, transform: 'translate(3px, -2px) rotate(1deg)' },
+      { offset: 0.88, transform: 'translate(-2px, 1px) rotate(-1deg)' },
+      { offset: 1,    transform: 'translate(0px, 0px) rotate(0deg)' },
+    ],
+  },
+
   // Stance/buff glow — brightness+saturation+hue bloom with a slight scale pop.
   // Shared by samurai_sheath (Battojutsu) and the generic buff animation.
   buff_glow: {

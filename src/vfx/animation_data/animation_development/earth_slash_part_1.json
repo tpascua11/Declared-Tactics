@@ -1,0 +1,8 @@
+{
+  "name": "earth_slash_part_1",
+  "duration": 500,
+  "sfx": [
+    { "src": "SWORD_SWING.wav", "start": 0, "volume": 0.7 }
+  ],
+  "floatingNumber": { "color": "#8b5a2b" }
+}

@@ -1,0 +1,63 @@
+[
+  {
+    "type": "streak",
+    "name": "heavy slice streak",
+    "colorStops": ["#ffffff", "#ff6a00"],
+    "coreColor": "#ffe066",
+    "width": 24,
+    "coreWidth": 2,
+    "fadeDuration": 260,
+    "additive": true,
+    "motion": { "fromX": 0, "fromY": -120, "dx": 0, "dy": 240, "duration": 160 }
+  },
+  {
+    "speed": 120,
+    "emitAngle": "auto",
+    "rate": 35,
+    "sizeMin": 1,
+    "sizeMax": 11,
+    "lifetime": 0.8,
+    "spreadX": 20,
+    "spreadY": 80,
+    "gravity": 30,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": ["#ffffff", "#ffe066", "#ff6a00"],
+    "showHead": false,
+    "motion": { "fromX": 0, "fromY": -120, "dx": 0, "dy": 240, "duration": 160 }
+  },
+  {
+    "offsetX": 0,
+    "offsetY": 35,
+    "speed": 350,
+    "angle": 90,
+    "rate": 35,
+    "sizeMin": 3,
+    "sizeMax": 12,
+    "lifetime": 0.5,
+    "spread": 260,
+    "gravity": 100,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 100,
+    "colorStops": ["#ffffff", "#ffe066", "#ff6a00"]
+  },
+  {
+    "name": "stone particles",
+    "speed": 140,
+    "emitAngle": "auto",
+    "rate": 18,
+    "sizeMin": 10,
+    "sizeMax": 22,
+    "lifetime": 0.6,
+    "spreadX": 100,
+    "spreadY": 40,
+    "gravity": 140,
+    "additive": false,
+    "rotation": true,
+    "shape": "square",
+    "colorStops": ["#8a8a86", "#5a5a54", "#2e2e2a"],
+    "showHead": false,
+    "motion": { "fromX": 0, "fromY": -120, "dx": 0, "dy": 240, "duration": 160 }
+  }
+]

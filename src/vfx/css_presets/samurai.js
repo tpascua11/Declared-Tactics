@@ -74,6 +74,19 @@ export const SAMURAI_PRESETS = {
     ],
   },
 
+  // Same filter language as tornado_slash_impact, but doubled rotation
+  // (720deg) over the same offsets/duration — two full spins instead of one.
+  tornado_slash_impact_x2: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    transform: 'rotate(0deg)',    filter: 'brightness(3.4) sepia(1) saturate(6) hue-rotate(160deg)' },
+      { offset: 0.15, transform: 'rotate(108deg)',  filter: 'brightness(2) sepia(0.6) saturate(3.6) hue-rotate(160deg)' },
+      { offset: 0.5,  transform: 'rotate(360deg)',  filter: 'brightness(1.5) sepia(0.35) saturate(2.2) hue-rotate(140deg)' },
+      { offset: 0.85, transform: 'rotate(612deg)',  filter: 'brightness(1.1) sepia(0.05) saturate(1.1) hue-rotate(30deg)' },
+      { offset: 1,    transform: 'rotate(720deg)',  filter: 'brightness(1) sepia(0) saturate(1) hue-rotate(0deg)' },
+    ],
+  },
+
   // Two-hit ice reaction (↘ slash then ↖ slash) — cyan/blue hue-rotate flash
   // per hit. No hold to strip; impact starts immediately at offset 0.
   ice_impact: {

@@ -1,0 +1,298 @@
+[
+  {
+    "type": "streak",
+    "name": "heavy slice streak — cut 1",
+    "colorStops": [
+      "#e0f9ff",
+      "#38bdf8"
+    ],
+    "coreColor": "#ffffff",
+    "width": 22,
+    "coreWidth": 2,
+    "fadeDuration": 260,
+    "additive": true,
+    "motion": {
+      "fromX": 0,
+      "fromY": 160,
+      "dx": 0,
+      "dy": -320,
+      "duration": 160
+    }
+  },
+  {
+    "type": "streak",
+    "name": "heavy slice streak — cut 2",
+    "delay": 180,
+    "colorStops": [
+      "#e0f9ff",
+      "#38bdf8"
+    ],
+    "coreColor": "#ffffff",
+    "width": 22,
+    "coreWidth": 2,
+    "fadeDuration": 260,
+    "additive": true,
+    "motion": {
+      "fromX": 0,
+      "fromY": 160,
+      "dx": 0,
+      "dy": -320,
+      "duration": 160
+    }
+  },
+  {
+    "name": "spark slash trail — cut 1",
+    "speed": 120,
+    "emitAngle": "auto",
+    "rate": 35,
+    "sizeMin": 1,
+    "sizeMax": 11,
+    "lifetime": 1.4,
+    "spreadX": 20,
+    "spreadY": 80,
+    "gravity": 30,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#a5f3fc",
+      "#2dd4bf"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": 0,
+      "fromY": 160,
+      "dx": 0,
+      "dy": -320,
+      "duration": 160
+    }
+  },
+  {
+    "name": "spark slash trail — cut 2",
+    "delay": 180,
+    "speed": 120,
+    "emitAngle": "auto",
+    "rate": 35,
+    "sizeMin": 1,
+    "sizeMax": 11,
+    "lifetime": 1.4,
+    "spreadX": 20,
+    "spreadY": 80,
+    "gravity": 30,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#a5f3fc",
+      "#2dd4bf"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": 0,
+      "fromY": 160,
+      "dx": 0,
+      "dy": -320,
+      "duration": 160
+    }
+  },
+  {
+    "name": "wisp 1",
+    "offsetX": -95,
+    "offsetY": 180,
+    "delay": 250,
+    "speed": 900,
+    "angle": 270,
+    "spreadX": 60,
+    "waveAmp": 40,
+    "waveFreq": 1.6,
+    "spreadY": 0,
+    "gravity": -20,
+    "rate": 5,
+    "sizeMin": 3,
+    "sizeMax": 9,
+    "lifetime": 0.48,
+    "emitDuration": 1000,
+    "additive": true,
+    "shape": "circle",
+    "colorStops": [
+      "#ffffff",
+      "#dff7ff",
+      "#a9e8ff"
+    ]
+  },
+  {
+    "name": "wisp 2",
+    "offsetX": -68,
+    "offsetY": 180,
+    "delay": 310,
+    "speed": 900,
+    "angle": 270,
+    "spreadX": 60,
+    "waveAmp": 40,
+    "waveFreq": 1.6,
+    "spreadY": 0,
+    "gravity": -20,
+    "rate": 5,
+    "sizeMin": 3,
+    "sizeMax": 9,
+    "lifetime": 0.48,
+    "emitDuration": 1000,
+    "additive": true,
+    "shape": "circle",
+    "colorStops": [
+      "#ffffff",
+      "#dff7ff",
+      "#a9e8ff"
+    ]
+  },
+  {
+    "name": "wisp 3",
+    "offsetX": -41,
+    "offsetY": 180,
+    "delay": 370,
+    "speed": 900,
+    "angle": 270,
+    "spreadX": 60,
+    "waveAmp": 40,
+    "waveFreq": 1.6,
+    "spreadY": 0,
+    "gravity": -20,
+    "rate": 5,
+    "sizeMin": 3,
+    "sizeMax": 9,
+    "lifetime": 0.48,
+    "emitDuration": 1000,
+    "additive": true,
+    "shape": "circle",
+    "colorStops": [
+      "#ffffff",
+      "#dff7ff",
+      "#a9e8ff"
+    ]
+  },
+  {
+    "name": "wisp 4",
+    "offsetX": -14,
+    "offsetY": 180,
+    "delay": 430,
+    "speed": 900,
+    "angle": 270,
+    "spreadX": 60,
+    "waveAmp": 40,
+    "waveFreq": 1.6,
+    "spreadY": 0,
+    "gravity": -20,
+    "rate": 5,
+    "sizeMin": 3,
+    "sizeMax": 9,
+    "lifetime": 0.48,
+    "emitDuration": 1000,
+    "additive": true,
+    "shape": "circle",
+    "colorStops": [
+      "#ffffff",
+      "#dff7ff",
+      "#a9e8ff"
+    ]
+  },
+  {
+    "name": "wisp 5",
+    "offsetX": 14,
+    "offsetY": 180,
+    "delay": 250,
+    "speed": 900,
+    "angle": 270,
+    "spreadX": 60,
+    "waveAmp": 40,
+    "waveFreq": 1.6,
+    "spreadY": 0,
+    "gravity": -20,
+    "rate": 5,
+    "sizeMin": 3,
+    "sizeMax": 9,
+    "lifetime": 0.48,
+    "emitDuration": 1000,
+    "additive": true,
+    "shape": "circle",
+    "colorStops": [
+      "#ffffff",
+      "#dff7ff",
+      "#a9e8ff"
+    ]
+  },
+  {
+    "name": "wisp 6",
+    "offsetX": 41,
+    "offsetY": 180,
+    "delay": 310,
+    "speed": 900,
+    "angle": 270,
+    "spreadX": 60,
+    "waveAmp": 40,
+    "waveFreq": 1.6,
+    "spreadY": 0,
+    "gravity": -20,
+    "rate": 5,
+    "sizeMin": 3,
+    "sizeMax": 9,
+    "lifetime": 0.48,
+    "emitDuration": 1000,
+    "additive": true,
+    "shape": "circle",
+    "colorStops": [
+      "#ffffff",
+      "#dff7ff",
+      "#a9e8ff"
+    ]
+  },
+  {
+    "name": "wisp 7",
+    "offsetX": 68,
+    "offsetY": 180,
+    "delay": 370,
+    "speed": 900,
+    "angle": 270,
+    "spreadX": 60,
+    "waveAmp": 40,
+    "waveFreq": 1.6,
+    "spreadY": 0,
+    "gravity": -20,
+    "rate": 5,
+    "sizeMin": 3,
+    "sizeMax": 9,
+    "lifetime": 0.48,
+    "emitDuration": 1000,
+    "additive": true,
+    "shape": "circle",
+    "colorStops": [
+      "#ffffff",
+      "#dff7ff",
+      "#a9e8ff"
+    ]
+  },
+  {
+    "name": "wisp 8",
+    "offsetX": 95,
+    "offsetY": 180,
+    "delay": 430,
+    "speed": 900,
+    "angle": 270,
+    "spreadX": 60,
+    "waveAmp": 40,
+    "waveFreq": 1.6,
+    "spreadY": 0,
+    "gravity": -20,
+    "rate": 5,
+    "sizeMin": 3,
+    "sizeMax": 9,
+    "lifetime": 0.48,
+    "emitDuration": 1000,
+    "additive": true,
+    "shape": "circle",
+    "colorStops": [
+      "#ffffff",
+      "#dff7ff",
+      "#a9e8ff"
+    ]
+  }
+]

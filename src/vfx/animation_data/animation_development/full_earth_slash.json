@@ -1,0 +1,14 @@
+{
+  "name": "full_earth_slash",
+  "duration": 1200,
+  "sfx": [
+    { "src": "SWORD_SWING.wav", "start": 0, "volume": 0.7 },
+    { "src": "EARTH_SHATTER.wav", "start": 280, "volume": 0.5 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "earthquake_shake", "start": 280, "duration": 800 }
+    ]
+  },
+  "floatingNumber": { "color": "#8b5a2b" }
+}

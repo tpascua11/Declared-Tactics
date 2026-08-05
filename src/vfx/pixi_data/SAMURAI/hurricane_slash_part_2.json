@@ -1,0 +1,179 @@
+[
+  {
+    "type": "streak",
+    "name": "blade cut — cut 1",
+    "colorStops": [
+      "#e0f9ff",
+      "#38bdf8"
+    ],
+    "coreColor": "#ffffff",
+    "width": 28,
+    "coreWidth": 2,
+    "fadeDuration": 420,
+    "additive": true,
+    "motion": {
+      "fromX": -120,
+      "fromY": 0,
+      "dx": 240,
+      "dy": 0,
+      "duration": 110
+    }
+  },
+  {
+    "type": "streak",
+    "name": "blade cut — cut 2",
+    "delay": 400,
+    "colorStops": [
+      "#e0f9ff",
+      "#38bdf8"
+    ],
+    "coreColor": "#ffffff",
+    "width": 28,
+    "coreWidth": 2,
+    "fadeDuration": 420,
+    "additive": true,
+    "motion": {
+      "fromX": -120,
+      "fromY": 0,
+      "dx": 240,
+      "dy": 0,
+      "duration": 110
+    }
+  },
+  {
+    "name": "spark slash trail — cut 1",
+    "speed": 80,
+    "emitAngle": "auto",
+    "rate": 80,
+    "sizeMin": 9,
+    "sizeMax": 26,
+    "lifetime": 0.35,
+    "spreadX": 18,
+    "spreadY": 12,
+    "gravity": 20,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#a5f3fc",
+      "#2dd4bf"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -120,
+      "fromY": 0,
+      "dx": 240,
+      "dy": 0,
+      "duration": 70
+    }
+  },
+  {
+    "name": "spark slash trail — cut 2",
+    "delay": 400,
+    "speed": 80,
+    "emitAngle": "auto",
+    "rate": 80,
+    "sizeMin": 9,
+    "sizeMax": 26,
+    "lifetime": 0.35,
+    "spreadX": 18,
+    "spreadY": 12,
+    "gravity": 20,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": [
+      "#ffffff",
+      "#a5f3fc",
+      "#2dd4bf"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -120,
+      "fromY": 0,
+      "dx": 240,
+      "dy": 0,
+      "duration": 70
+    }
+  },
+  {
+    "name": "lightning trail — cut 1",
+    "speed": 170,
+    "emitAngle": "auto",
+    "rate": 60,
+    "sizeMin": 4,
+    "sizeMax": 14,
+    "lifetime": 0.5,
+    "spreadX": 165,
+    "spreadY": 165,
+    "gravity": 0,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "colorStops": [
+      "#ffffff",
+      "#ffffff",
+      "#eaffff"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -120,
+      "fromY": 0,
+      "dx": 240,
+      "dy": 0,
+      "duration": 240
+    }
+  },
+  {
+    "name": "lightning trail — cut 2",
+    "delay": 400,
+    "speed": 170,
+    "emitAngle": "auto",
+    "rate": 60,
+    "sizeMin": 4,
+    "sizeMax": 14,
+    "lifetime": 0.5,
+    "spreadX": 165,
+    "spreadY": 165,
+    "gravity": 0,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "colorStops": [
+      "#ffffff",
+      "#ffffff",
+      "#eaffff"
+    ],
+    "showHead": false,
+    "motion": {
+      "fromX": -120,
+      "fromY": 0,
+      "dx": 240,
+      "dy": 0,
+      "duration": 240
+    }
+  },
+  {
+    "name": "impact lightning",
+    "delay": 480,
+    "offsetX": 115,
+    "offsetY": 0,
+    "speed": 200,
+    "angle": 140,
+    "rate": 130,
+    "sizeMin": 5,
+    "sizeMax": 13,
+    "lifetime": 0.55,
+    "spreadX": 290,
+    "spreadY": 290,
+    "gravity": 0,
+    "additive": true,
+    "rotation": true,
+    "shape": "star",
+    "emitDuration": 50,
+    "colorStops": [
+      "#ffffff",
+      "#ffffff",
+      "#eaffff"
+    ]
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "name": "hurricane_vertical",
+  "duration": 1200,
+  "sfx": [
+    { "src": "WIND_2.wav", "start": 0, "volume": 0.7 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "tornado_slash_impact_x2", "start": 100, "duration": 984 }
+    ]
+  },
+  "dom": {
+    "target": [
+      { "preset": "afterimage_trail", "start": 100, "duration": 984, "tickRate": 50, "count": 20, "fadeDuration": 300 }
+    ]
+  },
+  "floatingNumber": null
+}
