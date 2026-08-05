@@ -270,7 +270,7 @@ export const SAMURAI_CARDS = [
     name: 'Mikiri',
     speed_mod: 0,
     tag_type: ['PHYSICAL', 'STANCE'],
-    cost: { BATTLE_SPIRIT: 1 },
+    cost: { BATTLE_SPIRIT: 0.5 },
     icon: '💨',
     image: 'FOX_QUICK_STEPS',
     color: '#7dd3fc',

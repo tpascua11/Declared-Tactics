@@ -7,7 +7,7 @@ import { registerTag } from '../registry/battle_registry';
 
 // ── STILL WIND ──
 // Applied by the Still Wind card at 3 stacks (max 3).
-// PRE_ACTION: grants 1 Battle Spirit and consumes 1 stack. Removed when stacks hit 0.
+// PRE_ACTION: grants 0.5 Battle Spirit and consumes 1 stack. Removed when stacks hit 0.
 // ON_RECEIVE: consumed entirely when the owner takes a HIT.
 
 function StillWindPreActionHandler(context, tag) {
@@ -17,7 +17,7 @@ function StillWindPreActionHandler(context, tag) {
   }
   const res = owner.resources?.BATTLE_SPIRIT;
   if (res) {
-    res.current = Math.min(res.current + 1, res.max);
+    res.current = Math.min(res.current + 0.5, res.max);
   }
   tag.stacks -= 1;
   const consumed = tag.stacks <= 0;
@@ -25,7 +25,7 @@ function StillWindPreActionHandler(context, tag) {
   return {
     cancelled: false,
     consumed,
-    logs: [{ msg: `🌬️ ${owner.name} gains 1 Battle Spirit from Still Wind (${stackText})`, type: 'resource' }],
+    logs: [{ msg: `🌬️ ${owner.name} gains 0.5 Battle Spirit from Still Wind (${stackText})`, type: 'resource' }],
   };
 }
 

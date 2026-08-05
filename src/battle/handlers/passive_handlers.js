@@ -57,10 +57,10 @@ registerTag('ONE_UNDER_THE_SUN', {
 function ClashingSpiritHandler(context, tag) {
   if (!context.deflected) return { consumed: false };
   const res = context.owner.resources?.BATTLE_SPIRIT;
-  if (res) res.current = Math.min(res.current + 1, res.max);
+  if (res) res.current = Math.min(res.current + 0.5, res.max);
   return {
     consumed: false,
-    logs: [{ msg: `⚔️ ${context.owner.name}'s attack is deflected — gains 1 Battle Spirit`, type: 'resource' }],
+    logs: [{ msg: `⚔️ ${context.owner.name}'s attack is deflected — gains 0.5 Battle Spirit`, type: 'resource' }],
   };
 }
 

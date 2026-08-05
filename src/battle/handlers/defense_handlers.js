@@ -82,12 +82,12 @@ function UkeSpiritDamageReduceHandler(context, tag) {
   if (totalDamage === 0) return { payload, consumed: false };
 
   const res = target.resources?.BATTLE_SPIRIT;
-  if (res) res.current = Math.min(res.current + 1, res.max);
+  if (res) res.current = Math.min(res.current + 0.5, res.max);
 
   return {
     payload,
     consumed: false,
-    logs: [{ msg: `☯️ ${target.name} gains 1 Battle Spirit`, type: 'resource' }],
+    logs: [{ msg: `☯️ ${target.name} gains 0.5 Battle Spirit`, type: 'resource' }],
   };
 }
 
