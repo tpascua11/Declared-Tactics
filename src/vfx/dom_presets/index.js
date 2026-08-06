@@ -10,8 +10,9 @@
 // ============================================================
 
 import { afterimage_trail } from './afterimage_trail';
+import { card_split } from './card_split';
 
-export const DOM_PRESETS = { afterimage_trail };
+export const DOM_PRESETS = { afterimage_trail, card_split };
 
 // Screens must call clearAllDomSpawns() on unmount.
 const liveHandles = new Set();

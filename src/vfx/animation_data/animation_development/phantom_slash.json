@@ -1,0 +1,23 @@
+{
+  "name": "phantom_slash",
+  "duration": 1220,
+  "sfx": [
+    { "src": "SLICE_1.wav", "start": 0, "volume": 0.7 },
+    { "src": "DEBUFF_1.wav", "start": 0, "volume": 2.0 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "phantom_impact", "start": 0, "duration": 1200 },
+      { "preset": "phantom_split_hide", "start": 420, "duration": 800 }
+    ],
+    "owner": [
+      { "preset": "attack_lunge", "start": 0, "duration": 300 }
+    ]
+  },
+  "dom": {
+    "target": [
+      { "preset": "card_split", "start": 420, "duration": 450, "angle": 45, "separation": 35, "rotation": 4, "fadeDuration": 350, "desaturate": 0 }
+    ]
+  },
+  "floatingNumber": { "color": "#ff4444" }
+}

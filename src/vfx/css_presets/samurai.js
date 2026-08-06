@@ -24,6 +24,35 @@ export const SAMURAI_PRESETS = {
     ],
   },
 
+  // Phantom hit — stagger shake with no color tint: flashes to white,
+  // then sinks past normal brightness into near-black before recovering.
+  phantom_impact: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,    transform: 'translate(0, 0) rotate(0deg)',       filter: 'brightness(1) saturate(1)' },
+      { offset: 0.12, transform: 'translate(-3px, -2px) rotate(-1deg)', filter: 'brightness(3.5) saturate(0)' },
+      { offset: 0.35, transform: 'translate(2px, 1px) rotate(0.5deg)', filter: 'brightness(0.2) saturate(0)' },
+      { offset: 0.9,  transform: 'translate(-1px, 0px) rotate(0deg)',  filter: 'brightness(0.2) saturate(0)' },
+      { offset: 1,    transform: 'translate(0, 0) rotate(0deg)',       filter: 'brightness(1) saturate(1)' },
+    ],
+  },
+
+  // Companion to the card_split dom preset (phantom_slash): the real
+  // card must be invisible while the two clip-path halves are on
+  // screen, or the whole card would show through/behind them. Snaps
+  // to 0 almost instantly (~5%) so the vanish lands before the halves
+  // finish spawning, holds through the split, then fades back in
+  // smoothly over the final ~30% once card_split's pieces are gone.
+  phantom_split_hide: {
+    easing: 'linear',
+    keyframes: [
+      { offset: 0,    opacity: 1 },
+      { offset: 0.05, opacity: 0 },
+      { offset: 0.7,  opacity: 0 },
+      { offset: 1,    opacity: 1 },
+    ],
+  },
+
   // Flash of light at impact, tinted blue/teal — target is punched
   // upward, then right after the impact sound lands, gets knocked a
   // full ~100px to the top-right, holds there, then settles back.

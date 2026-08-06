@@ -1,0 +1,45 @@
+[
+  {
+    "type": "streak",
+    "name": "heavy slice streak",
+    "colorStops": ["#5a5a5a", "#000000"],
+    "coreColor": "#1a1a1a",
+    "width": 24,
+    "coreWidth": 2,
+    "fadeDuration": 260,
+    "additive": true,
+    "motion": { "fromX": -120, "fromY": -120, "dx": 240, "dy": 240, "duration": 160 }
+  },
+  {
+    "speed": 120,
+    "emitAngle": "auto",
+    "rate": 35,
+    "sizeMin": 1,
+    "sizeMax": 11,
+    "lifetime": 0.8,
+    "spreadX": 20,
+    "spreadY": 80,
+    "gravity": 30,
+    "additive": true,
+    "shape": "spark",
+    "colorStops": ["#5a5a5a", "#2a2a2a", "#000000"],
+    "showHead": false,
+    "motion": { "fromX": -120, "fromY": -120, "dx": 240, "dy": 240, "duration": 160 }
+  },
+  {
+    "offsetX": 35,
+    "offsetY": 35,
+    "speed": 350,
+    "angle": 225,
+    "rate": 35,
+    "sizeMin": 3,
+    "sizeMax": 12,
+    "lifetime": 0.5,
+    "spread": 260,
+    "gravity": 100,
+    "additive": true,
+    "rotation": true,
+    "emitDuration": 100,
+    "colorStops": ["#5a5a5a", "#2a2a2a", "#000000"]
+  }
+]
