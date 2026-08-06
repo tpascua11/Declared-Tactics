@@ -8,7 +8,7 @@
     "coreWidth": 2,
     "fadeDuration": 260,
     "additive": true,
-    "motion": { "fromX": 0, "fromY": -120, "dx": 0, "dy": 240, "duration": 160 }
+    "motion": { "fromX": 0, "fromY": -160, "dx": 0, "dy": 320, "duration": 160 }
   },
   {
     "speed": 120,
@@ -24,7 +24,7 @@
     "shape": "spark",
     "colorStops": ["#ffffff", "#ffe066", "#ff6a00"],
     "showHead": false,
-    "motion": { "fromX": 0, "fromY": -120, "dx": 0, "dy": 240, "duration": 160 }
+    "motion": { "fromX": 0, "fromY": -160, "dx": 0, "dy": 320, "duration": 160 }
   },
   {
     "offsetX": 0,
@@ -58,7 +58,7 @@
     "shape": "square",
     "colorStops": ["#8a8a86", "#5a5a54", "#2e2e2a"],
     "showHead": false,
-    "motion": { "fromX": 0, "fromY": -120, "dx": 0, "dy": 240, "duration": 160 }
+    "motion": { "fromX": 0, "fromY": -160, "dx": 0, "dy": 320, "duration": 160 }
   },
   {
     "name": "earth chunks — large",
