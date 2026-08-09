@@ -11,6 +11,7 @@ import TitleScreen from './screens/TitleScreen';
 import CharacterSelectScreen from './screens/CharacterSelectScreen';
 import BattleScreen from './screens/BattleScreen';
 import MapScreen from './screens/MapScreen';
+import WorldMapScreen2 from './screens/WorldMapScreen2';
 import GameFinishScreen from './screens/GameFinishScreen';
 import VfxEditorScreen from './screens/VfxEditorScreen';
 import DialogEditorScreen from './screens/DialogEditorScreen';
@@ -123,6 +124,9 @@ function PhaseRouter() {
       break;
     case 'MAP':
       screen = <MapScreen />;
+      break;
+    case 'WORLD_MAP_TEST':
+      screen = <WorldMapScreen2 />;
       break;
     case 'GAME_FINISH':
       screen = <GameFinishScreen />;

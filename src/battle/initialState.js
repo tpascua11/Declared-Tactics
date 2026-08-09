@@ -71,9 +71,10 @@ export function buildInitialState(scenario = TEST_ENEMY , playerData = null) {
   const characters = [player, ...builtEnemies];
   primeDisplayAura(characters);
   return {
-    phase: new URLSearchParams(window.location.search).has('editor') ? 'VFX_EDITOR'
-         : new URLSearchParams(window.location.search).has('dialog') ? 'DIALOG_EDITOR'
-         : new URLSearchParams(window.location.search).has('debug')  ? 'QUEUE_SETUP'
+    phase: new URLSearchParams(window.location.search).has('editor')       ? 'VFX_EDITOR'
+         : new URLSearchParams(window.location.search).has('dialog')       ? 'DIALOG_EDITOR'
+         : new URLSearchParams(window.location.search).has('worldmaptest') ? 'WORLD_MAP_TEST'
+         : new URLSearchParams(window.location.search).has('debug')        ? 'QUEUE_SETUP'
          : 'TITLE',
     music: scenario?.music ?? null,
     musicVolume: scenario?.music_volume ?? 0.2,

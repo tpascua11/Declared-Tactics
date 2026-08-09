@@ -1,0 +1,63 @@
+{
+  "id": "path_of_the_samurai_v2",
+  "name": "PATH OF THE SAMURAI",
+  "cols": 5,
+  "rows": 3,
+  "levels": [
+    {
+      "id": 0,
+      "name": "SNOW IRON GATE",
+      "type": "COMBAT",
+      "map_icon": "Snow_Iron_Gate",
+      "desc": "Snow falls steady against iron. The gate looms ahead — old metal gone gray with frost, chains thick as your arm. You've been walking through cold you can't name, following a path you can't explain. Your paws are numb. Your breath clouds the air. Something pulled you forward — not hunger, not anger, not revenge. Just... forward. Like your feet knew something your head didn't. Now the gate stands before you, held by more than metal. Boars shift in the snow behind two ferrets who stand front and center like they own this place. Rabbits dart between their legs, twitching. One ferret snorts. 'Hah — a fox? On the Path of the Samurai? Go home, kit.' The other doesn't laugh. He just looks at you — really looks — waiting. The snow keeps falling. And somewhere under the doubt, under the cold, there's a quiet thing that refuses to turn around.",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["quick_steps"] }] },
+      "defeat_tip": "Hestiation is defeat! Attack!",
+      "clear_desc": "The ferrets go quiet. One laughs despite himself — low, surprised, almost respectful. 'Not bad, fox.' Snow settles on all of you. You're standing, they're not — and that means something. But more than that: you notice how *they* moved. Not fast. Efficient. Every step placed just so, no wasted motion — like they'd decided where to be before arriving. While you swung at rabbits and shoved past boars, the ferrets were already *elsewhere*. That's what you forgot. The lesson you let go cold. Quick Steps. You're going to need that. The gate groans open. Wind cuts through sharp and clean. Beyond it, the path stretches into white nothing — trees, shadows, more fights, more questions. You step forward. Still confused. Still not turning back.",
+      "scenario_id": "rabbit_and_boar_level_1"
+    },
+    {
+      "id": 1,
+      "name": "TREE TRAIL",
+      "type": "COMBAT",
+      "map_icon": "Snowy_Field_Bamboo",
+      "desc": "Pine needles crunch underfoot. The trail winds between tall evergreens, their branches heavy with old snow, casting long blue shadows across your path. And it's held. Boars plant themselves ahead — slow, heavy, tusks gleaming dull. But it's the rabbits you should worry about. Three of them scatter among the pines, never still, already moving before you've finished looking. A couple of ferrets linger at the back, watching. Not fighting. Just... observing. Taking notes, maybe. One of the rabbits twitches its nose at you. 'Go on then, fox. Swing at nothing.' Your grip tightens on your blade. This isn't just a fight. It's a test you didn't study for.",
+      "reward": { "general": { "type": "gold", "amount": 20 } },
+      "defeat_tip": "Rabbits are extremely evasive. Don't waste heavy strikes on them — wait for your opening.",
+      "clear_desc": "The trail is yours now. The boars went down hard — they always do when you hit them right. But the rabbits... those took something else. Every wide swing met empty air. Every heavy strike caught only pine needles. So you stopped swinging. Started watching. Found the rhythm in their chaos — the tiny pause before each hop, the tell. That's when you struck. Not fast. *Timed*. The pines settle around you, quiet now. Speed isn't about hitting first. It's about hitting *when it means something*. The rabbits scatter into the underbrush, alive but humbled. The boars lumber off. The ferrets are already gone — slipped away while you weren't looking. Probably off to tell someone what they saw. Let them. You keep walking. The trail stretches deeper into the pines.",
+      "scenario_id": "rabbit_and_boar_level_2"
+    },
+    {
+      "id": 2,
+      "name": "RABBIT DEN",
+      "type": "COMBAT",
+      "map_icon": "Snowy_Field_Den",
+      "desc": "You hear them before you see them. Snickering. Lots of snickering. You round the corner and — eight rabbits. Just... sitting there. Blocking the path like a fuzzy, twitching roadblock. One's leaning against a pine, picking his teeth with a twig. Another's stretching his legs out like he's at a spa. They see you and not a single one flinches. The big one in the center grins wide. 'Look who it is, boys. A samurai fox.' He says it like it's a punchline. The others snicker. One tosses a pebble at your paw. 'Cute sword, fluffy. Your mama give you that?' More laughter. This is humiliating. This is *absurd*. Eight rabbits. Not running. Not scared. Just... mean.",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": ["still_wind"] }] },
+      "defeat_tip": "Watch for the small fiery aura — it appears just before the Rabbit strikes. That aura is your tell. They always attack on the 3rd turn, first action. Let them think they have you. Then make it count.",
+      "clear_desc": "Eight against one, and not one of them ran. That's the part that stings. The last rabbit hits the dirt and suddenly — slow clapping. From the tree line. A turtle steps out of the shadows, arms folded, expression unreadable. Old. The kind of old that means dangerous or wise. Possibly both. 'You have skill, fox,' he says, voice like gravel sliding on stone. 'But you fight angry. Sloppy.' He watches you for a moment, those slow eyes taking in everything — your stance, your grip, the way you're still bristling from those rabbits. 'Still Wind,' he says at last. 'When the world moves, you move less. Let me show you.' The rabbits groan in the dirt behind you. At least you agree on something.",
+      "scenario_id": "rabbit_full_squad"
+    },
+    {
+      "id": 3,
+      "name": "SILENT SHRINE",
+      "type": "COMBAT",
+      "map_icon": "Snow_Field_Shrine",
+      "desc": "The turtle doesn't ask if you're following him. He just walks, and you walk, and somehow that feels like agreement. Through the pines, past the frozen creek, until the trees thin and you see it — a shrine. Old wood, older stone, lanterns cold and dark for years. Someone left offerings here once. No one anymore. Two otters wait inside, arms crossed, stances loose but ready. A ferret leans against the doorframe, picking at her claws. They don't look surprised to see you. The turtle stops at the threshold and gestures vaguely. 'My students.' He says it like he's introducing weather. Unavoidable. 'If you can move them, perhaps you are ready to learn what I came here to teach.' The otters crack their knuckles. The ferret smiles thin. No one's moving aside.",
+      "reward": { "general": { "type": "gold", "amount": 20 } },
+      "defeat_tip": "The turtle is the real threat — Still Wind builds Battle Spirit every moment he's left alone. Break his concentration and it wears off. The otters are consistent: Stream Slash, every turn. Don't count on evading your way through them.",
+      "clear_desc": "The shrine goes still. Dust motes drift in cold light. The turtle watches the last of his students hit the ground, then exhales — slow, deliberate, like he's got all the time in the world. 'Good.' He settles into a low stance, hands resting at his sides, doing nothing. And then you *feel* it. A faint pressure building around him — not from movement, but from the opposite. From *not* moving. Like the air itself is holding its breath alongside him. 'That,' he says quietly, 'is Still Wind. Battle Spirit gathered not from the blade, but from the space between swings.' He holds it a moment longer, then lets it dissolve like morning fog. 'You will need it before this path is done.'",
+      "scenario_id": "otter_turtle_test"
+    },
+    {
+      "id": 4,
+      "name": "PATH BEYOND",
+      "type": "BOSS",
+      "map_icon": "Snow_Field_Path_1",
+      "desc": "The path ends here. Not fades — *ends*. Like someone drew a line in the snow and said 'no further.' Two turtles stand side by side ahead, planted like stones that learned to think. You recognize the stance. Still Wind, held so long it's become part of them. Between them, one rabbit — different from the others. Stiller. Watching you with eyes that don't twitch. They've been waiting. You know that now. Since the shrine, maybe before. The elder turtle speaks first, voice like old wood splitting. 'You've come far, fox.' He doesn't sound surprised. He sounds like he's been waiting to say those words for a long time. 'This is our answer.' The rabbit cracks his knuckles. The second turtle settles into silence. No one's moving aside.",
+      "reward": { "general": { "type": "gold", "amount": 20 }, "unlocks": [{ "class": "samurai", "card_ids": [""] }] },
+      "defeat_tip": "This is the hardest fight on the path. Don't rush it. You've seen Still Wind — you know their rhythm. Their patience is their strength, but patience cuts both ways. Find your moment and strike when they breathe.",
+      "clear_desc": "The last turtle staggers back — and the elder *laughs*. A low, rumbling thing that shakes snow from his shell. 'Oh, that was good.' He rolls his shoulders like he just woke up from a very long nap. 'That was *good*.' On the ridge above, the students stare. The ferret elbows the otter. 'Has he ever...' 'No.' 'Do any of us know what this path is actually for?' No one answers. The elder turns back to you, and there's something bright in those slow eyes now. Not respect exactly. Delight. Like you reminded him why he started doing this in the first place. 'We guard this path,' he says. 'Watch who walks it. Most come with purpose. Revenge. Honor. Duty.' He tilts his head at you. 'You came with nothing but forward. I enjoyed that fight, fox. Haven't enjoyed one in years.' He bows — just slightly, just enough. The rabbit steps aside. The students exchange glances full of questions no one can answer. The path opens into deeper white.",
+      "scenario_id": "dual_turtles"
+    }
+  ]
+}
