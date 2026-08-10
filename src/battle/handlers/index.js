@@ -15,3 +15,4 @@ import './speed_handlers';
 import './turn_phase_handlers';
 import './elemental_handlers';
 import './class_specific_handler';
+import './control_handlers';

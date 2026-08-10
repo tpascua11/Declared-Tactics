@@ -215,4 +215,6 @@ export { default as FOX_GUARD_STANCE }           from './FOX_SAMURAI/fox_water_s
 export { default as FOX_SAMURAI_STREAM_SLASH }  from './FOX_SAMURAI/SAMURAI_STREAM_SLASH.png';
 export { default as FOX_STORM_STRIKE }           from './FOX_SAMURAI/fox_storm_strike.png';
 export { default as FOX_SHINSOKU }               from './FOX_SAMURAI/fox_shinsoku.png';
+export { default as FOX_PHANTOM_SLASH }          from './FOX_SAMURAI/fox_phantom_slash.png';
+export { default as FOX_EARTH_SLASH }            from './FOX_SAMURAI/fox_earth_slash.png';
 export { default as FOX_DEFLECT }                from './FOX_SAMURAI/FOX_DEFLECT.png';

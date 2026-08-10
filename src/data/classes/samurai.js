@@ -30,7 +30,7 @@ export const SAMURAI = {
   combat_start_tags: [],
   //starting_cards: ['heavy_slice', 'flame_strike', 'battojutsu'],
 
-  starting_cards: ['heavy_slice', 'flame_strike', 'battojutsu', 'uke', 'mikiri'],
+  starting_cards: ['heavy_slice', 'flame_strike', 'battojutsu', 'uke', 'mikiri', 'phantom_slash', 'earth_slash'],
 
   //starting_cards: ['heavy_slice', 'flame_strike', 'storm_strike', 'quick_steps', 'still_wind', 'harai', 'mend', 'speed_up', 'freeze_slash', 'stream_slash', 'battojutsu'],
   card_order: [
