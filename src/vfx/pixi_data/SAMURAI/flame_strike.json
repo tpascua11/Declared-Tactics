@@ -1,5 +1,28 @@
 [
   {
+    "type": "streak",
+    "name": "second cut — flame surge",
+    "delay": 280,
+    "colorStops": ["#ff6600", "#ff2200"],
+    "coreColor": "#ffdd44",
+    "width": 34,
+    "coreWidth": 3,
+    "fadeDuration": 380,
+    "additive": true,
+    "motion": { "fromX": -130, "fromY": -130, "dx": 260, "dy": 260, "duration": 150 }
+  },
+  {
+    "type": "streak",
+    "name": "flame slash blade cut",
+    "colorStops": ["#ffdd44", "#ff2200"],
+    "coreColor": "#ffffff",
+    "width": 26,
+    "coreWidth": 2,
+    "fadeDuration": 300,
+    "additive": true,
+    "motion": { "fromX": -130, "fromY": -130, "dx": 260, "dy": 260, "duration": 130 }
+  },
+  {
     "name": "spark slash trail",
     "speed": 80,
     "emitAngle": "auto",
@@ -12,19 +35,9 @@
     "gravity": 20,
     "additive": true,
     "shape": "spark",
-    "colorStops": [
-      "#ffffff",
-      "#ffdd44",
-      "#ff6600"
-    ],
+    "colorStops": ["#ffffff", "#ffdd44", "#ff6600"],
     "showHead": false,
-    "motion": {
-      "fromX": -130,
-      "fromY": -130,
-      "dx": 260,
-      "dy": 260,
-      "duration": 130
-    }
+    "motion": { "fromX": -130, "fromY": -130, "dx": 260, "dy": 260, "duration": 130 }
   },
   {
     "name": "flame slash",
@@ -41,19 +54,9 @@
     "additive": true,
     "rotation": true,
     "emitDuration": 380,
-    "colorStops": [
-      "#ffdd44",
-      "#ff6600",
-      "#ff2200"
-    ],
+    "colorStops": ["#ffdd44", "#ff6600", "#ff2200"],
     "showHead": false,
-    "motion": {
-      "fromX": -130,
-      "fromY": -130,
-      "dx": 260,
-      "dy": 260,
-      "duration": 240
-    }
+    "motion": { "fromX": -130, "fromY": -130, "dx": 260, "dy": 260, "duration": 240 }
   },
   {
     "name": "impact burst",
@@ -72,10 +75,6 @@
     "additive": true,
     "rotation": true,
     "emitDuration": 500,
-    "colorStops": [
-      "#ffaa00",
-      "#ff4400",
-      "#aa1100"
-    ]
+    "colorStops": ["#ffaa00", "#ff4400", "#aa1100"]
   }
 ]

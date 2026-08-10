@@ -1,5 +1,28 @@
 [
   {
+    "type": "streak",
+    "name": "dual heavy slice streak — cut 1",
+    "colorStops": ["#ffffff", "#ff6a00"],
+    "coreColor": "#ffe066",
+    "width": 24,
+    "coreWidth": 2,
+    "fadeDuration": 260,
+    "additive": true,
+    "motion": { "fromX": -120, "fromY": -120, "dx": 240, "dy": 240, "duration": 160 }
+  },
+  {
+    "type": "streak",
+    "name": "dual heavy slice streak — cut 2",
+    "delay": 180,
+    "colorStops": ["#ffffff", "#ff6a00"],
+    "coreColor": "#ffe066",
+    "width": 24,
+    "coreWidth": 2,
+    "fadeDuration": 260,
+    "additive": true,
+    "motion": { "fromX": 120, "fromY": -120, "dx": -240, "dy": 240, "duration": 160 }
+  },
+  {
     "speed": 120,
     "emitAngle": "auto",
     "rate": 35,
@@ -11,19 +34,9 @@
     "gravity": 30,
     "additive": true,
     "shape": "spark",
-    "colorStops": [
-      "#ffffff",
-      "#ffe066",
-      "#ff6a00"
-    ],
+    "colorStops": ["#ffffff", "#ffe066", "#ff6a00"],
     "showHead": false,
-    "motion": {
-      "fromX": -120,
-      "fromY": -120,
-      "dx": 240,
-      "dy": 240,
-      "duration": 160
-    }
+    "motion": { "fromX": -120, "fromY": -120, "dx": 240, "dy": 240, "duration": 160 }
   },
   {
     "delay": 120,
@@ -40,11 +53,7 @@
     "additive": true,
     "rotation": true,
     "emitDuration": 100,
-    "colorStops": [
-      "#ffffff",
-      "#ffe066",
-      "#ff6a00"
-    ]
+    "colorStops": ["#ffffff", "#ffe066", "#ff6a00"]
   },
   {
     "delay": 120,
@@ -59,19 +68,9 @@
     "gravity": 30,
     "additive": true,
     "shape": "spark",
-    "colorStops": [
-      "#ffffff",
-      "#ffe066",
-      "#ff6a00"
-    ],
+    "colorStops": ["#ffffff", "#ffe066", "#ff6a00"],
     "showHead": false,
-    "motion": {
-      "fromX": 120,
-      "fromY": -120,
-      "dx": -240,
-      "dy": 240,
-      "duration": 160
-    }
+    "motion": { "fromX": 120, "fromY": -120, "dx": -240, "dy": 240, "duration": 160 }
   },
   {
     "delay": 240,
@@ -88,10 +87,6 @@
     "additive": true,
     "rotation": true,
     "emitDuration": 100,
-    "colorStops": [
-      "#ffffff",
-      "#ffe066",
-      "#ff6a00"
-    ]
+    "colorStops": ["#ffffff", "#ffe066", "#ff6a00"]
   }
 ]

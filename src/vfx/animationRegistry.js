@@ -102,17 +102,6 @@ const LEGACY_ANIMATIONS = {
     volume: 0.8,
     floatingNumber: { color: '#f97316' },
   },
-  old_ice_slash: {
-    targetCssClass:'animate-ice_shake',
-    duration: 1000,
-    sfx: [
-      { src: sfx('STREAM_SLASH.wav'), delay: 25,   volume: 0.3 },
-      { src: sfx('ICE'), delay: 100,   volume: 0.7 },
-      { src: sfx('ICE'), delay: 200, volume: 0.5 },
-      { src: sfx('ICE'), delay: 300, volume: 0.4 },
-    ],
-    floatingNumber: { color: '#7dd3fc' },
-  },
   cool_storm_strike: {
     ownerCssClass: 'animate-cool_storm_strike_user',
     duration: 1600,
