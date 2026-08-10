@@ -1,7 +1,7 @@
 {
   "id": "testing_enemy_ground",
   "name": "Testing Enemy Ground",
-  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "battle_background": "DOJO_7",
   "weather": "snow",
   "stages": [
     {

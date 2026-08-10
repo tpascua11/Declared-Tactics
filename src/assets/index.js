@@ -52,6 +52,15 @@ import SAMURAI_BATTLEFIELD_14 from './Scenario/samurai_battlefield_14.png';
 import SAMURAI_BATTLEFIELD_15 from './Scenario/samurai_battlefield_15.png';
 import SAMURAI_BATTLEFIELD_16 from './Scenario/SAMURAI_BATTLEFIELD_16.png';
 
+// Auto-registers every image dropped into Scenario/SAMURAI_MAP, keyed by
+// filename (no extension) — new files need no import/index.js edit here.
+const samuraiMapContext = require.context('./Scenario/SAMURAI_MAP', false, /\.(png|jpe?g)$/);
+const SAMURAI_MAP_BACKGROUNDS = {};
+samuraiMapContext.keys().forEach(path => {
+  const key = path.replace('./', '').replace(/\.(png|jpe?g)$/, '');
+  SAMURAI_MAP_BACKGROUNDS[key] = samuraiMapContext(path);
+});
+
 export const SCENARIO_BACKGROUNDS = {
   CITADEL_1_ENEMY:          SCENARIO_CITADEL_1_ENEMY,
   CABIN_WOOD_1_WIDE:        SCENARIO_CABIN_WOOD_1_WIDE,
@@ -75,6 +84,7 @@ export const SCENARIO_BACKGROUNDS = {
   samurai_battlefield_14:   SAMURAI_BATTLEFIELD_14,
   samurai_battlefield_15:   SAMURAI_BATTLEFIELD_15,
   samurai_battlefield_16:   SAMURAI_BATTLEFIELD_16,
+  ...SAMURAI_MAP_BACKGROUNDS,
 };
 
 // --- Enemy Portraits ---

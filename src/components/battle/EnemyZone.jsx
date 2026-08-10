@@ -80,17 +80,17 @@ export default function EnemyZone({ enemies, activeAnimations = {}, floatingNumb
   const bgImage = SCENARIO_BACKGROUNDS[battleBackground] ?? SCENARIO_BACKGROUNDS['CITADEL_1_ENEMY'];
   const offset = getMidCardOffset(enemies);
   return (
-    <div className="relative flex-1 min-h-0 mx-4 mt-3 mb-0 rounded-xl overflow-visible flex flex-row items-end justify-center gap-20 pb-10"
+    <div className="relative flex-1 min-h-0 mx-4 mt-3 mb-0 rounded-xl overflow-visible flex flex-row items-end justify-center gap-20 pb-4"
       style={{
         backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
+        backgroundSize: 'auto',
         backgroundPosition: 'center',
         border: '1px solid rgba(255, 255, 255, 0.6)',
         boxShadow: '0 0 12px rgba(255,255,255,0.25), 0 0 32px rgba(255,255,255,0.1), 0 8px 32px rgba(0,0,0,0.6)',
       }}>
 
       {/* Dark tint */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(10, 5, 20, 0.45)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'rgba(10, 5, 20, 0.20)' }} />
       {/* Scanlines */}
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 3px)' }} />
