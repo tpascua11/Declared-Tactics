@@ -1,0 +1,9 @@
+{
+  "name": "jump_forward_test",
+  "duration": 500,
+  "css": {
+    "owner": [
+      { "preset": "jump_forward", "start": 0, "duration": 500 }
+    ]
+  }
+}

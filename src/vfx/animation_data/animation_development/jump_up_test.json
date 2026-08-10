@@ -1,0 +1,9 @@
+{
+  "name": "jump_up_test",
+  "duration": 500,
+  "css": {
+    "owner": [
+      { "preset": "jump_up", "start": 0, "duration": 500 }
+    ]
+  }
+}

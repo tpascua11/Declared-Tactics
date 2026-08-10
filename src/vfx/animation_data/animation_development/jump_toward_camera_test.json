@@ -1,0 +1,9 @@
+{
+  "name": "jump_toward_camera_test",
+  "duration": 500,
+  "css": {
+    "owner": [
+      { "preset": "jump_toward_camera", "start": 0, "duration": 500 }
+    ]
+  }
+}

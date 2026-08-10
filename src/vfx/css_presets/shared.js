@@ -68,6 +68,57 @@ export const SHARED_PRESETS = {
     ],
   },
 
+  // Round-trips to --from-x/--from-y, so it's chain-safe like samurai_hard_step_left/right.
+  jump_up: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,   transform: 'translate(var(--from-x), var(--from-y))' },
+      { offset: 0.5, transform: 'translate(var(--from-x), calc(var(--from-y) - var(--jump-height, 60px)))' },
+      { offset: 1,   transform: 'translate(var(--from-x), var(--from-y))' },
+    ],
+  },
+
+  // Like jump_up but relocates — doesn't return to --from-x/--from-y.
+  jump_forward: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,   transform: 'translate(var(--from-x), var(--from-y))' },
+      { offset: 0.5, transform: 'translate(calc(var(--from-x) + var(--jump-distance, 80px) * 0.5), calc(var(--from-y) - var(--jump-height, 60px)))' },
+      { offset: 1,   transform: 'translate(calc(var(--from-x) + var(--jump-distance, 80px)), var(--from-y))' },
+    ],
+  },
+
+  // Fakes a Z-axis leap with scale, since nothing here sets `perspective` for real translateZ.
+  jump_toward_camera: {
+    easing: 'ease-in-out',
+    keyframes: [
+      { offset: 0,   transform: 'translate(var(--from-x), var(--from-y)) scale(1)',                                                      filter: 'brightness(1)' },
+      { offset: 0.5, transform: 'translate(var(--from-x), calc(var(--from-y) - var(--jump-height, 40px))) scale(var(--jump-scale, 1.35))', filter: 'brightness(1.15)' },
+      { offset: 1,   transform: 'translate(var(--from-x), var(--from-y)) scale(1)',                                                      filter: 'brightness(1)' },
+    ],
+  },
+
+  // Vanish off-screen-top instantly, a brief hold just to register the
+  // teleport, then fall back down over almost the entire duration. One
+  // animation (two separate presets duel over `transform` when played
+  // back-to-back). Duplicate offset-0 keyframes = a hard cut (zero
+  // interpolation) for the vanish; ease-in on the fall-back segment =
+  // starts slow, accelerates, like a drop. offset can't reference a CSS
+  // var (WAAPI reads it as a plain number), so the 0.05 split is
+  // hardcoded rather than tunable like --jump-height. Also forces opacity
+  // 0 while hidden then fades back in on the fall — makes this preset
+  // visibility-safe on its own (e.g. chained after shinsoku_vanish, whose
+  // opacity:0 otherwise never gets restored).
+  teleport_out_and_back_top: {
+    easing: 'ease-in',
+    keyframes: [
+      { offset: 0,    transform: 'translate(var(--from-x), var(--from-y))',                            opacity: 1 },
+      { offset: 0,    transform: 'translate(var(--from-x), calc(var(--from-y) - 150vh))',               opacity: 0 },
+      { offset: 0.05, transform: 'translate(var(--from-x), calc(var(--from-y) - 150vh))',               opacity: 0 },
+      { offset: 1,    transform: 'translate(var(--from-x), var(--from-y))',                             opacity: 1 },
+    ],
+  },
+
   // Sidestep — evaded attack, a quick horizontal dodge-and-settle wobble.
   // Darts front-loaded (done by ~0.46) so the ghost-to-solid fade gets the
   // back ~54% of the run — a longer lingering recovery at the same total.

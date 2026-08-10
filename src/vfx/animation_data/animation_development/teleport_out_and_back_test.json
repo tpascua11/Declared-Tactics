@@ -1,0 +1,14 @@
+{
+  "name": "teleport_out_and_back_test",
+  "duration": 1000,
+  "css": {
+    "owner": [
+      { "preset": "teleport_out_and_back_top", "start": 0, "duration": 1000 }
+    ]
+  },
+  "dom": {
+    "owner": [
+      { "preset": "afterimage_trail", "start": 0, "duration": 1000, "tickRate": 30, "count": 8, "fadeDuration": 500 }
+    ]
+  }
+}
