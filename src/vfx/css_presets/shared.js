@@ -108,9 +108,13 @@ export const SHARED_PRESETS = {
   // hardcoded rather than tunable like --jump-height. Also forces opacity
   // 0 while hidden then fades back in on the fall — makes this preset
   // visibility-safe on its own (e.g. chained after shinsoku_vanish, whose
-  // opacity:0 otherwise never gets restored).
+  // opacity:0 otherwise never gets restored). fill:'forwards' so the
+  // landed opacity:1 sticks around after this animation's own duration
+  // ends — without it, shinsoku_vanish's still-active forwards-held
+  // opacity:0 underneath reasserts itself and the character vanishes again.
   teleport_out_and_back_top: {
     easing: 'ease-in',
+    fill: 'forwards',
     keyframes: [
       { offset: 0,    transform: 'translate(var(--from-x), var(--from-y))',                            opacity: 1 },
       { offset: 0,    transform: 'translate(var(--from-x), calc(var(--from-y) - 150vh))',               opacity: 0 },

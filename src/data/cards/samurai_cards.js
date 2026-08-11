@@ -344,7 +344,7 @@ export const SAMURAI_CARDS = [
     image: 'FOX_EARTH_SLASH',
     color: '#a16207',
     desc: '150 damage to all enemies. Locks each target\'s next queued action, cancelling it before it fires. Costs 3 Battle Spirit.',
-    animation: 'full_earth_slash',
+    animation: 'earth_slash_jump',
     animation_intensity: 1.2,
     tags: {
       self: [],

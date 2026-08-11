@@ -58,6 +58,8 @@ export default function VfxEditorScreen() {
   const [reactionAnims, setReactionAnims] = useState(
     Object.fromEntries(Object.entries(REACTIONS).map(([k, r]) => [k, r.defaultAnim]))
   );
+  // Live ms readout while a preview plays, for timing new entries against — null when idle.
+  const [elapsedMs, setElapsedMs] = useState(null);
 
   // Sync textarea when selected animation changes
   useEffect(() => {
@@ -84,6 +86,18 @@ export default function VfxEditorScreen() {
     const config = r
       ? fuseDeflect(ANIMATIONS[selected], ANIMATIONS[reactionAnims[reaction]], r.fuseOptions)
       : ANIMATIONS[selected];
+
+    // Live ms counter, ticked via rAF against this play's own start time —
+    // read it off the UI to know what `start` to write for a new entry.
+    const playStart = performance.now();
+    const totalDuration = config?.duration ?? 0;
+    setElapsedMs(0);
+    (function tick() {
+      const now = performance.now() - playStart;
+      if (now >= totalDuration) { setElapsedMs(totalDuration); return; }
+      setElapsedMs(Math.round(now));
+      requestAnimationFrame(tick);
+    })();
 
     // Parse local JSON — use it for Pixi, leave the file untouched
     let parsedJson = null;
@@ -180,14 +194,13 @@ export default function VfxEditorScreen() {
         });
       }
       if (config.pixi) {
-        // Pixi channel — same shape as css/sfx: dispatch each named entry
-        // at its start. Aimed at the defender (owner too: reactions play
-        // entirely "at" the reactor). noFallback: unauthored names play
-        // nothing, not the debug burst.
-        const enemyEl = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
-        if (enemyEl) {
-          const er = enemyEl.getBoundingClientRect();
-          const pos = { x: er.left + er.width / 2, y: er.top + er.height / 2 };
+        // Same attackerEl/defenderEl swap as the css block above — was hardcoded to enemyEl.
+        const enemyEl  = document.querySelector(`[data-character-id="${ENEMY_ID}"]`);
+        const playerEl = document.querySelector(`[data-character-id="${MOCK_PLAYER.id}"]`);
+        const defenderEl = attackerIsEnemy ? playerEl : enemyEl;
+        if (defenderEl) {
+          const dr = defenderEl.getBoundingClientRect();
+          const pos = { x: dr.left + dr.width / 2, y: dr.top + dr.height / 2 };
           config.pixi.forEach(({ name, start }) => {
             setTimeout(() => window.dispatchEvent(new CustomEvent('play-thumos-animation', {
               detail: { animType: name, target: pos, owner: pos, x: pos.x, y: pos.y, noFallback: true },
@@ -368,6 +381,10 @@ export default function VfxEditorScreen() {
           >
             PLAY
           </button>
+
+          <div className="w-20 text-right font-mono text-sm text-[#4da6ff]">
+            {elapsedMs !== null ? `${elapsedMs}ms` : '—'}
+          </div>
         </div>
 
       </div>
