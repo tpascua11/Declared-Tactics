@@ -23,7 +23,8 @@
     ]
   },
   "pixi": [
-    { "name": "full_earth_slash", "start": 1400 }
+    { "name": "earth_slash_part_1", "start": 1225 },
+    { "name": "earth_slash_part_2_v2", "start": 1400 }
   ],
   "floatingNumber": { "color": "#8b5a2b" }
 }

@@ -15,10 +15,9 @@ export const GENERAL_MOVEMENT_PRESETS = {
     ],
   },
 
-  // No --from-x/--from-y on purpose: BattleScreen doesn't call
-  // captureCurrentTransform yet (only VfxEditorScreen does), so a preset
-  // meant for real battles has to start/end at rest instead of chaining.
-  // distance/power stay unmultiplied against each other — applyDynamicVars
+  // No --from-x/--from-y on purpose: starts/ends at rest instead of
+  // chaining, since this fires mid-combo where "rest" is the known
+  // position. distance/power stay unmultiplied against each other — applyDynamicVars
   // gives both a px unit, and px*px isn't a valid calc() length.
   snap: {
     easing: 'ease-out',

@@ -1,0 +1,16 @@
+{
+  "name": "earth_slash_part_2_v2",
+  "duration": 800,
+  "sfx": [
+    { "src": "EARTH_SHATTER.wav", "start": 0, "volume": 0.5 }
+  ],
+  "css": {
+    "target": [
+      { "preset": "earthquake_shake", "start": 0, "duration": 800 }
+    ]
+  },
+  "pixi": [
+    { "name": "earth_slash_part_2_v2", "start": 0 }
+  ],
+  "floatingNumber": { "color": "#8b5a2b" }
+}

@@ -11,7 +11,7 @@ import { getEffectiveActionSlots } from '../battle/engine/battle_engine';
 import { MUSIC_REGISTRY, VICTORY_MUSIC, DEFEAT_MUSIC } from '../assets/Music/index';
 import { useMusic } from '../hooks/useMusic';
 import { ANIMATIONS, playBattleSfx, sfx } from '../vfx/animationRegistry';
-import CSS_PRESETS, { playPreset, applyDynamicVars } from '../vfx/css_presets';
+import CSS_PRESETS, { playPreset, applyDynamicVars, captureCurrentTransform } from '../vfx/css_presets';
 import { getForwardSign } from '../vfx/direction';
 import DOM_PRESETS, { playDomPreset, clearAllDomSpawns } from '../vfx/dom_presets';
 import fuseDeflect from '../vfx/fuseDeflect';
@@ -293,6 +293,7 @@ export default function BattleScreen() {
           if (!p || !targetEl) return;
           lastEnd = Math.max(lastEnd, start + duration);
           setTimeout(() => {
+            captureCurrentTransform(targetEl);
             applyDynamicVars(targetEl, params);
             spawnedAnims.push(playPreset(targetEl, p, { duration, iterations }));
           }, start);
@@ -302,6 +303,7 @@ export default function BattleScreen() {
           if (!p || !ownerEl) return;
           lastEnd = Math.max(lastEnd, start + duration);
           setTimeout(() => {
+            captureCurrentTransform(ownerEl);
             applyDynamicVars(ownerEl, params);
             spawnedAnims.push(playPreset(ownerEl, p, { duration, iterations }));
           }, start);
