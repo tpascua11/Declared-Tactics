@@ -247,6 +247,11 @@ export default function BattleScreen() {
     if (!anims?.length) return;
 
     const timers = [];
+    // AOE hits fan out into one pendingAnimation entry per target, all
+    // sharing the same ownerId — config.css.owner (windup/lunge etc.) is
+    // the owner's own animation, not per-hit, so only the first entry for
+    // a given owner plays it. Mirrors skipSfx's "first hit only" rule.
+    const ownerCssPlayed = new Set();
     anims.forEach(anim => {
       const config = resolveAnimConfig(anim);
       if (!config) return;
@@ -298,16 +303,20 @@ export default function BattleScreen() {
             spawnedAnims.push(playPreset(targetEl, p, { duration, iterations }));
           }, start);
         });
-        (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations, ...params }) => {
-          const p = CSS_PRESETS[preset];
-          if (!p || !ownerEl) return;
-          lastEnd = Math.max(lastEnd, start + duration);
-          setTimeout(() => {
-            captureCurrentTransform(ownerEl);
-            applyDynamicVars(ownerEl, params);
-            spawnedAnims.push(playPreset(ownerEl, p, { duration, iterations }));
-          }, start);
-        });
+        const ownerCssAlreadyPlayed = anim.ownerId && ownerCssPlayed.has(anim.ownerId);
+        if (anim.ownerId) ownerCssPlayed.add(anim.ownerId);
+        if (!ownerCssAlreadyPlayed) {
+          (config.css.owner ?? []).forEach(({ preset, start = 0, duration, iterations, ...params }) => {
+            const p = CSS_PRESETS[preset];
+            if (!p || !ownerEl) return;
+            lastEnd = Math.max(lastEnd, start + duration);
+            setTimeout(() => {
+              captureCurrentTransform(ownerEl);
+              applyDynamicVars(ownerEl, params);
+              spawnedAnims.push(playPreset(ownerEl, p, { duration, iterations }));
+            }, start);
+          });
+        }
         animClearTimersRef.current.push(setTimeout(() => {
           spawnedAnims.forEach(a => a?.cancel());
         }, lastEnd));

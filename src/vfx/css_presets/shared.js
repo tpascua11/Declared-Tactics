@@ -78,6 +78,21 @@ export const SHARED_PRESETS = {
     ],
   },
 
+  // Knocked upward and held there — fill:'forwards' so it doesn't drop
+  // back down on its own; relies on the timeline's cancel-at-lastEnd
+  // cleanup (BattleScreen/VfxEditorScreen) to snap it back once the
+  // whole attack's css entries finish. Meant to chain into a later
+  // preset that also reads --from-x/--from-y (e.g. tornado_slash_impact_x2)
+  // so that preset inherits the lifted height instead of resetting to it.
+  knock_up_hold: {
+    easing: 'ease-out',
+    fill: 'forwards',
+    keyframes: [
+      { offset: 0, transform: 'translate(var(--from-x), var(--from-y))' },
+      { offset: 1, transform: 'translate(var(--from-x), calc(var(--from-y) - var(--knock-height, 50px)))' },
+    ],
+  },
+
   // Like jump_up but relocates — doesn't return to --from-x/--from-y.
   jump_forward: {
     easing: 'ease-in-out',
