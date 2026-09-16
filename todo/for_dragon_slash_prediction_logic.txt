@@ -1,0 +1,217 @@
+DRAGON SLASH — DEATH-PREDICTION SPEED LOGIC
+============================================
+Origin: a samurai card that should go faster if its owner is about to die
+from damage already queued ahead of it this BATTLE_STEP. Design discussion
+ballooned into a broader ExecuteAction architecture question — both are
+captured here since the second one changes how the first should be built.
+
+
+═══════════════════════════════════════════
+PART 1 — FOR AI (technical, load-bearing)
+═══════════════════════════════════════════
+
+GOAL
+----
+A SPEED_CALC tag/handler that boosts calc_speed when the owner is predicted
+to take lethal damage from actions faster than it in the current
+SpeedCheckAllAvailableActions() sort.
+
+WHY THIS IS NOT A SIMPLE SPEED_CALC HANDLER
+--------------------------------------------
+SpeedCheckAllAvailableActions (src/battle/engine/battle_engine.js:58) computes
+each character's calc_speed independently — SPEED_CALC handlers only receive
+{ action, owner } for their OWN character (line 71: speedContext), never the
+full cross-character action list. The full sorted list only exists AFTER all
+individual calc_speed values are computed. So "am I slower than a lethal
+hit" cannot be answered inside a normal SPEED_CALC handler in one pass.
+
+Required shape: a two-phase step —
+  1. Run SpeedCheckAllAvailableActions() once to get the provisional sorted
+     list (everyone's calc_speed computed WITHOUT the death-prediction boost).
+  2. For the character carrying this card, sum predicted damage from every
+     action ahead of it in that list that targets it.
+  3. If predicted damage >= character.health, re-run this character's speed
+     calc with the boost applied, and re-sort.
+This means the boost tag's SPEED_CALC handler cannot self-contain the logic —
+the caller (wherever SpeedCheckAllAvailableActions currently gets invoked,
+almost certainly the reducer/BATTLE_STEP driver in src/battle/reducer.js)
+needs to orchestrate the two-phase check, or SpeedCheckAllAvailableActions
+itself needs an optional second pass. Find the call site before designing
+the handler signature.
+
+DAMAGE PREDICTION MECHANISM — DECIDED
+--------------------------------------
+Do NOT hand-roll a parallel damage-math function. ExecuteAction already does
+`structuredClone(state)` at the top (battle_engine.js:391) and is a pure
+function: (action, interaction_result, state) -> { newState, logs, ... }.
+It returns damageDealt. This means:
+  - Speculative resolution is already free/safe: clone state, call
+    ExecuteAction(action, 'EXECUTE', clonedState), read
+    result.newState.characters.find(c => c.id === targetId).health,
+    discard the clone.
+  - This is MORE accurate than a heuristic (raw DAMAGE tag power) because it
+    naturally includes INJECT_MULT/INJECT_FLAT attacker buffs (MOMENTUM,
+    BATTOJUTSU, FIRE_CHARGE, MAGIC_CHARGE), DAMAGE_REDUCE mitigation, and
+    ON_INCOMING evasion/parry — all for free, same code path as real combat.
+  - No RNG exists in the resolution pipeline (grep confirmed: Math.random
+    only appears in src/battle/engine/enemy_ai.js, for AI card SELECTION,
+    not resolution) — so a speculative ExecuteAction call and the eventual
+    real one will always agree. If RNG is ever added to ON_INCOMING/
+    DAMAGE_REDUCE resolution, this determinism guarantee breaks and
+    speculative prediction needs a seeded/injectable RNG to stay honest.
+  - Perf is a non-issue: battles have a handful of characters with short
+    tag pools; structuredClone of that graph is sub-millisecond, and this
+    only runs once per BATTLE_STEP (setTimeout-paced), not per frame.
+
+Do not build the earlier-discussed heuristic (estimateActionDamage summing
+raw DAMAGE tag power + manually replaying INJECT_MULT/INJECT_FLAT). It was
+superseded once we confirmed ExecuteAction is already speculation-safe.
+
+IMPLEMENTATION SKETCH
+----------------------
+New helper, probably in src/battle/engine/preview_utils.js (existing home for
+"what would happen at execution time" functions):
+
+  function predictIncomingDamage(character, provisionalSortedActions, state) {
+    // provisionalSortedActions = output of SpeedCheckAllAvailableActions()
+    // filter to actions ahead of character's own action, targeting character
+    // for each: clone state, ExecuteAction(action, 'EXECUTE', clone),
+    //   read resulting character.health, diff against pre-health = damage
+    // sum and return
+  }
+
+Then wire into the boost tag's SPEED_CALC handler via whatever extra context
+the two-phase caller threads through (see "not a simple handler" above).
+
+RELATED ARCHITECTURE THREAD — DEFERRED-COMMIT ExecuteAction
+-------------------------------------------------------------
+A broader refactor was discussed that would make prediction even cheaper
+(no clone needed at all) and also unlocks smarter CLASH resolution in
+InteractionCheck (battle_engine.js:102, currently only compares calc_speed
+and tag_type — no visibility into either action's actual effect).
+
+Proposal: split what ExecuteAction touches into two categories.
+  1. TERMINAL STAT WRITES — character.health, character.temp_hp,
+     character.resources[x].current. Currently written inline at multiple
+     points (e.g. damage delivery loop lines 552-559, HealHandler in
+     delivery_handlers.js:19-24, resource cost deduction lines 422-424,
+     GainResourceHandler in delivery_handlers.js:42-48, burn/heal-over-time
+     in turn_phase_handlers.js:10-11 and :26). These should defer to a single
+     commit call at the very end of ExecuteAction (and equivalently at the
+     end of runPhaseOnTurnStart/runPhaseEndOfTurn for DoT/HoT). Once nothing
+     writes to real character fields until that one commit point, prediction
+     becomes: run the compute phase against the REAL live characters
+     (read-only, no clone), collect the would-be effects, and simply don't
+     call commit. Same code path as real execution, zero clone cost.
+     Concrete bug this also fixes: HealHandler's temp_hp-cap math
+     (delivery_handlers.js:21-23) is a SEPARATE implementation of the same
+     "absorb via temp_hp first" rule the damage loop implements independently
+     (battle_engine.js:554-556). Two copies of one rule, drift risk.
+  2. TAG POOL — NOT part of the "defer to end" rule. The phase pipeline
+     (PRE_ACTION -> DAMAGE_REDUCE -> DELIVERY -> ON_RECEIVE) is inherently
+     sequential working state: each phase's tag consumed:true/false decides
+     what the NEXT phase in the SAME action's resolution even sees
+     (e.g. a 1-charge EVADING tag must vanish before ON_RECEIVE if it fired).
+     This cannot be deferred to end-of-function without breaking existing
+     intentional sequencing.
+
+     Refinement for the tag pool specifically: two different "temporary" tag
+     concepts currently share one array by convention, not by structural
+     guarantee, and should be told apart:
+       a) action_tags (battle_engine.js:408) — modifiers scoped to ONE
+          action's resolution only. Currently merged into
+          owner.active_tag_pool at the start, and rely on each tag opting
+          into the ACTION_END phase (runPhaseActionEnd, line 273) to
+          self-remove. Failure mode: a new tag that forgets to declare
+          ACTION_END leaks into persistent state.
+          FIX: build a WORKING POOL per ExecuteAction call =
+          [...owner.active_tag_pool, ...action.action_tags]. Run phases
+          against the working copy as today. At commit: entries that
+          originated from the real pool and survived write back; entries
+          that originated from the real pool and were consumed are removed
+          from it; entries that originated from action_tags are simply never
+          written back — scope ends by construction, no opt-in phase needed.
+       b) reset: 'ON_OWNER_ACTION' tags (defense_handlers.js, incoming_
+          handlers.js, elemental_handlers.js SHOCKED) — genuinely PERSISTENT
+          character state with an expiry condition tied to "until owner acts
+          again," stripped at the START of the owner's NEXT action
+          (battle_engine.js:243-246, runPhasePreAction). Do NOT fold these
+          into the action-scoped working-pool concept — different lifetime,
+          already correctly modeled as real persistent-pool citizens.
+
+STATUS: discussion only, nothing implemented. If picking this up, confirm
+scope with the user first (small-steps convention in CLAUDE.md — one
+file/decision per turn even on an agreed plan) before touching
+battle_engine.js. Recommended order: (1) the two-phase speed-check wiring
+for the actual card, using speculative ExecuteAction — ships the feature.
+(2) deferred-commit refactor as a separate follow-up, since it's a
+cross-cutting change to ExecuteAction/turn_phase handlers independent of
+whether the card ships.
+
+
+═══════════════════════════════════════════
+PART 2 — FOR HUMANS (plain language)
+═══════════════════════════════════════════
+
+WHAT WE'RE BUILDING
+--------------------
+A samurai attack that senses danger: if the character is about to get hit
+hard enough to die by attacks that are faster and already lined up this
+turn, the card should speed itself up so it can act first instead of dying
+before it gets to swing.
+
+WHY IT'S TRICKIER THAN IT SOUNDS
+----------------------------------
+The game figures out turn order by asking every character "how fast is your
+next move?" all at once, then sorting. But a card that asks "am I about to
+die?" needs to know the sorted order FIRST to check who's faster and how
+much damage they'd deal — which creates a chicken-and-egg problem, since
+normally speed is decided before anyone knows the order. So this has to work
+in two passes: figure out the normal order first, check if the owner would
+die from what's ahead of them in that order, and only then decide whether to
+boost this card's speed and re-sort.
+
+HOW WE DECIDED TO PREDICT THE DAMAGE
+---------------------------------------
+Our first instinct was to write a simplified "rough guess" calculator that
+just adds up the raw damage numbers of the attacks that would land first.
+But then we realized something better: the game's real combat resolver
+already works on a disposable copy of the game state (it clones everything
+before making any changes, so it can't accidentally corrupt the real fight).
+That means we can just run the REAL combat logic on a throwaway copy to see
+exactly what would happen — full accuracy, including buffs, armor, dodging,
+all of it — and then throw the copy away without it ever affecting the real
+battle. This is the same trick tactics games like Into the Breach use to
+show you an exact preview of "if you do this, here's what happens." It's
+free/cheap for this game since fights only have a few characters, and this
+only needs to run once per turn step, not every animation frame.
+
+THE BIGGER IDEA THAT CAME OUT OF THIS
+----------------------------------------
+While talking this through, we noticed the combat code currently updates a
+character's health/resources at several different scattered points while
+it's resolving one attack, instead of figuring everything out first and
+applying it all at once at the very end. If we changed it so nothing "real"
+gets written until one final step, predicting outcomes becomes even
+cheaper — you wouldn't even need to make a throwaway copy anymore, you could
+just run the calculation for real and choose not to save the result. It
+would also let us build smarter clash resolution (two attacks colliding at
+the same speed) since we could compare what BOTH attacks would actually do
+before deciding who wins, instead of only comparing raw speed numbers like
+it does today.
+
+The one thing that has to stay as-is: the temporary bookkeeping tags a card
+uses WHILE it's resolving (like "this hit consumed my dodge charge") need to
+keep working step-by-step in order, because later steps depend on what
+earlier steps in the same attack already decided. That part is a different
+kind of "temporary" than a character's health/resources, and shouldn't be
+lumped into the same "do it all at the end" change.
+
+WHERE THIS STANDS
+-------------------
+Nothing has been built yet — this file is the design conversation captured
+so it isn't lost. The actual card (the speed-boost-on-danger effect) can be
+built now using the "run the real combat logic on a throwaway copy" trick.
+The bigger cleanup (batching all the health/resource writes to one final
+step) is a separate, larger change to the combat engine that's worth doing
+for its own sake later, but isn't required to ship the card.

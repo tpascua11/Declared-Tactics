@@ -15,7 +15,7 @@ import {
   MAP_ICON_SNOW_AND_WATER, MAP_ICON_SNOW_AND_WATER_2, MAP_ICON_SNOWY_FIELD_BAMBOO, MAP_ICON_SNOWY_FIELD_DEN,
   MAP_ICON_SUNSET, MAP_ICON_SUNSET_2, MAP_ICON_TREE_AT_SNOW, MAP_ICON_WATER,
 } from '../assets';
-import SUNSWORD_BG from '../assets/World/Sunsword.png';
+import SUNSWORD_BG from '../assets/World/Sunsword2.png';
 import { setWeather } from '../vfx/weatherBus';
 import samuraiMapTheme from '../assets/Music/SAMURAI_MAP_THEME_1.mp3';
 import { useMusic } from '../hooks/useMusic';
@@ -78,9 +78,9 @@ const MAP_ICON_LOOKUP = {
 const GRID_TILE = 128;
 const BOX_GAP   = 2;
 
-// Sunsword.png's native pixel size (checked via Get-Image on the file).
-const SUNSWORD_W = 1777;
-const SUNSWORD_H = 885;
+// Sunsword2.png's native pixel size (checked via Get-Image on the file).
+const SUNSWORD_W = 1672;
+const SUNSWORD_H = 941;
 
 const BOX_COLOR = { color: "#4da6ff", dim: "rgba(77,166,255,0.10)", glow: "rgba(77,166,255,0.4)" };
 
@@ -162,6 +162,9 @@ const STATIC_STYLES = {
     flex: 1,
     position: "relative",
     overflow: "auto",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#000000",
     backgroundImage: [
       "radial-gradient(ellipse at 50% 38%, rgba(30,20,50,0.35), transparent 65%)",
@@ -169,13 +172,12 @@ const STATIC_STYLES = {
     ].join(","),
     boxShadow: "inset 0 0 200px rgba(0,0,0,0.9)",
   },
-  // Sunsword.png forced to 2x its native pixel size (1777x885 -> 3554x1770)
-  // just to see it blown up — the canvas is sized to match so main can
-  // scroll/pan across the whole thing instead of clipping it.
+  // Sunsword.png at its native pixel size (1777x885) — canvas matches so
+  // main can scroll/pan if the viewport is smaller than the image.
   canvas: {
     position: "relative",
-    width: SUNSWORD_W * 2,
-    height: SUNSWORD_H * 2,
+    width: SUNSWORD_W,
+    height: SUNSWORD_H,
     backgroundImage: `url(${SUNSWORD_BG})`,
     backgroundSize: "100% 100%",
     backgroundRepeat: "no-repeat",
@@ -189,6 +191,68 @@ const STATIC_STYLES = {
     overflow: "hidden",
   },
 };
+
+// One-off try: a location as a card (art + title) instead of a bare icon box.
+const CARD_W = 64;
+const CARD_H = 80;
+
+const LocationCard = ({ title, mapIconSrc, isSelected }) => (
+  <div
+    className={isSelected ? "marching-ants" : undefined}
+    style={{
+      width: CARD_W,
+      height: CARD_H,
+      display: "flex",
+      flexDirection: "column",
+      background: "#0a0e18",
+      border: "2px solid #000000",
+      borderRadius: 8,
+      boxShadow: "0 0 16px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.95), 0 4px 18px rgba(0,0,0,0.6)",
+      overflow: "hidden",
+      cursor: "pointer",
+    }}
+  >
+    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(77,166,255,0.08)" }}>
+      <img
+        src={mapIconSrc}
+        alt=""
+        style={{ width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated", pointerEvents: "none" }}
+      />
+    </div>
+    <div
+      style={{
+        padding: "3px 4px",
+        borderTop: "1px solid rgba(77,166,255,0.25)",
+        fontSize: 6.5,
+        letterSpacing: 0.5,
+        textAlign: "center",
+        color: "#dde",
+        textTransform: "uppercase",
+      }}
+    >
+      {title}
+    </div>
+  </div>
+);
+
+// First 10 samurai icons, just to see a spread of cards at once.
+const TRY_CARDS = SAMURAI_ICON_KEYS.slice(0, 10).map(key => ({
+  id: key,
+  title: key.replace(/_/g, ' '),
+  icon: MAP_ICON_LOOKUP[key],
+}));
+
+// Selected-card border pulses gold via an animated box-shadow/border-color.
+const MARCHING_ANTS_CSS = `
+@keyframes gold-pulse {
+  0%, 100% { border-color: rgba(255,215,0,0.4); box-shadow: 0 0 6px rgba(255,215,0,0.4); }
+  50%      { border-color: rgba(255,215,0,1);   box-shadow: 0 0 18px rgba(255,215,0,0.9); }
+}
+.marching-ants {
+  border-color: gold !important;
+  animation: gold-pulse 1.2s ease-in-out infinite;
+}
+`;
 
 const EmptyBox = ({ isSelected, mapIconSrc, onClick }) => {
   const showBorder = isSelected || !!mapIconSrc;
@@ -237,6 +301,40 @@ export default function WorldMapScreen2() {
   const [gridDims, setGridDims] = useState({ cols: 0, rows: 0 });
   const gridWrapRef = useRef(null);
 
+  // Temporary drag test for LocationCard — 10 cards, each independently
+  // draggable. Positions keyed by id; dragRef tracks which id is active.
+  const [cardPositions, setCardPositions] = useState(() =>
+    TRY_CARDS.reduce((acc, c, i) => {
+      acc[c.id] = { x: 24 + (i % 5) * 90, y: 24 + Math.floor(i / 5) * 110 };
+      return acc;
+    }, {})
+  );
+  const dragRef = useRef(null);
+  const [selectedCardId, setSelectedCardId] = useState(null);
+
+  const handleCardPointerDown = useCallback((id) => (e) => {
+    const pos = cardPositions[id];
+    dragRef.current = { id, startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y, moved: false };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }, [cardPositions]);
+
+  const handleCardPointerMove = useCallback((e) => {
+    if (!dragRef.current) return;
+    const { id, startX, startY, origX, origY } = dragRef.current;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragRef.current.moved = true;
+    setCardPositions(prev => ({ ...prev, [id]: { x: origX + dx, y: origY + dy } }));
+  }, []);
+
+  // setPointerCapture on the drag wrapper can swallow the child <LocationCard>'s
+  // native click, so selection is driven here instead — a pointer-up with no
+  // meaningful movement counts as a click.
+  const handleCardPointerUp = useCallback(() => {
+    if (dragRef.current && !dragRef.current.moved) setSelectedCardId(dragRef.current.id);
+    dragRef.current = null;
+  }, []);
+
   useMusic(samuraiMapTheme, { loop: true, baseVolume: 0.5 });
 
   useEffect(() => {
@@ -281,6 +379,7 @@ export default function WorldMapScreen2() {
 
   return (
     <div style={STATIC_STYLES.root}>
+      <style>{MARCHING_ANTS_CSS}</style>
       <div style={STATIC_STYLES.scanlines} />
 
       <div style={STATIC_STYLES.topbar}>
@@ -291,6 +390,21 @@ export default function WorldMapScreen2() {
 
       <div style={STATIC_STYLES.main}>
         <div style={STATIC_STYLES.canvas}>
+          {TRY_CARDS.map(c => (
+            <div
+              key={c.id}
+              style={{ position: "absolute", top: cardPositions[c.id].y, left: cardPositions[c.id].x, zIndex: 5, touchAction: "none" }}
+              onPointerDown={handleCardPointerDown(c.id)}
+              onPointerMove={handleCardPointerMove}
+              onPointerUp={handleCardPointerUp}
+            >
+              <LocationCard
+                title={c.title}
+                mapIconSrc={c.icon}
+                isSelected={selectedCardId === c.id}
+              />
+            </div>
+          ))}
           <div ref={gridWrapRef} style={STATIC_STYLES.gridWrap}>
             <div style={gridStyle}>
               {Array.from({ length: gridDims.cols * gridDims.rows }, (_, i) => {

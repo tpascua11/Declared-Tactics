@@ -55,4 +55,27 @@ export function captureCurrentTransform(el) {
   el.style.setProperty('--from-y', `${m.m42}px`);
 }
 
+// Unaffected by CSS `transform` (own or ancestor's, e.g. GameCanvas's
+// scale-to-fit) — unlike getBoundingClientRect (viewport px, post-scale),
+// stays in translate()'s own unit space.
+function restingLayoutPos(el) {
+  let x = 0, y = 0, node = el;
+  while (node) {
+    x += node.offsetLeft;
+    y += node.offsetTop;
+    node = node.offsetParent;
+  }
+  return { x, y };
+}
+
+// --target-x/--target-y: the translate() value that lands ownerEl exactly
+// on targetEl. Call before playPreset(), same spot as captureCurrentTransform.
+export function captureTargetOffset(ownerEl, targetEl) {
+  if (!ownerEl || !targetEl) return;
+  const o = restingLayoutPos(ownerEl);
+  const t = restingLayoutPos(targetEl);
+  ownerEl.style.setProperty('--target-x', `${t.x - o.x}px`);
+  ownerEl.style.setProperty('--target-y', `${t.y - o.y}px`);
+}
+
 export default CSS_PRESETS;
