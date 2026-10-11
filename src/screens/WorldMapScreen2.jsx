@@ -15,7 +15,12 @@ import {
   MAP_ICON_SNOW_AND_WATER, MAP_ICON_SNOW_AND_WATER_2, MAP_ICON_SNOWY_FIELD_BAMBOO, MAP_ICON_SNOWY_FIELD_DEN,
   MAP_ICON_SUNSET, MAP_ICON_SUNSET_2, MAP_ICON_TREE_AT_SNOW, MAP_ICON_WATER,
 } from '../assets';
-import SUNSWORD_BG from '../assets/World/Sunsword2.png';
+import SUNSWORD_BG from '../assets/World/Sunsword7.png';
+import IMAGE_GEN_1 from '../assets/World_Map_Icons/image-gen-1.png';
+import IMAGE_GEN_2 from '../assets/World_Map_Icons/image-gen-2.png';
+import IMAGE_GEN_3 from '../assets/World_Map_Icons/image-gen-3.png';
+import IMAGE_GEN_4 from '../assets/World_Map_Icons/image-gen-4.png';
+import IMAGE_GEN_5 from '../assets/World_Map_Icons/image-gen-5.png';
 import { setWeather } from '../vfx/weatherBus';
 import samuraiMapTheme from '../assets/Music/SAMURAI_MAP_THEME_1.mp3';
 import { useMusic } from '../hooks/useMusic';
@@ -78,7 +83,7 @@ const MAP_ICON_LOOKUP = {
 const GRID_TILE = 128;
 const BOX_GAP   = 2;
 
-// Sunsword2.png's native pixel size (checked via Get-Image on the file).
+// Sunsword7.png's native pixel size (checked via Get-Image on the file).
 const SUNSWORD_W = 1672;
 const SUNSWORD_H = 941;
 
@@ -193,26 +198,24 @@ const STATIC_STYLES = {
 };
 
 // One-off try: a location as a card (art + title) instead of a bare icon box.
-const CARD_W = 64;
-const CARD_H = 80;
+const CARD_W = 128;
+const CARD_H = 160;
 
 const LocationCard = ({ title, mapIconSrc, isSelected }) => (
   <div
-    className={isSelected ? "marching-ants" : undefined}
     style={{
       width: CARD_W,
       height: CARD_H,
       display: "flex",
       flexDirection: "column",
-      background: "#0a0e18",
-      border: "2px solid #000000",
+      background: "transparent",
+      border: "2px solid transparent",
       borderRadius: 8,
-      boxShadow: "0 0 16px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.95), 0 4px 18px rgba(0,0,0,0.6)",
       overflow: "hidden",
       cursor: "pointer",
     }}
   >
-    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(77,166,255,0.08)" }}>
+    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <img
         src={mapIconSrc}
         alt=""
@@ -220,13 +223,20 @@ const LocationCard = ({ title, mapIconSrc, isSelected }) => (
       />
     </div>
     <div
+      className={isSelected ? "title-selected" : undefined}
       style={{
-        padding: "3px 4px",
-        borderTop: "1px solid rgba(77,166,255,0.25)",
-        fontSize: 6.5,
+        position: "relative",
+        border: "2px solid transparent",
+        margin: "-24px 0 4px",
+        whiteSpace: "nowrap",
+        background: "radial-gradient(ellipse at center, rgba(255,255,255,0.92) 35%, rgba(255,255,255,0) 100%)",
+        padding: "6px 2px",
+        fontFamily: "var(--font-mono)",
+        fontSize: 13,
+        fontWeight: "bold",
         letterSpacing: 0.5,
         textAlign: "center",
-        color: "#dde",
+        color: "#000",
         textTransform: "uppercase",
       }}
     >
@@ -235,22 +245,20 @@ const LocationCard = ({ title, mapIconSrc, isSelected }) => (
   </div>
 );
 
-// First 10 samurai icons, just to see a spread of cards at once.
-const TRY_CARDS = SAMURAI_ICON_KEYS.slice(0, 10).map(key => ({
-  id: key,
-  title: key.replace(/_/g, ' '),
-  icon: MAP_ICON_LOOKUP[key],
-}));
+// Preview of the new World_Map_Icons set (not yet in ../assets index).
+const TRY_CARDS = [
+  { id: 'image-gen-1', title: 'Hakuryu Shrine', icon: IMAGE_GEN_1 },
+  { id: 'image-gen-2', title: 'Frostpine Gate', icon: IMAGE_GEN_2 },
+  { id: 'image-gen-3', title: 'Kitsune Hollow', icon: IMAGE_GEN_3 },
+  { id: 'image-gen-4', title: 'Mount Tsukikage', icon: IMAGE_GEN_4 },
+  { id: 'image-gen-5', title: 'Sakura Ridge', icon: IMAGE_GEN_5 },
+];
 
-// Selected-card border pulses gold via an animated box-shadow/border-color.
+// Selected card's title gets a glowing white border.
 const MARCHING_ANTS_CSS = `
-@keyframes gold-pulse {
-  0%, 100% { border-color: rgba(255,215,0,0.4); box-shadow: 0 0 6px rgba(255,215,0,0.4); }
-  50%      { border-color: rgba(255,215,0,1);   box-shadow: 0 0 18px rgba(255,215,0,0.9); }
-}
-.marching-ants {
-  border-color: gold !important;
-  animation: gold-pulse 1.2s ease-in-out infinite;
+.title-selected {
+  border-color: #fff !important;
+  box-shadow: 0 0 10px 2px rgba(255,255,255,0.9), inset 0 0 8px rgba(255,255,255,0.8);
 }
 `;
 
@@ -305,7 +313,7 @@ export default function WorldMapScreen2() {
   // draggable. Positions keyed by id; dragRef tracks which id is active.
   const [cardPositions, setCardPositions] = useState(() =>
     TRY_CARDS.reduce((acc, c, i) => {
-      acc[c.id] = { x: 24 + (i % 5) * 90, y: 24 + Math.floor(i / 5) * 110 };
+      acc[c.id] = { x: 24 + (i % 5) * 180, y: 24 + Math.floor(i / 5) * 220 };
       return acc;
     }, {})
   );
