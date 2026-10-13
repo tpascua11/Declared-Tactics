@@ -16,6 +16,7 @@ import {
   MAP_ICON_SUNSET, MAP_ICON_SUNSET_2, MAP_ICON_TREE_AT_SNOW, MAP_ICON_WATER,
 } from '../assets';
 import SUNSWORD_BG from '../assets/World/Sunsword7.png';
+import PLAYER_SAMURAI from '../assets/Player_Map_Icons/SAMURAI.png';
 import IMAGE_GEN_1 from '../assets/World_Map_Icons/image-gen-1.png';
 import IMAGE_GEN_2 from '../assets/World_Map_Icons/image-gen-2.png';
 import IMAGE_GEN_3 from '../assets/World_Map_Icons/image-gen-3.png';
@@ -240,6 +241,20 @@ const LocationCard = ({ title, mapIconSrc, isSelected }) => (
         textTransform: "uppercase",
       }}
     >
+      {isSelected && (
+        <img
+          src={PLAYER_SAMURAI}
+          alt=""
+          style={{
+            position: "absolute",
+            bottom: "100%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            imageRendering: "pixelated",
+            pointerEvents: "none",
+          }}
+        />
+      )}
       {title}
     </div>
   </div>
