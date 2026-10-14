@@ -60,7 +60,7 @@ export const SAMURAI_CARDS = [
     icon: '💖',
     image: 'FOX_SAMURAI_MEND',
     color: '#4caf50',
-    desc: 'Clears all debuffs. Restore 200 HP and regen 33 HP/turn for 3 turns. Costs 3 Battle Spirit.',
+    desc: 'Clears all debuffs. Restore 200 HP and regen 25 HP/turn for 3 turns. Costs 3 Battle Spirit.',
     animation: 'green_marching_ants',
     animation_intensity: 1.0,
     tags: {
@@ -142,7 +142,7 @@ export const SAMURAI_CARDS = [
     icon: '🔦',
     image: 'FOX_SAMURAI_BATTOJUTSU',
     color: '#c084fc',
-    desc: 'Stance: next attack deals +75% damage, then consumes. Each extra use or non-attack adds a stack (+10% each).',
+    desc: 'Stance: next attack deals +65% damage, then consumes. Each non-attack action adds a stack, each extra use adds 2 (+10% each, max 10).',
     animation: 'samurai_sheath',
     animation_intensity: 1.2,
     tags: {
@@ -161,7 +161,7 @@ export const SAMURAI_CARDS = [
     icon: '👣',
     image: 'FOX_QUICK_STEPS',
     color: '#a5f3fc',
-    desc: 'Dodge stance: evade all attacks within -10 speed of this action. Ends after your next action.',
+    desc: '[ARCHIVED] Dodge stance: evade all attacks within -10 speed of this action. Ends after your next action.',
     animation: 'run_circle',
     animation_intensity: 1.0,
     tags: {
@@ -210,7 +210,7 @@ export const SAMURAI_CARDS = [
     icon: '⚡',
     image: 'FOX_STORM_STRIKE',
     color: '#818cf8',
-    desc: '150 lightning damage to all enemies. Applies Electrified (-20 speed for 3 turns). Costs 3 Battle Spirit.',
+    desc: '150 damage to all enemies. Applies Electrified (-20 speed for 4 turns). Costs 3 Battle Spirit.',
     animation: 'storm_strike',
     animation_intensity: 1.2,
     tags: {
@@ -230,7 +230,7 @@ export const SAMURAI_CARDS = [
     icon: '🌿',
     image: 'FOX_GUARD_STANCE',
     color: '#6ee7b7',
-    desc: 'Clears all debuffs. Reduce incoming damage by 75% until your next action or end of turn. Costs 1 Battle Spirit.',
+    desc: '[ARCHIVED] Clears all debuffs. Reduce incoming damage by 75% until your next action or end of turn. Costs 1 Battle Spirit.',
     animation: 'harai',
     animation_intensity: 1.0,
     tags: {
@@ -249,13 +249,13 @@ export const SAMURAI_CARDS = [
     icon: '🛡️',
     image: 'FOX_DEFLECT',
     color: '#94a3b8',
-    desc: 'Take a receiving stance. Blocks 50% of incoming damage until your next action or end of turn.',
+    desc: 'Take a receiving stance. Blocks 75% of incoming damage until your next action or end of turn.',
     animation: 'harai',
     animation_intensity: 1.0,
     tags: {
       self: [
         { tag_name: 'BLOCKING',
-          reduction: 0.95,
+          reduction: 0.75,
           reaction_anim: 'steel_guard_deflect',
           label: 'Uke',
           reset: ['ON_OWNER_ACTION', 'END_OF_TURN'] },
