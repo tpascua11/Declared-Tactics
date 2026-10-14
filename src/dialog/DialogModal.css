@@ -6,6 +6,11 @@
   from { transform: translateY(0);     opacity: 1; }
   to   { transform: translateY(-80px); opacity: 0; }
 }
+@keyframes dialogBackdropFadeIn {
+  from { background-color: rgba(0,0,0,0); }
+  to   { background-color: rgba(0,0,0,0.85); }
+}
+.dialog-backdrop-enter { animation: dialogBackdropFadeIn 0.6s ease-out; }
 .dialog-shell-enter { animation: dialogShellSlideIn 0.4s ease-out; }
 .dialog-shell-exit  { animation: dialogShellSlideOut 0.4s ease-in forwards; }
 

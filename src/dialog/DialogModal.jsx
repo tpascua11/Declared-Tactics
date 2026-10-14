@@ -92,6 +92,7 @@ export default function DialogModal({ dialog, onClose }) {
 
   return (
     <div
+      className="dialog-backdrop-enter"
       onClick={advance}
       style={{
         position: 'fixed', inset: 0, zIndex: 300,

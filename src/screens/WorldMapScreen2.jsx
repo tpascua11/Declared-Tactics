@@ -25,6 +25,8 @@ import IMAGE_GEN_5 from '../assets/World_Map_Icons/image-gen-5.png';
 import { setWeather } from '../vfx/weatherBus';
 import samuraiMapTheme from '../assets/Music/SAMURAI_MAP_THEME_1.mp3';
 import { useMusic } from '../hooks/useMusic';
+import { DIALOG_REGISTRY } from '../data/dialogs/dialog_registry';
+import DialogModal from '../dialog/DialogModal';
 
 // Pure visual preview of a world-map layout/feel — no battle wiring, no
 // level data. Grid fills the viewport at GRID_TILE-sized boxes; a hand-
@@ -87,8 +89,8 @@ const BOX_GAP   = 2;
 // Sunsword7.png's native pixel size (checked via Get-Image on the file).
 const SUNSWORD_W = 1672;
 const SUNSWORD_H = 941;
-
-const BOX_COLOR = { color: "#4da6ff", dim: "rgba(77,166,255,0.10)", glow: "rgba(77,166,255,0.4)" };
+const GAME_CANVAS_W = 1920;
+const MAP_SCALE = GAME_CANVAS_W / SUNSWORD_W;
 
 // The exact set of map_icon values referenced across PATH_OF_THE_SAMURAI(_V2)
 // levels — everything else in MAP_ICON_LOOKUP is a different map's icon set.
@@ -167,10 +169,8 @@ const STATIC_STYLES = {
   main: {
     flex: 1,
     position: "relative",
-    overflow: "auto",
+    overflow: "hidden",
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#000000",
     backgroundImage: [
       "radial-gradient(ellipse at 50% 38%, rgba(30,20,50,0.35), transparent 65%)",
@@ -178,12 +178,15 @@ const STATIC_STYLES = {
     ].join(","),
     boxShadow: "inset 0 0 200px rgba(0,0,0,0.9)",
   },
-  // Sunsword.png at its native pixel size (1777x885) — canvas matches so
-  // main can scroll/pan if the viewport is smaller than the image.
+  // Sunsword7.png scaled to the game canvas width — canvas matches so main
+  // scrolls vertically. margin:auto (not flex centering) keeps the top
+  // reachable once the canvas overflows main.
   canvas: {
     position: "relative",
-    width: SUNSWORD_W,
-    height: SUNSWORD_H,
+    flexShrink: 0,
+    margin: "auto",
+    width: GAME_CANVAS_W,
+    height: Math.round(SUNSWORD_H * MAP_SCALE),
     backgroundImage: `url(${SUNSWORD_BG})`,
     backgroundSize: "100% 100%",
     backgroundRepeat: "no-repeat",
@@ -277,9 +280,7 @@ const MARCHING_ANTS_CSS = `
 }
 `;
 
-const EmptyBox = ({ isSelected, mapIconSrc, onClick }) => {
-  const showBorder = isSelected || !!mapIconSrc;
-
+const EmptyBox = ({ mapIconSrc }) => {
   const boxStyle = useMemo(() => ({
     width: GRID_TILE,
     height: GRID_TILE,
@@ -287,21 +288,17 @@ const EmptyBox = ({ isSelected, mapIconSrc, onClick }) => {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    border: showBorder ? "2.5px solid" : "2.5px solid transparent",
+    border: mapIconSrc ? "2.5px solid" : "2.5px solid transparent",
     borderRadius: 3,
-    cursor: "pointer",
-    transition: "all 0.15s ease",
-    background: isSelected ? BOX_COLOR.dim : "transparent",
-    borderColor: isSelected ? BOX_COLOR.color : mapIconSrc ? "rgba(255,255,255,0.85)" : "transparent",
-    boxShadow: isSelected
-      ? `0 0 10px ${BOX_COLOR.glow}`
-      : mapIconSrc
-        ? "0 0 12px rgba(255,255,255,0.65), 0 0 4px rgba(255,255,255,0.8)"
-        : "none",
-  }), [isSelected, showBorder, mapIconSrc]);
+    background: "transparent",
+    borderColor: mapIconSrc ? "rgba(255,255,255,0.85)" : "transparent",
+    boxShadow: mapIconSrc
+      ? "0 0 12px rgba(255,255,255,0.65), 0 0 4px rgba(255,255,255,0.8)"
+      : "none",
+  }), [mapIconSrc]);
 
   return (
-    <div style={boxStyle} onClick={onClick}>
+    <div style={boxStyle}>
       {mapIconSrc && (
         <img
           src={mapIconSrc}
@@ -319,8 +316,11 @@ const EmptyBox = ({ isSelected, mapIconSrc, onClick }) => {
   );
 };
 
+const DIALOG_KEYS = Object.keys(DIALOG_REGISTRY);
+
 export default function WorldMapScreen2() {
-  const [selectedBox, setSelectedBox] = useState(null);
+  const [selectedDialogKey, setSelectedDialogKey] = useState(DIALOG_KEYS[0]);
+  const [playingDialogKey, setPlayingDialogKey] = useState(null);
   const [gridDims, setGridDims] = useState({ cols: 0, rows: 0 });
   const gridWrapRef = useRef(null);
 
@@ -379,8 +379,6 @@ export default function WorldMapScreen2() {
     return () => ro.disconnect();
   }, []);
 
-  const handleBoxClick = useCallback((idx) => setSelectedBox(idx), []);
-
   const scatteredByPos = useMemo(() => {
     const m = new Map();
     SCATTERED_ICONS.forEach(({ col, row, icon }) => m.set(`${col},${row}`, MAP_ICON_LOOKUP[icon]));
@@ -406,10 +404,31 @@ export default function WorldMapScreen2() {
       <div style={STATIC_STYLES.scanlines} />
 
       <div style={STATIC_STYLES.topbar}>
-        <div style={{ fontSize: 11, letterSpacing: 4, color: "#4da6ff", fontWeight: "bold" }}>WORLD MAP PREVIEW (v2)</div>
+        <div style={{ fontSize: 22, letterSpacing: 4, color: "#d4af37", fontWeight: "bold" }}>SUNSWORD</div>
         <div style={{ flex: 1 }} />
+        <select
+          value={selectedDialogKey}
+          onChange={e => setSelectedDialogKey(e.target.value)}
+          style={{ background: "#111", color: "#cfe3ee", border: "1px solid #333", padding: "4px 8px" }}
+        >
+          {DIALOG_KEYS.map(key => <option key={key} value={key}>{key}</option>)}
+        </select>
+        <button
+          onClick={() => setPlayingDialogKey(selectedDialogKey)}
+          style={{ background: "#1a2a3a", color: "#cfe3ee", border: "1px solid #4da6ff55", padding: "4px 12px", cursor: "pointer" }}
+        >
+          ▶ Preview Dialog
+        </button>
         <div style={{ fontSize: 9, letterSpacing: 2, color: "#1e3050" }}>{gridDims.cols}x{gridDims.rows} SPACED GRID</div>
       </div>
+
+      {playingDialogKey && (
+        <DialogModal
+          key={playingDialogKey}
+          dialog={DIALOG_REGISTRY[playingDialogKey]}
+          onClose={() => setPlayingDialogKey(null)}
+        />
+      )}
 
       <div style={STATIC_STYLES.main}>
         <div style={STATIC_STYLES.canvas}>
@@ -442,9 +461,7 @@ export default function WorldMapScreen2() {
                 return (
                   <EmptyBox
                     key={i}
-                    isSelected={selectedBox === i}
                     mapIconSrc={scattered ?? filled}
-                    onClick={() => handleBoxClick(i)}
                   />
                 );
               })}

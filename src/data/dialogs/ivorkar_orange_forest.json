@@ -1,0 +1,58 @@
+{
+  "id": "ivorkar_orange_forest",
+  "mapIcon": "DOJO_7",
+  "lines": [
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "What's on the other side?"
+    },
+    {
+      "speaker": { "source": "enemy", "id": "dragon_samurai_teacher", "name": "IVORKAR", "color": "#f5d76e" },
+      "text": "Trees that stay orange all year. Like the whole forest forgot to finish autumn."
+    },
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "That's it?"
+    },
+    {
+      "speaker": { "source": "enemy", "id": "dragon_samurai_teacher", "name": "IVORKAR", "color": "#f5d76e" },
+      "text": "Monsters. More than you've ever seen. And people who fight in ways you've never seen. Some of them don't even use swords."
+    },
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "Then how do they fight?"
+    },
+    {
+      "speaker": { "source": "narrator" },
+      "text": "Ivorkar laughs, starts to answer, and stops."
+    },
+    {
+      "speaker": { "source": "enemy", "id": "dragon_samurai_teacher", "name": "IVORKAR", "color": "#f5d76e" },
+      "text": "...I've been trying to tell people that for fifty years. It never comes out right."
+    },
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "Try."
+    },
+    {
+      "speaker": { "source": "narrator" },
+      "text": "Ivorkar digs in his sleeve and holds out a dry brown leaf."
+    },
+    {
+      "speaker": { "source": "enemy", "id": "dragon_samurai_teacher", "name": "IVORKAR", "color": "#f5d76e" },
+      "text": "Here."
+    },
+    {
+      "speaker": { "source": "class", "id": "samurai" },
+      "text": "...It's a dead leaf."
+    },
+    {
+      "speaker": { "source": "enemy", "id": "dragon_samurai_teacher", "name": "IVORKAR", "color": "#f5d76e" },
+      "text": "It was orange when I picked it. Go see the rest. Then come back and tell me if I got it right."
+    },
+    {
+      "speaker": { "source": "narrator" },
+      "text": "Varx turns the leaf over once, and puts it in his pocket."
+    }
+  ]
+}
