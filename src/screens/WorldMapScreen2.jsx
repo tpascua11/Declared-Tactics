@@ -17,6 +17,12 @@ import {
 } from '../assets';
 import SUNSWORD_BG from '../assets/World/Sunsword7.png';
 import PLAYER_SAMURAI from '../assets/Player_Map_Icons/SAMURAI.png';
+import BOOK_ICON from '../assets/UI/BOOK.png';
+import SUN_ICON from '../assets/UI/SUN.png';
+import WEAPON_ICON from '../assets/UI/WEAPON.png';
+import OPEN_BOOK_ICON from '../assets/UI/OPEN_BOOK.png';
+import NOTE_BOOK_ICON from '../assets/UI/NOTE_BOOK.png';
+import MOON_ICON from '../assets/UI/MOON.png';
 import IMAGE_GEN_1 from '../assets/World_Map_Icons/image-gen-1.png';
 import IMAGE_GEN_2 from '../assets/World_Map_Icons/image-gen-2.png';
 import IMAGE_GEN_3 from '../assets/World_Map_Icons/image-gen-3.png';
@@ -27,6 +33,9 @@ import samuraiMapTheme from '../assets/Music/SAMURAI_MAP_THEME_1.mp3';
 import { useMusic } from '../hooks/useMusic';
 import { DIALOG_REGISTRY } from '../data/dialogs/dialog_registry';
 import DialogModal from '../dialog/DialogModal';
+import GuideModal from '../components/battle/GuideModal';
+import SettingsModal from '../components/map/SettingsModal';
+import { playSelectSfx } from '../vfx/animationRegistry';
 
 // Pure visual preview of a world-map layout/feel — no battle wiring, no
 // level data. Grid fills the viewport at GRID_TILE-sized boxes; a hand-
@@ -162,12 +171,39 @@ const STATIC_STYLES = {
     zIndex: 100,
     position: "relative",
   },
+  // The screen's two stacked rows: rowTop (topbar + map frame) at its natural
+  // height, rowBottom (PlayerHud) takes the remaining height.
+  rowTop: {
+    flex: "0 0 auto",
+    display: "flex",
+    flexDirection: "column",
+  },
+  rowBottom: {
+    flex: "1 1 auto",
+    minHeight: 0,
+    display: "flex",
+    alignItems: "stretch",
+    gap: 20,
+    padding: "12px 24px",
+    boxSizing: "border-box",
+    background: "#050810",
+    borderTop: "1px solid rgba(77,166,255,0.12)",
+    position: "relative",
+    zIndex: 100,
+  },
   // Scrollable viewport — the void gradients are its own static background
   // (default background-attachment: scroll keeps them pinned to the visible
   // box, not the scrolled content), while the oversized image+grid live in
   // the larger `canvas` div below so there's actually something to pan.
   main: {
-    flex: 1,
+    flex: "0 0 auto",
+    height: Math.round(SUNSWORD_H * MAP_SCALE * 0.75),
+    width: GAME_CANVAS_W * 0.95,
+    alignSelf: "center",
+    margin: "40px 0 auto",
+    border: "2px solid #fff",
+    boxSizing: "content-box",
+    justifyContent: "center",
     position: "relative",
     overflow: "hidden",
     display: "flex",
@@ -184,7 +220,6 @@ const STATIC_STYLES = {
   canvas: {
     position: "relative",
     flexShrink: 0,
-    margin: "auto",
     width: GAME_CANVAS_W,
     height: Math.round(SUNSWORD_H * MAP_SCALE),
     backgroundImage: `url(${SUNSWORD_BG})`,
@@ -316,6 +351,136 @@ const EmptyBox = ({ mapIconSrc }) => {
   );
 };
 
+// Template values — wire to playerData later.
+const HUD_BUTTON_SIZE = 88;
+const HUD_BUTTONS = [
+  { label: 'Guidance', icon: SUN_ICON,       modal: 'guide' },
+  { label: 'Skillset', icon: WEAPON_ICON },
+  { label: 'Bestiary',  icon: OPEN_BOOK_ICON },
+  { label: 'Journal',   icon: NOTE_BOOK_ICON },
+  { label: 'Location',  icon: BOOK_ICON },
+  { label: 'Settings',  icon: MOON_ICON,      modal: 'settings' },
+];
+const HUD_STATS = [
+  { label: 'HP',           value: 100, max: 100, color: '#e04848' },
+  { label: 'BATTLE SPIRIT', value: 60,  max: 100, color: '#4da6ff' },
+];
+
+const HUD_FRAME = {
+  boxSizing: "border-box",
+  border: "2px solid rgba(255,255,255,0.18)",
+  borderRadius: 10,
+  background: "linear-gradient(180deg, rgba(20,28,44,0.9), rgba(8,12,20,0.95))",
+  overflow: "hidden",
+};
+
+// Inline styles can't express :hover/:active, so the HUD buttons use classes.
+// !important on border-color beats the inline borderColor on .hud-btn-box.
+const HUD_BUTTON_CSS = `
+.hud-btn .hud-btn-box {
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out, filter 0.12s ease-out;
+}
+.hud-btn:hover .hud-btn-box {
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 14px rgba(212,175,55,0.55);
+  filter: brightness(1.25);
+}
+.hud-btn:active .hud-btn-box {
+  transform: translateY(2px) scale(0.95);
+  border-color: #fff !important;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.7);
+  filter: brightness(0.8);
+}
+.hud-btn:hover span { color: #d4af37; }
+`;
+
+const StatBar =({ label, value, max, color }) => (
+  <div>
+    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, letterSpacing: 2, color: "#9ab", marginBottom: 4 }}>
+      <span>{label}</span>
+      <span style={{ color: "#dde" }}>{value}/{max}</span>
+    </div>
+    <div style={{ height: 14, borderRadius: 3, background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.15)", overflow: "hidden" }}>
+      <div style={{ width: `${(value / max) * 100}%`, height: "100%", background: `linear-gradient(180deg, ${color}, ${color}99)`, boxShadow: `0 0 8px ${color}88` }} />
+    </div>
+  </div>
+);
+
+// Bottom row: portrait (height-fit, 2:3 like the dialog PortraitSlot), stat
+// bars, then square menu buttons on the right.
+const PlayerHud = () => {
+  const [openModal, setOpenModal] = useState(null);
+  return (
+  <div style={STATIC_STYLES.rowBottom}>
+    <style>{HUD_BUTTON_CSS}</style>
+    {openModal === 'guide' && <GuideModal onClose={() => setOpenModal(null)} />}
+    {openModal === 'settings' && <SettingsModal onClose={() => setOpenModal(null)} />}
+    <div style={{ ...HUD_FRAME, height: "100%", aspectRatio: "2 / 3", flexShrink: 0, borderColor: "#d4af37", boxShadow: "0 0 18px rgba(212,175,55,0.25)" }}>
+      <img src={PLAYER_SAMURAI} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }} />
+    </div>
+
+    <div style={{ width: 320, flexShrink: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 14 }}>
+      <div style={{ fontSize: 18, letterSpacing: 4, color: "#d4af37", fontWeight: "bold" }}>SAMURAI</div>
+      {HUD_STATS.map(s => <StatBar key={s.label} {...s} />)}
+    </div>
+
+    <div style={{ flex: 1 }} />
+
+    <div style={{ display: "flex", alignItems: "center", gap: 13, height: "100%", flexShrink: 0 }}>
+      {HUD_BUTTONS.map(({ label, icon, modal }) => (
+        <button
+          key={label}
+          className="hud-btn"
+          onClick={modal ? () => { playSelectSfx(); setOpenModal(modal); } : undefined}
+          style={{
+            width: HUD_BUTTON_SIZE,
+            flexShrink: 0,
+            padding: 0,
+            border: "none",
+            background: "transparent",
+            cursor: "pointer",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 6,
+            color: "#cfe3ee",
+            fontFamily: "inherit",
+            fontSize: 13,
+            letterSpacing: 2,
+          }}
+        >
+          <div
+            className="hud-btn-box"
+            style={{
+              ...HUD_FRAME,
+              width: HUD_BUTTON_SIZE,
+              height: HUD_BUTTON_SIZE,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderColor: "rgba(77,166,255,0.35)",
+            }}
+          >
+            <img
+              src={icon}
+              alt=""
+              style={{
+                width: 64,
+                height: 64,
+                objectFit: "contain",
+                imageRendering: "pixelated",
+                pointerEvents: "none",
+              }}
+            />
+          </div>
+          <span style={{ fontWeight: "bold" }}>{label}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+  );
+};
+
 const DIALOG_KEYS = Object.keys(DIALOG_REGISTRY);
 
 export default function WorldMapScreen2() {
@@ -403,6 +568,7 @@ export default function WorldMapScreen2() {
       <style>{MARCHING_ANTS_CSS}</style>
       <div style={STATIC_STYLES.scanlines} />
 
+      <div style={STATIC_STYLES.rowTop}>
       <div style={STATIC_STYLES.topbar}>
         <div style={{ fontSize: 22, letterSpacing: 4, color: "#d4af37", fontWeight: "bold" }}>SUNSWORD</div>
         <div style={{ flex: 1 }} />
@@ -469,6 +635,8 @@ export default function WorldMapScreen2() {
           </div>
         </div>
       </div>
+      </div>
+      <PlayerHud />
     </div>
   );
 }
