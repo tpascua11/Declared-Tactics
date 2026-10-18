@@ -8,11 +8,11 @@ Target UI: `WorldMapScreen2.jsx` (free-placed location cards on the Sunsword art
 
 ```
 CAMPAIGN ──► WORLD (map) ──► LOCATION ──► SCENARIO ──► BATTLE
-                                              └──────► DIALOG
 ```
 
 Every layer points DOWN by string id. Nothing points up. Registries are keyed by `id`
-(same pattern as `SCENARIO_REGISTRY` / `DIALOG_REGISTRY`), built PER CAMPAIGN (see File layout).
+(same pattern as `SCENARIO_REGISTRY`), built PER CAMPAIGN (see File layout).
+Dialog is NOT a layer: it is a `dialog` game_event inside a scenario (see SCENARIO).
 
 **CAMPAIGN** is an independent playthrough: it holds several worlds, shares nothing with other
 campaigns, and has its own save. `campaign.json`: `{ "id": "path_of_the_samurai",
@@ -21,6 +21,65 @@ per-world file (`map.json`).
 
 **Rename:** today's `src/data/scenarios/*.json` (enemy group + modifiers) become
 **battles**. "Scenario" is redefined as the story/event box below.
+
+## Data at a glance
+
+Quick reference: one example per file type. The sections below hold the rules for each.
+
+```
+src/data/campaigns/PathOfTheSamurai/
+  campaign.json
+  shared/                       (scenarios, battles, flags used by 2+ worlds)
+  worlds/Sunsword/
+    map.json   flags.json
+    locations/   scenarios/   battles/
+```
+
+```
+campaign ─worlds→ map ─locations→ location ─scenarios (groups)→ scenario ─game_events→ battle
+requires gates: location -> group -> scenario (all AND)
+```
+
+```json
+// campaign.json
+{ "id": "path_of_the_samurai", "name": "PATH OF THE SAMURAI",
+  "worlds": ["Sunsword", "Dreamhelf"] }
+
+// map.json (one per world)
+{ "id": "sunsword", "name": "SUNSWORD", "background": "Sunsword7",
+  "locations": ["snow_iron_gate", "tree_trail"] }
+
+// location
+{ "id": "snow_iron_gate", "title": "Snow Iron Gate",
+  "pos": { "x": 320, "y": 180 }, "icon": "Snow_Iron_Gate", "requires": [],
+  "scenarios": [
+    { "mode": "sequence", "requires": ["met_turtle_elder"], "ids": ["gate_1", "gate_2"] },
+    { "mode": "pool", "requires": [], "ids": ["gate_scout"] } ] }
+
+// scenario (the script of game_events)
+{ "id": "gate_ferret_ambush", "name": "SNOW IRON GATE",
+  "desc": "...", "clear_desc": "...", "replayable": false, "requires": [],
+  "game_events": [
+    { "type": "dialog", "lines": [
+        { "speaker": { "source": "class", "id": "samurai" }, "text": "..." } ] },
+    { "type": "battle", "battle_id": "rabbit_and_boar_level_1" },
+    { "type": "reward", "gold": 20, "unlock_cards": { "samurai": ["quick_steps"] } },
+    { "type": "set_flag", "flag": "met_turtle_elder" } ] }
+
+// battle
+{ "id": "rabbit_and_boar_level_1", "name": "Ferrets And Boars",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [ { "enemies": ["ferret_samurai", "ferret_samurai"] } ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_1", "defeat_tip": "..." }
+
+// flags.json (definitions, static)
+{ "met_turtle_elder": { "desc": "Spoke to the turtle elder." },
+  "turtle_at_shrine": { "desc": "...", "toggleable": true } }
+
+// save (values only, PlayerContext)
+{ "save_version": 1, "campaign_id": "path_of_the_samurai",
+  "cleared_scenarios": ["gate_ferret_ambush"], "flags": ["met_turtle_elder"] }
+```
 
 ## MAP
 
@@ -70,9 +129,12 @@ per-world file (`map.json`).
   "replayable": false,
   "requires": [],
   "game_events": [
-    { "type": "dialog", "dialog_id": "gate_intro" },
+    { "type": "dialog", "title": "SNOW IRON GATE", "lines": [
+        { "speaker": { "source": "class", "id": "samurai" }, "text": "..." },
+        { "speaker": { "source": "enemy", "id": "ferret_samurai" }, "text": "..." } ] },
     { "type": "battle", "battle_id": "rabbit_and_boar_level_1" },
-    { "type": "dialog", "dialog_id": "gate_clear" },
+    { "type": "dialog", "lines": [
+        { "speaker": { "source": "class", "id": "samurai" }, "text": "..." } ] },
     { "type": "reward", "gold": 20, "unlock_cards": { "samurai": ["quick_steps"] } },
     { "type": "set_flag", "flag": "met_turtle_elder" }
   ] }
@@ -86,20 +148,28 @@ per-world file (`map.json`).
   variables until unavoidable.
 - `desc` / `clear_desc` are plain prose fields (intro modal / WinModal text), NOT dialogs.
 - `name` is required: a location with several scenarios needs per-choice labels.
-- `dialog` game_events are optional (current levels have none).
+- **Dialog is a game_event, not a separate file or registry.** A scenario is the script of the
+  whole scene (RPG Maker style: text, battle, reward, flag, in order), so the lines live
+  inline in the scenario's `dialog` game_event: `lines: [{ speaker: {source, id}, text }]`
+  plus optional `title` / `mapIcon`. The handler hands `lines` to `DialogModal`. There is no
+  `dialog_id`: dialogs are not reused across scenarios and not replayed on their own; replaying
+  a scenario replays its dialog. Long conversations stay one scenario per conversation.
+  `dialog` game_events are optional (current levels have none).
 - Rewards live in a `reward` game_event (end of scenario, or mid-scenario if wanted).
 - **game_events are open to growth, nothing more is built now.** Rules that keep them
   extensible: every game_event is an object with a `type`; one handler per type, registered
   in a game_event registry (same pattern as the tag handlers), so data can only call
   functions the game defines; an unknown `type` is a validator error; game_events may later
-  contain game_event lists. Dialog files will use this SAME game_event vocabulary when they
-  need branching (a `say` game_event plus the shared ones), never a second mechanism.
+  contain game_event lists. Dialog branching, when needed, uses this SAME mechanism (a
+  `choice` game_event holding a nested game_event list per option), never a second one.
 - **Reserved for later (do not build until a real scenario needs it):** an `if` game_event
   `{ "type": "if", "requires": [...], "then": [game_events], "else": [game_events] }` using the
   existing `requires` list as the condition. Nested game_event lists, NO jumps and no index
   skipping. Optional game_event-level `requires` (skip that game_event when unmet). Loose depth cap (about 3) for testability,
   since each branch multiplies the paths to test. Choices (`choice` with per-option `requires`
-  and `effects`) follow the same guarded-entries idea.
+  and a nested game_event list, like RPG Maker's Show Choices) follow the same guarded-entries
+  idea. A scenario that plays out as a dialog menu (talk / fight / leave) is just this: a
+  `dialog` game_event followed by a `choice`, each option running its own game_events.
 - `requires` gates whether the scenario appears inside an open location.
 
 ## BATTLE — pure definition (today's scenario files)
@@ -117,9 +187,13 @@ per-world file (`map.json`).
 - `BattleScreen` / `buildInitialState` keep taking this file unchanged: the battle black-box
   boundary stays intact.
 
-## DIALOG — unchanged
+## DIALOG — a game_event, not a layer
 
-`src/data/dialogs/*.json`: `id`, `mapIcon`, `title`, `lines: [{ speaker: {source, id}, text }]`.
+Dialog data is the inline `dialog` game_event of a scenario (see SCENARIO). Line format is
+unchanged: `lines: [{ speaker: {source, id}, text }]`, with the existing `<hl>` / `<color:>`
+text tags. The old `src/data/dialogs/*.json` files and `DIALOG_REGISTRY` stay as legacy until the
+campaign is rebuilt, then their lines move into scenarios and the registry is retired (also
+update the dialog preview in `WorldMapScreen2`, which reads the registry today).
 
 ## Flags
 
@@ -250,7 +324,7 @@ scenario, the runner checks its pending list as well as the save.
 
 ## Tooling (later, after the schema settles)
 
-- **Validator / scan:** dangling `battle_id` / `dialog_id` / `scenario_id`; flags read but
+- **Validator / scan:** dangling `battle_id` / `scenario_id`; flags read but
   never set; set but never read; `clear_flag` on a non-toggleable flag. Given a flag name,
   list every setter, clearer, and reader.
 - **Reachability simulator:** start with no flags, repeatedly take any scenario whose
@@ -262,7 +336,10 @@ scenario, the runner checks its pending list as well as the save.
   Also the recovery path for a stuck save.
 - **Scenario viewer:** read-only view generated from the JSON (indented outline first, maybe a
   dev screen or flowchart later) so nested game_events stay readable; shares the validator's tree
-  walk. The JSON stays the source of truth.
+  walk. The JSON stays the source of truth. A dialog-only mode prints just the `dialog` lines
+  (speaker and text) in order, with the other game_events as thin markers (`[battle]`,
+  `[reward]`), so a long story reads as a script; the same walk can export all lines to a table
+  keyed by scenario id and game_event position (and import them back) for editing or translation.
 
 ## Lessons carried over from other RPGs (Skyrim, BG3, Wrath of the Righteous)
 
@@ -286,7 +363,6 @@ src/data/campaigns/
         locations/
         scenarios/
         battles/
-        dialogs/
       Dreamhelf/
         ...
     shared/          # content used by 2+ worlds of THIS campaign
@@ -295,15 +371,15 @@ src/data/campaigns/
 ```
 
 - One folder per campaign, one per world inside it, holding the whole tree
-  (map -> locations -> scenarios -> battles/dialogs), mirroring the data hierarchy. Adding,
+  (map -> locations -> scenarios -> battles), mirroring the data hierarchy. Adding,
   reviewing, restarting, or deleting a world or campaign is one folder. Easier for humans to
   review and for AI to author with a small, focused scope.
 - Registries are keyed by `id` and built PER CAMPAIGN: the loader scans each campaign's folder
   by folder name (e.g. `require.context('./campaigns', true, /\/battles\/.*\.json$/)`, then
   groups the results by the campaign folder in the path), giving
-  `registries[campaign_id].{battles, scenarios, locations, dialogs, flags}`. The game uses the
+  `registries[campaign_id].{battles, scenarios, locations, flags}`. The game uses the
   active campaign's registries only. Within a campaign, all worlds' battles (or scenarios,
-  locations, dialogs) are visible at once. Same for validator/scan globs, run per campaign.
+  locations) are visible at once. Same for validator/scan globs, run per campaign.
 - Ids must be unique per type WITHIN a campaign; two campaigns may reuse an id. Validator
   checks duplicates per campaign.
 - Cross-world references inside a campaign are technically possible; validator may flag them
@@ -318,18 +394,18 @@ src/data/campaigns/
 
 ### `shared/` content (per campaign)
 
-- Holds scenarios, battles, dialogs, and flags genuinely used by two or more worlds of the
+- Holds scenarios, battles, and flags genuinely used by two or more worlds of the
   same campaign. Everything else stays in its own world; if `shared/` grows large the
   by-world grouping loses its point. Nothing is shared across campaigns.
 - Used by id, like any other content: a location in any world lists a shared scenario id in
-  its group; a scenario in any world may point to a shared battle or dialog.
+  its group; a scenario in any world may point to a shared battle.
 - `shared/` is the one allowed place for cross-world references; the validator flags a
   world reaching into another world, but not into its campaign's `shared/`.
 - Completion is per campaign save: `cleared_scenarios` is keyed by scenario id with one list
   per save, so a shared scenario is cleared once across the whole campaign and disappears
   everywhere (unless `replayable`). Right for one-time events. For "once per world", make one
-  scenario per world with different ids and let them share a battle or dialog. Rule of
-  thumb: share the battle/dialog, give each world its own scenario.
+  scenario per world with different ids and let them share a battle. Rule of thumb: share
+  the battle, give each world its own scenario.
 
 ## Field migration from old `levels[]`
 
@@ -388,3 +464,6 @@ src/data/campaigns/
   `battle`, `reward`, `set_flag`, `clear_flag`. Behavior is defined by each game_event type's
   handler; write the
   parameter list as the handlers are built.
+- Localization: dialog text is inline in scenario files, so translating needs extraction. Plan is
+  the scenario viewer's export/import (see Tooling), not per-line keys. Revisit only if
+  translation becomes a real plan.
