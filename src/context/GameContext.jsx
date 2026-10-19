@@ -6,14 +6,13 @@ import { createContext, useContext, useReducer } from 'react';
 import { battleReducer } from '../battle/reducer';
 import { buildInitialState } from '../battle/initialState';
 import { usePlayer } from './PlayerContext';
+import { getActiveSlot, readSlot } from '../data/saveSlots';
 
 const GameContext = createContext(null);
 
 function initGameState() {
   try {
-    const raw = localStorage.getItem('daq_player');
-    const playerData = raw ? JSON.parse(raw) : null;
-    return buildInitialState(undefined, playerData);
+    return buildInitialState(undefined, readSlot(getActiveSlot()));
   } catch {
     return buildInitialState();
   }
