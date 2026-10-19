@@ -1,0 +1,9 @@
+{
+  "id": "gate_ferret_ambush",
+  "name": "SNOW IRON GATE",
+  "desc": "",
+  "clear_desc": "",
+  "replayable": false,
+  "requires": [],
+  "game_events": []
+}
