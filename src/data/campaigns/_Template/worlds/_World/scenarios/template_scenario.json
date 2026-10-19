@@ -1,0 +1,16 @@
+{
+  "id": "template_scenario",
+  "name": "TEMPLATE SCENARIO",
+  "desc": "Intro text shown before the scenario starts.",
+  "clear_desc": "Text shown on the win modal.",
+  "replayable": false,
+  "requires": [],
+  "game_events": [
+    { "type": "dialog", "title": "TEMPLATE DIALOG", "mapIcon": "samurai_battlefield_9", "lines": [
+        { "speaker": { "source": "class", "id": "samurai" }, "text": "Line of <hl>dialog</hl>." },
+        { "speaker": { "source": "enemy", "id": "ferret_samurai" }, "text": "Reply line." } ] },
+    { "type": "battle", "battle_id": "template_battle" },
+    { "type": "reward", "gold": 0, "unlock_cards": { "samurai": [] } },
+    { "type": "set_flag", "flag": "template.example_flag" }
+  ]
+}

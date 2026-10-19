@@ -1,0 +1,4 @@
+{
+  "template.example_flag": { "desc": "Permanent flag: set once by template_scenario, never cleared." },
+  "template.example_toggle": { "desc": "Toggleable flag: may be turned off by clear_flag.", "toggleable": true }
+}
