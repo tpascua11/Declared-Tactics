@@ -15,7 +15,7 @@ import {
   MAP_ICON_SNOW_AND_WATER, MAP_ICON_SNOW_AND_WATER_2, MAP_ICON_SNOWY_FIELD_BAMBOO, MAP_ICON_SNOWY_FIELD_DEN,
   MAP_ICON_SUNSET, MAP_ICON_SUNSET_2, MAP_ICON_TREE_AT_SNOW, MAP_ICON_WATER,
 } from '../assets';
-import SUNSWORD_BG from '../assets/World/Sunsword7.png';
+import SUNSWORD_5 from '../assets/World/Sunsword5.png';
 import PLAYER_SAMURAI from '../assets/Player_Map_Icons/SAMURAI.png';
 import BOOK_ICON from '../assets/UI/BOOK.png';
 import SUN_ICON from '../assets/UI/SUN.png';
@@ -32,6 +32,7 @@ import { setWeather } from '../vfx/weatherBus';
 import samuraiMapTheme from '../assets/Music/SAMURAI_MAP_THEME_1.mp3';
 import { useMusic } from '../hooks/useMusic';
 import { DIALOG_REGISTRY } from '../data/dialogs/dialog_registry';
+import { getCampaign } from '../data/campaigns/campaign_registry';
 import DialogModal from '../dialog/DialogModal';
 import GuideModal from '../components/battle/GuideModal';
 import SettingsModal from '../components/map/SettingsModal';
@@ -214,15 +215,14 @@ const STATIC_STYLES = {
     ].join(","),
     boxShadow: "inset 0 0 200px rgba(0,0,0,0.9)",
   },
-  // Sunsword7.png scaled to the game canvas width — canvas matches so main
-  // scrolls vertically. margin:auto (not flex centering) keeps the top
-  // reachable once the canvas overflows main.
+  // Map background (set inline from map.background) scaled to the game canvas
+  // width — canvas matches so main scrolls vertically. margin:auto (not flex
+  // centering) keeps the top reachable once the canvas overflows main.
   canvas: {
     position: "relative",
     flexShrink: 0,
     width: GAME_CANVAS_W,
     height: Math.round(SUNSWORD_H * MAP_SCALE),
-    backgroundImage: `url(${SUNSWORD_BG})`,
     backgroundSize: "100% 100%",
     backgroundRepeat: "no-repeat",
   },
@@ -483,6 +483,14 @@ const PlayerHud = () => {
 
 const DIALOG_KEYS = Object.keys(DIALOG_REGISTRY);
 
+const CAMPAIGN = getCampaign('path_of_the_samurai');
+const WORLD_MAP = CAMPAIGN.maps.sunsword;
+const MAP_BACKGROUNDS = { Sunsword5: SUNSWORD_5 };
+const MAP_CARDS = WORLD_MAP.locations.map(id => {
+  const location = CAMPAIGN.locations[id];
+  return { id, title: location.title, icon: MAP_ICON_LOOKUP[location.icon], pos: location.pos };
+});
+
 export default function WorldMapScreen2() {
   const [selectedDialogKey, setSelectedDialogKey] = useState(DIALOG_KEYS[0]);
   const [playingDialogKey, setPlayingDialogKey] = useState(null);
@@ -492,8 +500,8 @@ export default function WorldMapScreen2() {
   // Temporary drag test for LocationCard — 10 cards, each independently
   // draggable. Positions keyed by id; dragRef tracks which id is active.
   const [cardPositions, setCardPositions] = useState(() =>
-    TRY_CARDS.reduce((acc, c, i) => {
-      acc[c.id] = { x: 24 + (i % 5) * 180, y: 24 + Math.floor(i / 5) * 220 };
+    MAP_CARDS.reduce((acc, c) => {
+      acc[c.id] = { x: c.pos.x, y: c.pos.y };
       return acc;
     }, {})
   );
@@ -570,7 +578,7 @@ export default function WorldMapScreen2() {
 
       <div style={STATIC_STYLES.rowTop}>
       <div style={STATIC_STYLES.topbar}>
-        <div style={{ fontSize: 22, letterSpacing: 4, color: "#d4af37", fontWeight: "bold" }}>SUNSWORD</div>
+        <div style={{ fontSize: 22, letterSpacing: 4, color: "#d4af37", fontWeight: "bold" }}>{WORLD_MAP.name}</div>
         <div style={{ flex: 1 }} />
         <select
           value={selectedDialogKey}
@@ -597,8 +605,8 @@ export default function WorldMapScreen2() {
       )}
 
       <div style={STATIC_STYLES.main}>
-        <div style={STATIC_STYLES.canvas}>
-          {TRY_CARDS.map(c => (
+        <div style={{ ...STATIC_STYLES.canvas, backgroundImage: `url(${MAP_BACKGROUNDS[WORLD_MAP.background]})` }}>
+          {MAP_CARDS.map(c => (
             <div
               key={c.id}
               style={{ position: "absolute", top: cardPositions[c.id].y, left: cardPositions[c.id].x, zIndex: 5, touchAction: "none" }}
