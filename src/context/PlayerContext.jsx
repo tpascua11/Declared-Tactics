@@ -1,6 +1,6 @@
 // ============================================================
 //  PlayerContext — persistent player data across fights + sessions
-//  Backed by localStorage under the key 'daq_player'.
+//  Backed by the active save slot (src/data/saveSlots.js).
 //
 //  WHAT WE STORE (minimal — IDs and deltas only, never full objects):
 //    class_id        → string, e.g. 'samurai'
@@ -22,8 +22,8 @@
 
 import { createContext, useContext, useReducer, useEffect } from 'react';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
+import { getActiveSlot, readSlot, writeSlot, clearSlot, importLegacySave } from '../data/saveSlots';
 
-const STORAGE_KEY = 'daq_player';
 const DEFAULT_CAMPAIGN_ID = 'path_of_the_samurai';
 
 const PlayerContext = createContext(null);
@@ -31,20 +31,8 @@ const PlayerContext = createContext(null);
 // ── Load / Save ──────────────────────────────────────────────
 
 function loadFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveToStorage(playerData) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(playerData));
-  } catch {
-    // storage full or unavailable — fail silently
-  }
+  importLegacySave();
+  return readSlot(getActiveSlot());
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -195,9 +183,9 @@ export function PlayerProvider({ children }) {
   // Sync to localStorage whenever playerData changes
   useEffect(() => {
     if (playerData) {
-      saveToStorage(playerData);
+      writeSlot(getActiveSlot(), playerData);
     } else {
-      localStorage.removeItem(STORAGE_KEY);
+      clearSlot(getActiveSlot());
     }
   }, [playerData]);
 
