@@ -24,6 +24,7 @@ import { createContext, useContext, useReducer, useEffect } from 'react';
 import { CLASS_REGISTRY } from '../data/classes/class_registry';
 
 const STORAGE_KEY = 'daq_player';
+const DEFAULT_CAMPAIGN_ID = 'path_of_the_samurai';
 
 const PlayerContext = createContext(null);
 
@@ -47,6 +48,11 @@ function saveToStorage(playerData) {
 }
 
 // ── Helpers ──────────────────────────────────────────────────
+
+export const hasFlag = (playerData, flag) => (playerData?.flags ?? []).includes(flag);
+
+export const isScenarioCleared = (playerData, scenarioId) =>
+  (playerData?.cleared_scenarios ?? []).includes(scenarioId);
 
 // Derives the full runtime player snapshot from stored minimal data.
 // Call this whenever you need the full picture (e.g. GO_TO_BATTLE).
@@ -115,6 +121,30 @@ function playerReducer(state, action) {
         unlocked_cards:  [],
         stat_boosts:     [],
         completed_levels: [],
+        save_version:    1,
+        campaign_id:     action.campaignId ?? DEFAULT_CAMPAIGN_ID,
+        cleared_scenarios: [],
+        flags:           [],
+        gold:            0,
+      };
+    }
+
+    // One write for cleared mark + flags + rewards, so a quit can never half-commit.
+    // An already-cleared scenario commits nothing (rewards are never granted twice).
+    case 'COMMIT_SCENARIO': {
+      const { scenarioId, flags = [], reward = {} } = action;
+      if (isScenarioCleared(state, scenarioId)) return state;
+      const unlockedCards = reward.unlock_cards?.[state.class_id] ?? [];
+      const statBoosts = reward.hp_upgrade
+        ? [{ stat: 'max_health', amount: reward.hp_upgrade, level_id: scenarioId }]
+        : [];
+      return {
+        ...state,
+        cleared_scenarios: [...(state.cleared_scenarios ?? []), scenarioId],
+        flags:             [...new Set([...(state.flags ?? []), ...flags])],
+        unlocked_cards:    [...new Set([...(state.unlocked_cards ?? []), ...unlockedCards])],
+        stat_boosts:       [...(state.stat_boosts ?? []), ...statBoosts],
+        gold:              (state.gold ?? 0) + (reward.gold ?? 0),
       };
     }
 
