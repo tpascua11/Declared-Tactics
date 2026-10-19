@@ -33,6 +33,7 @@ import samuraiMapTheme from '../assets/Music/SAMURAI_MAP_THEME_1.mp3';
 import { useMusic } from '../hooks/useMusic';
 import { DIALOG_REGISTRY } from '../data/dialogs/dialog_registry';
 import { getCampaign } from '../data/campaigns/campaign_registry';
+import { usePlayer } from '../context/PlayerContext';
 import DialogModal from '../dialog/DialogModal';
 import GuideModal from '../components/battle/GuideModal';
 import SettingsModal from '../components/map/SettingsModal';
@@ -483,15 +484,22 @@ const PlayerHud = () => {
 
 const DIALOG_KEYS = Object.keys(DIALOG_REGISTRY);
 
-const CAMPAIGN = getCampaign('path_of_the_samurai');
-const WORLD_MAP = CAMPAIGN.maps.sunsword;
 const MAP_BACKGROUNDS = { Sunsword5: SUNSWORD_5 };
-const MAP_CARDS = WORLD_MAP.locations.map(id => {
-  const location = CAMPAIGN.locations[id];
-  return { id, title: location.title, icon: MAP_ICON_LOOKUP[location.icon], pos: location.pos };
-});
+const FALLBACK_CAMPAIGN_ID = 'path_of_the_samurai';
 
 export default function WorldMapScreen2() {
+  const { playerData } = usePlayer();
+  // First world of the campaign until saves track a current world.
+  const { worldMap, mapCards } = useMemo(() => {
+    const campaign = getCampaign(playerData?.campaign_id ?? FALLBACK_CAMPAIGN_ID);
+    const worldMap = campaign.maps[campaign.campaign.worlds[0]];
+    const mapCards = worldMap.locations.map(id => {
+      const location = campaign.locations[id];
+      return { id, title: location.title, icon: MAP_ICON_LOOKUP[location.icon], pos: location.pos };
+    });
+    return { worldMap, mapCards };
+  }, [playerData?.campaign_id]);
+
   const [selectedDialogKey, setSelectedDialogKey] = useState(DIALOG_KEYS[0]);
   const [playingDialogKey, setPlayingDialogKey] = useState(null);
   const [gridDims, setGridDims] = useState({ cols: 0, rows: 0 });
@@ -500,7 +508,7 @@ export default function WorldMapScreen2() {
   // Temporary drag test for LocationCard — 10 cards, each independently
   // draggable. Positions keyed by id; dragRef tracks which id is active.
   const [cardPositions, setCardPositions] = useState(() =>
-    MAP_CARDS.reduce((acc, c) => {
+    mapCards.reduce((acc, c) => {
       acc[c.id] = { x: c.pos.x, y: c.pos.y };
       return acc;
     }, {})
@@ -578,7 +586,7 @@ export default function WorldMapScreen2() {
 
       <div style={STATIC_STYLES.rowTop}>
       <div style={STATIC_STYLES.topbar}>
-        <div style={{ fontSize: 22, letterSpacing: 4, color: "#d4af37", fontWeight: "bold" }}>{WORLD_MAP.name}</div>
+        <div style={{ fontSize: 22, letterSpacing: 4, color: "#d4af37", fontWeight: "bold" }}>{worldMap.name}</div>
         <div style={{ flex: 1 }} />
         <select
           value={selectedDialogKey}
@@ -605,8 +613,8 @@ export default function WorldMapScreen2() {
       )}
 
       <div style={STATIC_STYLES.main}>
-        <div style={{ ...STATIC_STYLES.canvas, backgroundImage: `url(${MAP_BACKGROUNDS[WORLD_MAP.background]})` }}>
-          {MAP_CARDS.map(c => (
+        <div style={{ ...STATIC_STYLES.canvas, backgroundImage: `url(${MAP_BACKGROUNDS[worldMap.background]})` }}>
+          {mapCards.map(c => (
             <div
               key={c.id}
               style={{ position: "absolute", top: cardPositions[c.id].y, left: cardPositions[c.id].x, zIndex: 5, touchAction: "none" }}

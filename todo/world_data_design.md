@@ -16,7 +16,7 @@ Dialog is NOT a layer: it is a `dialog` game_event inside a scenario (see SCENAR
 
 **CAMPAIGN** is an independent playthrough: it holds several worlds, shares nothing with other
 campaigns, and ~~has its own save~~ is played in one of 10 save slots (see State). `campaign.json`: `{ "id": "path_of_the_samurai",
-"name": "PATH OF THE SAMURAI", "worlds": ["Sunsword", "Dreamhelf"] }`. The MAP below is the
+"name": "PATH OF THE SAMURAI", "worlds": ["sunsword", "dreamhelf"] }`. `worlds` lists map ids (the `id` in each world's `map.json`), never folder names. The MAP below is the
 per-world file (`map.json`).
 
 **Rename:** today's `src/data/scenarios/*.json` (enemy group + modifiers) become
@@ -43,7 +43,7 @@ requires gates: location -> group -> scenario (all AND)
 ```json
 // campaign.json
 { "id": "path_of_the_samurai", "name": "PATH OF THE SAMURAI",
-  "worlds": ["Sunsword", "Dreamhelf"] }
+  "worlds": ["sunsword", "dreamhelf"] }
 
 // map.json (one per world)
 { "id": "sunsword", "name": "SUNSWORD", "background": "Sunsword7",
