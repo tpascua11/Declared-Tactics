@@ -15,7 +15,7 @@ Every layer points DOWN by string id. Nothing points up. Registries are keyed by
 Dialog is NOT a layer: it is a `dialog` game_event inside a scenario (see SCENARIO).
 
 **CAMPAIGN** is an independent playthrough: it holds several worlds, shares nothing with other
-campaigns, and has its own save. `campaign.json`: `{ "id": "path_of_the_samurai",
+campaigns, and ~~has its own save~~ is played in one of 10 save slots (see State). `campaign.json`: `{ "id": "path_of_the_samurai",
 "name": "PATH OF THE SAMURAI", "worlds": ["Sunsword", "Dreamhelf"] }`. The MAP below is the
 per-world file (`map.json`).
 
@@ -76,7 +76,7 @@ requires gates: location -> group -> scenario (all AND)
 { "met_turtle_elder": { "desc": "Spoke to the turtle elder." },
   "turtle_at_shrine": { "desc": "...", "toggleable": true } }
 
-// save (values only, PlayerContext)
+// save (values only, PlayerContext), stored under localStorage key daq_save_<slot>
 { "save_version": 1, "campaign_id": "path_of_the_samurai",
   "cleared_scenarios": ["gate_ferret_ambush"], "flags": ["met_turtle_elder"] }
 ```
@@ -233,8 +233,9 @@ thing).
 - **Self flags.** A scenario's or location's own extra flag uses its id as the owner prefix
   (`gate_ferret_ambush.spared_scout`). Completion needs no flag (see State).
 - `requires` entries: a flag name or `{ "cleared": "<scenario_id>" }`. AND-only for now.
-  Facts from other campaigns arrive as ordinary flags via `campaign.json` `imports`
-  (snapshot at start, see State), never as a cross-campaign `requires` form.
+  ~~Facts from other campaigns arrive as ordinary flags via `campaign.json` `imports`~~
+  ~~(snapshot at start, see State), never as a cross-campaign `requires` form.~~
+  Deferred: cross-save reads are done in code (see State, Save slots); `requires` never names another campaign.
 - Flat strings, never nested objects, so every use is literally searchable.
 
 ## State and storage
@@ -253,30 +254,50 @@ A save belongs to exactly ONE campaign (`campaign_id`); `cleared_scenarios` and 
 only meaningful against that campaign's registries, so ids never collide across campaigns.
 Starting a new campaign = new playthrough (progress fields reset).
 
-**Cross-campaign reads (one-way, read-only, SNAPSHOT at start).** A campaign may LOOK at other
-campaigns' saves, but only ONCE, at campaign start. It never writes to them, and no items/deck
-are copied; only derived true/false facts become flags in the NEW campaign's own save.
-- Declared in the new campaign's `campaign.json`:
-  `"imports": [ { "from": "path_of_the_samurai", "flag": "defeated_dragon",
-                  "as": "start_defeated_dragon" },
-                { "from": "path_of_the_samurai", "cleared": "samurai_boss",
-                  "as": "start_cleared_samurai_boss" } ]`
-  At campaign start each import is evaluated against the other campaign's save; if true, the
-  `as` flag is set in the new save. After that the new campaign gates on ordinary flags
-  (`requires: ["start_defeated_dragon"]`), so it depends only on its own save and cannot
-  change mid-playthrough if the old campaign is replayed or reset.
-- `flag` / `cleared` names are checked against THE OTHER campaign's registries; each `as`
-  flag must be registered in the NEW campaign's flag registry. Treat flags that another
-  campaign imports as a stable interface (renaming one breaks the importer; validator checks).
-- Helper `readCampaignSave(campaign_id)` reads another campaign's save from localStorage
-  WITHOUT loading it into the active `PlayerContext` state. A missing save means "nothing is
-  set" (no `as` flags get set); older `save_version` shapes are read via the needed fields
-  with defaults.
-- No two-way links: the import graph between campaigns must be acyclic (a campaign may only
-  import from campaigns that exist independently of it; validator flags A imports B and
-  B imports A).
-- Each campaign's save lives under its own localStorage key (`daq_player_<campaign_id>`), so
-  starting or resetting one campaign never touches another's save.
+**Save slots.** There are 10 global slots, `daq_save_1` .. `daq_save_10` (localStorage). A slot is
+empty or holds one save, and each save carries its own `campaign_id`, so slot 1 can be one
+campaign and slot 2 another. The campaign is fixed when the slot is created.
+- `daq_active_slot` (a number) says which slot `PlayerContext` and `GameContext` load. Neither
+  reads a hardcoded key.
+- Slot list for the UI = read the 10 keys. Empty key = free slot. A filled slot shows a summary
+  (campaign name, class, HP, last location).
+- `NEW_GAME` / delete removes only that slot's key. Slots never touch each other.
+- New game flow: pick a slot. Filled = load and go to the map. Empty = campaign select (skipped
+  while there is one campaign), character select, then the map.
+- The slot number is NOT stored inside the save, and no save stores another save's slot number
+  (slots can be deleted or overwritten, so they are not stable identities).
+- Cross-save reads are plain code, not structure: `readSlot(n)` parses `daq_save_<n>`. To find a
+  save of campaign X, filter the 10 slots by `campaign_id`. Resolve at the moment it is needed
+  and handle empty or a different campaign. If a campaign wants facts from an older save, copy
+  them into its own `flags` once at start so it does not depend on the other save later.
+  Not built; build when a real case exists.
+
+~~Previous design, replaced by Save slots (campaign-keyed saves and `imports`):~~
+
+~~**Cross-campaign reads (one-way, read-only, SNAPSHOT at start).** A campaign may LOOK at other~~
+~~campaigns' saves, but only ONCE, at campaign start. It never writes to them, and no items/deck~~
+~~are copied; only derived true/false facts become flags in the NEW campaign's own save.~~
+- ~~Declared in the new campaign's `campaign.json`:~~
+  ~~`"imports": [ { "from": "path_of_the_samurai", "flag": "defeated_dragon",~~
+                  ~~"as": "start_defeated_dragon" },~~
+                ~~{ "from": "path_of_the_samurai", "cleared": "samurai_boss",~~
+                  ~~"as": "start_cleared_samurai_boss" } ]`~~
+  ~~At campaign start each import is evaluated against the other campaign's save; if true, the~~
+  ~~`as` flag is set in the new save. After that the new campaign gates on ordinary flags~~
+  ~~(`requires: ["start_defeated_dragon"]`), so it depends only on its own save and cannot~~
+  ~~change mid-playthrough if the old campaign is replayed or reset.~~
+- ~~`flag` / `cleared` names are checked against THE OTHER campaign's registries; each `as`~~
+  ~~flag must be registered in the NEW campaign's flag registry. Treat flags that another~~
+  ~~campaign imports as a stable interface (renaming one breaks the importer; validator checks).~~
+- ~~Helper `readCampaignSave(campaign_id)` reads another campaign's save from localStorage~~
+  ~~WITHOUT loading it into the active `PlayerContext` state. A missing save means "nothing is~~
+  ~~set" (no `as` flags get set); older `save_version` shapes are read via the needed fields~~
+  ~~with defaults.~~
+- ~~No two-way links: the import graph between campaigns must be acyclic (a campaign may only~~
+  ~~import from campaigns that exist independently of it; validator flags A imports B and~~
+  ~~B imports A).~~
+- ~~Each campaign's save lives under its own localStorage key (`daq_player_<campaign_id>`), so~~
+  ~~starting or resetting one campaign never touches another's save.~~
 
 | State | Set by | Used for |
 |---|---|---|
@@ -289,9 +310,10 @@ are copied; only derived true/false facts become flags in the NEW campaign's own
   by the scenario runner. Reads go through helpers exported next to `derivePlayerSnapshot`
   (`hasFlag`, cleared check).
 - World progress lives in the SAME `PlayerContext` state as character data (one store per
-  campaign save); not split into a separate PlayerWorld store. The localStorage key is
-  per campaign (`daq_player_<campaign_id>`), replacing today's single `daq_player`, so
-  `NEW_GAME` removes only the active campaign's key.
+  save slot); not split into a separate PlayerWorld store. The localStorage key is
+  ~~per campaign (`daq_player_<campaign_id>`), replacing today's single `daq_player`, so~~
+  ~~`NEW_GAME` removes only the active campaign's key.~~ Now per slot (`daq_save_<slot>`),
+  replacing today's single `daq_player`; `NEW_GAME` removes only the active slot's key.
 - No second copy of flags in `GameContext`, `BattleScreen`, or component state.
   `BattleScreen` stays a black box (battle in, result out) and never sets story flags.
 - `save_version` exists from the start so the save shape can be migrated later.
@@ -384,8 +406,9 @@ src/data/campaigns/
   checks duplicates per campaign.
 - Cross-world references inside a campaign are technically possible; validator may flag them
   to keep worlds self-contained. Cross-CAMPAIGN references to DATA files are always an error;
-  the only allowed cross-campaign link is the read-only snapshot `imports` in `campaign.json`
-  (see State).
+  ~~the only allowed cross-campaign link is the read-only snapshot `imports` in `campaign.json`~~
+  ~~(see State).~~ Data files never reference another campaign. Cross-save reads, if ever needed,
+  happen in code (see State, Save slots).
 - Enemy/character/class definitions stay global in `src/data/characters/` and
   `src/data/classes/` (any campaign may use them).
 - The old `src/data/scenarios/**` files (battle definitions) move into the matching
@@ -430,13 +453,17 @@ src/data/campaigns/
 ## Decided
 
 - Campaigns are independent: each holds several worlds, shares no worlds with other
-  campaigns, has its own registries (ids unique per campaign), and its own save
-  (`campaign_id` in the save, one localStorage key per campaign).
-- Cross-campaign links are one-way, read-only, and a SNAPSHOT at campaign start: a campaign
-  declares `imports` in `campaign.json`, evaluated once into ordinary flags in its own save.
-  It never writes to another save, no items are copied, and no two-way connections (import
-  graph acyclic). Build `readCampaignSave` and the import step only when a second campaign
-  exists.
+  campaigns, has its own registries (ids unique per campaign), and ~~its own save~~
+  ~~(`campaign_id` in the save, one localStorage key per campaign)~~ is played in a save slot
+  (10 global slots `daq_save_<slot>`; each save carries its `campaign_id`).
+- ~~Cross-campaign links are one-way, read-only, and a SNAPSHOT at campaign start: a campaign~~
+  ~~declares `imports` in `campaign.json`, evaluated once into ordinary flags in its own save.~~
+  ~~It never writes to another save, no items are copied, and no two-way connections (import~~
+  ~~graph acyclic). Build `readCampaignSave` and the import step only when a second campaign~~
+  ~~exists.~~
+- Cross-campaign transfer is deferred. If needed it is done in code by reading another slot
+  (`readSlot`), not by changing the data structure. `imports` is dropped from `campaign.json`.
+- Saves are 10 global slots, each bound to one campaign when created (see State, Save slots).
 - The existing campaign is REBUILT in the new format, not converted from the old 21 `levels[]`.
   "Level" is no longer a concept: old levels are just scenarios.
 - A scenario file is only an ordered list of game_event calls. How each game_event type behaves at
@@ -453,7 +480,9 @@ src/data/campaigns/
   build the per-campaign registries (battles first), repoint `scenario_registry.js` /
   `MapScreen` / `initialState` refs (code step, do as one self-contained change so the game
   keeps running).
-- How a campaign is chosen/started (title or character select?).
+- ~~How a campaign is chosen/started (title or character select?).~~ Answered: slot screen, then
+  campaign select on an empty slot (see State, Save slots). Still open: where the slot screen
+  sits relative to `TitleScreen` Continue / New Game, and what the slot summary shows.
 - Readers of the old map JSON (`MapScreen`, `WinModal`): implementation work, to check
   against `PlayerContext.jsx`. No save migration needed: old saves are abandoned (starting
   anew); `save_version` still starts at 1 for future changes.
