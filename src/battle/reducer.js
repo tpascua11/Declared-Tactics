@@ -359,7 +359,8 @@ export function battleReducer(state, action) {
       // playerData: minimal stored data from PlayerContext.
       // scenario: array of enemy definitions from the selected map node.
       // sourceLevel: { levelId } — which map level launched this fight.
-      const { playerData, scenario, sourceLevel } = action.payload;
+      // returnPhase: phase BATTLE_END goes back to (defaults to the old 'MAP').
+      const { playerData, scenario, sourceLevel, returnPhase } = action.payload;
       const freshState = buildInitialState(scenario, playerData);
       const prevTargetId = state.lastTargetId;
       const prevTargetAlive = prevTargetId &&
@@ -373,6 +374,7 @@ export function battleReducer(state, action) {
         ...freshState,
         phase: 'QUEUE_SETUP',
         sourceLevel: sourceLevel ?? null,
+        returnPhase: returnPhase ?? null,
         lastTargetId,
         checkpoint: { stageIndex: 0, player: checkpointPlayer },
         initialCheckpoint: { stageIndex: 0, player: checkpointPlayer },
@@ -418,6 +420,7 @@ export function battleReducer(state, action) {
         ...freshState,
         phase: 'QUEUE_SETUP',
         sourceLevel: state.sourceLevel ?? null,
+        returnPhase: state.returnPhase ?? null,
         initialCheckpoint: { stageIndex: 0, player: checkpointPlayer },
         checkpoint: { stageIndex: 0, player: checkpointPlayer },
         retryKey: (state.retryKey ?? 0) + 1,
@@ -429,7 +432,7 @@ export function battleReducer(state, action) {
       // Called by BattleScreen when fight is over.
       // MapScreen reads battleResult to apply rewards, HP carryover, progression.
       const { currentHP, victory } = action.payload;
-      return { ...state, phase: 'MAP', battleResult: { currentHP, victory } };
+      return { ...state, phase: state.returnPhase ?? 'MAP', battleResult: { currentHP, victory } };
     }
 
     case 'CLEAR_BATTLE_RESULT':

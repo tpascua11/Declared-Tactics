@@ -1,0 +1,18 @@
+{
+  "id": "ferrets_and_boars",
+  "name": "Ferrets And Boars",
+  "battle_background": "SNOW_BATTLE_FIELD_WIDE",
+  "stages": [
+    {
+      "enemies": ["ferret_samurai", "ferret_samurai", "ferret_samurai"]
+    },
+    {
+      "enemies": ["ferret_samurai", "boar_samurai", "ferret_samurai"]
+    },
+    {
+      "enemies": ["ferret_samurai", "ferret_samurai", "boar_samurai", "ferret_samurai", "ferret_samurai"]
+    }
+  ],
+  "music": "WAY_OF_THE_SAMURAI_BATTLE_1",
+  "rewards": {}
+}

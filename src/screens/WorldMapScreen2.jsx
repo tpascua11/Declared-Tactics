@@ -14,6 +14,7 @@ import {
   MAP_ICON_SNOW_FIELD_SHRINE, MAP_ICON_SNOW_IRON_GATE, MAP_ICON_SNOW_MOUNTAIN_1, MAP_ICON_SNOW_MOUNTAIN_2,
   MAP_ICON_SNOW_AND_WATER, MAP_ICON_SNOW_AND_WATER_2, MAP_ICON_SNOWY_FIELD_BAMBOO, MAP_ICON_SNOWY_FIELD_DEN,
   MAP_ICON_SUNSET, MAP_ICON_SUNSET_2, MAP_ICON_TREE_AT_SNOW, MAP_ICON_WATER,
+  ITEM_GOLD_1,
 } from '../assets';
 import SUNSWORD_5 from '../assets/World/Sunsword5.png';
 import PLAYER_SAMURAI from '../assets/Player_Map_Icons/SAMURAI.png';
@@ -33,8 +34,11 @@ import samuraiMapTheme from '../assets/Music/SAMURAI_MAP_THEME_1.mp3';
 import { useMusic } from '../hooks/useMusic';
 import { DIALOG_REGISTRY } from '../data/dialogs/dialog_registry';
 import { getCampaign } from '../data/campaigns/campaign_registry';
-import { usePlayer } from '../context/PlayerContext';
+import { usePlayer, isScenarioCleared } from '../context/PlayerContext';
+import { useGame } from '../context/GameContext';
 import DialogModal from '../dialog/DialogModal';
+import EventModal from '../event/EventModal';
+import { buildScenarioPages, buildScenarioReward } from '../event/scenarioPages';
 import GuideModal from '../components/battle/GuideModal';
 import SettingsModal from '../components/map/SettingsModal';
 import { playSelectSfx } from '../vfx/animationRegistry';
@@ -410,6 +414,7 @@ const StatBar =({ label, value, max, color }) => (
 // Bottom row: portrait (height-fit, 2:3 like the dialog PortraitSlot), stat
 // bars, then square menu buttons on the right.
 const PlayerHud = () => {
+  const { playerData } = usePlayer();
   const [openModal, setOpenModal] = useState(null);
   return (
   <div style={STATIC_STYLES.rowBottom}>
@@ -423,6 +428,14 @@ const PlayerHud = () => {
     <div style={{ width: 320, flexShrink: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: 14 }}>
       <div style={{ fontSize: 18, letterSpacing: 4, color: "#d4af37", fontWeight: "bold" }}>SAMURAI</div>
       {HUD_STATS.map(s => <StatBar key={s.label} {...s} />)}
+    </div>
+
+    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 8, marginLeft: 24, flexShrink: 0 }}>
+      <div style={{ fontSize: 11, letterSpacing: 2, color: "#9ab" }}>GOLD</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <img src={ITEM_GOLD_1} alt="" style={{ width: 40, height: 40, objectFit: "contain", imageRendering: "pixelated" }} />
+        <span style={{ fontSize: 28, fontWeight: "bold", color: "#ffd700" }}>{playerData?.gold ?? 0}</span>
+      </div>
     </div>
 
     <div style={{ flex: 1 }} />
@@ -488,17 +501,89 @@ const MAP_BACKGROUNDS = { Sunsword5: SUNSWORD_5 };
 const FALLBACK_CAMPAIGN_ID = 'path_of_the_samurai';
 
 export default function WorldMapScreen2() {
-  const { playerData } = usePlayer();
+  const { playerData, playerDispatch } = usePlayer();
+  const { gs, dispatch, goToBattle } = useGame();
   // First world of the campaign until saves track a current world.
-  const { worldMap, mapCards } = useMemo(() => {
+  const { campaign, worldMap, mapCards } = useMemo(() => {
     const campaign = getCampaign(playerData?.campaign_id ?? FALLBACK_CAMPAIGN_ID);
     const worldMap = campaign.maps[campaign.campaign.worlds[0]];
     const mapCards = worldMap.locations.map(id => {
       const location = campaign.locations[id];
       return { id, title: location.title, icon: MAP_ICON_LOOKUP[location.icon], pos: location.pos };
     });
-    return { worldMap, mapCards };
+    return { campaign, worldMap, mapCards };
   }, [playerData?.campaign_id]);
+
+  // Location whose Enter button was pressed; its scenarios show as a choice page in EventModal.
+  const [enteredLocationId, setEnteredLocationId] = useState(null);
+  const enteredLocation = enteredLocationId ? campaign.locations[enteredLocationId] : null;
+  const enteredScenarioIds = useMemo(
+    () => (enteredLocation ? enteredLocation.scenarios.flatMap(group => group.ids) : []),
+    [enteredLocation]
+  );
+  const enteredPages = useMemo(() => {
+    if (!enteredLocation) return [];
+    return [{
+      type: 'choice',
+      header: enteredLocation.title.toUpperCase(),
+      options: enteredScenarioIds.map(id => {
+        const { name, replayable } = campaign.scenarios[id];
+        const cleared = isScenarioCleared(playerData, id);
+        return {
+          label: name,
+          disabled: cleared && !replayable,
+          sublabel: cleared ? (replayable ? 'REPEATABLE' : 'CLEARED') : undefined,
+        };
+      }),
+    }];
+  }, [campaign, enteredLocation, enteredScenarioIds, playerData]);
+
+  // Scenario picked from the Enter menu; plays its game_events as pages, then commits on finishing (not on Leave).
+  // The location's scene image is captured at pick time: the menu modal (and enteredLocation) is gone by the time this one is mid-play.
+  // playing = { scenarioId, sceneImage, startIndex?, runFlags? }. A scenario runs in segments split at `battle` events:
+  // the fight leaves this screen, and on return the effect below resumes at the event after it.
+  // runFlags are the temporary flags of this run ('battle_won' / 'battle_lost'); they travel through the fight and are never saved.
+  const [playing, setPlaying] = useState(null);
+  const playingScenarioId = playing?.scenarioId;
+  const playingScenario = playingScenarioId ? campaign.scenarios[playingScenarioId] : null;
+  const playingSegment = useMemo(
+    () => (playingScenario ? buildScenarioPages(playingScenario, playerData, playing.startIndex ?? 0, playing.runFlags ?? []) : null),
+    [playingScenario, playerData, playing?.startIndex, playing?.runFlags]
+  );
+
+  const finishPlaying = (completed) => {
+    if (completed && playingSegment.battle) {
+      const { battleId, resumeIndex } = playingSegment.battle;
+      goToBattle(
+        campaign.battles[battleId],
+        { scenarioId: playingScenarioId, sceneImage: playing.sceneImage, resumeIndex, runFlags: playing.runFlags ?? [] },
+        'WORLD_MAP_TEST'
+      );
+    } else if (completed) {
+      playerDispatch({
+        type: 'COMMIT_SCENARIO',
+        scenarioId: playingScenarioId,
+        reward: buildScenarioReward(playingScenario, playerData, playing.runFlags ?? []),
+      });
+    }
+    setPlaying(null);
+  };
+
+  // A segment with no pages (e.g. a battle as the first event) has nothing to show: finish it immediately.
+  useEffect(() => {
+    if (playingSegment && playingSegment.pages.length === 0) finishPlaying(true);
+  }, [playing]);
+
+  // Back from a fight started by a scenario: the scenario always continues, with exactly one of
+  // 'battle_won' / 'battle_lost' set for its `if` events to read.
+  useEffect(() => {
+    const resume = gs.sourceLevel;
+    if (!gs.battleResult || !resume?.scenarioId) return;
+    const outcomeFlag = gs.battleResult.victory ? 'battle_won' : 'battle_lost';
+    const runFlags = [...(resume.runFlags ?? []).filter(f => f !== 'battle_won' && f !== 'battle_lost'), outcomeFlag];
+    setPlaying({ scenarioId: resume.scenarioId, sceneImage: resume.sceneImage, startIndex: resume.resumeIndex, runFlags });
+    dispatch({ type: 'CLEAR_BATTLE_RESULT' });
+  }, []);
 
   const [selectedDialogKey, setSelectedDialogKey] = useState(DIALOG_KEYS[0]);
   const [playingDialogKey, setPlayingDialogKey] = useState(null);
@@ -602,6 +687,15 @@ export default function WorldMapScreen2() {
           ▶ Preview Dialog
         </button>
         <div style={{ fontSize: 9, letterSpacing: 2, color: "#1e3050" }}>{gridDims.cols}x{gridDims.rows} SPACED GRID</div>
+        <button
+          onClick={() => {
+            if (!window.confirm('Reset everything? Clears cleared scenarios, gold, flags and unlocked cards.')) return;
+            playerDispatch({ type: 'CONFIRM_CLASS', classId: playerData.class_id, campaignId: playerData.campaign_id });
+          }}
+          style={{ background: "#3a1a1a", color: "#ffb4b4", border: "1px solid #e0484888", padding: "4px 12px", cursor: "pointer", letterSpacing: 1 }}
+        >
+          RESET EVERYTHING
+        </button>
       </div>
 
       {playingDialogKey && (
@@ -609,6 +703,26 @@ export default function WorldMapScreen2() {
           key={playingDialogKey}
           dialog={DIALOG_REGISTRY[playingDialogKey]}
           onClose={() => setPlayingDialogKey(null)}
+        />
+      )}
+
+      {enteredLocation && (
+        <EventModal
+          key={enteredLocationId}
+          pages={enteredPages}
+          title={enteredLocation.title.toUpperCase()}
+          mapIcon={enteredLocation.scene_image}
+          onChoose={(i) => setPlaying({ scenarioId: enteredScenarioIds[i], sceneImage: enteredLocation.scene_image })}
+          onDone={() => setEnteredLocationId(null)}
+        />
+      )}
+
+      {playingSegment && playingSegment.pages.length > 0 && (
+        <EventModal
+          key={`${playingScenarioId}:${playing.startIndex ?? 0}`}          pages={playingSegment.pages}
+          title={playingScenario.name}
+          mapIcon={playing.sceneImage}
+          onDone={finishPlaying}
         />
       )}
 
@@ -629,6 +743,22 @@ export default function WorldMapScreen2() {
               />
             </div>
           ))}
+          {selectedCardId && (
+            <button
+              onClick={() => { playSelectSfx(); setEnteredLocationId(selectedCardId); }}
+              style={{
+                position: "absolute",
+                top: cardPositions[selectedCardId].y + CARD_H + 4,
+                left: cardPositions[selectedCardId].x + CARD_W / 2,
+                transform: "translateX(-50%)",
+                zIndex: 6,
+                background: "#1a2a3a", color: "#f5d76e", border: "1px solid #d4af37",
+                borderRadius: 4, padding: "4px 24px", letterSpacing: 2, fontWeight: "bold", cursor: "pointer",
+              }}
+            >
+              ENTER
+            </button>
+          )}
           <div ref={gridWrapRef} style={STATIC_STYLES.gridWrap}>
             <div style={gridStyle}>
               {Array.from({ length: gridDims.cols * gridDims.rows }, (_, i) => {

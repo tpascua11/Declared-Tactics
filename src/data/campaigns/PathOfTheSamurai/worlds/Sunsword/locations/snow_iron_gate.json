@@ -3,8 +3,9 @@
   "title": "Snow Iron Gate",
   "pos": { "x": 320, "y": 180 },
   "icon": "Snow_Iron_Gate",
+  "scene_image": "samurai_battlefield_9",
   "requires": [],
   "scenarios": [
-    { "mode": "sequence", "requires": [], "ids": ["gate_ferret_ambush"] }
+    { "mode": "sequence", "requires": [], "ids": ["gate_ferret_ambush", "tree_trail", "rabbit_den", "field_work", "ferret_fight"] }
   ]
 }

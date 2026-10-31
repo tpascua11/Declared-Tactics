@@ -118,17 +118,17 @@ function playerReducer(state, action) {
     }
 
     // One write for cleared mark + flags + rewards, so a quit can never half-commit.
-    // An already-cleared scenario commits nothing (rewards are never granted twice).
+    // Rewards carry no restriction here: whether a scenario can be played again is the
+    // scenario's job (cleared / replayable / requires), so this always applies what it is given.
     case 'COMMIT_SCENARIO': {
       const { scenarioId, flags = [], reward = {} } = action;
-      if (isScenarioCleared(state, scenarioId)) return state;
       const unlockedCards = reward.unlock_cards?.[state.class_id] ?? [];
       const statBoosts = reward.hp_upgrade
         ? [{ stat: 'max_health', amount: reward.hp_upgrade, level_id: scenarioId }]
         : [];
       return {
         ...state,
-        cleared_scenarios: [...(state.cleared_scenarios ?? []), scenarioId],
+        cleared_scenarios: [...new Set([...(state.cleared_scenarios ?? []), scenarioId])],
         flags:             [...new Set([...(state.flags ?? []), ...flags])],
         unlocked_cards:    [...new Set([...(state.unlocked_cards ?? []), ...unlockedCards])],
         stat_boosts:       [...(state.stat_boosts ?? []), ...statBoosts],
