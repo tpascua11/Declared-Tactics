@@ -4,3 +4,4 @@
 
 export const DEBUG_HAND_COST = false; // disables resource cost gating in Hand + queue reducer
 export const DEBUG_MAP = true;       // shows cheat button on MapScreen to force-clear any node
+export const DEBUG_SHOW_HAND_TOOLTIP = false; // shows card tooltip on hover in Hand

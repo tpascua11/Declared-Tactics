@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { effectiveResourceAtExecution, projectedSpeedPenalty, projectedSpeedInfluence } from '../../battle/engine/preview_utils';
 import { battle_registry } from '../../battle/registry/battle_registry';
-import { DEBUG_HAND_COST } from '../../debug';
+import { DEBUG_HAND_COST, DEBUG_SHOW_HAND_TOOLTIP } from '../../debug';
 import { playSelectSfx } from '../../vfx/animationRegistry';
 import GuideModal from './GuideModal';
 import AdvancedGuideModal from './AdvancedGuideModal';
@@ -213,7 +213,7 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
                   </div>
 
                   {/* Tooltip — outside the opacity wrapper so it's always full opacity */}
-                  <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2
+                  {DEBUG_SHOW_HAND_TOOLTIP && <div className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2
                     w-64 rounded-lg border border-gray-600 shadow-xl z-[100]
                     opacity-0 group-hover:opacity-100 transition-opacity duration-150"
                     style={{ background: '#1a1a2e' }}>
@@ -239,7 +239,7 @@ export default function Hand({ cards, queue, totalSlots, onCardClick, disabled, 
                         );
                       })}
                     </div>
-                  </div>
+                  </div>}
                 </div>
               );
             })}
