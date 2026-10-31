@@ -1,0 +1,41 @@
+BATTLE OUTCOME FLOW: open questions
+Context: design in todo/world_data_design.md (BATTLE section). Built: after a `battle`
+game_event the run sets the temporary flag `battle_won` or `battle_lost` (never saved), the
+scenario ALWAYS continues, and an `if` game_event (requires / then / else) decides the rest.
+Code: src/event/scenarioPages.js, src/screens/WorldMapScreen2.jsx (playing / finishPlaying).
+
+1. A loss that continues also CLEARS the scenario (most important, discussing first)
+   A run that reaches its last game_event commits, so a lost fight records the scenario in
+   cleared_scenarios. "Cleared" is meant to mean "completed"; sequence unlocking and
+   requires: [{ "cleared": id }] will read it, so losing could unlock the next scenario.
+   Options:
+   a) explicit `end_scenario` game_event with `clear: false` (e.g. in an `else` branch).
+   b) automatic: a scenario containing a `battle` clears only if `battle_won` was set.
+   c) split the save into "attempted" vs "cleared".
+   Question: which one?
+
+2. Resume data rides on gs.sourceLevel (a field built for the old game's levelId)
+   Move scenarioId / resumeIndex / sceneImage / runFlags to a dedicated "active scenario
+   run" object in GameContext.
+
+3. Resume is by top-level event index, so a `battle` inside an `if` throws
+   "Lose, then fight again" / a second fight in a branch needs a PATH of indexes
+   (e.g. [2, "then", 0]) instead of one number. Build when a scenario needs it.
+
+4. One pair of flags (battle_won / battle_lost) is replaced on each fight
+   A scenario with two fights cannot ask about the first one afterwards. If it matters,
+   let the `battle` game_event name its own result flag.
+
+5. Flags are read when a segment's pages are built
+   A flag set earlier in the SAME segment (future set_flag) is not visible to a later `if`
+   in that segment. This is the doc's existing open question (Commit rule).
+
+6. battle_won / battle_lost must be documented as engine-provided
+   The validator rejects unregistered flags, so these two are reserved names, not entries in a
+   campaign's flags.json.
+
+7. Doc still says a loss ends the scenario uncommitted (BATTLE section, Commit rule);
+   update after question 1 is decided.
+
+Related, left open on purpose: battle loot, battle outcome flags such as "took no damage"
+(world_data_design.md, Open).

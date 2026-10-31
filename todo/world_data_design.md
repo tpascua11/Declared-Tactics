@@ -186,6 +186,13 @@ requires gates: location -> group -> scenario (all AND)
 - Empty `rewards: {}` is removed; rewards moved to the scenario `reward` game_event.
 - `BattleScreen` / `buildInitialState` keep taking this file unchanged: the battle black-box
   boundary stays intact.
+- **The `battle` game_event** is `{ "type": "battle", "battle_id": "..." }`. The battle only
+  reports an outcome (win / lose) back to the scenario; it grants nothing. Today a win continues
+  the scenario with the next game_event and a loss ends it uncommitted (retry starts clean).
+  Branching on the outcome later uses the reserved `if` game_event (see SCENARIO), not a second mechanism.
+- A scenario that contains a `battle` runs in segments split at the fight: the fight leaves the
+  map screen, and on return the runner resumes at the game_event after it (the battle phase
+  returns to the phase that started it, not always the old `MAP`).
 
 ## DIALOG — a game_event, not a layer
 
@@ -340,7 +347,14 @@ game_event finishes, in a single save write. Because state is saved after every 
 ONE reducer action (e.g. `COMMIT_SCENARIO`) that applies the cleared mark, flags, and rewards
 in one step. Separate dispatches would allow a half-committed save if the game quits between
 them. Quitting or losing mid-scenario commits nothing and a
-retry starts clean. This prevents duplicate rewards and half-set story state.
+retry starts clean. This prevents half-set story state.
+~~An already-cleared scenario commits nothing (rewards never granted twice).~~ Replaced:
+**rewards carry no restriction of their own.** `COMMIT_SCENARIO` applies what it is given, and
+`cleared_scenarios` is only recorded (no duplicates). Whether a scenario can be played again is
+the scenario's job: a cleared scenario with `replayable: false` is not selectable, one with
+`replayable: true` is. A reward restricts itself only if its own data says so (for example a
+future `once` on the `reward` game_event); `hp_upgrade` is the known case that will need it,
+since it stacks on every commit.
 Open: if a flag set early in a scenario must be visible to a later game_event of the same
 scenario, the runner checks its pending list as well as the save.
 
@@ -353,7 +367,7 @@ scenario, the runner checks its pending list as well as the save.
   `requires` are met; every scenario and the ending must become reachable. Unreachable =
   soft lock or typo.
 - **Random-order fuzzer:** same simulator, random order, checking invariants (no reward
-  granted twice, game can always still finish).
+  granted by a one-time scenario twice, game can always still finish).
 - **Debug panel (dev only):** set/clear flags, mark scenarios cleared, jump to a location.
   Also the recovery path for a stuck save.
 - **Scenario viewer:** read-only view generated from the JSON (indented outline first, maybe a
@@ -493,6 +507,18 @@ src/data/campaigns/
   `battle`, `reward`, `set_flag`, `clear_flag`. Behavior is defined by each game_event type's
   handler; write the
   parameter list as the handlers are built.
+- **Battle loot (left open on purpose).** Two kinds of reward: scenario rewards (authored,
+  guaranteed, `reward` game_event) and battle drops (owned by the enemy or encounter, possibly
+  random, repeat every fight). Sketch, as in RPG Maker's enemy drops vs. event commands: enemies
+  get an optional `drops` field (the battle file may add encounter bonuses); the fight reports a
+  `loot` list rolled once at its end; the `battle` game_event grants it on a win (maybe a
+  `"loot": false` switch); loot and the scenario's own rewards go into ONE `COMMIT_SCENARIO`.
+  Decisions still open: random chance vs. fixed amounts, whether the battle file may add drops
+  or only enemies, whether the `battle` game_event holds the on/off switch, loot on a loss
+  (leaning none). There are no items yet (only gold, cards, `hp_upgrade`), so drops would start
+  with gold and cards. Build only when a real scenario needs it.
+- Battle outcome flags (e.g. "took no damage") that a scenario's `if` / `requires` could read:
+  scenario-run temporary flags, never saved. Same "build when needed" rule.
 - Localization: dialog text is inline in scenario files, so translating needs extraction. Plan is
   the scenario viewer's export/import (see Tooling), not per-line keys. Revisit only if
   translation becomes a real plan.

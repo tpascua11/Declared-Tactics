@@ -1,0 +1,66 @@
+LOCATION / SCENARIO STRUCTURE: THOUGHT DESIGN (flags, clears, persistence)
+Status: thinking, nothing built. Main design is todo/world_data_design.md. The battle
+loss-clears-the-scenario question lives in todo/battle_outcome_flow.txt (item 1); this file is
+the wider flag thinking it depends on.
+
+1. A scenario "clear" is just another flag
+   Today: cleared_scenarios (array) is written automatically by COMMIT_SCENARIO when a run
+   reaches its last game_event; flags (array) is for authored story facts. Both are booleans
+   about the save, so they could be ONE list. Idea: requires becomes a plain list of flag
+   names (the { "cleared": id } form goes away), and completing a scenario sets a flag.
+
+2. One place to READ flags, several places to DECLARE them
+   - Save: one flat `flags` list. requires checks only that list.
+   - Story facts with no single owner (met_turtle_elder): declared in flags.json, with a
+     description. Set in one scenario, read somewhere else.
+   - A scenario's own "done" flag: implied by the scenario itself, NOT listed in flags.json.
+   - A location's own state flag: implied by the location, same rule.
+   Like RPG Maker: global switches + self-switches (local to the event, not in the global
+   list). Pokemon trainers: the defeated flag is set on the success path only.
+   Why not one table for everything: boilerplate per scenario, and definition and entry can
+   drift apart. Why not only per-object flags: story facts belong to no single object, and the
+   validator needs one list for "set but never read".
+   Rules: namespace implied flags so they cannot collide with story flags (e.g.
+   `scenario:ferret_fight`); the owner writes its own flag, anyone may require it; the validator
+   derives implied flags from the objects and checks them together with flags.json.
+
+3. Scenario `flag` field and who sets it (leaning, not decided)
+   - Every scenario may declare "flag": "ferret_fight_done". Omitted = defaults to the id
+     (namespaced). Declaring it makes the name independent of the id, so the id can be renamed.
+   - The engine sets the scenario's flag automatically when the run reaches its end (normal
+     scenarios: nothing to write).
+   - Opt-out "auto_flag": false for scenarios that can fail: the author puts `set_flag` in the
+     branch that counts as success (e.g. the `then` of `if battle_won`); a loss branch simply
+     does not set it. This answers battle_outcome_flow.txt item 1 without a new event type.
+     Needs set_flag and the flags registry, which are not built yet.
+   - Pure alternative: ALWAYS authored (more typing for every simple scenario, nothing hidden).
+   Undecided: default-plus-opt-out vs always authored.
+
+4. Persistence: what breaks saves
+   A save stores flag names and ids. A save survives a change only if the name keeps its
+   meaning. Renaming breaks both object-owned and central flags equally; object-owned flags
+   are riskier only because renaming a scenario id looks like a harmless cleanup. Fixes:
+   explicit `flag` names for anything that will move or be renamed; a validator that knows the
+   full set of valid names and flags a disappearing one; a small rename map + save_version bump
+   for the rare real rename.
+   Folder moves are safe (data references ids, never folder names).
+
+5. This version starts anew, so nothing needs migrating yet
+   No old-save compatibility is needed now (the doc already abandons old saves), so the flag
+   refactor (cleared_scenarios into flags, requires as plain names) costs almost nothing today
+   and would need a migration later. RESET EVERYTHING on the world map wipes a test save.
+   Keep: save_version (starts at 1, the hook for a future migration step).
+   Freeze point: pick a moment (e.g. the first public build) when names that appear in saves
+   become promises. Before it, rename freely. After it, a rename needs a rename map and a
+   version bump. Record the chosen moment in world_data_design.md.
+
+6. Other games, for reference (from memory, approximate)
+   RPG Maker: switches/variables + per-event self-switches A-D. Pokemon: trainer defeated flag
+   on the win path. Skyrim: numbered quest stages, not booleans (the step beyond flags).
+   BG3 / Wrath of the Righteous: large authored flag systems with tooling to list setters and
+   readers (matches the planned validator).
+
+Next actions when this is settled
+- Decide item 3 (default-plus-opt-out vs always authored) and answer battle_outcome_flow.txt 1.
+- Update world_data_design.md (flags, State, Commit rule, requires) and strike the old text.
+- Then the code: isScenarioCleared / COMMIT_SCENARIO / meetsRequires / the Enter menu.
