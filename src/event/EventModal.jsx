@@ -16,6 +16,11 @@ const CARD_H = 132;
 
 const TYPE_MS_PER_CHAR = 12;
 const CLOSE_ANIM_MS = 400;
+// Scene wipe curve: starts nearly still (first control point y = 0), ends at normal speed (last segment has slope 1).
+const SCENE_WIPE_EASING = 'cubic-bezier(0.4, 0, 0.5, 0.5)';
+// The close is the open curve run backwards: (x1, y1, x2, y2) -> (1 - x2, 1 - y2, 1 - x1, 1 - y1).
+const SCENE_CLOSE_EASING = 'cubic-bezier(0.5, 0.5, 0.6, 1)';
+const SCENE_CLOSE_MS = 800;
 
 function hexToRgba(hex, alpha) {
   const n = parseInt(hex.replace('#', ''), 16);
@@ -34,10 +39,24 @@ function hexToRgba(hex, alpha) {
 // startPageIndex: the page to open on (e.g. past the menu page when resuming after a fight).
 // defaultLeftSpeaker ({ source, id }, optional): shown in the left slot on choice pages when no line sets a left speaker.
 export default function EventModal({ pages, title, sceneImage, onDone, onChoose, onEnd, startPageIndex = 0, defaultLeftSpeaker = null }) {
-  const resolvedPages = useMemo(
+  const [closing, setClosing] = useState(false);
+  const livePages = useMemo(
     () => pages.map(page => (page.type === 'line' ? { ...page, speaker: resolveDialogSpeaker(page.speaker) } : page)),
     [pages]
   );
+  // While closing, keep showing the pages from just before the close: the parent may already have swapped `pages`
+  // (`exit` clears the run), and the fade-out must not flash the menu page or play the scene curtain.
+  const lastLivePages = useRef(livePages);
+  if (!closing) lastLivePages.current = livePages;
+  const resolvedPages = closing ? lastLivePages.current : livePages;
+  const lastLiveBanner = useRef({ title, sceneImage });
+  if (!closing) lastLiveBanner.current = { title, sceneImage };
+  const { title: shownTitle, sceneImage: shownSceneImage } = closing ? lastLiveBanner.current : { title, sceneImage };
+  // The first title fades in slowly after the opening wipe; once the title has ever changed, new ones fade in fast.
+  const firstTitle = useRef(shownTitle);
+  const titleChangedRef = useRef(false);
+  if (shownTitle !== firstTitle.current) titleChangedRef.current = true;
+  const titleHasChanged = titleChangedRef.current;
 
   const [pageIndex, setPageIndex] = useState(startPageIndex);
   // `pages` can shrink under the current index (a finished scenario's pages leave): show the last page until the effect resyncs.
@@ -78,7 +97,6 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
   const rightSpeaker = speakerForSide('right', shownPageIndex);
   const activeSide = page.speaker?.side;
 
-  const [closing, setClosing] = useState(false);
   // onDone(completed): true when the last page finished, false when the player pressed Leave.
   const requestClose = (completed) => {
     setClosing(true);
@@ -124,22 +142,34 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
   }, [choicePending]);
 
   let renderedChars = 0;
-  // A page's `scene` (from change_scene) overrides the location's sceneImage. A new scene wipes in over the old one:
-  // the old image stays underneath (underSrc) while the new one (topSrc) replays the opening reveal and glow (wipeIn).
-  const sceneName = page.scene ?? sceneImage;
+  // A page's `scene` (from change_scene) overrides the location's sceneImage. A new scene plays like curtains:
+  // the shown image closes (wipePhase 'closing', SCENE_CLOSE_MS), then the new one opens ('closed' -> 'open', the opening reveal).
+  // 'closed' has no transition so the swap and the closed starting position never animate.
+  const sceneName = page.scene ?? shownSceneImage;
   const sceneSrc = sceneName ? (ASSETS[sceneName] ?? ASSETS.SCENARIO_BACKGROUNDS[sceneName]) : null;
-  const [sceneLayers, setSceneLayers] = useState({ underSrc: null, topSrc: sceneSrc });
-  const [wipeIn, setWipeIn] = useState(false);
-  useEffect(() => { if (entered) setWipeIn(true); }, [entered]);
-  const shownSceneSrc = useRef(sceneSrc);
+  const [shownSrc, setShownSrc] = useState(sceneSrc);
+  const [wipePhase, setWipePhase] = useState('closed');
+  const sceneOpen = wipePhase === 'open';
+  useEffect(() => { if (entered) setWipePhase('open'); }, [entered]);
+  const requestedSrc = useRef(sceneSrc);
   useEffect(() => {
-    if (shownSceneSrc.current === sceneSrc) return;
-    shownSceneSrc.current = sceneSrc;
-    setSceneLayers(prev => ({ underSrc: prev.topSrc, topSrc: sceneSrc }));
-    setWipeIn(false);
-    let innerFrame;
-    const outerFrame = requestAnimationFrame(() => { innerFrame = requestAnimationFrame(() => setWipeIn(true)); });
-    return () => { cancelAnimationFrame(outerFrame); cancelAnimationFrame(innerFrame); };
+    if (requestedSrc.current === sceneSrc) return;
+    requestedSrc.current = sceneSrc;
+    let closeTimer, outerFrame, innerFrame;
+    const swapAndOpen = () => {
+      setShownSrc(sceneSrc);
+      setWipePhase('closed');
+      outerFrame = requestAnimationFrame(() => { innerFrame = requestAnimationFrame(() => setWipePhase('open')); });
+    };
+    if (wipePhase === 'open' && shownSrc) {
+      setWipePhase('closing');
+      closeTimer = setTimeout(swapAndOpen, SCENE_CLOSE_MS);
+    } else if (entered) {
+      swapAndOpen();
+    } else {
+      setShownSrc(sceneSrc);
+    }
+    return () => { clearTimeout(closeTimer); cancelAnimationFrame(outerFrame); cancelAnimationFrame(innerFrame); };
   }, [sceneSrc]);
 
   return (
@@ -188,36 +218,23 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
         <div style={{
           width: '100%', height: 368, marginBottom: 20,
           position: 'relative', overflow: 'hidden', borderRadius: 12,
-          border: (sceneLayers.topSrc && wipeIn) ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
-          boxShadow: (sceneLayers.topSrc && wipeIn) ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
+          border: (shownSrc && sceneOpen) ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
+          boxShadow: (shownSrc && sceneOpen) ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
           background: '#000',
-          transition: wipeIn ? 'border-color 2s ease-out, box-shadow 2s ease-out' : 'none',
+          transition: sceneOpen
+            ? 'border-color 2s ease-out, box-shadow 2s ease-out'
+            : wipePhase === 'closing' ? `border-color ${SCENE_CLOSE_MS}ms ease-in, box-shadow ${SCENE_CLOSE_MS}ms ease-in` : 'none',
         }}>
-          {sceneLayers.topSrc && (
+          {shownSrc && (
             <>
-              {sceneLayers.underSrc && (
-                <img src={sceneLayers.underSrc} alt="" style={{
-                  position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-                }} />
-              )}
-              <img src={sceneLayers.topSrc} alt="" style={{
+              <img src={shownSrc} alt="" style={{
                 position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-                clipPath: wipeIn ? 'inset(0 0 0 0)' : 'inset(0 50% 0 50%)',
-                transition: wipeIn ? 'clip-path 2s ease-out' : 'none',
+                clipPath: sceneOpen ? 'inset(0 0 0 0)' : 'inset(0 50% 0 50%)',
+                transition: sceneOpen
+                  ? `clip-path 2s ${SCENE_WIPE_EASING}`
+                  : wipePhase === 'closing' ? `clip-path ${SCENE_CLOSE_MS}ms ${SCENE_CLOSE_EASING}` : 'none',
               }} />
-              {title && (
-                <div style={{
-                  position: 'absolute', bottom: 0, left: 0, right: 0,
-                  textAlign: 'center', padding: '24px 0',
-                  background: 'radial-gradient(ellipse 260px 90px at center, rgba(0,0,0,0.75) 0%, transparent 75%)',
-                  fontSize: 32, fontWeight: 'bold', color: '#f5d76e', textShadow: '0 0 24px #c8a135, 0 0 8px rgba(0,0,0,0.9)', letterSpacing: 3,
-                  opacity: entered ? 1 : 0,
-                  transition: 'opacity 0.6s ease-out',
-                  transitionDelay: entered ? '2s' : '0s',
-                }}>
-                  {title}
-                </div>
-              )}
+              {shownTitle && <SceneTitle key={shownTitle} text={shownTitle} entered={entered} isFirst={!titleHasChanged} />}
             </>
           )}
         </div>
@@ -290,6 +307,30 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
           <PortraitSlot key={rightSpeaker?.id ?? 'empty'} speaker={rightSpeaker} active={activeSide === 'right'} align="right" visible={entered} />
         </div>
       </div>
+    </div>
+  );
+}
+
+// Remounted per title (key in the parent), so every new title fades in from hidden.
+// isFirst: waits for the opening wipe (2s delay, slow fade); later titles fade in quickly at once.
+function SceneTitle({ text, entered, isFirst }) {
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    if (!entered) return;
+    const frame = requestAnimationFrame(() => setShown(true));
+    return () => cancelAnimationFrame(frame);
+  }, [entered]);
+  return (
+    <div style={{
+      position: 'absolute', bottom: 0, left: 0, right: 0,
+      textAlign: 'center', padding: '24px 0',
+      background: 'radial-gradient(ellipse 260px 90px at center, rgba(0,0,0,0.75) 0%, transparent 75%)',
+      fontSize: 32, fontWeight: 'bold', color: '#f5d76e', textShadow: '0 0 24px #c8a135, 0 0 8px rgba(0,0,0,0.9)', letterSpacing: 3,
+      opacity: shown ? 1 : 0,
+      transition: `opacity ${isFirst ? 600 : 300}ms ease-out`,
+      transitionDelay: isFirst ? '2s' : '0s',
+    }}>
+      {text}
     </div>
   );
 }

@@ -80,6 +80,7 @@ src/data/campaigns/<Campaign>/
 | `battle` | leaves for a fight, then resumes at the next event (top level only, not inside `if`) |
 | `if` | `{ requires, then, else }`; runs one branch; nests up to 3 deep |
 | `exit` | `{ "type": "exit" }`. Ends the scenario normally (commit applies, events after it are not committed) and closes the whole modal instead of returning to the menu. Works at top level and inside `if`, so a branch can exit (win only, lose only, or both). `LEAVE` still commits nothing. Put it last. `ferret_fight` ends both branches with it. |
+| `change_scene` | `{ "type": "change_scene", "image": "<name>" }`. Shows nothing itself. Every page after it carries `scene`; the modal wipes the new image in over the old one (same 2s clip-path reveal and glow as on open). The name is looked up as `ASSETS[name]` or `ASSETS.SCENARIO_BACKGROUNDS[name]`; the validator does not check it. Persists until the next change; a resume after a fight rebuilds it by walking the earlier events. `ferret_fight` win branch is the worked example. |
 
 An unknown `type` throws. Add a type only when a real scenario needs it.
 
@@ -93,23 +94,28 @@ Its pages are `[menu choice page, ...scenario pages]`.
 - A fight leaves the screen. The location id is saved with the resume data (`locationId`), and on return the modal opens
   on the first resumed page (`startPageIndex` skips the menu page), so a scenario with a fight ends the same way.
 - `EventModal.onEnd` runs after the last page and returns the page to show next, or anything else to close.
+- Portraits: the left slot shows the speaker of the nearest left-side line. On the menu (choice) page, when no line sets one,
+  it shows the player's class (`defaultLeftSpeaker`, passed by the runner). Scenario pages do not get that default.
+  Each slot is remounted per speaker, so a new speaker slides in; a portrait already on screen stays put.
 - Dev only: the SKIP BATTLE button (top bar, off / win / loss) continues a scenario past a fight with
   `battle_won` / `battle_lost` set, without opening the battle. Remove it with the other dev leftovers.
 
-## Presentation commands (planned, not built)
+## Presentation commands (`change_scene` built, `change_portrait` planned)
 
 The dialog's scene image and portraits are set by game_events, like RPG Maker's command list.
+`change_scene` is in the built table above; `change_portrait` is not built. The rules below cover both.
 
 | type | does |
 |---|---|
-| `change_scene` | `{ "type": "change_scene", "image": "<scene image name>" }`. Replaces the scene image from here on. |
 | `change_portrait` | `{ "type": "change_portrait", "side": "left" or "right", "speaker": { source, id } or null }`. Replaces that side's portrait; `null` clears it. |
 
 - They are sibling events of `dialog`, not inside `lines`. They show nothing by themselves.
 - Persistent: a change stays until the next change.
 - Start state: scene = the location's `scene_image`; portraits = none, until a `dialog` line with a `speaker.side` shows one.
-- Snapshot: `buildScenarioPages` walks the events from the top, keeps a running `{ scene, left, right }`, and copies it onto every page.
-  A battle resume (`startIndex > 0`) still walks the earlier events to rebuild the state; it only emits pages from `startIndex`.
+- Snapshot: `buildScenarioPages` walks the events from the top, keeps a running state, and copies it onto every page.
+  Built so far: `scene` only (undefined until a `change_scene` runs; `EventModal` then falls back to the location's scene).
+  `left` / `right` come with `change_portrait`. A battle resume (`startIndex > 0`) still walks the earlier events to rebuild
+  the state; it only emits pages from `startIndex`.
 - `EventModal` is dumb: it draws the snapshot on the page it is given and interprets no commands.
 - One `EventModal` stays mounted for the menu and the run (no close and reopen between them). A scene change swaps inside the open modal.
 - Add commands as entries in `event/gameEvents.js` (todo item 1d).
