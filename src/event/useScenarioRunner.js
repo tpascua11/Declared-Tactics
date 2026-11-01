@@ -24,12 +24,18 @@ export function useScenarioRunner(campaign, skipBattle = null) {
   const [enteredLocationId, setEnteredLocationId] = useState(null);
   const enteredLocation = enteredLocationId ? campaign.locations[enteredLocationId] : null;
   // Only scenarios whose `requires` are met show up; menu option i maps to enteredScenarioIds[i].
-  const enteredScenarioIds = useMemo(
-    () => (enteredLocation
-      ? enteredLocation.scenarios.filter(id => meetsRequires(campaign.scenarios[id].requires, playerData))
-      : []),
-    [campaign, enteredLocation, playerData]
-  );
+  // Order: not cleared, then REPEATABLE (cleared but replayable), then CLEARED (disabled); each group keeps the location's order.
+  const enteredScenarioIds = useMemo(() => {
+    if (!enteredLocation) return [];
+    const available = enteredLocation.scenarios.filter(id => meetsRequires(campaign.scenarios[id].requires, playerData));
+    const isCleared = (id) => isScenarioCleared(playerData, id);
+    const isRepeatable = (id) => isCleared(id) && campaign.scenarios[id].replayable;
+    return [
+      ...available.filter(id => !isCleared(id)),
+      ...available.filter(isRepeatable),
+      ...available.filter(id => isCleared(id) && !isRepeatable(id)),
+    ];
+  }, [campaign, enteredLocation, playerData]);
   const menuPages = useMemo(() => {
     if (!enteredLocation) return [];
     return [{
