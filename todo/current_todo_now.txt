@@ -1,0 +1,57 @@
+CURRENT TODO: world map / campaign work
+
+Start here (what exists)
+   Data: src/data/campaigns/<Campaign>/ (campaign -> world map -> location -> scenario -> battle).
+   _Template/ is a copy-me campaign. Read todo/world_design.md first: the current design (flat global flags,
+   requires, game_events, what is built vs not).
+   Code: src/screens/WorldMapScreen2.jsx (screen), src/event/ (EventModal, useScenarioRunner, scenarioPages,
+   requires), src/data/campaigns/campaign_registry.js, src/context/PlayerContext.jsx (COMMIT_SCENARIO).
+   The old game (MapScreen.jsx, src/data/maps/, DialogModal) still runs until it is removed.
+   todo/old/ holds superseded designs. Battle leftovers: todo/battle_outcome_flow.txt (items 2-5 still open).
+Rules: small steps, one file or decision at a time, user reviews each. Never run npm start or npm run build.
+Check data with: node tools/validate_campaigns.js
+
+1. Clean up WorldMapScreen2.jsx (about 570 lines now, was 788)
+   Planned structure, one step at a time:
+   a) Split PlayerHud and LocationCard into src/components/worldmap/ (also StatBar, HUD constants).
+   b) data/mapArt.js: icons and backgrounds loaded from the asset folders (require.context), replacing the
+      hand-written MAP_ICON_LOOKUP / MAP_BACKGROUNDS and the many imports. A new icon then needs only the file.
+   c) GameContext.activeRun: replaces gs.sourceLevel (built for the old game) for the scenario resume data
+      { scenarioId, sceneImage, resumeIndex, runFlags }. Same item as battle_outcome_flow.txt 2.
+   d) event/gameEvents.js: one registry of game_event handlers (dialog, reward, set_flag, battle, if) so a new
+      type is one entry; today the types are spread over scenarioPages.js and the commit code.
+   e) Target: WorldMapScreen2 about 100 lines (canvas, cards, Enter button, modals).
+
+2. Remove dev leftovers (user decides each)
+   - Dialog preview in the top bar (dropdown + Preview Dialog button, uses DIALOG_REGISTRY and DialogModal).
+   - RESET EVERYTHING button (before shipping).
+   - HUD placeholders: fake HP / BATTLE SPIRIT bars, HUD buttons that open nothing.
+   - src/data/maps/PATH_OF_THE_SAMURAI_V2.json and iron_wastes_map.json (nothing imports them).
+
+3. Remove the old game (blocked until the new map is the real one)
+   MapScreen.jsx is still the live screen for the MAP phase in App.jsx. It pulls in WinModal,
+   PATH_OF_THE_SAMURAI.json, data/maps/scenario_registry.js, the old reducer actions in PlayerContext
+   (UNLOCK_CARD, UPGRADE_STAT, SAVE_LAST_LEVEL, APPLY_BATTLE_RESULT, completed_levels) and the old battle files in
+   data/scenarios/ (move the ones still used into campaign battles/). DialogModal, DIALOG_REGISTRY and
+   DialogEditorScreen go with it (EventModal replaces DialogModal). Needs App.jsx and phase-flow changes.
+
+4. Renames for clearer names
+   - buildScenarioReward -> buildScenarioCommit (it returns flags as well as the reward); COMMIT_SCENARIO takes
+     `commit`, not `reward`.
+   - EventModal prop mapIcon -> sceneImage (the value is the location's scene_image).
+   - playing / playingSegment in useScenarioRunner: clearer names for run state vs current pages.
+
+5. Data to settle
+   - scenario desc / clear_desc: read by nothing. Keep as prose for later or remove (the old Path of the Samurai
+     text in them may be wanted).
+   - location pos units: pixels (canvas 1920 wide) or fraction of the map image.
+   - location scene_image: every location uses the placeholder samurai_battlefield_9.
+   - _Template: still shows things not built (toggleable flags, clear_flag, dialog title / mapIcon). Match it to
+     what is built, ideally with a validator check on the template.
+   - hp_upgrade reward stacks on every commit; needs a `once` on the reward before it is used again.
+   - Uncommitted and unrelated, leave alone unless asked: .gitignore change, src/assets/World/Sunsword7 - Copy.png.
+
+6. Later
+   - Validator: also check icons, backgrounds and scene_image names against the art; "flag set but never read".
+   - Save slot screen and campaign select; current_world in the save.
+   - Battle loot, clear_flag / toggleable flags, a choice game_event (see world_design.md, Not built).

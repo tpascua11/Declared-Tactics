@@ -5,7 +5,8 @@ Turn-based battle card game. React 18 + Tailwind CSS (Create React App).
 ## Commands
 
 - `npm start` — dev server. NEVER run this yourself; the user runs it and verifies changes in their own session.
-- `npm run build` — production build
+- `npm run build` — production build. Do not run it unless the user asks.
+- `node tools/validate_campaigns.js` — checks campaign data (references, flags, missing `set_flag`). Safe to run; run it after editing anything under `src/data/campaigns/`.
 
 ## Workflow
 
