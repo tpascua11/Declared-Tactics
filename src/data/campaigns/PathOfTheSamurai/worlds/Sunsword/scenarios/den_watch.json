@@ -1,0 +1,16 @@
+{
+  "id": "den_watch",
+  "name": "DEN WATCH",
+  "desc": "",
+  "clear_desc": "",
+  "replayable": false,
+  "requires": [],
+  "game_events": [
+    { "type": "dialog", "lines": [
+      { "speaker": { "source": "narrator" }, "text": "A den lies half-buried in the drifts, quiet now. Whoever lived here left in a hurry." },
+      { "speaker": { "source": "class", "id": "samurai" }, "text": "The gate is open behind me. This is the first place the road leads." }
+    ] },
+    { "type": "reward", "gold": 20 },
+    { "type": "set_flag", "flag": "cleared:den_watch" }
+  ]
+}

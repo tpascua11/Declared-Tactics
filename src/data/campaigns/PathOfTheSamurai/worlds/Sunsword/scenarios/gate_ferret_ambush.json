@@ -11,6 +11,7 @@
       { "speaker": { "source": "enemy", "id": "ferret_samurai" }, "text": "You dare approach <color:c8a135>our territory</color>, outsider?" },
       { "speaker": { "source": "class", "id": "samurai" }, "text": "Then we settle this the old way." }
     ] },
-    { "type": "reward", "gold": 20, "unlock_cards": { "samurai": ["quick_steps"] } }
+    { "type": "reward", "gold": 20, "unlock_cards": { "samurai": ["quick_steps"] } },
+    { "type": "set_flag", "flag": "cleared:gate_ferret_ambush" }
   ]
 }

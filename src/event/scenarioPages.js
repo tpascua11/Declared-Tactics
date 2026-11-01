@@ -1,9 +1,9 @@
 // Turns a scenario's game_events into EventModal pages (todo/world_data_design.md: SCENARIO).
-// Handled types: dialog, reward, battle (stops a segment), if (expanded here). set_flag / clear_flag are not handled yet.
+// Handled types: dialog, reward, set_flag (no page; collected by buildScenarioReward), battle (stops a segment), if (expanded here). clear_flag is not handled yet.
 //
 // runFlags = temporary flags of the current scenario run (e.g. 'battle_won' / 'battle_lost'); never saved.
 
-import { hasFlag, isScenarioCleared } from '../context/PlayerContext';
+import { meetsRequires } from './requires';
 
 const MAX_IF_DEPTH = 3;
 
@@ -20,16 +20,9 @@ const PAGE_BUILDERS = {
       cardId,
     }));
   },
-};
 
-// `requires` entries: a flag name, or { cleared: scenario_id }. AND-only.
-function meetsRequires(requires = [], playerData, runFlags) {
-  return requires.every(entry =>
-    typeof entry === 'string'
-      ? runFlags.includes(entry) || hasFlag(playerData, entry)
-      : isScenarioCleared(playerData, entry.cleared)
-  );
-}
+  set_flag: () => [],
+};
 
 // Replaces an `if` event with the events of the branch that applies; other events pass through.
 function expandEvent(event, playerData, runFlags, depth = 0) {
@@ -40,17 +33,18 @@ function expandEvent(event, playerData, runFlags, depth = 0) {
 }
 
 // The reward a finished scenario hands to COMMIT_SCENARIO: the `reward` events of the branches
-// that applied (given the final runFlags), merged.
+// that applied (given the final runFlags), merged, plus `flags` from the `set_flag` events of those branches.
 export function buildScenarioReward(scenario, playerData, runFlags = []) {
-  return scenario.game_events
-    .flatMap(event => expandEvent(event, playerData, runFlags))
+  const appliedEvents = scenario.game_events.flatMap(event => expandEvent(event, playerData, runFlags));
+  const flags = appliedEvents.filter(event => event.type === 'set_flag').map(event => event.flag);
+  return appliedEvents
     .filter(event => event.type === 'reward')
     .reduce((total, { type, gold = 0, ...rest }) => ({
       ...total,
       ...rest,
       gold: total.gold + gold,
       unlock_cards: { ...total.unlock_cards, ...rest.unlock_cards },
-    }), { gold: 0, unlock_cards: {} });
+    }), { gold: 0, unlock_cards: {}, flags });
 }
 
 // Plays game_events from startIndex until a top-level `battle` event or the end.

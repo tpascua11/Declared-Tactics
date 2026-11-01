@@ -11,6 +11,7 @@
         { "speaker": { "source": "enemy", "id": "ferret_samurai" }, "text": "Reply line." } ] },
     { "type": "battle", "battle_id": "template_battle" },
     { "type": "reward", "gold": 0, "unlock_cards": { "samurai": [] } },
-    { "type": "set_flag", "flag": "template.example_flag" }
+    { "type": "set_flag", "flag": "template.example_flag" },
+    { "type": "set_flag", "flag": "cleared:template_scenario" }
   ]
 }

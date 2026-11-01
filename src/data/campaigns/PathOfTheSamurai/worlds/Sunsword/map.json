@@ -1,6 +1,6 @@
 {
   "id": "sunsword",
   "name": "SUNSWORD",
-  "background": "Sunsword5",
-  "locations": ["snow_iron_gate"]
+  "background": "Sunsword6",
+  "locations": ["snow_iron_gate", "snowy_field_den", "snow_field_shrine"]
 }

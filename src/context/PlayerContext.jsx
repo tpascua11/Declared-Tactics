@@ -39,8 +39,12 @@ function loadFromStorage() {
 
 export const hasFlag = (playerData, flag) => (playerData?.flags ?? []).includes(flag);
 
+// "Cleared" is an ordinary flag, written by a scenario's own `set_flag` event.
+// Design: todo/location-scaneario-structure-thought-design.txt (DECISION).
+export const clearedFlag = (scenarioId) => `cleared:${scenarioId}`;
+
 export const isScenarioCleared = (playerData, scenarioId) =>
-  (playerData?.cleared_scenarios ?? []).includes(scenarioId);
+  hasFlag(playerData, clearedFlag(scenarioId));
 
 // Derives the full runtime player snapshot from stored minimal data.
 // Call this whenever you need the full picture (e.g. GO_TO_BATTLE).
@@ -111,24 +115,24 @@ function playerReducer(state, action) {
         completed_levels: [],
         save_version:    1,
         campaign_id:     action.campaignId ?? DEFAULT_CAMPAIGN_ID,
-        cleared_scenarios: [],
         flags:           [],
         gold:            0,
       };
     }
 
-    // One write for cleared mark + flags + rewards, so a quit can never half-commit.
+    // One write for flags + rewards, so a quit can never half-commit. Nothing is marked cleared
+    // here: a scenario clears itself with a `set_flag` event (arrives as reward.flags).
     // Rewards carry no restriction here: whether a scenario can be played again is the
     // scenario's job (cleared / replayable / requires), so this always applies what it is given.
     case 'COMMIT_SCENARIO': {
-      const { scenarioId, flags = [], reward = {} } = action;
+      const { scenarioId, reward = {} } = action;
+      const flags = reward.flags ?? [];
       const unlockedCards = reward.unlock_cards?.[state.class_id] ?? [];
       const statBoosts = reward.hp_upgrade
         ? [{ stat: 'max_health', amount: reward.hp_upgrade, level_id: scenarioId }]
         : [];
       return {
         ...state,
-        cleared_scenarios: [...new Set([...(state.cleared_scenarios ?? []), scenarioId])],
         flags:             [...new Set([...(state.flags ?? []), ...flags])],
         unlocked_cards:    [...new Set([...(state.unlocked_cards ?? []), ...unlockedCards])],
         stat_boosts:       [...(state.stat_boosts ?? []), ...statBoosts],

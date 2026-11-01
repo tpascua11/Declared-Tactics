@@ -4,7 +4,7 @@
   "desc": "",
   "clear_desc": "",
   "replayable": true,
-  "requires": [],
+  "requires": [{ "cleared": "field_work" }],
   "game_events": [
     { "type": "dialog", "lines": [
       { "speaker": { "source": "enemy", "id": "ferret_samurai" }, "text": "This is <color:c8a135>our gate</color>, fox. Turn around, or bleed." },
@@ -17,7 +17,8 @@
           { "speaker": { "source": "narrator" }, "text": "The ferrets lie quiet in the snow. The gate stands open." },
           { "speaker": { "source": "class", "id": "samurai" }, "text": "That wasn't so hard." }
         ] },
-        { "type": "reward", "gold": 20 }
+        { "type": "reward", "gold": 20 },
+        { "type": "set_flag", "flag": "cleared:ferret_fight" }
       ],
       "else": [
         { "type": "dialog", "lines": [

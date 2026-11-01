@@ -1,0 +1,9 @@
+{
+  "id": "snow_field_shrine",
+  "title": "Snow Field Shrine",
+  "pos": { "x": 980, "y": 220 },
+  "icon": "Snowy_Pagoda_Mountain_Shrine",
+  "scene_image": "samurai_battlefield_9",
+  "requires": [{ "cleared": "ferret_fight" }],
+  "scenarios": ["shrine_prayer"]
+}

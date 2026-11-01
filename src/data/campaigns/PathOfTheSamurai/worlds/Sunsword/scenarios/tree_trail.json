@@ -4,7 +4,7 @@
   "desc": "Pine needles crunch underfoot. The trail winds between tall evergreens, their branches heavy with old snow, casting long blue shadows across your path. And it's held. Boars plant themselves ahead — slow, heavy, tusks gleaming dull. But it's the rabbits you should worry about. Three of them scatter among the pines, never still, already moving before you've finished looking. A couple of ferrets linger at the back, watching. Not fighting. Just... observing. Taking notes, maybe. One of the rabbits twitches its nose at you. 'Go on then, fox. Swing at nothing.' Your grip tightens on your blade. This isn't just a fight. It's a test you didn't study for.",
   "clear_desc": "The trail is yours now. The boars went down hard — they always do when you hit them right. But the rabbits... those took something else. Every wide swing met empty air. Every heavy strike caught only pine needles. So you stopped swinging. Started watching. Found the rhythm in their chaos — the tiny pause before each hop, the tell. That's when you struck. Not fast. *Timed*. The pines settle around you, quiet now. Speed isn't about hitting first. It's about hitting *when it means something*. The rabbits scatter into the underbrush, alive but humbled. The boars lumber off. The ferrets are already gone — slipped away while you weren't looking. Probably off to tell someone what they saw. Let them. You keep walking. The trail stretches deeper into the pines.",
   "replayable": false,
-  "requires": [],
+  "requires": [{ "cleared": "gate_ferret_ambush" }],
   "game_events": [
     { "type": "dialog", "lines": [
       { "speaker": { "source": "narrator" }, "text": "The road climbs past <hl>Ember Keep</hl>, its lanterns still lit from last night's watch." },
@@ -12,6 +12,7 @@
       { "speaker": { "source": "narrator" }, "text": "A cold wind rolls off the ridge, carrying the smell of pine and ash." },
       { "speaker": { "source": "class", "id": "samurai" }, "text": "<color:c8a135>Worth remembering this view.</color>" }
     ] },
-    { "type": "reward", "gold": 20 }
+    { "type": "reward", "gold": 20 },
+    { "type": "set_flag", "flag": "cleared:tree_trail" }
   ]
 }

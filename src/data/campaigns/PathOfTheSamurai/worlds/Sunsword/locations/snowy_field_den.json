@@ -1,0 +1,9 @@
+{
+  "id": "snowy_field_den",
+  "title": "Snowy Field Den",
+  "pos": { "x": 620, "y": 320 },
+  "icon": "World_Icon_2",
+  "scene_image": "samurai_battlefield_9",
+  "requires": [{ "cleared": "ferret_fight" }],
+  "scenarios": ["den_watch"]
+}

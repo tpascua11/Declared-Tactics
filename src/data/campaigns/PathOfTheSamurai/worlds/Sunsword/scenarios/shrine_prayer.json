@@ -1,0 +1,16 @@
+{
+  "id": "shrine_prayer",
+  "name": "SHRINE PRAYER",
+  "desc": "",
+  "clear_desc": "",
+  "replayable": false,
+  "requires": [],
+  "game_events": [
+    { "type": "dialog", "lines": [
+      { "speaker": { "source": "narrator" }, "text": "A small shrine stands in the snow, its bell frozen mid-swing." },
+      { "speaker": { "source": "class", "id": "samurai" }, "text": "I don't know who to pray to. I'll stand here a moment anyway." }
+    ] },
+    { "type": "reward", "gold": 20 },
+    { "type": "set_flag", "flag": "cleared:shrine_prayer" }
+  ]
+}

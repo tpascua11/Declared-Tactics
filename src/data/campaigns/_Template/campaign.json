@@ -1,5 +1,5 @@
 {
   "id": "template_campaign",
   "name": "TEMPLATE CAMPAIGN",
-  "worlds": ["_World"]
+  "worlds": ["template_map"]
 }

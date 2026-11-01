@@ -4,7 +4,7 @@
   "desc": "You hear them before you see them. Snickering. Lots of snickering. You round the corner and — eight rabbits. Just... sitting there. Blocking the path like a fuzzy, twitching roadblock. One's leaning against a pine, picking his teeth with a twig. Another's stretching his legs out like he's at a spa. They see you and not a single one flinches. The big one in the center grins wide. 'Look who it is, boys. A samurai fox.' He says it like it's a punchline. The others snicker. One tosses a pebble at your paw. 'Cute sword, fluffy. Your mama give you that?' More laughter. This is humiliating. This is *absurd*. Eight rabbits. Not running. Not scared. Just... mean.",
   "clear_desc": "Eight against one, and not one of them ran. That's the part that stings. The last rabbit hits the dirt and suddenly — slow clapping. From the tree line. A turtle steps out of the shadows, arms folded, expression unreadable. Old. The kind of old that means dangerous or wise. Possibly both. 'You have skill, fox,' he says, voice like gravel sliding on stone. 'But you fight angry. Sloppy.' He watches you for a moment, those slow eyes taking in everything — your stance, your grip, the way you're still bristling from those rabbits. 'Still Wind,' he says at last. 'When the world moves, you move less. Let me show you.' The rabbits groan in the dirt behind you. At least you agree on something.",
   "replayable": false,
-  "requires": [],
+  "requires": [{ "cleared": "tree_trail" }],
   "game_events": [
     { "type": "dialog", "lines": [
       { "speaker": { "source": "class", "id": "samurai" }, "text": "What's on the other side?" },
@@ -21,6 +21,7 @@
       { "speaker": { "source": "enemy", "id": "dragon_samurai_teacher", "name": "IVORKAR", "color": "#f5d76e" }, "text": "It was orange when I picked it. Go see the rest. Then come back and tell me if I got it right." },
       { "speaker": { "source": "narrator" }, "text": "Varx turns the leaf over once, and puts it in his pocket." }
     ] },
-    { "type": "reward", "gold": 20, "unlock_cards": { "samurai": ["still_wind"] } }
+    { "type": "reward", "gold": 20, "unlock_cards": { "samurai": ["still_wind"] } },
+    { "type": "set_flag", "flag": "cleared:rabbit_den" }
   ]
 }

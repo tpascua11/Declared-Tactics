@@ -4,12 +4,13 @@
   "desc": "",
   "clear_desc": "",
   "replayable": false,
-  "requires": [],
+  "requires": [{ "cleared": "rabbit_den" }],
   "game_events": [
     { "type": "dialog", "lines": [
       { "speaker": { "source": "narrator" }, "text": "You work in the fields for <hl>six hours</hl>, hauling snow-crusted sacks until your paws ache." },
       { "speaker": { "source": "class", "id": "samurai" }, "text": "An honest day's work. The farmer pays well enough." }
     ] },
-    { "type": "reward", "gold": 20 }
+    { "type": "reward", "gold": 20 },
+    { "type": "set_flag", "flag": "cleared:field_work" }
   ]
 }
