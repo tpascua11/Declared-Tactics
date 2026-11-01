@@ -121,22 +121,22 @@ function playerReducer(state, action) {
     }
 
     // One write for flags + rewards, so a quit can never half-commit. Nothing is marked cleared
-    // here: a scenario clears itself with a `set_flag` event (arrives as reward.flags).
+    // here: a scenario clears itself with a `set_flag` event (arrives as commit.flags).
     // Rewards carry no restriction here: whether a scenario can be played again is the
     // scenario's job (cleared / replayable / requires), so this always applies what it is given.
     case 'COMMIT_SCENARIO': {
-      const { scenarioId, reward = {} } = action;
-      const flags = reward.flags ?? [];
-      const unlockedCards = reward.unlock_cards?.[state.class_id] ?? [];
-      const statBoosts = reward.hp_upgrade
-        ? [{ stat: 'max_health', amount: reward.hp_upgrade, level_id: scenarioId }]
+      const { scenarioId, commit = {} } = action;
+      const flags = commit.flags ?? [];
+      const unlockedCards = commit.unlock_cards?.[state.class_id] ?? [];
+      const statBoosts = commit.hp_upgrade
+        ? [{ stat: 'max_health', amount: commit.hp_upgrade, level_id: scenarioId }]
         : [];
       return {
         ...state,
         flags:             [...new Set([...(state.flags ?? []), ...flags])],
         unlocked_cards:    [...new Set([...(state.unlocked_cards ?? []), ...unlockedCards])],
         stat_boosts:       [...(state.stat_boosts ?? []), ...statBoosts],
-        gold:              (state.gold ?? 0) + (reward.gold ?? 0),
+        gold:              (state.gold ?? 0) + (commit.gold ?? 0),
       };
     }
 

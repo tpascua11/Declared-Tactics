@@ -6,7 +6,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { usePlayer, isScenarioCleared } from '../context/PlayerContext';
 import { useGame } from '../context/GameContext';
-import { buildScenarioPages, buildScenarioReward } from './scenarioPages';
+import { buildScenarioPages, buildScenarioCommit } from './scenarioPages';
 import { meetsRequires } from './requires';
 
 const RETURN_PHASE = 'WORLD_MAP_TEST';
@@ -69,7 +69,7 @@ export function useScenarioRunner(campaign) {
       playerDispatch({
         type: 'COMMIT_SCENARIO',
         scenarioId: playingScenarioId,
-        reward: buildScenarioReward(playingScenario, playerData, playing.runFlags ?? []),
+        commit: buildScenarioCommit(playingScenario, playerData, playing.runFlags ?? []),
       });
     }
     setPlaying(null);
@@ -96,7 +96,7 @@ export function useScenarioRunner(campaign) {
     modalKey: enteredLocationId,
     pages: menuPages,
     title: enteredLocation.title.toUpperCase(),
-    mapIcon: enteredLocation.scene_image,
+    sceneImage: enteredLocation.scene_image,
     onChoose: (i) => setPlaying({ scenarioId: enteredScenarioIds[i], sceneImage: enteredLocation.scene_image }),
     onDone: () => setEnteredLocationId(null),
   };
@@ -105,7 +105,7 @@ export function useScenarioRunner(campaign) {
     modalKey: `${playingScenarioId}:${playing.startIndex ?? 0}`,
     pages: playingSegment.pages,
     title: playingScenario.name,
-    mapIcon: playing.sceneImage,
+    sceneImage: playing.sceneImage,
     onDone: finishPlaying,
   };
 

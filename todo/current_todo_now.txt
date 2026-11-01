@@ -36,9 +36,9 @@ Check data with: node tools/validate_campaigns.js
    DialogEditorScreen go with it (EventModal replaces DialogModal). Needs App.jsx and phase-flow changes.
 
 4. Renames for clearer names
-   - buildScenarioReward -> buildScenarioCommit (it returns flags as well as the reward); COMMIT_SCENARIO takes
-     `commit`, not `reward`.
-   - EventModal prop mapIcon -> sceneImage (the value is the location's scene_image).
+   - DONE: buildScenarioReward -> buildScenarioCommit (it returns flags as well as the reward); COMMIT_SCENARIO
+     takes `commit`, not `reward`.
+   - DONE: EventModal prop mapIcon -> sceneImage (the value is the location's scene_image).
    - playing / playingSegment in useScenarioRunner: clearer names for run state vs current pages.
 
 5. Data to settle

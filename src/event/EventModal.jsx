@@ -29,7 +29,7 @@ function hexToRgba(hex, alpha) {
 // runs, then the modal moves to the next page or closes if it was the last.
 // Speaker portraits sit on their declared side and persist there across pages
 // (a silent party member still shows), dimming when not the current speaker.
-export default function EventModal({ pages, title, mapIcon, onDone, onChoose }) {
+export default function EventModal({ pages, title, sceneImage, onDone, onChoose }) {
   const resolvedPages = useMemo(
     () => pages.map(page => (page.type === 'line' ? { ...page, speaker: resolveDialogSpeaker(page.speaker) } : page)),
     [pages]
@@ -104,7 +104,7 @@ export default function EventModal({ pages, title, mapIcon, onDone, onChoose }) 
   };
 
   let renderedChars = 0;
-  const mapIconSrc = mapIcon ? (ASSETS[mapIcon] ?? ASSETS.SCENARIO_BACKGROUNDS[mapIcon]) : null;
+  const sceneImageSrc = sceneImage ? (ASSETS[sceneImage] ?? ASSETS.SCENARIO_BACKGROUNDS[sceneImage]) : null;
 
   return (
     <div
@@ -152,14 +152,14 @@ export default function EventModal({ pages, title, mapIcon, onDone, onChoose }) 
         <div style={{
           width: '100%', height: 368, marginBottom: 20,
           position: 'relative', overflow: 'hidden', borderRadius: 12,
-          border: (mapIconSrc && entered) ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
-          boxShadow: (mapIconSrc && entered) ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
+          border: (sceneImageSrc && entered) ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
+          boxShadow: (sceneImageSrc && entered) ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
           background: '#000',
           transition: 'border-color 2s ease-out, box-shadow 2s ease-out',
         }}>
-          {mapIconSrc && (
+          {sceneImageSrc && (
             <>
-              <img src={mapIconSrc} alt="" style={{
+              <img src={sceneImageSrc} alt="" style={{
                 position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
                 clipPath: entered ? 'inset(0 0 0 0)' : 'inset(0 50% 0 50%)',
                 transition: 'clip-path 2s ease-out',

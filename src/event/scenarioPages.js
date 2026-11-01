@@ -1,5 +1,5 @@
 // Turns a scenario's game_events into EventModal pages (todo/world_design.md: game_events).
-// Handled types: dialog, reward, set_flag (no page; collected by buildScenarioReward), battle (stops a segment), if (expanded here). clear_flag is not handled yet.
+// Handled types: dialog, reward, set_flag (no page; collected by buildScenarioCommit), battle (stops a segment), if (expanded here). clear_flag is not handled yet.
 //
 // runFlags = temporary flags of the current scenario run (e.g. 'battle_won' / 'battle_lost'); never saved.
 
@@ -32,9 +32,9 @@ function expandEvent(event, playerData, runFlags, depth = 0) {
   return branch.flatMap(inner => expandEvent(inner, playerData, runFlags, depth + 1));
 }
 
-// The reward a finished scenario hands to COMMIT_SCENARIO: the `reward` events of the branches
+// The commit a finished scenario hands to COMMIT_SCENARIO: the `reward` events of the branches
 // that applied (given the final runFlags), merged, plus `flags` from the `set_flag` events of those branches.
-export function buildScenarioReward(scenario, playerData, runFlags = []) {
+export function buildScenarioCommit(scenario, playerData, runFlags = []) {
   const appliedEvents = scenario.game_events.flatMap(event => expandEvent(event, playerData, runFlags));
   const flags = appliedEvents.filter(event => event.type === 'set_flag').map(event => event.flag);
   return appliedEvents
