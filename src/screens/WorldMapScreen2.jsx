@@ -26,11 +26,6 @@ import WEAPON_ICON from '../assets/UI/WEAPON.png';
 import OPEN_BOOK_ICON from '../assets/UI/OPEN_BOOK.png';
 import NOTE_BOOK_ICON from '../assets/UI/NOTE_BOOK.png';
 import MOON_ICON from '../assets/UI/MOON.png';
-import IMAGE_GEN_1 from '../assets/World_Map_Icons/image-gen-1.png';
-import IMAGE_GEN_2 from '../assets/World_Map_Icons/image-gen-2.png';
-import IMAGE_GEN_3 from '../assets/World_Map_Icons/image-gen-3.png';
-import IMAGE_GEN_4 from '../assets/World_Map_Icons/image-gen-4.png';
-import IMAGE_GEN_5 from '../assets/World_Map_Icons/image-gen-5.png';
 import WORLD_ICON_1 from '../assets/World_Map_Icons/world-icon-1.png';
 import WORLD_ICON_2 from '../assets/World_Map_Icons/world-icon-2.png';
 import SNOWY_PAGODA_MOUNTAIN_SHRINE from '../assets/World_Map_Icons/Snowy Pagoda Mountain Shrine.png';
@@ -47,10 +42,6 @@ import { meetsRequires } from '../event/requires';
 import GuideModal from '../components/battle/GuideModal';
 import SettingsModal from '../components/map/SettingsModal';
 import { playSelectSfx } from '../vfx/animationRegistry';
-
-// Pure visual preview of a world-map layout/feel — no battle wiring, no
-// level data. Grid fills the viewport at GRID_TILE-sized boxes; a hand-
-// placed scatter of icons (SCATTERED_ICONS) previews icon density/coverage.
 
 const MAP_ICON_LOOKUP = {
   GARDEN_TOWN:    MAP_ICON_GARDEN_TOWN,
@@ -104,55 +95,11 @@ const MAP_ICON_LOOKUP = {
   Snowy_Pagoda_Mountain_Shrine:  SNOWY_PAGODA_MOUNTAIN_SHRINE,
 };
 
-// The box grid itself now draws the graph-paper lines (each box's border
-// is one grid square) — no separate SVG grain/gridline background needed.
-const GRID_TILE = 128;
-const BOX_GAP   = 2;
-
 // Sunsword7.png's native pixel size (checked via Get-Image on the file).
 const SUNSWORD_W = 1672;
 const SUNSWORD_H = 941;
 const GAME_CANVAS_W = 1920;
 const MAP_SCALE = GAME_CANVAS_W / SUNSWORD_W;
-
-// The exact set of map_icon values referenced across PATH_OF_THE_SAMURAI(_V2)
-// levels — everything else in MAP_ICON_LOOKUP is a different map's icon set.
-const SAMURAI_ICON_KEYS = [
-  'Snow_Iron_Gate', 'Snowy_Field_Bamboo', 'Snowy_Field_Den', 'Snow_Field_Shrine',
-  'Snow_Field_Path_1', 'Snow_Field_Path_2', 'Snow_Field_Path_3', 'Snow_Mountain_1',
-  'Snow_Mountain_2', 'Snow_and_Water', 'Snow_and_Water_2', 'Snowy_Forest',
-  'Green_Tree_At_Snow', 'Big_Snow_Cave', 'Big_Snow_Cave_2', 'Home',
-  'Snow_Cherry_Path_1', 'Sunset', 'Sunset_2', 'Tree_At_Snow', 'Water',
-];
-
-// Hand-placed (not Math.random()) so the scatter can be eyeballed and
-// adjusted by hand — just a density preview, not real level positions.
-// Every col/row is even, same lattice as FILL_STRIDE below: any two
-// distinct even/even points are always >=2 apart in both axes, so nothing
-// here can ever land adjacent (incl. diagonally) to another filled box.
-const SCATTERED_ICONS = [
-  { col: 2,  row: 0,  icon: 'Snow_Iron_Gate' },
-  { col: 4,  row: 2,  icon: 'Snow_Mountain_2' },
-  { col: 2,  row: 4,  icon: 'Snowy_Field_Bamboo' },
-  { col: 6,  row: 0,  icon: 'Snowy_Forest' },
-  { col: 8,  row: 2,  icon: 'Snow_Field_Shrine' },
-  { col: 4,  row: 6,  icon: 'Big_Snow_Cave_2' },
-  { col: 10, row: 4,  icon: 'Snowy_Field_Den' },
-  { col: 12, row: 0,  icon: 'Snow_Field_Path_2' },
-  { col: 6,  row: 6,  icon: 'Tree_At_Snow' },
-  { col: 14, row: 2,  icon: 'Snow_Cherry_Path_1' },
-  { col: 4,  row: 8,  icon: 'Snow_Mountain_1' },
-  { col: 16, row: 0,  icon: 'Snow_and_Water_2' },
-  { col: 8,  row: 6,  icon: 'Home' },
-  { col: 10, row: 8,  icon: 'Snow_and_Water' },
-  { col: 0,  row: 6,  icon: 'Green_Tree_At_Snow' },
-  { col: 18, row: 4,  icon: 'Sunset' },
-  { col: 14, row: 8,  icon: 'Big_Snow_Cave' },
-  { col: 0,  row: 2,  icon: 'Sunset_2' },
-  { col: 12, row: 6,  icon: 'Snow_Field_Path_1' },
-  { col: 16, row: 2,  icon: 'Snow_Field_Path_3' },
-  { col: 2,  row: 8,  icon: 'Water' },
-];
 
 const STATIC_STYLES = {
   root: {
@@ -239,14 +186,6 @@ const STATIC_STYLES = {
     backgroundSize: "100% 100%",
     backgroundRepeat: "no-repeat",
   },
-  gridWrap: {
-    position: "absolute",
-    inset: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
 };
 
 // One-off try: a location as a card (art + title) instead of a bare icon box.
@@ -311,15 +250,6 @@ const LocationCard = ({ title, mapIconSrc, isSelected }) => (
   </div>
 );
 
-// Preview of the new World_Map_Icons set (not yet in ../assets index).
-const TRY_CARDS = [
-  { id: 'image-gen-1', title: 'Hakuryu Shrine', icon: IMAGE_GEN_1 },
-  { id: 'image-gen-2', title: 'Frostpine Gate', icon: IMAGE_GEN_2 },
-  { id: 'image-gen-3', title: 'Kitsune Hollow', icon: IMAGE_GEN_3 },
-  { id: 'image-gen-4', title: 'Mount Tsukikage', icon: IMAGE_GEN_4 },
-  { id: 'image-gen-5', title: 'Sakura Ridge', icon: IMAGE_GEN_5 },
-];
-
 // Selected card's title gets a glowing white border.
 const MARCHING_ANTS_CSS = `
 .title-selected {
@@ -327,42 +257,6 @@ const MARCHING_ANTS_CSS = `
   box-shadow: 0 0 10px 2px rgba(255,255,255,0.9), inset 0 0 8px rgba(255,255,255,0.8);
 }
 `;
-
-const EmptyBox = ({ mapIconSrc }) => {
-  const boxStyle = useMemo(() => ({
-    width: GRID_TILE,
-    height: GRID_TILE,
-    flexShrink: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: mapIconSrc ? "2.5px solid" : "2.5px solid transparent",
-    borderRadius: 3,
-    background: "transparent",
-    borderColor: mapIconSrc ? "rgba(255,255,255,0.85)" : "transparent",
-    boxShadow: mapIconSrc
-      ? "0 0 12px rgba(255,255,255,0.65), 0 0 4px rgba(255,255,255,0.8)"
-      : "none",
-  }), [mapIconSrc]);
-
-  return (
-    <div style={boxStyle}>
-      {mapIconSrc && (
-        <img
-          src={mapIconSrc}
-          alt=""
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            imageRendering: "pixelated",
-            pointerEvents: "none",
-          }}
-        />
-      )}
-    </div>
-  );
-};
 
 // Template values — wire to playerData later.
 const HUD_BUTTON_SIZE = 88;
@@ -532,8 +426,6 @@ export default function WorldMapScreen2() {
 
   const [selectedDialogKey, setSelectedDialogKey] = useState(DIALOG_KEYS[0]);
   const [playingDialogKey, setPlayingDialogKey] = useState(null);
-  const [gridDims, setGridDims] = useState({ cols: 0, rows: 0 });
-  const gridWrapRef = useRef(null);
 
   // Temporary drag test for LocationCard — 10 cards, each independently
   // draggable. Positions keyed by id; dragRef tracks which id is active.
@@ -577,39 +469,6 @@ export default function WorldMapScreen2() {
     return () => setWeather(null);
   }, []);
 
-  useEffect(() => {
-    const el = gridWrapRef.current;
-    if (!el) return;
-    const measure = () => {
-      const cols = Math.max(1, Math.floor((el.clientWidth + BOX_GAP) / (GRID_TILE + BOX_GAP)));
-      const rows = Math.max(1, Math.floor((el.clientHeight + BOX_GAP) / (GRID_TILE + BOX_GAP)));
-      setGridDims({ cols, rows });
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  const scatteredByPos = useMemo(() => {
-    const m = new Map();
-    SCATTERED_ICONS.forEach(({ col, row, icon }) => m.set(`${col},${row}`, MAP_ICON_LOOKUP[icon]));
-    return m;
-  }, []);
-
-  // Filled boxes cycle deterministically through the whole icon set, but
-  // only every FILL_STRIDE'th row/col so a full empty box separates each
-  // slot in every direction (incl. diagonals) — nothing touches.
-  const ALL_ICONS = useMemo(() => SAMURAI_ICON_KEYS.map(k => MAP_ICON_LOOKUP[k]), []);
-  const FILL_STRIDE = 4;
-
-  const gridStyle = useMemo(() => ({
-    display: "grid",
-    gridTemplateColumns: `repeat(${gridDims.cols}, ${GRID_TILE}px)`,
-    gridTemplateRows:    `repeat(${gridDims.rows}, ${GRID_TILE}px)`,
-    gap: BOX_GAP,
-  }), [gridDims]);
-
   return (
     <div style={STATIC_STYLES.root}>
       <style>{MARCHING_ANTS_CSS}</style>
@@ -632,7 +491,6 @@ export default function WorldMapScreen2() {
         >
           ▶ Preview Dialog
         </button>
-        <div style={{ fontSize: 9, letterSpacing: 2, color: "#1e3050" }}>{gridDims.cols}x{gridDims.rows} SPACED GRID</div>
         <button
           onClick={() => {
             if (!window.confirm('Reset everything? Clears cleared scenarios, gold, flags and unlocked cards.')) return;
@@ -688,26 +546,6 @@ export default function WorldMapScreen2() {
               ENTER
             </button>
           )}
-          <div ref={gridWrapRef} style={STATIC_STYLES.gridWrap}>
-            <div style={gridStyle}>
-              {Array.from({ length: gridDims.cols * gridDims.rows }, (_, i) => {
-                const col = i % gridDims.cols;
-                const row = Math.floor(i / gridDims.cols);
-                // Icons hidden for now — re-enable by uncommenting these two.
-                // const scattered = scatteredByPos.get(`${col},${row}`);
-                // const onStride = col % FILL_STRIDE === 0 && row % FILL_STRIDE === 0;
-                // const filled = onStride ? ALL_ICONS[i % ALL_ICONS.length] : null;
-                const scattered = null;
-                const filled = null;
-                return (
-                  <EmptyBox
-                    key={i}
-                    mapIconSrc={scattered ?? filled}
-                  />
-                );
-              })}
-            </div>
-          </div>
         </div>
       </div>
       </div>
