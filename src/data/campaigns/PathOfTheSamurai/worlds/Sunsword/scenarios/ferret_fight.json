@@ -18,13 +18,15 @@
           { "speaker": { "source": "class", "id": "samurai" }, "text": "That wasn't so hard." }
         ] },
         { "type": "reward", "gold": 20 },
-        { "type": "set_flag", "flag": "cleared:ferret_fight" }
+        { "type": "set_flag", "flag": "cleared:ferret_fight" },
+        { "type": "exit" }
       ],
       "else": [
         { "type": "dialog", "lines": [
           { "speaker": { "source": "narrator" }, "text": "The ferrets drag you out of the snow and send you limping down the road." },
           { "speaker": { "source": "class", "id": "samurai" }, "text": "Next time." }
-        ] }
+        ] },
+        { "type": "exit" }
       ]
     }
   ]

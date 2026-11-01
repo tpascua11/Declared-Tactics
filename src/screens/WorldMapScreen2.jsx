@@ -422,7 +422,9 @@ export default function WorldMapScreen2() {
     [campaign, worldMap, playerData]
   );
 
-  const { openLocation, menuModal, runModal } = useScenarioRunner(campaign);
+  // Dev only: cycles null -> 'win' -> 'loss' -> null. Remove with the other dev buttons (todo item 2).
+  const [skipBattle, setSkipBattle] = useState(null);
+  const { openLocation, eventModal } = useScenarioRunner(campaign, skipBattle);
 
   const [selectedDialogKey, setSelectedDialogKey] = useState(DIALOG_KEYS[0]);
   const [playingDialogKey, setPlayingDialogKey] = useState(null);
@@ -492,6 +494,12 @@ export default function WorldMapScreen2() {
           ▶ Preview Dialog
         </button>
         <button
+          onClick={() => setSkipBattle(s => (s === null ? 'win' : s === 'win' ? 'loss' : null))}
+          style={{ background: "#1a2a3a", color: skipBattle ? "#f5d76e" : "#cfe3ee", border: "1px solid #4da6ff55", padding: "4px 12px", cursor: "pointer", letterSpacing: 1 }}
+        >
+          SKIP BATTLE: {skipBattle ? skipBattle.toUpperCase() : 'OFF'}
+        </button>
+        <button
           onClick={() => {
             if (!window.confirm('Reset everything? Clears cleared scenarios, gold, flags and unlocked cards.')) return;
             playerDispatch({ type: 'CONFIRM_CLASS', classId: playerData.class_id, campaignId: playerData.campaign_id });
@@ -510,8 +518,7 @@ export default function WorldMapScreen2() {
         />
       )}
 
-      {menuModal && <EventModal key={menuModal.modalKey} {...menuModal} />}
-      {runModal && <EventModal key={runModal.modalKey} {...runModal} />}
+      {eventModal && <EventModal key={eventModal.modalKey} {...eventModal} />}
 
       <div style={STATIC_STYLES.main}>
         <div style={{ ...STATIC_STYLES.canvas, backgroundImage: `url(${MAP_BACKGROUNDS[worldMap.background]})` }}>

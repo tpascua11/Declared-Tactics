@@ -29,14 +29,22 @@ function hexToRgba(hex, alpha) {
 // runs, then the modal moves to the next page or closes if it was the last.
 // Speaker portraits sit on their declared side and persist there across pages
 // (a silent party member still shows), dimming when not the current speaker.
-export default function EventModal({ pages, title, sceneImage, onDone, onChoose }) {
+// onEnd (optional): runs after the last page. Return a page number to stay open and show that page (the parent
+// has swapped `pages`); anything else closes the modal and runs onDone(true).
+// startPageIndex: the page to open on (e.g. past the menu page when resuming after a fight).
+export default function EventModal({ pages, title, sceneImage, onDone, onChoose, onEnd, startPageIndex = 0 }) {
   const resolvedPages = useMemo(
     () => pages.map(page => (page.type === 'line' ? { ...page, speaker: resolveDialogSpeaker(page.speaker) } : page)),
     [pages]
   );
 
-  const [pageIndex, setPageIndex] = useState(0);
-  const page = resolvedPages[pageIndex];
+  const [pageIndex, setPageIndex] = useState(startPageIndex);
+  // `pages` can shrink under the current index (a finished scenario's pages leave): show the last page until the effect resyncs.
+  const shownPageIndex = Math.min(pageIndex, resolvedPages.length - 1);
+  const page = resolvedPages[shownPageIndex];
+  useEffect(() => {
+    if (pageIndex >= resolvedPages.length) setPageIndex(resolvedPages.length - 1);
+  }, [pageIndex, resolvedPages.length]);
   const isReward = page.type === 'reward';
   const isChoice = page.type === 'choice';
   const segments = useMemo(() => (page.type === 'line' ? parseDialogText(page.text) : []), [page.type, page.text]);
@@ -64,8 +72,8 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose 
     }
     return null;
   };
-  const leftSpeaker = speakerForSide('left', pageIndex);
-  const rightSpeaker = speakerForSide('right', pageIndex);
+  const leftSpeaker = speakerForSide('left', shownPageIndex);
+  const rightSpeaker = speakerForSide('right', shownPageIndex);
   const activeSide = page.speaker?.side;
 
   const [closing, setClosing] = useState(false);
@@ -83,7 +91,9 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose 
     if (pageIndex + 1 < resolvedPages.length) {
       setPageIndex(pageIndex + 1);
     } else {
-      requestClose(true);
+      const nextPageIndex = onEnd?.();
+      if (typeof nextPageIndex === 'number') setPageIndex(nextPageIndex);
+      else requestClose(true);
     }
   };
 
@@ -97,11 +107,19 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose 
     goToNextPage();
   };
 
+  // onChoose may make the parent pass more pages (the picked scenario's). Both state updates batch into one
+  // render, so the effect below sees the new `pages` and either moves on or closes if none followed.
+  const [choicePending, setChoicePending] = useState(false);
   const choose = (optionIndex) => {
     playSelectSfx();
     onChoose?.(optionIndex);
-    goToNextPage();
+    setChoicePending(true);
   };
+  useEffect(() => {
+    if (!choicePending) return;
+    setChoicePending(false);
+    goToNextPage();
+  }, [choicePending]);
 
   let renderedChars = 0;
   const sceneImageSrc = sceneImage ? (ASSETS[sceneImage] ?? ASSETS.SCENARIO_BACKGROUNDS[sceneImage]) : null;

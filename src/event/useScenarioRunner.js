@@ -12,7 +12,11 @@ import { meetsRequires } from './requires';
 const RETURN_PHASE = 'WORLD_MAP_TEST';
 const BATTLE_OUTCOME_FLAGS = ['battle_won', 'battle_lost'];
 
-export function useScenarioRunner(campaign) {
+const withBattleOutcome = (runFlags, victory) =>
+  [...runFlags.filter(f => !BATTLE_OUTCOME_FLAGS.includes(f)), victory ? 'battle_won' : 'battle_lost'];
+
+// skipBattle (dev only): null = fight normally, 'win' / 'loss' = skip the fight and continue as if it ended that way.
+export function useScenarioRunner(campaign, skipBattle = null) {
   const { playerData, playerDispatch } = usePlayer();
   const { gs, dispatch, goToBattle } = useGame();
 
@@ -61,9 +65,18 @@ export function useScenarioRunner(campaign) {
   const finishSegment = (completed) => {
     if (completed && segment.battle) {
       const { battleId, resumeIndex } = segment.battle;
+      if (skipBattle) {
+        setRun({
+          scenarioId: runScenarioId,
+          sceneImage: run.sceneImage,
+          startIndex: resumeIndex,
+          runFlags: withBattleOutcome(run.runFlags ?? [], skipBattle === 'win'),
+        });
+        return;
+      }
       goToBattle(
         campaign.battles[battleId],
-        { scenarioId: runScenarioId, sceneImage: run.sceneImage, resumeIndex, runFlags: run.runFlags ?? [] },
+        { scenarioId: runScenarioId, sceneImage: run.sceneImage, locationId: enteredLocationId, resumeIndex, runFlags: run.runFlags ?? [] },
         RETURN_PHASE
       );
     } else if (completed) {
@@ -86,9 +99,9 @@ export function useScenarioRunner(campaign) {
   useEffect(() => {
     const resume = gs.sourceLevel;
     if (!gs.battleResult || !resume?.scenarioId) return;
-    const outcomeFlag = gs.battleResult.victory ? 'battle_won' : 'battle_lost';
-    const runFlags = [...(resume.runFlags ?? []).filter(f => !BATTLE_OUTCOME_FLAGS.includes(f)), outcomeFlag];
+    const runFlags = withBattleOutcome(resume.runFlags ?? [], gs.battleResult.victory);
     setRun({ scenarioId: resume.scenarioId, sceneImage: resume.sceneImage, startIndex: resume.resumeIndex, runFlags });
+    setEnteredLocationId(resume.locationId ?? null);
     dispatch({ type: 'CLEAR_BATTLE_RESULT' });
   }, []);
 
@@ -110,5 +123,39 @@ export function useScenarioRunner(campaign) {
     onDone: finishSegment,
   };
 
-  return { openLocation: setEnteredLocationId, menuModal: menuModal || null, runModal: runModal || null };
+  // One modal for menu + run: the menu's choice page is followed by the picked scenario's pages, so the shell
+  // stays mounted. After a fight the location is restored too, and the modal opens past the menu page (startPageIndex)
+  // on the first resumed page. Without a location (older saves) only the resumed segment shows.
+  const eventModal = (enteredLocation || (segment && segment.pages.length > 0)) && {
+    modalKey: enteredLocationId ?? `${runScenarioId}:${run.startIndex ?? 0}`,
+    pages: enteredLocation
+      ? (segment ? [...menuPages, ...segment.pages] : menuPages)
+      : segment.pages,
+    title: runScenario ? runScenario.name : enteredLocation.title.toUpperCase(),
+    sceneImage: run?.sceneImage ?? enteredLocation?.scene_image,
+    startPageIndex: enteredLocation && run?.startIndex > 0 ? menuPages.length : 0,
+    onChoose: enteredLocation && !run ? menuModal.onChoose : undefined,
+    // After the last page: finish the segment (commit, or leave for a battle). Returns the page to show next, or
+    // false to close: the menu (0) when the scenario ended normally, the first resumed page when a skipped fight
+    // continues, false for `exit`, a real fight, or no location. An empty segment was already finished by the
+    // effect above; finishing it again would re-enter the battle.
+    onEnd: () => {
+      if (segment && segment.pages.length > 0) finishSegment(true);
+      if (!enteredLocation || !segment || segment.exit) return false;
+      if (segment.battle) return skipBattle ? menuPages.length : false;
+      return 0;
+    },
+    // The modal closed: LEAVE (completed = false, commits nothing) or an end that did not stay open.
+    onDone: (completed) => {
+      if (!completed) setRun(null);
+      setEnteredLocationId(null);
+    },
+  };
+
+  return {
+    openLocation: setEnteredLocationId,
+    eventModal: eventModal || null,
+    menuModal: menuModal || null,
+    runModal: runModal || null,
+  };
 }
