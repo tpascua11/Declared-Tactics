@@ -1,7 +1,26 @@
 LOCATION / SCENARIO STRUCTURE: THOUGHT DESIGN (flags, clears, persistence)
-Status: thinking, nothing built. Main design is todo/world_data_design.md. The battle
-loss-clears-the-scenario question lives in todo/battle_outcome_flow.txt (item 1); this file is
-the wider flag thinking it depends on.
+Status: DECIDED (below), nothing built yet. Main design is todo/world_data_design.md. The battle
+loss-clears-the-scenario question (todo/battle_outcome_flow.txt item 1) is answered by the decision.
+
+DECISION: flags are dumb, global and fully authored
+   - The save has ONE flat `flags` list of strings. No flag fields on scenarios or locations.
+     `cleared_scenarios` goes away.
+   - The engine does NOT clear scenarios automatically. A scenario is cleared only when its own
+     game_events say so: { "type": "set_flag", "flag": "cleared:<scenario id>" }, written in the
+     branch that counts as success (so a lost fight that continues simply does not write it).
+   - Meaning comes only from logic: set_flag / reward write, requires / if read. The engine adds
+     no hidden rule at the end of a run. COMMIT_SCENARIO still applies rewards and flags once at
+     the end of every run, win or lose.
+   - Reading: requires keeps typed references, { "cleared": "<scenario id>" } resolves to the flag
+     name `cleared:<scenario id>` in one place (meetsRequires). Plain strings are story flags.
+     The Enter menu reads the same flag for CLEARED / REPEATABLE.
+   - Temporary run flags (battle_won, battle_lost) are never saved.
+   - Fully explicit set_flag chosen over a thin `clear` event: one mechanism, nothing inferred,
+     easy for an AI reader. Cost: forgetting the line means a scenario never clears silently;
+     the planned validator reports "required but never set" / "set but never read".
+   - Build order: (1) set_flag event + move cleared into flags, (2) author it in each scenario,
+     (3) validator.
+   Items 1-3 below are the thinking that led here; the struck parts are superseded.
 
 1. A scenario "clear" is just another flag
    Today: cleared_scenarios (array) is written automatically by COMMIT_SCENARIO when a run
@@ -24,7 +43,8 @@ the wider flag thinking it depends on.
    `scenario:ferret_fight`); the owner writes its own flag, anyone may require it; the validator
    derives implied flags from the objects and checks them together with flags.json.
 
-3. Scenario `flag` field and who sets it (leaning, not decided)
+3. ~~Scenario `flag` field and who sets it (leaning, not decided)~~ SUPERSEDED by the DECISION:
+   no scenario `flag` field, no auto_flag, the author writes set_flag. Old text kept for the why:
    - Every scenario may declare "flag": "ferret_fight_done". Omitted = defaults to the id
      (namespaced). Declaring it makes the name independent of the id, so the id can be renamed.
    - The engine sets the scenario's flag automatically when the run reaches its end (normal
@@ -61,6 +81,6 @@ the wider flag thinking it depends on.
    readers (matches the planned validator).
 
 Next actions when this is settled
-- Decide item 3 (default-plus-opt-out vs always authored) and answer battle_outcome_flow.txt 1.
+- ~~Decide item 3 and answer battle_outcome_flow.txt 1.~~ Done: always authored (see DECISION).
 - Update world_data_design.md (flags, State, Commit rule, requires) and strike the old text.
 - Then the code: isScenarioCleared / COMMIT_SCENARIO / meetsRequires / the Enter menu.
