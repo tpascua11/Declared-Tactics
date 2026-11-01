@@ -1,5 +1,5 @@
 BATTLE OUTCOME FLOW: open questions
-Context: design in todo/world_data_design.md (BATTLE section). Built: after a `battle`
+Context: design in todo/world_design.md (Battle in a scenario). Built: after a `battle`
 game_event the run sets the temporary flag `battle_won` or `battle_lost` (never saved), the
 scenario ALWAYS continues, and an `if` game_event (requires / then / else) decides the rest.
 Code: src/event/scenarioPages.js, src/screens/WorldMapScreen2.jsx (playing / finishPlaying).
@@ -38,4 +38,4 @@ Code: src/event/scenarioPages.js, src/screens/WorldMapScreen2.jsx (playing / fin
    update after question 1 is decided.
 
 Related, left open on purpose: battle loot, battle outcome flags such as "took no damage"
-(world_data_design.md, Open).
+(old/world_data_design.md, Open; world_design.md, Not built).

@@ -1,4 +1,4 @@
-// Turns a scenario's game_events into EventModal pages (todo/world_data_design.md: SCENARIO).
+// Turns a scenario's game_events into EventModal pages (todo/world_design.md: game_events).
 // Handled types: dialog, reward, set_flag (no page; collected by buildScenarioReward), battle (stops a segment), if (expanded here). clear_flag is not handled yet.
 //
 // runFlags = temporary flags of the current scenario run (e.g. 'battle_won' / 'battle_lost'); never saved.

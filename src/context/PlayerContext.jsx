@@ -40,7 +40,7 @@ function loadFromStorage() {
 export const hasFlag = (playerData, flag) => (playerData?.flags ?? []).includes(flag);
 
 // "Cleared" is an ordinary flag, written by a scenario's own `set_flag` event.
-// Design: todo/location-scaneario-structure-thought-design.txt (DECISION).
+// Design: todo/world_design.md (Flags).
 export const clearedFlag = (scenarioId) => `cleared:${scenarioId}`;
 
 export const isScenarioCleared = (playerData, scenarioId) =>

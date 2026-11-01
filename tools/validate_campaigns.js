@@ -1,6 +1,6 @@
 // Checks every campaign under src/data/campaigns for broken references. Run: node tools/validate_campaigns.js
 // Exit code 1 when there are errors; warnings do not fail the run.
-// Design: todo/location-scaneario-structure-thought-design.txt (DECISION), todo/world_data_design.md.
+// Design: todo/world_design.md (Flags, requires).
 
 const fs = require('fs');
 const path = require('path');

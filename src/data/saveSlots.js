@@ -1,4 +1,4 @@
-// Save slots: design in todo/world_data_design.md ("Save slots"). Only file that knows storage key names.
+// Save slots: design in todo/old/world_data_design.md ("Save slots"). Only file that knows storage key names.
 
 export const SLOT_COUNT = 10;
 const DEFAULT_SLOT = 1;

@@ -1,5 +1,5 @@
 // NOTE: EventModal replaces src/dialog/DialogModal.jsx. Same layout, new page model
-// (todo/world_data_design.md: dialog / reward / choice are game_events).
+// (todo/world_design.md: game_events).
 // DialogModal stays only until the old MapScreen and DialogEditorScreen are removed.
 
 import { useState, useEffect, useMemo } from 'react';

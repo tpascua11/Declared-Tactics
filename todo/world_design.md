@@ -1,7 +1,7 @@
 # World Design (current)
 
-What is built and how it works. Replaces `world_data_design.md` and
-`location-scaneario-structure-thought-design.txt` (both now old; see the end).
+What is built and how it works. Replaces `old/world_data_design.md` and
+`old/location-scaneario-structure-thought-design.txt` (see the end).
 Open battle questions stay in `battle_outcome_flow.txt` (still valid).
 Check data with `node tools/validate_campaigns.js`.
 
@@ -133,6 +133,6 @@ Fields used here: `save_version`, `campaign_id`, `flags`, `gold`, `unlocked_card
 
 ## Old docs
 
-- `world_data_design.md`: old. Still describes groups, `sequence`/`pool` modes, automatic clearing and `cleared_scenarios`. Use this doc instead. Still useful from it: the save slots section, the file layout section, the tooling ideas and the RPG lessons.
-- `location-scaneario-structure-thought-design.txt`: old thinking. Its DECISION block is what this doc records.
+- `old/world_data_design.md`: old. Still describes groups, `sequence`/`pool` modes, automatic clearing and `cleared_scenarios`. Use this doc instead. Still useful from it: the save slots section, the file layout section, the tooling ideas and the RPG lessons.
+- `old/location-scaneario-structure-thought-design.txt`: old thinking. Its DECISION block is what this doc records.
 - `battle_outcome_flow.txt`: current, except item 1 (answered: a scenario writes its cleared flag only on the win path) and item 7 (this doc replaces it).

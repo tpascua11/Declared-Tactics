@@ -1,7 +1,7 @@
 // Runs scenarios for a campaign: the location menu, the scenario's pages, the hand-off to a
 // battle and the resume after it, and the final COMMIT_SCENARIO. Draws nothing: returns props
 // for two EventModals (or null when that modal is not open).
-// Design: todo/world_data_design.md (SCENARIO, BATTLE, Commit rule).
+// Design: todo/world_design.md (Scenario run, Battle in a scenario).
 
 import { useState, useMemo, useEffect } from 'react';
 import { usePlayer, isScenarioCleared } from '../context/PlayerContext';
