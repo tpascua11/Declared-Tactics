@@ -39,7 +39,7 @@ Check data with: node tools/validate_campaigns.js
    - DONE: buildScenarioReward -> buildScenarioCommit (it returns flags as well as the reward); COMMIT_SCENARIO
      takes `commit`, not `reward`.
    - DONE: EventModal prop mapIcon -> sceneImage (the value is the location's scene_image).
-   - playing / playingSegment in useScenarioRunner: clearer names for run state vs current pages.
+   - DONE: playing / playingSegment in useScenarioRunner are now run / segment (finishPlaying -> finishSegment).
 
 5. Data to settle
    - scenario desc / clear_desc: read by nothing. Keep as prose for later or remove (the old Path of the Samurai

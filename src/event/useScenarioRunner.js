@@ -44,41 +44,42 @@ export function useScenarioRunner(campaign) {
   }, [campaign, enteredLocation, enteredScenarioIds, playerData]);
 
   // ── The running scenario ──
-  // playing = { scenarioId, sceneImage, startIndex?, runFlags? }. A scenario runs in segments split at
-  // `battle` events: the fight leaves the screen, and on return the effect below resumes at the event
-  // after it. The scene image is captured at pick time: the menu (and enteredLocation) is gone mid-play.
+  // run = { scenarioId, sceneImage, startIndex?, runFlags? }: the scenario being played, or null. It plays in
+  // segments split at `battle` events: the fight leaves the screen, and on return the effect below resumes
+  // at the event after it. `segment` is the pages of the part currently shown.
+  // The scene image is captured at pick time: the menu (and enteredLocation) is gone mid-run.
   // runFlags are the temporary flags of this run ('battle_won' / 'battle_lost'); they travel through the
   // fight and are never saved.
-  const [playing, setPlaying] = useState(null);
-  const playingScenarioId = playing?.scenarioId;
-  const playingScenario = playingScenarioId ? campaign.scenarios[playingScenarioId] : null;
-  const playingSegment = useMemo(
-    () => (playingScenario ? buildScenarioPages(playingScenario, playerData, playing.startIndex ?? 0, playing.runFlags ?? []) : null),
-    [playingScenario, playerData, playing?.startIndex, playing?.runFlags]
+  const [run, setRun] = useState(null);
+  const runScenarioId = run?.scenarioId;
+  const runScenario = runScenarioId ? campaign.scenarios[runScenarioId] : null;
+  const segment = useMemo(
+    () => (runScenario ? buildScenarioPages(runScenario, playerData, run.startIndex ?? 0, run.runFlags ?? []) : null),
+    [runScenario, playerData, run?.startIndex, run?.runFlags]
   );
 
-  const finishPlaying = (completed) => {
-    if (completed && playingSegment.battle) {
-      const { battleId, resumeIndex } = playingSegment.battle;
+  const finishSegment = (completed) => {
+    if (completed && segment.battle) {
+      const { battleId, resumeIndex } = segment.battle;
       goToBattle(
         campaign.battles[battleId],
-        { scenarioId: playingScenarioId, sceneImage: playing.sceneImage, resumeIndex, runFlags: playing.runFlags ?? [] },
+        { scenarioId: runScenarioId, sceneImage: run.sceneImage, resumeIndex, runFlags: run.runFlags ?? [] },
         RETURN_PHASE
       );
     } else if (completed) {
       playerDispatch({
         type: 'COMMIT_SCENARIO',
-        scenarioId: playingScenarioId,
-        commit: buildScenarioCommit(playingScenario, playerData, playing.runFlags ?? []),
+        scenarioId: runScenarioId,
+        commit: buildScenarioCommit(runScenario, playerData, run.runFlags ?? []),
       });
     }
-    setPlaying(null);
+    setRun(null);
   };
 
   // A segment with no pages (e.g. a battle as the first event) has nothing to show: finish it immediately.
   useEffect(() => {
-    if (playingSegment && playingSegment.pages.length === 0) finishPlaying(true);
-  }, [playing]);
+    if (segment && segment.pages.length === 0) finishSegment(true);
+  }, [run]);
 
   // Back from a fight started by a scenario: the scenario always continues, with exactly one of
   // 'battle_won' / 'battle_lost' set for its `if` events to read.
@@ -87,7 +88,7 @@ export function useScenarioRunner(campaign) {
     if (!gs.battleResult || !resume?.scenarioId) return;
     const outcomeFlag = gs.battleResult.victory ? 'battle_won' : 'battle_lost';
     const runFlags = [...(resume.runFlags ?? []).filter(f => !BATTLE_OUTCOME_FLAGS.includes(f)), outcomeFlag];
-    setPlaying({ scenarioId: resume.scenarioId, sceneImage: resume.sceneImage, startIndex: resume.resumeIndex, runFlags });
+    setRun({ scenarioId: resume.scenarioId, sceneImage: resume.sceneImage, startIndex: resume.resumeIndex, runFlags });
     dispatch({ type: 'CLEAR_BATTLE_RESULT' });
   }, []);
 
@@ -97,16 +98,16 @@ export function useScenarioRunner(campaign) {
     pages: menuPages,
     title: enteredLocation.title.toUpperCase(),
     sceneImage: enteredLocation.scene_image,
-    onChoose: (i) => setPlaying({ scenarioId: enteredScenarioIds[i], sceneImage: enteredLocation.scene_image }),
+    onChoose: (i) => setRun({ scenarioId: enteredScenarioIds[i], sceneImage: enteredLocation.scene_image }),
     onDone: () => setEnteredLocationId(null),
   };
 
-  const runModal = playingSegment && playingSegment.pages.length > 0 && {
-    modalKey: `${playingScenarioId}:${playing.startIndex ?? 0}`,
-    pages: playingSegment.pages,
-    title: playingScenario.name,
-    sceneImage: playing.sceneImage,
-    onDone: finishPlaying,
+  const runModal = segment && segment.pages.length > 0 && {
+    modalKey: `${runScenarioId}:${run.startIndex ?? 0}`,
+    pages: segment.pages,
+    title: runScenario.name,
+    sceneImage: run.sceneImage,
+    onDone: finishSegment,
   };
 
   return { openLocation: setEnteredLocationId, menuModal: menuModal || null, runModal: runModal || null };
