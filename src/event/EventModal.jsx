@@ -2,7 +2,7 @@
 // (todo/world_design.md: game_events).
 // DialogModal stays only until the old MapScreen and DialogEditorScreen are removed.
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { resolveDialogSpeaker } from '../dialog/resolveDialogSpeaker';
 import { parseDialogText } from '../dialog/parseDialogText';
 import { playSelectSfx } from '../vfx/animationRegistry';
@@ -32,7 +32,8 @@ function hexToRgba(hex, alpha) {
 // onEnd (optional): runs after the last page. Return a page number to stay open and show that page (the parent
 // has swapped `pages`); anything else closes the modal and runs onDone(true).
 // startPageIndex: the page to open on (e.g. past the menu page when resuming after a fight).
-export default function EventModal({ pages, title, sceneImage, onDone, onChoose, onEnd, startPageIndex = 0 }) {
+// defaultLeftSpeaker ({ source, id }, optional): shown in the left slot on choice pages when no line sets a left speaker.
+export default function EventModal({ pages, title, sceneImage, onDone, onChoose, onEnd, startPageIndex = 0, defaultLeftSpeaker = null }) {
   const resolvedPages = useMemo(
     () => pages.map(page => (page.type === 'line' ? { ...page, speaker: resolveDialogSpeaker(page.speaker) } : page)),
     [pages]
@@ -72,7 +73,8 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
     }
     return null;
   };
-  const leftSpeaker = speakerForSide('left', shownPageIndex);
+  const menuLeftSpeaker = useMemo(() => resolveDialogSpeaker(defaultLeftSpeaker), [defaultLeftSpeaker?.id]);
+  const leftSpeaker = speakerForSide('left', shownPageIndex) ?? (isChoice ? menuLeftSpeaker : null);
   const rightSpeaker = speakerForSide('right', shownPageIndex);
   const activeSide = page.speaker?.side;
 
@@ -122,7 +124,23 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
   }, [choicePending]);
 
   let renderedChars = 0;
-  const sceneImageSrc = sceneImage ? (ASSETS[sceneImage] ?? ASSETS.SCENARIO_BACKGROUNDS[sceneImage]) : null;
+  // A page's `scene` (from change_scene) overrides the location's sceneImage. A new scene wipes in over the old one:
+  // the old image stays underneath (underSrc) while the new one (topSrc) replays the opening reveal and glow (wipeIn).
+  const sceneName = page.scene ?? sceneImage;
+  const sceneSrc = sceneName ? (ASSETS[sceneName] ?? ASSETS.SCENARIO_BACKGROUNDS[sceneName]) : null;
+  const [sceneLayers, setSceneLayers] = useState({ underSrc: null, topSrc: sceneSrc });
+  const [wipeIn, setWipeIn] = useState(false);
+  useEffect(() => { if (entered) setWipeIn(true); }, [entered]);
+  const shownSceneSrc = useRef(sceneSrc);
+  useEffect(() => {
+    if (shownSceneSrc.current === sceneSrc) return;
+    shownSceneSrc.current = sceneSrc;
+    setSceneLayers(prev => ({ underSrc: prev.topSrc, topSrc: sceneSrc }));
+    setWipeIn(false);
+    let innerFrame;
+    const outerFrame = requestAnimationFrame(() => { innerFrame = requestAnimationFrame(() => setWipeIn(true)); });
+    return () => { cancelAnimationFrame(outerFrame); cancelAnimationFrame(innerFrame); };
+  }, [sceneSrc]);
 
   return (
     <div
@@ -170,17 +188,22 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
         <div style={{
           width: '100%', height: 368, marginBottom: 20,
           position: 'relative', overflow: 'hidden', borderRadius: 12,
-          border: (sceneImageSrc && entered) ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
-          boxShadow: (sceneImageSrc && entered) ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
+          border: (sceneLayers.topSrc && wipeIn) ? '3px solid #fff' : '3px solid rgba(255,255,255,0.25)',
+          boxShadow: (sceneLayers.topSrc && wipeIn) ? '0 0 40px rgba(255,255,255,0.6)' : 'none',
           background: '#000',
-          transition: 'border-color 2s ease-out, box-shadow 2s ease-out',
+          transition: wipeIn ? 'border-color 2s ease-out, box-shadow 2s ease-out' : 'none',
         }}>
-          {sceneImageSrc && (
+          {sceneLayers.topSrc && (
             <>
-              <img src={sceneImageSrc} alt="" style={{
+              {sceneLayers.underSrc && (
+                <img src={sceneLayers.underSrc} alt="" style={{
+                  position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+                }} />
+              )}
+              <img src={sceneLayers.topSrc} alt="" style={{
                 position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
-                clipPath: entered ? 'inset(0 0 0 0)' : 'inset(0 50% 0 50%)',
-                transition: 'clip-path 2s ease-out',
+                clipPath: wipeIn ? 'inset(0 0 0 0)' : 'inset(0 50% 0 50%)',
+                transition: wipeIn ? 'clip-path 2s ease-out' : 'none',
               }} />
               {title && (
                 <div style={{
@@ -201,7 +224,7 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
 
         {/* Row: portraits + dialog box */}
         <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-          <PortraitSlot speaker={leftSpeaker} active={activeSide === 'left'} visible={entered} />
+          <PortraitSlot key={leftSpeaker?.id ?? 'empty'} speaker={leftSpeaker} active={activeSide === 'left'} visible={entered} />
           <Connector speaker={leftSpeaker} active={activeSide === 'left'} pointRight visible={entered} />
 
           {/* Center: dialog box */}
@@ -264,7 +287,7 @@ export default function EventModal({ pages, title, sceneImage, onDone, onChoose,
           </div>
 
           <Connector speaker={rightSpeaker} active={activeSide === 'right'} visible={entered} />
-          <PortraitSlot speaker={rightSpeaker} active={activeSide === 'right'} align="right" visible={entered} />
+          <PortraitSlot key={rightSpeaker?.id ?? 'empty'} speaker={rightSpeaker} active={activeSide === 'right'} align="right" visible={entered} />
         </div>
       </div>
     </div>
@@ -426,9 +449,16 @@ function Connector({ speaker, active, pointRight = false, visible = true }) {
 // rounded-2xl) so dialog and battle read as the same character card.
 function PortraitSlot({ speaker, active, align = 'left', visible = true }) {
   const offset = align === 'right' ? 60 : -60;
+  // The slot is remounted per speaker (key in the parent): each new portrait slides in from hidden.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  const shown = visible && mounted;
   const fade = {
-    opacity: visible ? 1 : 0,
-    transform: visible ? 'translateX(0)' : `translateX(${offset}px)`,
+    opacity: shown ? 1 : 0,
+    transform: shown ? 'translateX(0)' : `translateX(${offset}px)`,
     transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
   };
   if (!speaker) {

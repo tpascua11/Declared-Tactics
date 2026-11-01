@@ -133,6 +133,7 @@ export function useScenarioRunner(campaign, skipBattle = null) {
       : segment.pages,
     title: runScenario ? runScenario.name : enteredLocation.title.toUpperCase(),
     sceneImage: run?.sceneImage ?? enteredLocation?.scene_image,
+    defaultLeftSpeaker: { source: 'class', id: playerData.class_id },
     startPageIndex: enteredLocation && run?.startIndex > 0 ? menuPages.length : 0,
     onChoose: enteredLocation && !run ? menuModal.onChoose : undefined,
     // After the last page: finish the segment (commit, or leave for a battle). Returns the page to show next, or

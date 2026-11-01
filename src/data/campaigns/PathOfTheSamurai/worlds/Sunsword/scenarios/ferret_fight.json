@@ -13,6 +13,7 @@
     { "type": "battle", "battle_id": "ferrets_and_boars" },
     { "type": "if", "requires": ["battle_won"],
       "then": [
+        { "type": "change_scene", "image": "MOUNTAIN_1_WIDE" },
         { "type": "dialog", "lines": [
           { "speaker": { "source": "narrator" }, "text": "The ferrets lie quiet in the snow. The gate stands open." },
           { "speaker": { "source": "class", "id": "samurai" }, "text": "That wasn't so hard." }

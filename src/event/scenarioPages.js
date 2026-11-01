@@ -1,5 +1,5 @@
 // Turns a scenario's game_events into EventModal pages (todo/world_design.md: game_events).
-// Handled types: dialog, reward, set_flag (no page; collected by buildScenarioCommit), battle (stops a segment), exit (stops the run and closes the modal), if (expanded here). clear_flag is not handled yet.
+// Handled types: dialog, reward, set_flag (no page; collected by buildScenarioCommit), battle (stops a segment), exit (stops the run and closes the modal), change_scene (no page; stamped on the pages after it as `scene`), if (expanded here). clear_flag is not handled yet.
 //
 // runFlags = temporary flags of the current scenario run (e.g. 'battle_won' / 'battle_lost'); never saved.
 
@@ -53,19 +53,28 @@ export function buildScenarioCommit(scenario, playerData, runFlags = []) {
 // Returns { pages, battle, exit }: battle is { battleId, resumeIndex } when the run stops at a fight
 // (resumeIndex = the event after it), otherwise null. A `battle` inside an `if` is not supported.
 // exit is true when an `exit` event ended the run (events after it are not played).
+// Every page carries `scene`: the image set by the latest `change_scene` (undefined until one runs, then the modal
+// keeps the location's scene). On a resume the events before startIndex are walked again to rebuild it.
 export function buildScenarioPages(scenario, playerData, startIndex = 0, runFlags = []) {
   const pages = [];
+  let scene;
+  for (const earlierEvent of scenario.game_events.slice(0, startIndex)) {
+    for (const event of expandEvent(earlierEvent, playerData, runFlags)) {
+      if (event.type === 'change_scene') scene = event.image;
+    }
+  }
   for (let i = startIndex; i < scenario.game_events.length; i++) {
     const topEvent = scenario.game_events[i];
     for (const event of expandEvent(topEvent, playerData, runFlags)) {
       if (event.type === 'exit') return { pages, battle: null, exit: true };
+      if (event.type === 'change_scene') { scene = event.image; continue; }
       if (event.type === 'battle') {
         if (topEvent.type === 'if') throw new Error(`\`battle\` inside \`if\` is not supported (scenario "${scenario.id}")`);
         return { pages, battle: { battleId: event.battle_id, resumeIndex: i + 1 }, exit: false };
       }
       const build = PAGE_BUILDERS[event.type];
       if (!build) throw new Error(`Unknown game_event type "${event.type}" in scenario "${scenario.id}"`);
-      pages.push(...build(event, playerData));
+      pages.push(...build(event, playerData).map(page => ({ ...page, scene })));
     }
   }
   return { pages, battle: null, exit: false };
